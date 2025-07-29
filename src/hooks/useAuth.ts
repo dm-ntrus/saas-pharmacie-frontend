@@ -1,5 +1,6 @@
+"use client"
 import React, { useState, useEffect, useContext, createContext, ReactNode } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/apiClient';
 import type { User, UserRole } from '@/types';
 
