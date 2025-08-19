@@ -236,7 +236,7 @@ const SettingsPage: React.FC = () => {
             type="text"
             value={editValue}
             onChange={(e) => setEditValues({ ...editValues, [setting.id]: e.target.value })}
-            className="px-3 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500"
+            className="px-3 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-sky-500"
             autoFocus
           />
         );
@@ -247,7 +247,7 @@ const SettingsPage: React.FC = () => {
             type="number"
             value={editValue}
             onChange={(e) => setEditValues({ ...editValues, [setting.id]: parseInt(e.target.value) })}
-            className="px-3 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500 w-24"
+            className="px-3 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-sky-500 w-24"
             autoFocus
           />
         );
@@ -270,7 +270,7 @@ const SettingsPage: React.FC = () => {
           <select
             value={editValue}
             onChange={(e) => setEditValues({ ...editValues, [setting.id]: e.target.value })}
-            className="px-3 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500"
+            className="px-3 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-sky-500"
             autoFocus
           >
             {setting.options?.map(option => (
@@ -307,7 +307,7 @@ const SettingsPage: React.FC = () => {
       title: 'Intégrations',
       value: settings.filter(s => s.category === 'integrations' && s.value === true).length.toString(),
       icon: GlobeAltIcon,
-      color: 'bg-purple-500'
+      color: 'bg-cyan-500'
     }
   ];
 
@@ -361,9 +361,9 @@ const SettingsPage: React.FC = () => {
                 aria-selected={activeTab === category.id}
                 aria-controls={`${category.id}-panel`}
                 onClick={() => setActiveTab(category.id)}
-                className={`flex items-center py-2 px-1 border-b-2 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                className={`flex items-center py-2 px-1 border-b-2 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 ${
                   activeTab === category.id
-                    ? 'border-indigo-500 text-indigo-600'
+                    ? 'border-sky-500 text-sky-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -378,7 +378,7 @@ const SettingsPage: React.FC = () => {
         <div role="tabpanel" id={`${activeTab}-panel`} aria-labelledby={`${activeTab}-tab`}>
           <div className="space-y-4">
             {filteredSettings.map((setting) => (
-              <Card key={setting.id} className="p-6 hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-indigo-500">
+              <Card key={setting.id} className="p-6 hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-sky-500">
                 <div className="flex items-center justify-between">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-3">

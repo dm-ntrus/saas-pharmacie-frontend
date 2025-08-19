@@ -170,7 +170,7 @@ const LaboratoryPage: React.FC = () => {
       title: 'En Cours',
       value: labTests.filter(t => t.status === 'in_progress').length.toString(),
       icon: BeakerIcon,
-      color: 'bg-purple-500'
+      color: 'bg-cyan-500'
     },
     {
       title: 'Terminés',
@@ -241,14 +241,14 @@ const LaboratoryPage: React.FC = () => {
                 placeholder="Rechercher un test..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
               />
             </div>
             
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
             >
               {testTypes.map(type => (
                 <option key={type} value={type}>
@@ -260,7 +260,7 @@ const LaboratoryPage: React.FC = () => {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
             >
               {statusTypes.map(status => (
                 <option key={status} value={status}>

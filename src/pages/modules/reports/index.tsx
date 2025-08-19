@@ -175,7 +175,7 @@ const ReportsPage: React.FC = () => {
     switch (category) {
       case 'sales': return 'bg-blue-500';
       case 'inventory': return 'bg-green-500';
-      case 'financial': return 'bg-purple-500';
+      case 'financial': return 'bg-cyan-500';
       case 'operational': return 'bg-orange-500';
       case 'compliance': return 'bg-red-500';
       default: return 'bg-gray-500';
@@ -271,7 +271,7 @@ const ReportsPage: React.FC = () => {
                 placeholder="Rechercher un rapport..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
               />
             </div>
             <div>
@@ -280,7 +280,7 @@ const ReportsPage: React.FC = () => {
                 id="category-filter"
                 value={activeCategory}
                 onChange={(e) => setActiveCategory(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
               >
                 {categories.map(category => (
                   <option key={category.id} value={category.id}>
@@ -297,9 +297,9 @@ const ReportsPage: React.FC = () => {
               <button
                 key={category.id}
                 onClick={() => setActiveCategory(category.id)}
-                className={`px-3 py-1 text-sm font-medium rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                className={`px-3 py-1 text-sm font-medium rounded-full focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 ${
                   activeCategory === category.id
-                    ? 'bg-indigo-600 text-white'
+                    ? 'bg-sky-600 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
                 aria-pressed={activeCategory === category.id}
@@ -318,7 +318,7 @@ const ReportsPage: React.FC = () => {
             return (
               <Card 
                 key={report.id} 
-                className="p-6 hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-indigo-500"
+                className="p-6 hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-sky-500"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-start space-x-3">

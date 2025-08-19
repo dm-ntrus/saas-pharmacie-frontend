@@ -27,7 +27,7 @@ const TenantSwitcher: React.FC<TenantSwitcherProps> = ({ currentTenant }) => {
       slug: 'sante-plus',
       name: 'Santé Plus',
       description: 'Lubumbashi, RD Congo',
-      color: 'bg-purple-500'
+      color: 'bg-cyan-500'
     }
   ];
 
@@ -44,7 +44,7 @@ const TenantSwitcher: React.FC<TenantSwitcherProps> = ({ currentTenant }) => {
             key={tenant.slug}
             className={`border rounded-lg p-4 transition-colors ${
               currentTenant === tenant.slug 
-                ? 'border-indigo-500 bg-indigo-50' 
+                ? 'border-sky-500 bg-sky-50' 
                 : 'border-gray-200 hover:border-gray-300'
             }`}
           >
@@ -60,7 +60,7 @@ const TenantSwitcher: React.FC<TenantSwitcherProps> = ({ currentTenant }) => {
               <div className="flex space-x-2">
                 <Link
                   href={`/tenant/${tenant.slug}`}
-                  className="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center"
+                  className="text-sky-600 hover:text-sky-800 text-sm font-medium flex items-center"
                 >
                   Visiter
                   <ArrowTopRightOnSquareIcon className="h-4 w-4 ml-1" />
@@ -69,8 +69,8 @@ const TenantSwitcher: React.FC<TenantSwitcherProps> = ({ currentTenant }) => {
             </div>
             
             {currentTenant === tenant.slug && (
-              <div className="mt-3 pt-3 border-t border-indigo-200">
-                <p className="text-xs text-indigo-600 font-medium">
+              <div className="mt-3 pt-3 border-t border-sky-200">
+                <p className="text-xs text-sky-600 font-medium">
                   ✓ Pharmacie actuellement visitée
                 </p>
               </div>

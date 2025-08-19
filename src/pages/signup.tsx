@@ -126,7 +126,7 @@ const SignupPage: NextPage = () => {
         <meta name="keywords" content="plans, tarifs, pharmacie, saas, abonnement" />
       </Head>
 
-      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-800 py-12">
+      <div className="min-h-screen bg-gradient-to-br from-sky-900 via-sky-800 to-cyan-800 py-12">
         {/* Navigation */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-8">
@@ -134,12 +134,12 @@ const SignupPage: NextPage = () => {
               NakiCode PharmaSaaS
             </Link>
             <div className="flex items-center space-x-6">
-              <Link href="/login" className="text-indigo-200 hover:text-white">
+              <Link href="/login" className="text-sky-200 hover:text-white">
                 Se connecter
               </Link>
               <Link
                 href="/demo"
-                className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg font-semibold transition-colors backdrop-blur"
+                className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg font-semibold transition-colors backdrop-blur"
               >
                 Essai Gratuit
               </Link>
@@ -153,26 +153,26 @@ const SignupPage: NextPage = () => {
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
               Choisissez Votre Plan
             </h1>
-            <p className="text-xl text-indigo-200 mb-8 max-w-3xl mx-auto">
+            <p className="text-xl text-sky-200 mb-8 max-w-3xl mx-auto">
               Sélectionnez l'offre qui correspond parfaitement aux besoins de votre pharmacie. 
               Premier mois gratuit, aucun engagement.
             </p>
             
             {/* Avantages exclusifs */}
             <div className="flex flex-wrap justify-center gap-6 mb-8">
-              <div className="flex items-center text-indigo-200">
+              <div className="flex items-center text-sky-200">
                 <CheckCircleIcon className="h-5 w-5 text-green-400 mr-2" />
                 30 jours gratuits
               </div>
-              <div className="flex items-center text-indigo-200">
+              <div className="flex items-center text-sky-200">
                 <ShieldCheckIcon className="h-5 w-5 text-green-400 mr-2" />
                 Aucun engagement
               </div>
-              <div className="flex items-center text-indigo-200">
+              <div className="flex items-center text-sky-200">
                 <CreditCardIcon className="h-5 w-5 text-green-400 mr-2" />
                 Annulation en 1 clic
               </div>
-              <div className="flex items-center text-indigo-200">
+              <div className="flex items-center text-sky-200">
                 <DevicePhoneMobileIcon className="h-5 w-5 text-green-400 mr-2" />
                 Mobile Money accepté
               </div>
@@ -218,7 +218,7 @@ const SignupPage: NextPage = () => {
                     
                     <div className="mb-4">
                       <div className="flex items-center justify-center">
-                        <span className="text-4xl font-bold text-indigo-600">
+                        <span className="text-4xl font-bold text-sky-600">
                           ${plan.price}
                         </span>
                         <span className="text-gray-600 ml-2">/mois</span>
@@ -259,7 +259,7 @@ const SignupPage: NextPage = () => {
                     onClick={() => handleSelectPlan(plan.id)}
                     className={`w-full py-3 px-4 rounded-lg font-semibold transition-colors flex items-center justify-center ${
                       plan.popular
-                        ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg'
+                        ? 'bg-sky-600 hover:bg-sky-700 text-white shadow-lg'
                         : 'bg-gray-100 hover:bg-gray-200 text-gray-900'
                     }`}
                   >
@@ -278,7 +278,7 @@ const SignupPage: NextPage = () => {
           </div>
 
           {/* Comparaison détaillée */}
-          <div className="bg-white bg-opacity-10 rounded-2xl p-8 backdrop-blur mb-12">
+          <div className="bg-white/10 rounded-2xl p-8 backdrop-blur mb-12">
             <h2 className="text-2xl font-bold text-white text-center mb-8">
               Besoin d'aide pour choisir ?
             </h2>
@@ -289,7 +289,7 @@ const SignupPage: NextPage = () => {
                   <span className="text-white text-2xl">🏪</span>
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-2">Petite Pharmacie</h3>
-                <p className="text-indigo-200 mb-4">1-2 employés, 200-500 produits</p>
+                <p className="text-sky-200 mb-4">1-2 employés, 200-500 produits</p>
                 <span className="bg-blue-500 text-white px-4 py-2 rounded-lg font-semibold">
                   → Plan Simple
                 </span>
@@ -300,7 +300,7 @@ const SignupPage: NextPage = () => {
                   <span className="text-white text-2xl">🏥</span>
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-2">Pharmacie Moyenne</h3>
-                <p className="text-indigo-200 mb-4">3-5 employés, 500-2000 produits</p>
+                <p className="text-sky-200 mb-4">3-5 employés, 500-2000 produits</p>
                 <span className="bg-yellow-500 text-white px-4 py-2 rounded-lg font-semibold">
                   → Plan Moyenne
                 </span>
@@ -311,7 +311,7 @@ const SignupPage: NextPage = () => {
                   <span className="text-white text-2xl">🏢</span>
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-2">Grande Structure</h3>
-                <p className="text-indigo-200 mb-4">5+ employés, distribution</p>
+                <p className="text-sky-200 mb-4">5+ employés, distribution</p>
                 <span className="bg-green-500 text-white px-4 py-2 rounded-lg font-semibold">
                   → Plan Standard/Grossiste
                 </span>
@@ -320,7 +320,7 @@ const SignupPage: NextPage = () => {
           </div>
 
           {/* FAQ Rapide */}
-          <div className="bg-white bg-opacity-10 rounded-2xl p-8 backdrop-blur mb-12">
+          <div className="bg-white/10 rounded-2xl p-8 backdrop-blur mb-12">
             <h2 className="text-2xl font-bold text-white text-center mb-8">
               Questions Fréquentes
             </h2>
@@ -330,7 +330,7 @@ const SignupPage: NextPage = () => {
                 <h3 className="text-lg font-semibold text-white mb-2">
                   Puis-je changer de plan plus tard ?
                 </h3>
-                <p className="text-indigo-200">
+                <p className="text-sky-200">
                   Oui, vous pouvez upgrader ou downgrader votre plan à tout moment. 
                   Les changements sont effectifs immédiatement.
                 </p>
@@ -340,7 +340,7 @@ const SignupPage: NextPage = () => {
                 <h3 className="text-lg font-semibold text-white mb-2">
                   Y a-t-il des frais cachés ?
                 </h3>
-                <p className="text-indigo-200">
+                <p className="text-sky-200">
                   Non, le prix affiché est tout inclus. Pas de frais d'installation, 
                   de formation ou de support supplémentaires.
                 </p>
@@ -350,7 +350,7 @@ const SignupPage: NextPage = () => {
                 <h3 className="text-lg font-semibold text-white mb-2">
                   Comment fonctionne l'essai gratuit ?
                 </h3>
-                <p className="text-indigo-200">
+                <p className="text-sky-200">
                   30 jours complets avec toutes les fonctionnalités. 
                   Aucune carte bancaire requise pour commencer.
                 </p>
@@ -360,7 +360,7 @@ const SignupPage: NextPage = () => {
                 <h3 className="text-lg font-semibold text-white mb-2">
                   Support technique inclus ?
                 </h3>
-                <p className="text-indigo-200">
+                <p className="text-sky-200">
                   Oui, tous nos plans incluent le support technique. 
                   Les plans supérieurs ont un support prioritaire.
                 </p>
@@ -370,19 +370,19 @@ const SignupPage: NextPage = () => {
 
           {/* CTA Final */}
           <div className="text-center">
-            <p className="text-xl text-indigo-200 mb-6">
+            <p className="text-xl text-sky-200 mb-6">
               Plus de 2,500 pharmacies nous font confiance en Afrique
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/demo"
-                className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-8 py-3 rounded-lg font-semibold transition-colors backdrop-blur border border-white border-opacity-30"
+                className="bg-white/20 hover:bg-white/30 text-white px-8 py-3 rounded-lg font-semibold transition-colors backdrop-blur border border-white/30"
               >
                 Essayer Gratuitement
               </Link>
               <Link
                 href="/contact"
-                className="bg-white text-indigo-900 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+                className="bg-white text-sky-900 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
               >
                 Parler à un Expert
               </Link>

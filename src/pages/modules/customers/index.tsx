@@ -122,7 +122,7 @@ const CustomersPage: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'vip': return 'bg-purple-100 text-purple-800';
+      case 'vip': return 'bg-cyan-100 text-cyan-800';
       case 'active': return 'bg-green-100 text-green-800';
       case 'inactive': return 'bg-gray-100 text-gray-800';
       default: return 'bg-gray-100 text-gray-800';
@@ -149,7 +149,7 @@ const CustomersPage: React.FC = () => {
       title: 'Clients VIP',
       value: customers.filter(c => c.status === 'vip').length.toString(),
       icon: StarIcon,
-      color: 'bg-purple-500'
+      color: 'bg-cyan-500'
     },
     {
       title: 'Clients Actifs',
@@ -161,7 +161,7 @@ const CustomersPage: React.FC = () => {
       title: 'Nouveaux ce Mois',
       value: customers.filter(c => new Date(c.registrationDate) > new Date('2025-01-01')).length.toString(),
       icon: PlusIcon,
-      color: 'bg-indigo-500'
+      color: 'bg-sky-500'
     }
   ];
 
@@ -212,14 +212,14 @@ const CustomersPage: React.FC = () => {
                 placeholder="Rechercher un client..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
               />
             </div>
             
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
             >
               <option value="all">Tous les statuts</option>
               <option value="vip">VIP</option>
@@ -247,7 +247,7 @@ const CustomersPage: React.FC = () => {
                       {getStatusText(customer.status)}
                     </span>
                     {customer.status === 'vip' && (
-                      <StarIcon className="h-4 w-4 text-purple-600 ml-2" />
+                      <StarIcon className="h-4 w-4 text-cyan-600 ml-2" />
                     )}
                   </div>
                 </div>
@@ -292,7 +292,7 @@ const CustomersPage: React.FC = () => {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <p className="text-sm font-medium text-gray-900">Points de fidélité</p>
-                  <p className="text-lg font-bold text-indigo-600">{customer.loyaltyPoints.toLocaleString()}</p>
+                  <p className="text-lg font-bold text-sky-600">{customer.loyaltyPoints.toLocaleString()}</p>
                 </div>
                 <div className="flex space-x-2">
                   {[1, 2, 3, 4, 5].map((star) => (

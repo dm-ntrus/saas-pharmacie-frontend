@@ -14,6 +14,7 @@ import {
   StarIcon
 } from '@heroicons/react/24/outline';
 import TenantSwitcher from '../components/TenantSwitcher';
+import Layout from '@/components/layout/Layout';
 
 const DemoPage: NextPage = () => {
   const [selectedDemo, setSelectedDemo] = useState('interactive');
@@ -91,44 +92,27 @@ const DemoPage: NextPage = () => {
   ];
 
   return (
-    <>
-      <Head>
-        <title>Démo - NakiCode PharmaSaaS</title>
-        <meta name="description" content="Découvrez NakiCode PharmaSaaS en action. Démo interactive gratuite ou visite guidée avec nos experts." />
-        <meta name="keywords" content="démo, pharmacie, logiciel, essai gratuit, présentation" />
-      </Head>
+    <Layout
+      requireAuth={false}
+      showSidebar={false}
+      title="PharmacySaaS - Gestion Moderne des Pharmacies"
+    >
 
-      <div className="min-h-screen bg-white">
-        {/* Navigation */}
-        <nav className="bg-white border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center py-4">
-              <Link href="/" className="text-xl font-bold text-indigo-600">
-                NakiCode PharmaSaaS
-              </Link>
-              <div className="flex items-center space-x-6">
-                <Link href="/" className="text-gray-600 hover:text-gray-900">Accueil</Link>
-                <Link href="/features" className="text-gray-600 hover:text-gray-900">Fonctionnalités</Link>
-                <Link href="/pricing" className="text-gray-600 hover:text-gray-900">Tarifs</Link>
-                <Link href="/demo" className="text-indigo-600 font-medium">Démo</Link>
-              </div>
-            </div>
-          </div>
-        </nav>
+      <div className="bg-white pt-10">
 
         {/* Hero */}
-        <section className="bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-800 text-white py-20">
+        <section className="bg-gradient-to-br from-sky-900 via-sky-800 to-cyan-800 text-white py-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <PlayCircleIcon className="h-20 w-20 text-indigo-300 mx-auto mb-6" />
+            <PlayCircleIcon className="h-20 w-20 text-sky-300 mx-auto mb-6" />
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Voir <span className="text-indigo-300">en Action</span>
+              Voir <span className="text-sky-300">en Action</span>
             </h1>
-            <p className="text-xl text-indigo-200 mb-8">
+            <p className="text-xl text-sky-200 mb-8">
               Découvrez comment NakiCode PharmaSaaS peut transformer la gestion de votre pharmacie.
               Essayez maintenant, gratuitement et sans engagement.
             </p>
             <div className="flex justify-center">
-              <button className="bg-white text-indigo-900 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-indigo-50 transition-colors inline-flex items-center focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-900">
+              <button className="bg-white text-sky-900 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-sky-50 transition-colors inline-flex items-center focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-sky-900">
                 <PlayCircleIcon className="h-6 w-6 mr-3" />
                 Lancer la Démo Interactive
               </button>
@@ -150,13 +134,13 @@ const DemoPage: NextPage = () => {
                   key={option.id}
                   className={`relative p-8 rounded-2xl border-2 cursor-pointer transition-all hover:shadow-lg ${
                     selectedDemo === option.id
-                      ? 'border-indigo-500 bg-indigo-50'
+                      ? 'border-sky-500 bg-sky-50'
                       : 'border-gray-200 bg-white hover:border-gray-300'
                   }`}
                   onClick={() => setSelectedDemo(option.id)}
                 >
                   <div className="text-center mb-6">
-                    <div className={`${selectedDemo === option.id ? 'bg-indigo-600' : 'bg-gray-400'} w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4 transition-colors`}>
+                    <div className={`${selectedDemo === option.id ? 'bg-sky-600' : 'bg-gray-400'} w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4 transition-colors`}>
                       <option.icon className="h-8 w-8 text-white" />
                     </div>
                     <h3 className="text-xl font-bold text-gray-900 mb-2">{option.name}</h3>
@@ -179,7 +163,7 @@ const DemoPage: NextPage = () => {
                   <button
                     className={`w-full py-3 px-4 rounded-lg font-semibold transition-colors ${
                       selectedDemo === option.id
-                        ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                        ? 'bg-sky-600 text-white hover:bg-sky-700'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -195,10 +179,10 @@ const DemoPage: NextPage = () => {
             <div className="bg-gray-100 rounded-2xl p-8 mb-12">
               <div className="aspect-video bg-gray-800 rounded-lg flex items-center justify-center">
                 <div className="text-center text-white">
-                  <PlayCircleIcon className="h-20 w-20 mx-auto mb-4 text-indigo-400" />
+                  <PlayCircleIcon className="h-20 w-20 mx-auto mb-4 text-sky-400" />
                   <h3 className="text-2xl font-bold mb-2">Démo Interactive Disponible</h3>
                   <p className="text-gray-300 mb-6">Explorez toutes les fonctionnalités en temps réel</p>
-                  <button className="bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">
+                  <button className="bg-sky-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-sky-700 transition-colors">
                     Lancer la Démo
                   </button>
                 </div>
@@ -243,32 +227,32 @@ const DemoPage: NextPage = () => {
         {/* Planifier une démo personnalisée */}
         <section className="py-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-indigo-900 rounded-2xl p-12 text-center text-white">
-              <CalendarIcon className="h-16 w-16 text-indigo-300 mx-auto mb-6" />
+            <div className="bg-sky-900 rounded-2xl p-12 text-center text-white">
+              <CalendarIcon className="h-16 w-16 text-sky-300 mx-auto mb-6" />
               <h2 className="text-3xl font-bold mb-4">Démo Personnalisée avec un Expert</h2>
-              <p className="text-xl text-indigo-200 mb-8">
+              <p className="text-xl text-sky-200 mb-8">
                 Obtenez une présentation adaptée à votre pharmacie et vos besoins spécifiques
               </p>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div className="text-center">
-                  <VideoCameraIcon className="h-12 w-12 text-indigo-300 mx-auto mb-3" />
+                  <VideoCameraIcon className="h-12 w-12 text-sky-300 mx-auto mb-3" />
                   <h3 className="font-semibold mb-2">Présentation Live</h3>
-                  <p className="text-sm text-indigo-200">45 minutes avec un expert produit</p>
+                  <p className="text-sm text-sky-200">45 minutes avec un expert produit</p>
                 </div>
                 <div className="text-center">
-                  <ComputerDesktopIcon className="h-12 w-12 text-indigo-300 mx-auto mb-3" />
+                  <ComputerDesktopIcon className="h-12 w-12 text-sky-300 mx-auto mb-3" />
                   <h3 className="font-semibold mb-2">Sur Mesure</h3>
-                  <p className="text-sm text-indigo-200">Adaptée à votre type de pharmacie</p>
+                  <p className="text-sm text-sky-200">Adaptée à votre type de pharmacie</p>
                 </div>
                 <div className="text-center">
-                  <CheckIcon className="h-12 w-12 text-indigo-300 mx-auto mb-3" />
+                  <CheckIcon className="h-12 w-12 text-sky-300 mx-auto mb-3" />
                   <h3 className="font-semibold mb-2">Plan d'Action</h3>
-                  <p className="text-sm text-indigo-200">Roadmap d'implémentation incluse</p>
+                  <p className="text-sm text-sky-200">Roadmap d'implémentation incluse</p>
                 </div>
               </div>
 
-              <div className="bg-indigo-800 rounded-xl p-6 mb-8">
+              <div className="bg-sky-800 rounded-xl p-6 mb-8">
                 <h3 className="text-lg font-semibold mb-4">Créneaux Disponibles Cette Semaine</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {[
@@ -282,8 +266,8 @@ const DemoPage: NextPage = () => {
                       disabled={!slot.available}
                       className={`p-3 rounded-lg text-sm font-medium transition-colors ${
                         slot.available
-                          ? 'bg-white text-indigo-900 hover:bg-indigo-50'
-                          : 'bg-indigo-700 text-indigo-400 cursor-not-allowed'
+                          ? 'bg-white text-sky-900 hover:bg-sky-50'
+                          : 'bg-sky-700 text-sky-400 cursor-not-allowed'
                       }`}
                     >
                       <div className="font-semibold">{slot.day}</div>
@@ -294,7 +278,7 @@ const DemoPage: NextPage = () => {
                 </div>
               </div>
 
-              <button className="bg-white text-indigo-900 px-8 py-3 rounded-lg font-semibold hover:bg-indigo-50 transition-colors inline-flex items-center focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-900">
+              <button className="bg-white text-sky-900 px-8 py-3 rounded-lg font-semibold hover:bg-sky-50 transition-colors inline-flex items-center focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-sky-900">
                 Réserver Ma Démo Personnalisée
                 <ArrowRightIcon className="ml-2 h-5 w-5" />
               </button>
@@ -328,7 +312,7 @@ const DemoPage: NextPage = () => {
                   title: 'Cas d\'Usage',
                   description: 'Exemples concrets d\'implémentation',
                   action: 'Lire',
-                  color: 'bg-purple-500'
+                  color: 'bg-cyan-500'
                 },
                 {
                   title: 'Support Chat',
@@ -343,7 +327,7 @@ const DemoPage: NextPage = () => {
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">{resource.title}</h3>
                   <p className="text-gray-600 mb-4 text-sm">{resource.description}</p>
-                  <button className="text-indigo-600 font-semibold hover:text-indigo-800 transition-colors">
+                  <button className="text-sky-600 font-semibold hover:text-sky-800 transition-colors">
                     {resource.action} →
                   </button>
                 </div>
@@ -351,50 +335,6 @@ const DemoPage: NextPage = () => {
             </div>
           </div>
         </section>
-
-        {/* Footer */}
-        <footer className="bg-gray-900 text-white py-12">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              <div>
-                <h3 className="text-lg font-semibold mb-4">NakiCode PharmaSaaS</h3>
-                <p className="text-gray-400">
-                  Solution SaaS de gestion pharmaceutique pour l'Afrique
-                </p>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-4">Produit</h4>
-                <ul className="space-y-2 text-gray-400">
-                  <li><Link href="/features" className="hover:text-white">Fonctionnalités</Link></li>
-                  <li><Link href="/pricing" className="hover:text-white">Tarifs</Link></li>
-                  <li><Link href="/demo" className="hover:text-white">Démo</Link></li>
-                  <li><Link href="/api" className="hover:text-white">API</Link></li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-4">Support</h4>
-                <ul className="space-y-2 text-gray-400">
-                  <li><Link href="/support" className="hover:text-white">Centre d'aide</Link></li>
-                  <li><Link href="/contact" className="hover:text-white">Contact</Link></li>
-                  <li><Link href="/training" className="hover:text-white">Formation</Link></li>
-                  <li><Link href="/status" className="hover:text-white">Statut</Link></li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-4">Entreprise</h4>
-                <ul className="space-y-2 text-gray-400">
-                  <li><Link href="/about" className="hover:text-white">À propos</Link></li>
-                  <li><Link href="/blog" className="hover:text-white">Blog</Link></li>
-                  <li><Link href="/careers" className="hover:text-white">Carrières</Link></li>
-                  <li><Link href="/privacy" className="hover:text-white">Confidentialité</Link></li>
-                </ul>
-              </div>
-            </div>
-            <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-              <p>&copy; 2025 NakiCode. Tous droits réservés.</p>
-            </div>
-          </div>
-        </footer>
 
         {/* Section Multi-Tenant Demo */}
         <div className="bg-gray-50 py-16">
@@ -415,7 +355,7 @@ const DemoPage: NextPage = () => {
           </div>
         </div>
       </div>
-    </>
+    </Layout>
   );
 };
 

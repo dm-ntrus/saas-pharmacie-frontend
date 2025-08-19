@@ -40,7 +40,7 @@ const InventoryPage: React.FC = () => {
     const colors = {
       [ProductCategory.PRESCRIPTION]: 'bg-blue-100 text-blue-800',
       [ProductCategory.OTC]: 'bg-green-100 text-green-800',
-      [ProductCategory.SUPPLEMENT]: 'bg-purple-100 text-purple-800',
+      [ProductCategory.SUPPLEMENT]: 'bg-cyan-100 text-cyan-800',
       [ProductCategory.MEDICAL_DEVICE]: 'bg-orange-100 text-orange-800',
       [ProductCategory.COSMETIC]: 'bg-pink-100 text-pink-800',
       [ProductCategory.PERSONAL_CARE]: 'bg-gray-100 text-gray-800',

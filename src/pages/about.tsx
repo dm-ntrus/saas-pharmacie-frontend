@@ -12,6 +12,7 @@ import {
   AcademicCapIcon,
   LightBulbIcon
 } from '@heroicons/react/24/outline';
+import Layout from '@/components/layout/Layout';
 
 const AboutPage: NextPage = () => {
   const stats = [
@@ -69,7 +70,7 @@ const AboutPage: NextPage = () => {
       title: 'Excellence',
       description: 'Nous visons l\'excellence en respectant les standards internationaux tout en restant adaptés aux besoins locaux spécifiques.',
       icon: TrophyIcon,
-      color: 'bg-purple-500'
+      color: 'bg-cyan-500'
     },
     {
       title: 'Partenariat',
@@ -113,39 +114,22 @@ const AboutPage: NextPage = () => {
   ];
 
   return (
-    <>
-      <Head>
-        <title>À Propos - NakiCode PharmaSaaS</title>
-        <meta name="description" content="Découvrez l'histoire de NakiCode, notre mission de transformation digitale pharmaceutique en Afrique et notre équipe d'experts." />
-        <meta name="keywords" content="à propos, entreprise, équipe, mission, histoire, pharmacie, Afrique" />
-      </Head>
+    <Layout
+      requireAuth={false}
+      showSidebar={false}
+      title="PharmacySaaS - Gestion Moderne des Pharmacies"
+    >
 
-      <div className="min-h-screen bg-white">
-        {/* Navigation */}
-        <nav className="bg-white border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center py-4">
-              <Link href="/" className="text-xl font-bold text-indigo-600">
-                NakiCode PharmaSaaS
-              </Link>
-              <div className="flex items-center space-x-6">
-                <Link href="/" className="text-gray-600 hover:text-gray-900">Accueil</Link>
-                <Link href="/features" className="text-gray-600 hover:text-gray-900">Fonctionnalités</Link>
-                <Link href="/pricing" className="text-gray-600 hover:text-gray-900">Tarifs</Link>
-                <Link href="/about" className="text-indigo-600 font-medium">À Propos</Link>
-              </div>
-            </div>
-          </div>
-        </nav>
+      <div className="bg-white pt-10">
 
         {/* Hero */}
-        <section className="bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-800 text-white py-20">
+        <section className="bg-gradient-to-br from-sky-900 via-sky-800 to-cyan-800 text-white py-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <RocketLaunchIcon className="h-20 w-20 text-indigo-300 mx-auto mb-6" />
+            <RocketLaunchIcon className="h-20 w-20 text-sky-300 mx-auto mb-6" />
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Notre <span className="text-indigo-300">Mission</span>
+              Notre <span className="text-sky-300">Mission</span>
             </h1>
-            <p className="text-xl text-indigo-200 mb-8">
+            <p className="text-xl text-sky-200 mb-8">
               Transformer le secteur pharmaceutique africain grâce à des technologies innovantes, 
               accessibles et adaptées aux réalités locales. Depuis 2017, nous accompagnons 
               les pharmacies dans leur digitalisation pour améliorer l'accès aux soins de santé.
@@ -159,8 +143,8 @@ const AboutPage: NextPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {stats.map((stat, index) => (
                 <div key={index} className="text-center">
-                  <div className="bg-indigo-100 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <stat.icon className="h-10 w-10 text-indigo-600" />
+                  <div className="bg-sky-100 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <stat.icon className="h-10 w-10 text-sky-600" />
                   </div>
                   <div className="text-4xl font-bold text-gray-900 mb-2">{stat.value}</div>
                   <div className="text-gray-600">{stat.label}</div>
@@ -201,11 +185,11 @@ const AboutPage: NextPage = () => {
             </div>
 
             <div className="relative">
-              <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-indigo-200"></div>
+              <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-sky-200"></div>
               
               {timeline.map((item, index) => (
                 <div key={index} className="relative flex items-start mb-12">
-                  <div className="bg-indigo-600 w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-lg mr-8 relative z-10">
+                  <div className="bg-sky-600 w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-lg mr-8 relative z-10">
                     {item.year}
                   </div>
                   <div className="flex-1">
@@ -231,11 +215,11 @@ const AboutPage: NextPage = () => {
                 <div key={index} className="bg-white rounded-2xl p-8 text-center shadow-sm border border-gray-200">
                   <div className="text-6xl mb-4">{member.image}</div>
                   <h3 className="text-xl font-bold text-gray-900 mb-2">{member.name}</h3>
-                  <p className="text-indigo-600 font-semibold mb-4">{member.role}</p>
+                  <p className="text-sky-600 font-semibold mb-4">{member.role}</p>
                   <p className="text-gray-600 text-sm mb-6">{member.description}</p>
                   <a 
                     href={member.linkedin}
-                    className="text-indigo-600 hover:text-indigo-800 font-medium text-sm"
+                    className="text-sky-600 hover:text-sky-800 font-medium text-sm"
                   >
                     LinkedIn →
                   </a>
@@ -248,7 +232,7 @@ const AboutPage: NextPage = () => {
         {/* Vision Afrique */}
         <section className="py-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <GlobeAltIcon className="h-20 w-20 text-indigo-600 mx-auto mb-6" />
+            <GlobeAltIcon className="h-20 w-20 text-sky-600 mx-auto mb-6" />
             <h2 className="text-3xl font-bold text-gray-900 mb-6">Vision 2030 : L'Afrique Digitale</h2>
             <p className="text-xl text-gray-600 mb-8">
               Notre ambition est de devenir la plateforme de référence pour la gestion pharmaceutique 
@@ -256,7 +240,7 @@ const AboutPage: NextPage = () => {
               à l'amélioration de l'accès aux médicaments pour 100 millions d'Africains.
             </p>
             
-            <div className="bg-indigo-50 rounded-2xl p-8 mb-8">
+            <div className="bg-sky-50 rounded-2xl p-8 mb-8">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Nos Engagements</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
                 <div>
@@ -276,58 +260,14 @@ const AboutPage: NextPage = () => {
 
             <Link 
               href="/contact"
-              className="bg-indigo-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-indigo-700 transition-colors inline-block"
+              className="bg-sky-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-sky-700 transition-colors inline-block"
             >
               Rejoignez Notre Vision
             </Link>
           </div>
         </section>
-
-        {/* Footer */}
-        <footer className="bg-gray-900 text-white py-12">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              <div>
-                <h3 className="text-lg font-semibold mb-4">NakiCode PharmaSaaS</h3>
-                <p className="text-gray-400">
-                  Solution SaaS de gestion pharmaceutique pour l'Afrique
-                </p>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-4">Produit</h4>
-                <ul className="space-y-2 text-gray-400">
-                  <li><Link href="/features" className="hover:text-white">Fonctionnalités</Link></li>
-                  <li><Link href="/pricing" className="hover:text-white">Tarifs</Link></li>
-                  <li><Link href="/demo" className="hover:text-white">Démo</Link></li>
-                  <li><Link href="/api-docs" className="hover:text-white">API</Link></li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-4">Support</h4>
-                <ul className="space-y-2 text-gray-400">
-                  <li><Link href="/support" className="hover:text-white">Centre d'aide</Link></li>
-                  <li><Link href="/contact" className="hover:text-white">Contact</Link></li>
-                  <li><Link href="/training" className="hover:text-white">Formation</Link></li>
-                  <li><Link href="/status" className="hover:text-white">Statut</Link></li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-4">Entreprise</h4>
-                <ul className="space-y-2 text-gray-400">
-                  <li><Link href="/about" className="hover:text-white">À propos</Link></li>
-                  <li><Link href="/blog" className="hover:text-white">Blog</Link></li>
-                  <li><Link href="/careers" className="hover:text-white">Carrières</Link></li>
-                  <li><Link href="/privacy" className="hover:text-white">Confidentialité</Link></li>
-                </ul>
-              </div>
-            </div>
-            <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-              <p>&copy; 2025 NakiCode. Tous droits réservés.</p>
-            </div>
-          </div>
-        </footer>
       </div>
-    </>
+    </Layout>
   );
 };
 

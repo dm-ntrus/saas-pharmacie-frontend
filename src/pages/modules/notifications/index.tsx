@@ -258,7 +258,7 @@ const NotificationsPage: React.FC = () => {
                 placeholder="Rechercher une notification..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
               />
             </div>
             
@@ -268,7 +268,7 @@ const NotificationsPage: React.FC = () => {
                 id="type-filter"
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
               >
                 {notificationTypes.map(type => (
                   <option key={type} value={type}>
@@ -287,7 +287,7 @@ const NotificationsPage: React.FC = () => {
                 id="status-filter"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
               >
                 {statusTypes.map(status => (
                   <option key={status} value={status}>
@@ -312,8 +312,8 @@ const NotificationsPage: React.FC = () => {
             return (
               <Card 
                 key={notification.id} 
-                className={`p-6 hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-indigo-500 ${
-                  !notification.read ? 'border-l-4 border-l-indigo-500' : ''
+                className={`p-6 hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-sky-500 ${
+                  !notification.read ? 'border-l-4 border-l-sky-500' : ''
                 }`}
               >
                 <div className="flex items-start space-x-4">

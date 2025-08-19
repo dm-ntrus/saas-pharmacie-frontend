@@ -1,96 +1,139 @@
-import React, { useState } from 'react';
-import { NextPage } from 'next';
-import Head from 'next/head';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
+import React, { useState } from "react";
+import { NextPage } from "next";
+import Head from "next/head";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import {
   EyeIcon,
   EyeSlashIcon,
   LockClosedIcon,
   EnvelopeIcon,
   UserIcon,
-  BuildingStorefrontIcon
-} from '@heroicons/react/24/outline';
+  BuildingStorefrontIcon,
+} from "@heroicons/react/24/outline";
+import { useAuthStore } from "@/lib/store/authStore";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/design-system";
 
 const LoginPage: NextPage = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    rememberMe: false
+    email: "",
+    password: "",
+    rememberMe: false,
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
+
+  const { login } = useAuthStore();
+
+  const { login: log } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    setError("");
 
     try {
       // Simulation de connexion - en production, connecter à l'API
-      if (formData.email === 'demo@pharmacie.cd' && formData.password === 'demo123') {
+      if (
+        formData.email === "demo@pharmacie.cd" &&
+        formData.password === "demo123"
+      ) {
+        const user = {
+          id: "1",
+          email: "chriscedrick4@gmail.com",
+          firstName: "Chris",
+          lastName: "Cedrick",
+          role: "pharmacien",
+          tenantId: "",
+          avatar: "hj",
+          permissions: [""],
+          isActive: true,
+          lastLogin: "",
+          createdAt: "",
+          updatedAt: "",
+        };
+
+        log(user);
+
+        login(user, "yutdrsdfghjkiyutrdtfghj");
         // Redirection vers le tableau de bord
         setTimeout(() => {
-          router.push('/dashboard');
+          router.push("/dashboard/tenant");
         }, 1500);
+        setIsLoading(false);
       } else {
-        throw new Error('Identifiants incorrects');
+        throw new Error("Identifiants incorrects");
       }
     } catch (err) {
-      setError('Email ou mot de passe incorrect');
+      setError("Email ou mot de passe incorrect");
       setIsLoading(false);
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
   const demoCredentials = [
     {
-      role: 'Pharmacien Titulaire',
-      email: 'pharmacien@demo.cd',
-      password: 'demo123',
-      description: 'Accès complet à tous les modules'
+      role: "Pharmacien Titulaire",
+      email: "pharmacien@demo.cd",
+      password: "demo123",
+      description: "Accès complet à tous les modules",
     },
     {
-      role: 'Caissier',
-      email: 'caissier@demo.cd',
-      password: 'demo123',
-      description: 'Point de vente et gestion clients'
+      role: "Caissier",
+      email: "caissier@demo.cd",
+      password: "demo123",
+      description: "Point de vente et gestion clients",
     },
     {
-      role: 'Technicien',
-      email: 'technicien@demo.cd',
-      password: 'demo123',
-      description: 'Inventaire et approvisionnement'
-    }
+      role: "Technicien",
+      email: "technicien@demo.cd",
+      password: "demo123",
+      description: "Inventaire et approvisionnement",
+    },
   ];
 
   return (
     <>
       <Head>
         <title>Connexion - NakiCode PharmaSaaS</title>
-        <meta name="description" content="Connectez-vous à votre tableau de bord NakiCode PharmaSaaS ou essayez notre démo gratuite." />
-        <meta name="keywords" content="connexion, login, démo, tableau de bord, pharmacie" />
+        <meta
+          name="description"
+          content="Connectez-vous à votre tableau de bord NakiCode PharmaSaaS ou essayez notre démo gratuite."
+        />
+        <meta
+          name="keywords"
+          content="connexion, login, démo, tableau de bord, pharmacie"
+        />
       </Head>
 
-      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-800">
-        <div className="flex">
+      <div className="min-h-screen flex justify-center items-center  bg-gradient-to-br from-sky-50 via-blue-50 to-white relative overflow-hidden px-2 sm:px-0">
+        {/* Background decorative elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-0 w-72 h-72 bg-sky-200/20 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-200/20 rounded-full translate-x-1/2 translate-y-1/2"></div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 rounded-2xl bg-white shadow-2xl z-50">
           {/* Panel gauche - Formulaire */}
-          <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+          <div className="flex-1 flex flex-col justify-center py-12 px-6 lg:flex-none lg:px-20 xl:px-24">
             <div className="mx-auto w-full max-w-sm lg:w-96">
               <div className="text-center">
-                <Link href="/" className="text-3xl font-bold text-white mb-2 block">
+                <Link
+                  href="/"
+                  className="text-3xl font-bold text-sky-600 mb-2 block"
+                >
                   NakiCode PharmaSaaS
                 </Link>
-                <p className="text-indigo-200 mb-8">
+                <p className="text-gray-500 mb-6">
                   Connectez-vous à votre espace de gestion pharmaceutique
                 </p>
               </div>
@@ -101,13 +144,16 @@ const LoginPage: NextPage = () => {
                 </div>
               )}
 
-              <form className="space-y-6" onSubmit={handleSubmit}>
+              <form className="space-y-4" onSubmit={handleSubmit}>
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Email professionnel
                   </label>
                   <div className="relative">
-                    <EnvelopeIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <EnvelopeIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-700 z-10" />
                     <input
                       id="email"
                       name="email"
@@ -116,27 +162,30 @@ const LoginPage: NextPage = () => {
                       required
                       value={formData.email}
                       onChange={handleChange}
-                      className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-white focus:border-white bg-white bg-opacity-90 backdrop-blur text-gray-900"
+                      className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-white focus:border-white bg-white/90 backdrop-blur text-gray-900"
                       placeholder="pharmacien@votrePharmacie.cd"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-white mb-2">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Mot de passe
                   </label>
                   <div className="relative">
-                    <LockClosedIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <LockClosedIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-700 z-10" />
                     <input
                       id="password"
                       name="password"
-                      type={showPassword ? 'text' : 'password'}
+                      type={showPassword ? "text" : "password"}
                       autoComplete="current-password"
                       required
                       value={formData.password}
                       onChange={handleChange}
-                      className="pl-10 pr-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-white focus:border-white bg-white bg-opacity-90 backdrop-blur text-gray-900"
+                      className="pl-10 pr-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-white focus:border-white bg-white/90 backdrop-blur text-gray-900"
                       placeholder="••••••••"
                     />
                     <button
@@ -161,44 +210,52 @@ const LoginPage: NextPage = () => {
                       type="checkbox"
                       checked={formData.rememberMe}
                       onChange={handleChange}
-                      className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                      className="h-4 w-4 text-sky-600 focus:ring-sky-500 border-gray-300 rounded"
                     />
-                    <label htmlFor="rememberMe" className="ml-2 block text-sm text-white">
+                    <label
+                      htmlFor="rememberMe"
+                      className="ml-2 block text-sm text-gray-500"
+                    >
                       Se souvenir de moi
                     </label>
                   </div>
 
                   <div className="text-sm">
-                    <Link href="/forgot-password" className="text-indigo-200 hover:text-white font-medium">
+                    <Link
+                      href="/forgot-password"
+                      className="text-sky-600 hover:text-sky-700 font-medium"
+                    >
                       Mot de passe oublié ?
                     </Link>
                   </div>
                 </div>
 
                 <div>
-                  <button
+                  <Button
                     type="submit"
+                    size="lg"
                     disabled={isLoading}
-                    className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-semibold text-indigo-900 transition-colors ${
-                      isLoading
-                        ? 'bg-gray-300 cursor-not-allowed'
-                        : 'bg-white hover:bg-gray-50 focus:ring-2 focus:ring-offset-2 focus:ring-white'
+                    className={`w-full flex justify-center transition-colors ${
+                      isLoading ? "bg-gray-300 cursor-not-allowed" : ""
                     }`}
                   >
                     {isLoading ? (
                       <div className="flex items-center">
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-indigo-900 mr-2"></div>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-sky-900 mr-2"></div>
                         Connexion...
                       </div>
                     ) : (
-                      'Se connecter'
+                      "Se connecter"
                     )}
-                  </button>
+                  </Button>
                 </div>
 
                 <div className="text-center">
-                  <span className="text-indigo-200">Pas encore de compte ? </span>
-                  <Link href="/register" className="text-white font-semibold hover:text-indigo-200">
+                  <span className="text-gray-500">Pas encore de compte ? </span>
+                  <Link
+                    href="/register"
+                    className="text-sky-600 font-medium hover:text-sky-700"
+                  >
                     Créer un compte
                   </Link>
                 </div>
@@ -207,61 +264,24 @@ const LoginPage: NextPage = () => {
           </div>
 
           {/* Panel droit - Démo */}
-          <div className="hidden lg:block relative flex-1 bg-white bg-opacity-10 backdrop-blur">
+          <div className="hidden lg:block relative flex-1 rounded-r-2xl bg-gradient-to-br from-sky-900 via-sky-800 to-cyan-800 backdrop-blur">
             <div className="absolute inset-0 flex flex-col justify-center p-12">
-              <div className="text-center mb-8">
+              <div className="text-center mb-6">
                 <BuildingStorefrontIcon className="h-16 w-16 text-white mx-auto mb-4" />
                 <h2 className="text-3xl font-bold text-white mb-4">
                   Essai Gratuit Immédiat
                 </h2>
-                <p className="text-xl text-indigo-200 mb-8">
-                  Testez toutes les fonctionnalités sans engagement avec nos comptes de démonstration
+                <p className="text-xl text-sky-200 mb-8">
+                  Testez toutes les fonctionnalités sans engagement avec nos
+                  comptes de démonstration
                 </p>
               </div>
 
-              <div className="space-y-4 mb-8">
-                {demoCredentials.map((demo, index) => (
-                  <div key={index} className="bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-semibold text-white">{demo.role}</h3>
-                      <UserIcon className="h-5 w-5 text-indigo-200" />
-                    </div>
-                    <p className="text-sm text-indigo-200 mb-3">{demo.description}</p>
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div>
-                        <span className="text-indigo-300">Email:</span>
-                        <p className="text-white font-mono text-xs">{demo.email}</p>
-                      </div>
-                      <div>
-                        <span className="text-indigo-300">Mot de passe:</span>
-                        <p className="text-white font-mono text-xs">{demo.password}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="text-center">
-                <button
-                  onClick={() => {
-                    setFormData({
-                      email: demoCredentials[0].email,
-                      password: demoCredentials[0].password,
-                      rememberMe: false
-                    });
-                  }}
-                  className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-lg font-semibold transition-colors backdrop-blur border border-white border-opacity-30"
-                >
-                  Utiliser le Compte Démo Principal
-                </button>
-                <p className="text-xs text-indigo-300 mt-3">
-                  Aucune carte bancaire requise • Données réalistes • Support inclus
-                </p>
-              </div>
-
-              <div className="mt-8 pt-8 border-t border-white border-opacity-20">
-                <h3 className="text-lg font-semibold text-white mb-4">Fonctionnalités Démo Incluses:</h3>
-                <div className="grid grid-cols-2 gap-2 text-sm text-indigo-200">
+              <div className="mt-6 pt-6 border-t border-white/20">
+                <h3 className="text-lg font-semibold text-white mb-4">
+                  Fonctionnalités Démo Incluses:
+                </h3>
+                <div className="grid grid-cols-2 gap-2 text-sm text-sky-200">
                   <div>✓ Point de vente complet</div>
                   <div>✓ Gestion inventaire</div>
                   <div>✓ Prescriptions & DCI</div>

@@ -49,21 +49,21 @@ const CashierDashboard: React.FC = () => {
       value: '18',
       count: 'depuis ce matin',
       icon: UserIcon,
-      color: 'bg-purple-500'
+      color: 'bg-cyan-500'
     },
     {
       title: 'Caisse',
       value: '85,000 FC',
       count: 'solde disponible',
       icon: BanknotesIcon,
-      color: 'bg-indigo-500'
+      color: 'bg-sky-500'
     }
   ];
 
   const paymentMethods = [
     { name: 'Espèces', icon: BanknotesIcon, color: 'bg-green-100 text-green-800' },
     { name: 'Carte Bancaire', icon: CreditCardIcon, color: 'bg-blue-100 text-blue-800' },
-    { name: 'Mobile Money', icon: QrCodeIcon, color: 'bg-purple-100 text-purple-800' }
+    { name: 'Mobile Money', icon: QrCodeIcon, color: 'bg-cyan-100 text-cyan-800' }
   ];
 
   return (
@@ -189,7 +189,7 @@ const CashierDashboard: React.FC = () => {
               </label>
               <input 
                 type="number" 
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                 placeholder="0"
               />
               <p className="text-sm text-gray-500 mt-1">
@@ -265,7 +265,7 @@ const CashierDashboard: React.FC = () => {
                     <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                       sale.method === 'cash' ? 'bg-green-100 text-green-800' :
                       sale.method === 'card' ? 'bg-blue-100 text-blue-800' :
-                      'bg-purple-100 text-purple-800'
+                      'bg-cyan-100 text-cyan-800'
                     }`}>
                       {sale.method === 'cash' ? 'Espèces' :
                        sale.method === 'card' ? 'Carte' : 'Mobile'}

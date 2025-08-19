@@ -81,7 +81,7 @@ const TenantDashboard: NextPage<DashboardProps> = ({ pharmacySlug, user }) => {
       title: 'Clients actifs',
       value: '156',
       change: '+8%',
-      color: 'text-purple-600'
+      color: 'text-cyan-600'
     },
     {
       title: 'Stock critique',
@@ -138,7 +138,7 @@ const TenantDashboard: NextPage<DashboardProps> = ({ pharmacySlug, user }) => {
                   <input
                     type="text"
                     placeholder="Rechercher..."
-                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   />
                 </div>
                 
@@ -181,7 +181,7 @@ const TenantDashboard: NextPage<DashboardProps> = ({ pharmacySlug, user }) => {
                         onClick={() => setActiveModule(module.id)}
                         className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-colors ${
                           activeModule === module.id
-                            ? 'bg-indigo-50 text-indigo-700 border-r-4 border-indigo-700'
+                            ? 'bg-sky-50 text-sky-700 border-r-4 border-sky-700'
                             : 'text-gray-700 hover:bg-gray-50'
                         }`}
                       >
@@ -204,7 +204,7 @@ const TenantDashboard: NextPage<DashboardProps> = ({ pharmacySlug, user }) => {
               <div>
                 <div className="flex items-center justify-between mb-8">
                   <h2 className="text-2xl font-bold text-gray-900">Accueil</h2>
-                  <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition-colors flex items-center">
+                  <button className="bg-sky-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-sky-700 transition-colors flex items-center">
                     <PlusIcon className="h-4 w-4 mr-2" />
                     Nouvelle Vente
                   </button>
@@ -239,7 +239,7 @@ const TenantDashboard: NextPage<DashboardProps> = ({ pharmacySlug, user }) => {
                           <div className="flex items-center space-x-4">
                             <div className={`w-3 h-3 rounded-full ${
                               activity.type === 'vente' ? 'bg-green-400' :
-                              activity.type === 'stock' ? 'bg-blue-400' : 'bg-purple-400'
+                              activity.type === 'stock' ? 'bg-blue-400' : 'bg-cyan-400'
                             }`}></div>
                             <div>
                               <p className="text-sm font-medium text-gray-900">{activity.description}</p>
@@ -264,7 +264,7 @@ const TenantDashboard: NextPage<DashboardProps> = ({ pharmacySlug, user }) => {
                   <ShoppingCartIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">Module Point de Vente</h3>
                   <p className="text-gray-600 mb-6">Interface de caisse et gestion des ventes</p>
-                  <button className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">
+                  <button className="bg-sky-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-sky-700 transition-colors">
                     Ouvrir la Caisse
                   </button>
                 </div>
@@ -278,7 +278,7 @@ const TenantDashboard: NextPage<DashboardProps> = ({ pharmacySlug, user }) => {
                   <UsersIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">Base de Données Clients</h3>
                   <p className="text-gray-600 mb-6">Gestion complète de votre clientèle</p>
-                  <button className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">
+                  <button className="bg-sky-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-sky-700 transition-colors">
                     Voir les Clients
                   </button>
                 </div>
@@ -292,7 +292,7 @@ const TenantDashboard: NextPage<DashboardProps> = ({ pharmacySlug, user }) => {
                   <DocumentTextIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">Inventaire & Stocks</h3>
                   <p className="text-gray-600 mb-6">Suivi en temps réel de vos stocks</p>
-                  <button className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">
+                  <button className="bg-sky-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-sky-700 transition-colors">
                     Gérer l'Inventaire
                   </button>
                 </div>
@@ -306,7 +306,7 @@ const TenantDashboard: NextPage<DashboardProps> = ({ pharmacySlug, user }) => {
                   <ChartBarIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">Tableaux de Bord</h3>
                   <p className="text-gray-600 mb-6">Analytics avancés et rapports détaillés</p>
-                  <button className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">
+                  <button className="bg-sky-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-sky-700 transition-colors">
                     Voir les Rapports
                   </button>
                 </div>
@@ -320,7 +320,7 @@ const TenantDashboard: NextPage<DashboardProps> = ({ pharmacySlug, user }) => {
                   <CogIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">Configuration</h3>
                   <p className="text-gray-600 mb-6">Paramètres de la pharmacie et du système</p>
-                  <button className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">
+                  <button className="bg-sky-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-sky-700 transition-colors">
                     Configurer
                   </button>
                 </div>

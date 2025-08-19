@@ -210,14 +210,14 @@ response = requests.post(
         <nav className="bg-white border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-4">
-              <Link href="/" className="text-xl font-bold text-indigo-600">
+              <Link href="/" className="text-xl font-bold text-sky-600">
                 NakiCode PharmaSaaS
               </Link>
               <div className="flex items-center space-x-6">
                 <Link href="/" className="text-gray-600 hover:text-gray-900">Accueil</Link>
                 <Link href="/features" className="text-gray-600 hover:text-gray-900">Fonctionnalités</Link>
                 <Link href="/pricing" className="text-gray-600 hover:text-gray-900">Tarifs</Link>
-                <Link href="/api-docs" className="text-indigo-600 font-medium">API</Link>
+                <Link href="/api-docs" className="text-sky-600 font-medium">API</Link>
               </div>
             </div>
           </div>
@@ -228,7 +228,7 @@ response = requests.post(
           <aside className="w-64 bg-white h-screen sticky top-0 overflow-y-auto border-r border-gray-200">
             <div className="p-6">
               <div className="flex items-center mb-6">
-                <CodeBracketIcon className="h-8 w-8 text-indigo-600 mr-3" />
+                <CodeBracketIcon className="h-8 w-8 text-sky-600 mr-3" />
                 <h2 className="text-xl font-bold text-gray-900">API Docs</h2>
               </div>
               
@@ -239,7 +239,7 @@ response = requests.post(
                     onClick={() => setActiveSection(section.id)}
                     className={`w-full text-left px-3 py-2 rounded-lg flex items-center text-sm font-medium transition-colors ${
                       activeSection === section.id
-                        ? 'bg-indigo-100 text-indigo-700'
+                        ? 'bg-sky-100 text-sky-700'
                         : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                     }`}
                   >
@@ -262,7 +262,7 @@ response = requests.post(
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
                   <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <ServerIcon className="h-12 w-12 text-indigo-600 mb-4" />
+                    <ServerIcon className="h-12 w-12 text-sky-600 mb-4" />
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">API REST</h3>
                     <p className="text-gray-600">Architecture REST standard avec réponses JSON</p>
                   </div>
@@ -272,7 +272,7 @@ response = requests.post(
                     <p className="text-gray-600">Authentification OAuth 2.0 et chiffrement HTTPS</p>
                   </div>
                   <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <CodeBracketIcon className="h-12 w-12 text-purple-600 mb-4" />
+                    <CodeBracketIcon className="h-12 w-12 text-cyan-600 mb-4" />
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">SDKs Disponibles</h3>
                     <p className="text-gray-600">JavaScript, Python, PHP et plus à venir</p>
                   </div>
@@ -408,7 +408,7 @@ Content-Type: application/json`}
                                 {endpoint.parameters?.map((param, paramIndex) => (
                                   <div key={paramIndex} className="border border-gray-200 rounded-lg p-4">
                                     <div className="flex items-center justify-between mb-2">
-                                      <code className="text-sm font-mono text-indigo-600">{param.name}</code>
+                                      <code className="text-sm font-mono text-sky-600">{param.name}</code>
                                       <div className="flex space-x-2">
                                         <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
                                           {param.type}
@@ -441,7 +441,7 @@ Content-Type: application/json`}
                                       onClick={() => setActiveLanguage(lang as keyof typeof codeExamples)}
                                       className={`text-xs px-3 py-1 rounded ${
                                         activeLanguage === lang
-                                          ? 'bg-indigo-600 text-white'
+                                          ? 'bg-sky-600 text-white'
                                           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                       }`}
                                     >

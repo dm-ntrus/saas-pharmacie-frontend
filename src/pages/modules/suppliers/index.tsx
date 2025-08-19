@@ -194,13 +194,13 @@ const SuppliersPage: React.FC = () => {
       title: 'Commandes ce Mois',
       value: suppliers.reduce((sum, s) => sum + s.totalOrders, 0).toString(),
       icon: ClipboardDocumentListIcon,
-      color: 'bg-purple-500'
+      color: 'bg-cyan-500'
     },
     {
       title: 'Valeur Totale',
       value: (suppliers.reduce((sum, s) => sum + s.totalSpent, 0) / 1000000).toFixed(1) + 'M FC',
       icon: CurrencyDollarIcon,
-      color: 'bg-indigo-500'
+      color: 'bg-sky-500'
     }
   ];
 
@@ -252,14 +252,14 @@ const SuppliersPage: React.FC = () => {
                 placeholder="Rechercher un fournisseur..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
               />
             </div>
             
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
             >
               <option value="all">Tous les statuts</option>
               <option value="active">Actif</option>
@@ -270,7 +270,7 @@ const SuppliersPage: React.FC = () => {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
             >
               {categories.map(category => (
                 <option key={category} value={category}>
@@ -409,7 +409,7 @@ const SuppliersPage: React.FC = () => {
                 .map((supplier, index) => (
                   <div key={supplier.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div className="flex items-center">
-                      <span className="w-6 h-6 bg-indigo-600 text-white rounded-full text-xs flex items-center justify-center mr-3">
+                      <span className="w-6 h-6 bg-sky-600 text-white rounded-full text-xs flex items-center justify-center mr-3">
                         {index + 1}
                       </span>
                       <div>

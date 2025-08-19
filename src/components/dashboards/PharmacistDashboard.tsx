@@ -291,15 +291,15 @@ const PharmacistDashboard: React.FC = () => {
             </Button>
           </div>
           
-          <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+          <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4">
             <div className="flex items-center mb-2">
-              <UserGroupIcon className="h-5 w-5 text-purple-600 mr-2" />
-              <h4 className="font-medium text-purple-900">Conseils Patients</h4>
+              <UserGroupIcon className="h-5 w-5 text-cyan-600 mr-2" />
+              <h4 className="font-medium text-cyan-900">Conseils Patients</h4>
             </div>
-            <p className="text-sm text-purple-700">
+            <p className="text-sm text-cyan-700">
               Guide de consultation pharmaceutique pour les patients
             </p>
-            <Button size="sm" variant="outline" className="mt-3 border-purple-300 text-purple-700">
+            <Button size="sm" variant="outline" className="mt-3 border-cyan-300 text-cyan-700">
               Voir protocoles
             </Button>
           </div>

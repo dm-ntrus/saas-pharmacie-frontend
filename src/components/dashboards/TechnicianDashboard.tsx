@@ -79,7 +79,7 @@ const TechnicianDashboard: React.FC = () => {
       value: '3',
       detail: 'cette semaine',
       icon: TruckIcon,
-      color: 'bg-purple-500'
+      color: 'bg-cyan-500'
     },
     {
       title: 'Contrôles Qualité',
@@ -296,7 +296,7 @@ const TechnicianDashboard: React.FC = () => {
 
         <Card className="p-6">
           <div className="flex items-center mb-4">
-            <ClipboardDocumentListIcon className="h-8 w-8 text-purple-600 mr-3" />
+            <ClipboardDocumentListIcon className="h-8 w-8 text-cyan-600 mr-3" />
             <div>
               <h3 className="text-lg font-semibold text-gray-900">Qualité</h3>
               <p className="text-sm text-gray-600">Contrôles et conformité</p>

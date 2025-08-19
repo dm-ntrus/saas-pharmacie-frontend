@@ -224,7 +224,7 @@ const ModulesPage: React.FC = () => {
   const getCategoryColor = (category: Module['category']) => {
     const colors = {
       core: 'bg-blue-500',
-      advanced: 'bg-purple-500',
+      advanced: 'bg-cyan-500',
       analytics: 'bg-green-500',
       integration: 'bg-orange-500'
     };
@@ -256,7 +256,7 @@ const ModulesPage: React.FC = () => {
               onClick={() => setSelectedCategory(category.id)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 selectedCategory === category.id
-                  ? 'bg-indigo-600 text-white'
+                  ? 'bg-sky-600 text-white'
                   : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
               }`}
             >
@@ -282,7 +282,7 @@ const ModulesPage: React.FC = () => {
               <div className="space-y-2 mb-6">
                 {module.features.map((feature, index) => (
                   <div key={index} className="flex items-center text-sm text-gray-600">
-                    <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full mr-2"></div>
+                    <div className="w-1.5 h-1.5 bg-sky-600 rounded-full mr-2"></div>
                     {feature}
                   </div>
                 ))}
@@ -314,7 +314,7 @@ const ModulesPage: React.FC = () => {
         {/* Statistiques des modules */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
           <Card className="p-6 text-center">
-            <div className="text-3xl font-bold text-indigo-600 mb-2">
+            <div className="text-3xl font-bold text-sky-600 mb-2">
               {modules.filter(m => m.status === 'active').length}
             </div>
             <div className="text-sm text-gray-600">Modules Actifs</div>
@@ -326,7 +326,7 @@ const ModulesPage: React.FC = () => {
             <div className="text-sm text-gray-600">Modules Core</div>
           </Card>
           <Card className="p-6 text-center">
-            <div className="text-3xl font-bold text-purple-600 mb-2">
+            <div className="text-3xl font-bold text-cyan-600 mb-2">
               {modules.filter(m => m.category === 'advanced').length}
             </div>
             <div className="text-sm text-gray-600">Modules Avancés</div>

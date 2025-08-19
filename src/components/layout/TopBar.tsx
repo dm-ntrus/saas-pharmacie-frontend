@@ -35,7 +35,7 @@ const TopBar: React.FC = () => {
         <div className="flex items-center">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+            className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-sky-500"
           >
             <Bars3Icon className="h-6 w-6" />
           </button>
@@ -52,7 +52,7 @@ const TopBar: React.FC = () => {
               <input
                 id="search"
                 name="search"
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 sm:text-sm"
                 placeholder="Rechercher..."
                 type="search"
                 value={searchQuery}
@@ -66,7 +66,7 @@ const TopBar: React.FC = () => {
         <div className="flex items-center space-x-4">
           {/* Notifications */}
           <Menu as="div" className="relative">
-            <Menu.Button className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500">
+            <Menu.Button className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-sky-500">
               <span className="sr-only">Voir les notifications</span>
               <div className="relative">
                 <BellIcon className="h-6 w-6" />
@@ -139,7 +139,7 @@ const TopBar: React.FC = () => {
                     <div className="px-4 py-2 border-t border-gray-100">
                       <Link
                         href="/notifications"
-                        className="text-sm text-primary-600 hover:text-primary-500"
+                        className="text-sm text-sky-600 hover:text-sky-500"
                       >
                         Voir toutes les notifications
                       </Link>
@@ -152,7 +152,7 @@ const TopBar: React.FC = () => {
 
           {/* User menu */}
           <Menu as="div" className="relative">
-            <Menu.Button className="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500">
+            <Menu.Button className="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-sky-500">
               <span className="sr-only">Ouvrir le menu utilisateur</span>
               {user?.avatar ? (
                 <img
@@ -161,7 +161,7 @@ const TopBar: React.FC = () => {
                   alt={`${user.firstName} ${user.lastName}`}
                 />
               ) : (
-                <div className="h-8 w-8 bg-primary-600 rounded-full flex items-center justify-center">
+                <div className="h-8 w-8 bg-sky-600 rounded-full flex items-center justify-center">
                   <span className="text-sm font-medium text-white">
                     {user?.firstName?.[0]}{user?.lastName?.[0]}
                   </span>

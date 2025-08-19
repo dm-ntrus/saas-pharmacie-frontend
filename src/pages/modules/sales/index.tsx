@@ -193,21 +193,21 @@ const SalesPage: React.FC = () => {
       value: '18',
       detail: 'depuis 8h',
       icon: UserIcon,
-      color: 'bg-purple-500'
+      color: 'bg-cyan-500'
     },
     {
       title: 'Vente Actuelle',
       value: currentSale.total.toLocaleString() + ' FC',
       detail: `${currentSale.items.length} articles`,
       icon: ShoppingCartIcon,
-      color: 'bg-indigo-500'
+      color: 'bg-sky-500'
     }
   ];
 
   const paymentMethods = [
     { id: 'cash', name: 'Espèces', icon: BanknotesIcon, color: 'bg-green-100 text-green-800' },
     { id: 'card', name: 'Carte Bancaire', icon: CreditCardIcon, color: 'bg-blue-100 text-blue-800' },
-    { id: 'mobile', name: 'Mobile Money', icon: QrCodeIcon, color: 'bg-purple-100 text-purple-800' }
+    { id: 'mobile', name: 'Mobile Money', icon: QrCodeIcon, color: 'bg-cyan-100 text-cyan-800' }
   ] as const;
 
   return (
@@ -251,7 +251,7 @@ const SalesPage: React.FC = () => {
                 placeholder="Rechercher un produit..."
                 value={productSearch}
                 onChange={(e) => setProductSearch(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
               />
               
               <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-60 overflow-y-auto">
@@ -366,7 +366,7 @@ const SalesPage: React.FC = () => {
                     onClick={() => setSelectedPaymentMethod(method.id)}
                     className={`w-full flex items-center p-3 border rounded-lg transition-colors ${
                       selectedPaymentMethod === method.id
-                        ? 'border-indigo-500 bg-indigo-50'
+                        ? 'border-sky-500 bg-sky-50'
                         : 'border-gray-200 hover:bg-gray-50'
                     }`}
                   >
@@ -386,7 +386,7 @@ const SalesPage: React.FC = () => {
                     type="number"
                     value={paymentAmount}
                     onChange={(e) => setPaymentAmount(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                     placeholder="0"
                   />
                 </div>

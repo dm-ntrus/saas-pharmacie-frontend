@@ -17,7 +17,7 @@ const Loader: React.FC<LoaderProps> = ({ size = 'md', className }) => {
   return (
     <div
       className={cn(
-        'animate-spin rounded-full border-2 border-gray-300 border-t-primary-600',
+        'animate-spin rounded-full border-2 border-gray-300 border-t-sky-600',
         sizeClasses[size],
         className
       )}

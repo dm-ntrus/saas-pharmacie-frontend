@@ -53,7 +53,7 @@ const SalesPage: React.FC = () => {
     const colors = {
       [PaymentMethod.CASH]: 'bg-green-100 text-green-800',
       [PaymentMethod.CARD]: 'bg-blue-100 text-blue-800',
-      [PaymentMethod.INSURANCE]: 'bg-purple-100 text-purple-800',
+      [PaymentMethod.INSURANCE]: 'bg-cyan-100 text-cyan-800',
       [PaymentMethod.MIXED]: 'bg-orange-100 text-orange-800',
     };
     
@@ -252,7 +252,7 @@ const SalesPage: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <BanknotesIcon className="h-6 w-6 text-purple-400" />
+                <BanknotesIcon className="h-6 w-6 text-cyan-400" />
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>

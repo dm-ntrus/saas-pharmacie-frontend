@@ -16,14 +16,14 @@ const PrivacyPage: NextPage = () => {
         <nav className="bg-white border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-4">
-              <Link href="/" className="text-xl font-bold text-indigo-600">NakiCode PharmaSaaS</Link>
+              <Link href="/" className="text-xl font-bold text-sky-600">NakiCode PharmaSaaS</Link>
             </div>
           </div>
         </nav>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center mb-12">
-            <ShieldCheckIcon className="h-16 w-16 text-indigo-600 mx-auto mb-4" />
+            <ShieldCheckIcon className="h-16 w-16 text-sky-600 mx-auto mb-4" />
             <h1 className="text-4xl font-bold text-gray-900 mb-4">Politique de Confidentialité</h1>
             <p className="text-xl text-gray-600">Dernière mise à jour : 21 janvier 2025</p>
           </div>
@@ -165,7 +165,7 @@ const PrivacyPage: NextPage = () => {
 
               <p className="text-gray-600 mb-4">
                 <strong>Comment exercer vos droits :</strong> Contactez notre Délégué à la Protection des Données à l'adresse 
-                <a href="mailto:privacy@nakicode.com" className="text-indigo-600 hover:text-indigo-800 ml-1">privacy@nakicode.com</a> 
+                <a href="mailto:privacy@nakicode.com" className="text-sky-600 hover:text-sky-800 ml-1">privacy@nakicode.com</a> 
                 avec une pièce d'identité. Nous répondons sous 30 jours.
               </p>
             </section>
@@ -279,7 +279,7 @@ const PrivacyPage: NextPage = () => {
             </p>
             <Link 
               href="/"
-              className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
+              className="bg-sky-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-sky-700 transition-colors"
             >
               Retour à l'accueil
             </Link>

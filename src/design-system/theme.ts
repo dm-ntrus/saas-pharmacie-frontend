@@ -2,9 +2,9 @@
 // À étendre selon les besoins de la plateforme
 
 export const colors = {
-  primary: '#6366f1', // indigo-500
-  secondary: '#a5b4fc', // indigo-200
-  accent: '#a21caf', // purple-700
+  primary: '#6366f1', // sky-500
+  secondary: '#a5b4fc', // sky-200
+  accent: '#a21caf', // cyan-700
   danger: '#ef4444', // red-500
   warning: '#f59e42', // orange-400
   success: '#22c55e', // green-500

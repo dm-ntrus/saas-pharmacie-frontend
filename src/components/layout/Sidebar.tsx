@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/hooks/useAuth';
@@ -157,7 +157,7 @@ const Sidebar: React.FC = () => {
       <div className="flex items-center justify-between p-4 border-b border-gray-700">
         {sidebarOpen && (
           <div className="flex items-center">
-            <div className="h-8 w-8 bg-primary-600 rounded-lg flex items-center justify-center mr-3">
+            <div className="h-8 w-8 bg-sky-600 rounded-lg flex items-center justify-center mr-3">
               <HeartIcon className="h-5 w-5 text-white" />
             </div>
             <span className="text-xl font-bold">PharmacySaaS</span>
@@ -179,7 +179,7 @@ const Sidebar: React.FC = () => {
       {sidebarOpen && user && (
         <div className="p-4 border-b border-gray-700">
           <div className="flex items-center">
-            <div className="h-10 w-10 bg-primary-600 rounded-full flex items-center justify-center">
+            <div className="h-10 w-10 bg-sky-600 rounded-full flex items-center justify-center">
               <span className="text-sm font-medium">
                 {user.firstName?.[0]}{user.lastName?.[0]}
               </span>

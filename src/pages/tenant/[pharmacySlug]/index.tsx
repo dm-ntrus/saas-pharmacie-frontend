@@ -70,7 +70,7 @@ const TenantPage: NextPage<TenantPageProps> = ({ pharmacy, error }) => {
             <p className="text-gray-600 mb-8">Cette pharmacie n'existe pas ou n'est plus active.</p>
             <Link
               href="/"
-              className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
+              className="bg-sky-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-sky-700 transition-colors"
             >
               Retour à l'accueil
             </Link>
@@ -129,7 +129,7 @@ const TenantPage: NextPage<TenantPageProps> = ({ pharmacy, error }) => {
 
             {/* Informations essentielles */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white bg-opacity-20 backdrop-blur rounded-lg p-4">
+              <div className="bg-white/20 backdrop-blur rounded-lg p-4">
                 <div className="flex items-center text-white">
                   <MapPinIcon className="h-6 w-6 mr-3" />
                   <div>
@@ -140,7 +140,7 @@ const TenantPage: NextPage<TenantPageProps> = ({ pharmacy, error }) => {
                 </div>
               </div>
 
-              <div className="bg-white bg-opacity-20 backdrop-blur rounded-lg p-4">
+              <div className="bg-white/20 backdrop-blur rounded-lg p-4">
                 <div className="flex items-center text-white">
                   <PhoneIcon className="h-6 w-6 mr-3" />
                   <div>
@@ -151,7 +151,7 @@ const TenantPage: NextPage<TenantPageProps> = ({ pharmacy, error }) => {
                 </div>
               </div>
 
-              <div className="bg-white bg-opacity-20 backdrop-blur rounded-lg p-4">
+              <div className="bg-white/20 backdrop-blur rounded-lg p-4">
                 <div className="flex items-center text-white">
                   <ClockIcon className="h-6 w-6 mr-3" />
                   <div>
@@ -167,7 +167,7 @@ const TenantPage: NextPage<TenantPageProps> = ({ pharmacy, error }) => {
 
         {/* Formulaire de connexion modal */}
         {showLoginForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-xl p-8 max-w-md w-full">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900">Connexion Employé</h2>
@@ -189,7 +189,7 @@ const TenantPage: NextPage<TenantPageProps> = ({ pharmacy, error }) => {
                     required
                     value={loginData.email}
                     onChange={(e) => setLoginData(prev => ({ ...prev, email: e.target.value }))}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                     placeholder="votre.email@{pharmacy.slug}.com"
                   />
                 </div>
@@ -203,7 +203,7 @@ const TenantPage: NextPage<TenantPageProps> = ({ pharmacy, error }) => {
                     required
                     value={loginData.password}
                     onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                     placeholder="••••••••"
                   />
                 </div>

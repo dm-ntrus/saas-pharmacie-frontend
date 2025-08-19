@@ -135,7 +135,7 @@ const Navigation = () => {
               <div className="flex">
                 <div className="flex flex-shrink-0 items-center">
                   <Link href="/dashboard" className="flex items-center">
-                    <div className="h-8 w-8 bg-primary-600 rounded-lg flex items-center justify-center">
+                    <div className="h-8 w-8 bg-sky-600 rounded-lg flex items-center justify-center">
                       <span className="text-white font-bold text-sm">PS</span>
                     </div>
                     <span className="ml-2 text-xl font-bold text-gray-900">
@@ -150,7 +150,7 @@ const Navigation = () => {
                       href={item.href}
                       className={clsx(
                         isCurrentPage(item.href)
-                          ? 'border-primary-500 text-primary-600'
+                          ? 'border-sky-500 text-sky-600'
                           : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
                         'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium transition-colors'
                       )}
@@ -170,7 +170,7 @@ const Navigation = () => {
               <div className="hidden sm:ml-6 sm:flex sm:items-center">
                 <button
                   type="button"
-                  className="relative rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                  className="relative rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
                 >
                   <span className="absolute -inset-1.5" />
                   <span className="sr-only">Voir les notifications</span>
@@ -180,11 +180,11 @@ const Navigation = () => {
                 {/* Profile dropdown */}
                 <Menu as="div" className="relative ml-3">
                   <div>
-                    <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
+                    <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
                       <span className="absolute -inset-1.5" />
                       <span className="sr-only">Ouvrir le menu utilisateur</span>
-                      <div className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center">
-                        <span className="text-primary-600 font-medium text-sm">
+                      <div className="h-8 w-8 rounded-full bg-sky-100 flex items-center justify-center">
+                        <span className="text-sky-600 font-medium text-sm">
                           {user?.firstName?.[0]}{user?.lastName?.[0]}
                         </span>
                       </div>
@@ -252,7 +252,7 @@ const Navigation = () => {
 
               <div className="-mr-2 flex items-center sm:hidden">
                 {/* Mobile menu button */}
-                <Disclosure.Button className="relative inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
+                <Disclosure.Button className="relative inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
                   <span className="absolute -inset-0.5" />
                   <span className="sr-only">Ouvrir le menu principal</span>
                   {open ? (
@@ -274,7 +274,7 @@ const Navigation = () => {
                   href={item.href}
                   className={clsx(
                     isCurrentPage(item.href)
-                      ? 'border-primary-500 bg-primary-50 text-primary-700'
+                      ? 'border-sky-500 bg-sky-50 text-sky-700'
                       : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800',
                     'block border-l-4 py-2 pl-3 pr-4 text-base font-medium'
                   )}
@@ -293,8 +293,8 @@ const Navigation = () => {
             </div>
             <div className="border-t border-gray-200 pb-3 pt-4">
               <div className="flex items-center px-4">
-                <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center">
-                  <span className="text-primary-600 font-medium">
+                <div className="h-10 w-10 rounded-full bg-sky-100 flex items-center justify-center">
+                  <span className="text-sky-600 font-medium">
                     {user?.firstName?.[0]}{user?.lastName?.[0]}
                   </span>
                 </div>
@@ -306,7 +306,7 @@ const Navigation = () => {
                 </div>
                 <button
                   type="button"
-                  className="relative ml-auto flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                  className="relative ml-auto flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
                 >
                   <span className="absolute -inset-1.5" />
                   <span className="sr-only">Voir les notifications</span>

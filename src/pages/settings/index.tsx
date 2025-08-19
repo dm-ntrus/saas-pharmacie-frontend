@@ -56,16 +56,16 @@ const SettingsPage: React.FC = () => {
                     aria-selected={activeTab === tab.id}
                     aria-controls={`${tab.id}-panel`}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`group rounded-md px-3 py-2 flex items-center text-sm font-medium w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                    className={`group rounded-md px-3 py-2 flex items-center text-sm font-medium w-full focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 ${
                       activeTab === tab.id
-                        ? 'bg-indigo-50 text-indigo-700 hover:text-indigo-700 hover:bg-indigo-50'
+                        ? 'bg-sky-50 text-sky-700 hover:text-sky-700 hover:bg-sky-50'
                         : 'text-gray-900 hover:text-gray-900 hover:bg-gray-50'
                     }`}
                   >
                     <tab.icon
                       className={`flex-shrink-0 -ml-1 mr-3 h-6 w-6 ${
                         activeTab === tab.id
-                          ? 'text-indigo-500'
+                          ? 'text-sky-500'
                           : 'text-gray-400 group-hover:text-gray-500'
                       }`}
                       aria-hidden="true"
@@ -96,7 +96,7 @@ const SettingsPage: React.FC = () => {
                               name="first-name"
                               id="first-name"
                               defaultValue="Jean"
-                              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                              className="shadow-sm focus:ring-sky-500 focus:border-sky-500 block w-full sm:text-sm border-gray-300 rounded-md"
                             />
                           </div>
                         </div>
@@ -111,7 +111,7 @@ const SettingsPage: React.FC = () => {
                               name="last-name"
                               id="last-name"
                               defaultValue="Mukasa"
-                              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                              className="shadow-sm focus:ring-sky-500 focus:border-sky-500 block w-full sm:text-sm border-gray-300 rounded-md"
                             />
                           </div>
                         </div>
@@ -126,7 +126,7 @@ const SettingsPage: React.FC = () => {
                               name="email"
                               type="email"
                               defaultValue="jean.mukasa@pharmacie.cd"
-                              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                              className="shadow-sm focus:ring-sky-500 focus:border-sky-500 block w-full sm:text-sm border-gray-300 rounded-md"
                             />
                           </div>
                         </div>
@@ -141,7 +141,7 @@ const SettingsPage: React.FC = () => {
                               name="phone"
                               id="phone"
                               defaultValue="+243 99 123 4567"
-                              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                              className="shadow-sm focus:ring-sky-500 focus:border-sky-500 block w-full sm:text-sm border-gray-300 rounded-md"
                             />
                           </div>
                         </div>
@@ -176,9 +176,9 @@ const SettingsPage: React.FC = () => {
                               role="radio"
                               aria-checked={fontSize === size}
                               onClick={() => setFontSize(size)}
-                              className={`px-4 py-2 border rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                              className={`px-4 py-2 border rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 ${
                                 fontSize === size
-                                  ? 'bg-indigo-600 text-white border-indigo-600'
+                                  ? 'bg-sky-600 text-white border-sky-600'
                                   : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
                               }`}
                             >
@@ -203,8 +203,8 @@ const SettingsPage: React.FC = () => {
                           role="switch"
                           aria-checked={highContrast}
                           onClick={toggleHighContrast}
-                          className={`relative inline-flex h-6 w-11 items-center rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
-                            highContrast ? 'bg-indigo-600' : 'bg-gray-200'
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 ${
+                            highContrast ? 'bg-sky-600' : 'bg-gray-200'
                           }`}
                         >
                           <span
@@ -232,8 +232,8 @@ const SettingsPage: React.FC = () => {
                           role="switch"
                           aria-checked={reducedMotion}
                           onClick={toggleReducedMotion}
-                          className={`relative inline-flex h-6 w-11 items-center rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
-                            reducedMotion ? 'bg-indigo-600' : 'bg-gray-200'
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 ${
+                            reducedMotion ? 'bg-sky-600' : 'bg-gray-200'
                           }`}
                         >
                           <span
@@ -288,7 +288,7 @@ const SettingsPage: React.FC = () => {
                         <select
                           id="language"
                           name="language"
-                          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm rounded-md"
                           defaultValue="fr"
                         >
                           <option value="fr">Français</option>
@@ -305,7 +305,7 @@ const SettingsPage: React.FC = () => {
                         <select
                           id="timezone"
                           name="timezone"
-                          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm rounded-md"
                           defaultValue="Africa/Kinshasa"
                         >
                           <option value="Africa/Kinshasa">Kinshasa (GMT+1)</option>
@@ -326,7 +326,7 @@ const SettingsPage: React.FC = () => {
                           ].map((theme) => (
                             <button
                               key={theme.id}
-                              className="flex items-center justify-center flex-col p-4 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                              className="flex items-center justify-center flex-col p-4 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
                             >
                               <theme.icon className="h-6 w-6 text-gray-400 mb-2" aria-hidden="true" />
                               <span className="text-sm font-medium text-gray-700">
@@ -366,7 +366,7 @@ const SettingsPage: React.FC = () => {
                           <button
                             role="switch"
                             aria-checked={true}
-                            className="relative inline-flex h-6 w-11 items-center rounded-full bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            className="relative inline-flex h-6 w-11 items-center rounded-full bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
                           >
                             <span className="inline-block h-4 w-4 transform rounded-full bg-white transition translate-x-6" />
                             <span className="sr-only">

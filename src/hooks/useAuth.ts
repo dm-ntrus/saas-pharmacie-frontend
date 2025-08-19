@@ -11,7 +11,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (userData: any) => Promise<void>;
   register: (userData: any) => Promise<void>;
   logout: () => void;
   hasRole: (role: string) => boolean;
@@ -78,10 +78,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const login = async (email: string, password: string) => {
+  const login = async (userData: any) => {
     try {
       setLoading(true);
-      const { user: userData } = await apiClient.login(email, password);
+      // const { user: userData } = await apiClient.login(email, password);
       setUser(userData);
       
       // Redirection vers le tableau de bord

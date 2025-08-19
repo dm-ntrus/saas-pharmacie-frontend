@@ -131,7 +131,7 @@ const AccountingPage: React.FC = () => {
       change: '+2.1%',
       trend: 'up',
       icon: ArrowTrendingUpIcon,
-      color: 'bg-purple-500'
+      color: 'bg-cyan-500'
     }
   ];
 
@@ -176,7 +176,7 @@ const AccountingPage: React.FC = () => {
       title: 'Comptes Actifs',
       value: '5',
       icon: BanknotesIcon,
-      color: 'bg-purple-500'
+      color: 'bg-cyan-500'
     }
   ];
 
@@ -193,7 +193,7 @@ const AccountingPage: React.FC = () => {
             <select
               value={periodFilter}
               onChange={(e) => setPeriodFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500"
             >
               <option value="this_month">Ce mois</option>
               <option value="last_month">Mois dernier</option>
@@ -252,7 +252,7 @@ const AccountingPage: React.FC = () => {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center py-2 px-1 border-b-2 font-medium text-sm ${
                   activeTab === tab.id
-                    ? 'border-indigo-500 text-indigo-600'
+                    ? 'border-sky-500 text-sky-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -332,7 +332,7 @@ const AccountingPage: React.FC = () => {
                 {[
                   { name: 'Caisse Principale', balance: 850000, type: 'Liquide', color: 'bg-green-500' },
                   { name: 'Compte Bancaire Principal', balance: 2450000, type: 'Bancaire', color: 'bg-blue-500' },
-                  { name: 'Compte Épargne', balance: 1200000, type: 'Épargne', color: 'bg-purple-500' },
+                  { name: 'Compte Épargne', balance: 1200000, type: 'Épargne', color: 'bg-cyan-500' },
                 ].map((account, index) => (
                   <div key={index} className="p-4 border border-gray-200 rounded-lg">
                     <div className="flex items-center justify-between mb-2">
@@ -377,7 +377,7 @@ const AccountingPage: React.FC = () => {
                     placeholder="Rechercher une transaction..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 w-full md:w-80 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="pl-10 w-full md:w-80 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   />
                 </div>
                 <div className="flex space-x-2 mt-4 md:mt-0">
@@ -475,7 +475,7 @@ const AccountingPage: React.FC = () => {
             ].map((report, index) => (
               <Card key={index} className="p-6 hover:shadow-lg transition-shadow cursor-pointer">
                 <div className="flex items-center mb-4">
-                  <div className="bg-indigo-500 p-3 rounded-lg mr-4">
+                  <div className="bg-sky-500 p-3 rounded-lg mr-4">
                     <report.icon className="h-6 w-6 text-white" />
                   </div>
                   <div>

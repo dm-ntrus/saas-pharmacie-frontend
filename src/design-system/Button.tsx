@@ -7,12 +7,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/40 hover:-translate-y-0.5 focus-visible:ring-indigo-500 before:absolute before:inset-0 before:bg-gradient-to-r before:from-indigo-500 before:to-purple-500 before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100",
+        default: "bg-gradient-to-r from-sky-600 to-cyan-600 text-white shadow-lg shadow-sky-500/25 hover:shadow-xl hover:shadow-sky-500/40 hover:-translate-y-0.5 focus-visible:ring-sky-500 before:absolute before:inset-0 before:bg-gradient-to-r before:from-sky-500 before:to-cyan-500 before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100",
         destructive: "bg-gradient-to-r from-red-600 to-pink-600 text-white shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40 hover:-translate-y-0.5 focus-visible:ring-red-500 before:absolute before:inset-0 before:bg-gradient-to-r before:from-red-500 before:to-pink-500 before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100",
         outline: "border-2 border-slate-200 bg-white text-slate-900 hover:bg-slate-50 hover:border-slate-300 hover:shadow-md focus-visible:ring-slate-500 transition-all duration-200",
         secondary: "bg-gradient-to-r from-slate-100 to-slate-200 text-slate-900 hover:from-slate-200 hover:to-slate-300 hover:shadow-md hover:-translate-y-0.5 focus-visible:ring-slate-500 transition-all duration-200",
         ghost: "text-slate-700 hover:bg-slate-100 hover:text-slate-900 focus-visible:ring-slate-500 hover:scale-105 transition-all duration-200",
-        link: "text-indigo-600 underline-offset-4 hover:underline focus-visible:ring-indigo-500 hover:text-indigo-700 transition-colors duration-200",
+        link: "text-sky-600 underline-offset-4 hover:underline focus-visible:ring-sky-500 hover:text-sky-700 transition-colors duration-200",
         gradient: "bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 shadow-2xl shadow-yellow-500/25 hover:shadow-yellow-500/40 hover:-translate-y-1 focus-visible:ring-yellow-500 before:absolute before:inset-0 before:bg-gradient-to-r before:from-yellow-300 before:to-orange-400 before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100",
         glassmorphism: "bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 hover:border-white/30 hover:scale-105 focus-visible:ring-white/50 transition-all duration-300",
       },

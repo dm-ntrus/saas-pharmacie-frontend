@@ -34,7 +34,7 @@ export const AccessibilityPanel: React.FC = () => {
       {/* Bouton flottant */}
       <button
         onClick={togglePanel}
-        className="fixed bottom-6 right-6 z-50 p-3 bg-primary-600 text-white rounded-full shadow-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-200"
+        className="fixed bottom-6 right-6 z-50 p-3 bg-sky-600 text-white rounded-full shadow-lg hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 transition-all duration-200"
         aria-label="Ouvrir les options d'accessibilité"
         title="Options d'accessibilité"
       >
@@ -43,7 +43,7 @@ export const AccessibilityPanel: React.FC = () => {
 
       {/* Panneau d'accessibilité */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <Card className="w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               {/* En-tête */}
@@ -51,7 +51,7 @@ export const AccessibilityPanel: React.FC = () => {
                 <h2 className="text-xl font-semibold text-gray-900">Accessibilité</h2>
                 <button
                   onClick={togglePanel}
-                  className="p-2 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-lg"
+                  className="p-2 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-sky-500 rounded-lg"
                   aria-label="Fermer le panneau d'accessibilité"
                 >
                   <XMarkIcon className="h-5 w-5" />
@@ -111,7 +111,7 @@ export const AccessibilityPanel: React.FC = () => {
                     type="checkbox"
                     checked={reducedMotion}
                     onChange={(e) => setReducedMotion(e.target.checked)}
-                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-sky-600 focus:ring-sky-500 border-gray-300 rounded"
                   />
                   <span className="text-sm text-gray-700">Mouvement réduit</span>
                 </label>
@@ -122,7 +122,7 @@ export const AccessibilityPanel: React.FC = () => {
                     type="checkbox"
                     checked={screenReader}
                     onChange={toggleScreenReader}
-                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-sky-600 focus:ring-sky-500 border-gray-300 rounded"
                   />
                   <span className="text-sm text-gray-700">Mode lecteur d&apos;écran</span>
                 </label>
@@ -136,7 +136,7 @@ export const AccessibilityPanel: React.FC = () => {
                     type="checkbox"
                     checked={focusIndicator}
                     onChange={(e) => setFocusIndicator(e.target.checked)}
-                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-sky-600 focus:ring-sky-500 border-gray-300 rounded"
                   />
                   <span className="text-sm text-gray-700">Indicateur de focus</span>
                 </label>
@@ -147,7 +147,7 @@ export const AccessibilityPanel: React.FC = () => {
                     type="checkbox"
                     checked={keyboardNavigation}
                     onChange={(e) => setKeyboardNavigation(e.target.checked)}
-                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-sky-600 focus:ring-sky-500 border-gray-300 rounded"
                   />
                   <span className="text-sm text-gray-700">Navigation clavier</span>
                 </label>

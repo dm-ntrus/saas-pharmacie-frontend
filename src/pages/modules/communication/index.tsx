@@ -174,7 +174,7 @@ const CommunicationPage: React.FC = () => {
     switch (type) {
       case 'sms': return 'text-green-600';
       case 'email': return 'text-blue-600';
-      case 'announcement': return 'text-purple-600';
+      case 'announcement': return 'text-cyan-600';
       case 'reminder': return 'text-orange-600';
       default: return 'text-gray-600';
     }
@@ -213,7 +213,7 @@ const CommunicationPage: React.FC = () => {
       title: 'Taux d\'Ouverture',
       value: '78.5%',
       icon: EyeIcon,
-      color: 'bg-purple-500'
+      color: 'bg-cyan-500'
     }
   ];
 
@@ -273,9 +273,9 @@ const CommunicationPage: React.FC = () => {
                 aria-selected={activeTab === tab.id}
                 aria-controls={`${tab.id}-panel`}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center py-2 px-1 border-b-2 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                className={`flex items-center py-2 px-1 border-b-2 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 ${
                   activeTab === tab.id
-                    ? 'border-indigo-500 text-indigo-600'
+                    ? 'border-sky-500 text-sky-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -303,7 +303,7 @@ const CommunicationPage: React.FC = () => {
                     placeholder="Rechercher un message..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   />
                 </div>
                 
@@ -313,7 +313,7 @@ const CommunicationPage: React.FC = () => {
                     id="status-filter"
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   >
                     {statusTypes.map(status => (
                       <option key={status} value={status}>
@@ -337,7 +337,7 @@ const CommunicationPage: React.FC = () => {
                 return (
                   <Card 
                     key={message.id} 
-                    className="p-6 hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-indigo-500"
+                    className="p-6 hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-sky-500"
                   >
                     <div className="flex items-start space-x-4">
                       <div className="flex-shrink-0">
@@ -411,7 +411,7 @@ const CommunicationPage: React.FC = () => {
           <div role="tabpanel" id="campaigns-panel">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {campaigns.map((campaign) => (
-                <Card key={campaign.id} className="p-6 hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-indigo-500">
+                <Card key={campaign.id} className="p-6 hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-sky-500">
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">{campaign.name}</h3>
@@ -502,7 +502,7 @@ const CommunicationPage: React.FC = () => {
                 { name: 'Remerciement client', category: 'Relation client', usage: 67 },
                 { name: 'Invitation événement', category: 'Événement', usage: 12 }
               ].map((template, index) => (
-                <Card key={index} className="p-6 hover:shadow-lg transition-shadow cursor-pointer focus:ring-2 focus:ring-indigo-500">
+                <Card key={index} className="p-6 hover:shadow-lg transition-shadow cursor-pointer focus:ring-2 focus:ring-sky-500">
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">{template.name}</h3>

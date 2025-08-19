@@ -175,7 +175,7 @@ const StatusPage: NextPage = () => {
       name: 'Incidents Résolus (30j)',
       value: '3',
       icon: ShieldCheckIcon,
-      color: 'text-purple-600 bg-purple-100',
+      color: 'text-cyan-600 bg-cyan-100',
       trend: '-2'
     },
     {
@@ -243,13 +243,13 @@ const StatusPage: NextPage = () => {
         <nav className="bg-white border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-4">
-              <Link href="/" className="text-xl font-bold text-indigo-600">
+              <Link href="/" className="text-xl font-bold text-sky-600">
                 NakiCode PharmaSaaS
               </Link>
               <div className="flex items-center space-x-6">
                 <Link href="/" className="text-gray-600 hover:text-gray-900">Accueil</Link>
                 <Link href="/support" className="text-gray-600 hover:text-gray-900">Support</Link>
-                <Link href="/status" className="text-indigo-600 font-medium">Statut</Link>
+                <Link href="/status" className="text-sky-600 font-medium">Statut</Link>
               </div>
             </div>
           </div>
@@ -315,7 +315,7 @@ const StatusPage: NextPage = () => {
                     onClick={() => setSelectedPeriod(period)}
                     className={`px-3 py-1 text-sm rounded-lg transition-colors ${
                       selectedPeriod === period
-                        ? 'bg-indigo-600 text-white'
+                        ? 'bg-sky-600 text-white'
                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}
                   >
@@ -371,7 +371,7 @@ const StatusPage: NextPage = () => {
                                 service.status === 'outage' && i === 23 ? 'bg-red-500' :
                                 service.status === 'degraded' && i >= 22 ? 'bg-yellow-500' :
                                 'bg-green-500'
-                              } ${i > 0 ? 'border-l border-white border-opacity-20' : ''}`}
+                              } ${i > 0 ? 'border-l border-white/20' : ''}`}
                               title={`${23 - i}h ago`}
                             />
                           ))}
@@ -459,7 +459,7 @@ const StatusPage: NextPage = () => {
           <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
               <div className="flex items-center mb-4">
-                <GlobeAltIcon className="h-6 w-6 text-indigo-600 mr-2" />
+                <GlobeAltIcon className="h-6 w-6 text-sky-600 mr-2" />
                 <h3 className="text-lg font-semibold text-gray-900">Infrastructure</h3>
               </div>
               <ul className="space-y-2 text-sm text-gray-600">
@@ -492,7 +492,7 @@ const StatusPage: NextPage = () => {
             <div className="flex justify-center space-x-4">
               <Link 
                 href="/support"
-                className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
+                className="bg-sky-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-sky-700 transition-colors"
               >
                 Contacter le Support
               </Link>

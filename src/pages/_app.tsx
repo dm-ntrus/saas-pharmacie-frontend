@@ -5,7 +5,7 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from '@/hooks/useAuth';
 import { AccessibilityProvider, AccessibilityPanel } from '@/design-system';
 import '../styles/globals.css';
-import '../styles/accessibility.css';
+// import '../styles/accessibility.css';
 
 // Créer une instance du QueryClient
 const queryClient = new QueryClient({
@@ -24,7 +24,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <AccessibilityProvider>
         <AuthProvider>
           <Component {...pageProps} />
-          <AccessibilityPanel />
+          {/* <AccessibilityPanel /> */}
           <Toaster
             position="top-right"
             toastOptions={{

@@ -222,7 +222,7 @@ const HRPage: React.FC = () => {
       title: 'Performance Moyenne',
       value: Math.round(employees.reduce((sum, e) => sum + (e.performance || 0), 0) / employees.length) + '%',
       icon: ChartBarIcon,
-      color: 'bg-purple-500'
+      color: 'bg-cyan-500'
     }
   ];
 
@@ -277,7 +277,7 @@ const HRPage: React.FC = () => {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center py-2 px-1 border-b-2 font-medium text-sm ${
                   activeTab === tab.id
-                    ? 'border-indigo-500 text-indigo-600'
+                    ? 'border-sky-500 text-sky-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -300,14 +300,14 @@ const HRPage: React.FC = () => {
                     placeholder="Rechercher un employé..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   />
                 </div>
                 
                 <select
                   value={departmentFilter}
                   onChange={(e) => setDepartmentFilter(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                 >
                   {departments.map(dept => (
                     <option key={dept} value={dept}>
@@ -470,7 +470,7 @@ const HRPage: React.FC = () => {
                         <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                           schedule.shift === 'morning' ? 'bg-yellow-100 text-yellow-800' :
                           schedule.shift === 'afternoon' ? 'bg-blue-100 text-blue-800' :
-                          'bg-purple-100 text-purple-800'
+                          'bg-cyan-100 text-cyan-800'
                         }`}>
                           {schedule.shift === 'morning' ? 'Matin' :
                            schedule.shift === 'afternoon' ? 'Après-midi' : 'Nuit'}

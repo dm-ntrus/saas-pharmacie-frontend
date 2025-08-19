@@ -18,26 +18,26 @@ const RegistrationSuccessPage: NextPage = () => {
   const [countdown, setCountdown] = useState(10);
   const [showConfetti, setShowConfetti] = useState(true);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          router.push('/dashboard?welcome=true');
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+  // useEffect(() => {
+  //   const timer = setInterval(() => {
+  //     setCountdown((prev) => {
+  //       if (prev <= 1) {
+  //         router.push('/dashboard?welcome=true');
+  //         return 0;
+  //       }
+  //       return prev - 1;
+  //     });
+  //   }, 1000);
 
-    const confettiTimer = setTimeout(() => {
-      setShowConfetti(false);
-    }, 3000);
+  //   const confettiTimer = setTimeout(() => {
+  //     setShowConfetti(false);
+  //   }, 3000);
 
-    return () => {
-      clearInterval(timer);
-      clearTimeout(confettiTimer);
-    };
-  }, [router]);
+  //   return () => {
+  //     clearInterval(timer);
+  //     clearTimeout(confettiTimer);
+  //   };
+  // }, [router]);
 
   return (
     <>
@@ -46,7 +46,7 @@ const RegistrationSuccessPage: NextPage = () => {
         <meta name="description" content="Félicitations ! Votre compte NakiCode PharmaSaaS a été créé avec succès." />
       </Head>
 
-      <div className="min-h-screen bg-gradient-to-br from-green-400 via-blue-500 to-purple-600 flex items-center justify-center px-4 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-green-400 via-blue-500 to-cyan-600 flex items-center justify-center px-4 relative overflow-hidden">
         {/* Effet de confettis */}
         {showConfetti && (
           <div className="absolute inset-0 pointer-events-none">
@@ -67,8 +67,8 @@ const RegistrationSuccessPage: NextPage = () => {
           </div>
         )}
 
-        <div className="max-w-2xl mx-auto text-center">
-          <div className="bg-white rounded-3xl shadow-2xl p-12 backdrop-blur-lg bg-opacity-95">
+        <div className="max-w-6xl mx-auto text-center">
+          <div className="bg-white/95 rounded-3xl shadow-2xl p-12 backdrop-blur-lg">
             <div className="mb-8">
               <CheckCircleIcon className="h-24 w-24 text-green-500 mx-auto mb-6 animate-pulse" />
               <h1 className="text-4xl font-bold text-gray-900 mb-4">
@@ -84,14 +84,14 @@ const RegistrationSuccessPage: NextPage = () => {
             </div>
 
             {/* Informations du compte */}
-            <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-8 mb-8">
+            <div className="bg-gradient-to-r from-sky-50 to-cyan-50 rounded-2xl p-8 mb-8">
               <h3 className="text-xl font-bold text-gray-900 mb-6">📋 Récapitulatif de votre inscription</h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white rounded-lg p-4 shadow-sm">
                   <h4 className="font-semibold text-gray-900 mb-2">Plan Sélectionné</h4>
                   <div className="flex items-center">
-                    <div className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
+                    <div className="bg-sky-100 text-sky-800 px-3 py-1 rounded-full text-sm font-medium">
                       Plan Moyenne
                     </div>
                     <span className="ml-2 text-gray-600">$45/mois</span>
@@ -132,8 +132,8 @@ const RegistrationSuccessPage: NextPage = () => {
                   </div>
                 </div>
 
-                <div className="flex items-start bg-purple-50 rounded-lg p-4">
-                  <ShieldCheckIcon className="h-6 w-6 text-purple-500 mr-3 mt-0.5 flex-shrink-0" />
+                <div className="flex items-start bg-cyan-50 rounded-lg p-4">
+                  <ShieldCheckIcon className="h-6 w-6 text-cyan-500 mr-3 mt-0.5 flex-shrink-0" />
                   <div>
                     <h4 className="font-semibold text-gray-900">3. Configuration initiale</h4>
                     <p className="text-gray-600 text-sm">
@@ -166,12 +166,12 @@ const RegistrationSuccessPage: NextPage = () => {
             </div>
 
             {/* Compteur et redirection */}
-            <div className="bg-indigo-600 text-white rounded-2xl p-6 mb-6">
+            <div className="bg-sky-600 text-white rounded-2xl p-6 mb-6">
               <h3 className="text-lg font-semibold mb-2">
                 Redirection automatique vers votre tableau de bord
               </h3>
               <div className="text-3xl font-bold mb-4">{countdown}</div>
-              <div className="w-full bg-indigo-400 rounded-full h-2">
+              <div className="w-full bg-sky-400 rounded-full h-2">
                 <div 
                   className="bg-white h-2 rounded-full transition-all duration-1000"
                   style={{ width: `${(10 - countdown) * 10}%` }}
@@ -183,7 +183,7 @@ const RegistrationSuccessPage: NextPage = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <button
                 onClick={() => router.push('/dashboard?welcome=true')}
-                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl font-semibold transition-colors shadow-lg flex items-center justify-center"
+                className="flex-1 bg-sky-600 hover:bg-sky-700 text-white px-8 py-4 rounded-xl font-semibold transition-colors shadow-lg flex items-center justify-center"
               >
                 Accéder au Tableau de Bord
                 <ArrowRightIcon className="h-5 w-5 ml-2" />
@@ -191,7 +191,7 @@ const RegistrationSuccessPage: NextPage = () => {
               
               <Link
                 href="/support"
-                className="flex-1 border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50 px-8 py-4 rounded-xl font-semibold transition-colors text-center"
+                className="flex-1 border-2 border-sky-600 text-sky-600 hover:bg-sky-50 px-8 py-4 rounded-xl font-semibold transition-colors text-center"
               >
                 Centre d'Aide
               </Link>
@@ -200,11 +200,11 @@ const RegistrationSuccessPage: NextPage = () => {
             <div className="mt-8 pt-6 border-t border-gray-200">
               <p className="text-sm text-gray-500">
                 Des questions ? Contactez notre équipe au{' '}
-                <a href="tel:+243991234567" className="text-indigo-600 hover:text-indigo-800 font-semibold">
+                <a href="tel:+243991234567" className="text-sky-600 hover:text-sky-800 font-semibold">
                   +243 99 123 4567
                 </a>{' '}
                 ou par email à{' '}
-                <a href="mailto:support@nakicode.com" className="text-indigo-600 hover:text-indigo-800 font-semibold">
+                <a href="mailto:support@nakicode.com" className="text-sky-600 hover:text-sky-800 font-semibold">
                   support@nakicode.com
                 </a>
               </p>

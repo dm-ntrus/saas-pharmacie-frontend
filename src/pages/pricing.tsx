@@ -12,6 +12,7 @@ import {
   TruckIcon,
   ChartBarIcon
 } from '@heroicons/react/24/outline';
+import Layout from '@/components/layout/Layout';
 
 interface PricingPlan {
   id: string;
@@ -92,7 +93,7 @@ const PricingPage: NextPage = () => {
       popular: true,
       icon: ChartBarIcon,
       target: 'Pharmacies de 4-10 employés',
-      color: 'bg-indigo-500',
+      color: 'bg-sky-500',
       features: [
         { name: 'Toutes fonctionnalités Simple', included: true },
         { name: 'Gestion Fournisseurs', included: true, description: 'Commandes et livraisons' },
@@ -126,7 +127,7 @@ const PricingPage: NextPage = () => {
       period: billingPeriod === 'monthly' ? '/mois' : '/an',
       icon: StarIcon,
       target: 'Pharmacies de 11-25 employés',
-      color: 'bg-purple-500',
+      color: 'bg-cyan-500',
       features: [
         { name: 'Toutes fonctionnalités Moyenne', included: true },
         { name: 'Laboratoire & Préparations', included: true, description: 'Gestion magistrales' },
@@ -198,51 +199,33 @@ const PricingPage: NextPage = () => {
   };
 
   return (
-    <>
-      <Head>
-        <title>Tarifs - NakiCode PharmaSaaS</title>
-        <meta name="description" content="Découvrez nos plans tarifaires flexibles pour votre pharmacie en Afrique. Essai gratuit 14 jours." />
-      </Head>
-
-      <div className="min-h-screen bg-white">
-        {/* Navigation */}
-        <nav className="bg-white border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center py-4">
-              <Link href="/" className="text-xl font-bold text-indigo-600">
-                NakiCode PharmaSaaS
-              </Link>
-              <div className="flex items-center space-x-6">
-                <Link href="/" className="text-gray-600 hover:text-gray-900">Accueil</Link>
-                <Link href="/features" className="text-gray-600 hover:text-gray-900">Fonctionnalités</Link>
-                <Link href="/pricing" className="text-indigo-600 font-medium">Tarifs</Link>
-                <Link href="/contact" className="text-gray-600 hover:text-gray-900">Contact</Link>
-              </div>
-            </div>
-          </div>
-        </nav>
-
+    <Layout
+      requireAuth={false}
+      showSidebar={false}
+      title="PharmacySaaS - Gestion Moderne des Pharmacies"
+    >
+      <div className=" bg-white pt-10">
         {/* Hero */}
-        <section className="bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-800 text-white py-20">
+        <section className="bg-gradient-to-br from-sky-900 via-sky-800 to-cyan-800 text-white py-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Tarifs <span className="text-indigo-300">Transparents</span>
+              Tarifs <span className="text-sky-300">Transparents</span>
             </h1>
-            <p className="text-xl text-indigo-200 mb-8">
+            <p className="text-xl text-sky-200 mb-8">
               Choisissez le plan parfait pour votre pharmacie. Tous les plans incluent un essai gratuit de 14 jours.
             </p>
             
             {/* Contrôles de devise et période */}
             <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-8 mb-8">
               <div className="flex items-center space-x-4">
-                <span className="text-indigo-200">Devise:</span>
-                <div className="flex bg-indigo-800 rounded-lg p-1">
+                <span className="text-sky-200">Devise:</span>
+                <div className="flex bg-sky-800 rounded-lg p-1">
                   {Object.entries(currencySymbols).map(([key, curr]) => (
                     <button
                       key={key}
                       onClick={() => setCurrency(key as 'usd' | 'cdf' | 'bif')}
                       className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                        currency === key ? 'bg-white text-indigo-900' : 'text-indigo-200 hover:text-white'
+                        currency === key ? 'bg-white text-sky-900' : 'text-sky-200 hover:text-white'
                       }`}
                     >
                       {curr.name}
@@ -252,12 +235,12 @@ const PricingPage: NextPage = () => {
               </div>
               
               <div className="flex items-center space-x-4">
-                <span className="text-indigo-200">Facturation:</span>
-                <div className="flex bg-indigo-800 rounded-lg p-1">
+                <span className="text-sky-200">Facturation:</span>
+                <div className="flex bg-sky-800 rounded-lg p-1">
                   <button
                     onClick={() => setBillingPeriod('monthly')}
                     className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                      billingPeriod === 'monthly' ? 'bg-white text-indigo-900' : 'text-indigo-200 hover:text-white'
+                      billingPeriod === 'monthly' ? 'bg-white text-sky-900' : 'text-sky-200 hover:text-white'
                     }`}
                   >
                     Mensuel
@@ -265,7 +248,7 @@ const PricingPage: NextPage = () => {
                   <button
                     onClick={() => setBillingPeriod('annually')}
                     className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                      billingPeriod === 'annually' ? 'bg-white text-indigo-900' : 'text-indigo-200 hover:text-white'
+                      billingPeriod === 'annually' ? 'bg-white text-sky-900' : 'text-sky-200 hover:text-white'
                     }`}
                   >
                     Annuel <span className="text-green-400">(-17%)</span>
@@ -285,13 +268,13 @@ const PricingPage: NextPage = () => {
                   key={plan.id}
                   className={`relative bg-white rounded-2xl shadow-lg border-2 transition-transform hover:scale-105 ${
                     plan.popular 
-                      ? 'border-indigo-500 ring-4 ring-indigo-500 ring-opacity-20' 
+                      ? 'border-sky-500 ring-4 ring-sky-500 ring-opacity-20' 
                       : 'border-gray-200'
                   }`}
                 >
                   {plan.popular && (
                     <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                      <span className="bg-indigo-500 text-white px-4 py-2 rounded-full text-sm font-semibold">
+                      <span className="bg-sky-500 text-white px-4 py-2 rounded-full text-sm font-semibold">
                         Le Plus Populaire
                       </span>
                     </div>
@@ -354,7 +337,7 @@ const PricingPage: NextPage = () => {
                         href={`/signup?plan=${plan.id}`}
                         className={`w-full py-3 px-6 rounded-lg font-semibold text-center block transition-colors focus:ring-2 focus:ring-offset-2 ${
                           plan.popular
-                            ? 'bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500'
+                            ? 'bg-sky-600 text-white hover:bg-sky-700 focus:ring-sky-500'
                             : 'bg-gray-900 text-white hover:bg-gray-800 focus:ring-gray-500'
                         }`}
                       >
@@ -442,77 +425,33 @@ const PricingPage: NextPage = () => {
         </section>
 
         {/* CTA Final */}
-        <section className="bg-indigo-900 py-20">
+        <section className="bg-sky-900 py-20">
           <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-white mb-6">
               Prêt à Commencer ?
             </h2>
-            <p className="text-xl text-indigo-200 mb-8">
+            <p className="text-xl text-sky-200 mb-8">
               Essayez gratuitement pendant 14 jours. Aucune carte bancaire requise.
             </p>
             <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
               <Link 
                 href="/signup" 
-                className="bg-white text-indigo-900 px-8 py-3 rounded-lg font-semibold hover:bg-indigo-50 transition-colors inline-flex items-center justify-center focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-900"
+                className="bg-white text-sky-900 px-8 py-3 rounded-lg font-semibold hover:bg-sky-50 transition-colors inline-flex items-center justify-center focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-sky-900"
               >
                 Commencer Gratuitement
                 <ArrowRightIcon className="ml-2 h-5 w-5" aria-hidden="true" />
               </Link>
               <Link 
                 href="/contact" 
-                className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-indigo-900 transition-colors focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-900"
+                className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-sky-900 transition-colors focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-sky-900"
               >
                 Parler à un Expert
               </Link>
             </div>
           </div>
         </section>
-
-        {/* Footer */}
-        <footer className="bg-gray-900 text-white py-12">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              <div>
-                <h3 className="text-lg font-semibold mb-4">NakiCode PharmaSaaS</h3>
-                <p className="text-gray-400">
-                  Solution SaaS de gestion pharmaceutique pour l'Afrique
-                </p>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-4">Produit</h4>
-                <ul className="space-y-2 text-gray-400">
-                  <li><Link href="/features" className="hover:text-white">Fonctionnalités</Link></li>
-                  <li><Link href="/pricing" className="hover:text-white">Tarifs</Link></li>
-                  <li><Link href="/demo" className="hover:text-white">Démo</Link></li>
-                  <li><Link href="/api" className="hover:text-white">API</Link></li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-4">Support</h4>
-                <ul className="space-y-2 text-gray-400">
-                  <li><Link href="/support" className="hover:text-white">Centre d'aide</Link></li>
-                  <li><Link href="/contact" className="hover:text-white">Contact</Link></li>
-                  <li><Link href="/training" className="hover:text-white">Formation</Link></li>
-                  <li><Link href="/status" className="hover:text-white">Statut</Link></li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-4">Entreprise</h4>
-                <ul className="space-y-2 text-gray-400">
-                  <li><Link href="/about" className="hover:text-white">À propos</Link></li>
-                  <li><Link href="/blog" className="hover:text-white">Blog</Link></li>
-                  <li><Link href="/careers" className="hover:text-white">Carrières</Link></li>
-                  <li><Link href="/privacy" className="hover:text-white">Confidentialité</Link></li>
-                </ul>
-              </div>
-            </div>
-            <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-              <p>&copy; 2025 NakiCode. Tous droits réservés.</p>
-            </div>
-          </div>
-        </footer>
       </div>
-    </>
+    </Layout>
   );
 };
 

@@ -40,7 +40,7 @@ const TenantDashboard: React.FC = () => {
     return (
       <Layout title="Chargement...">
         <div className="flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600" role="status" aria-label="Chargement en cours">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-600" role="status" aria-label="Chargement en cours">
             <span className="sr-only">Chargement...</span>
           </div>
         </div>

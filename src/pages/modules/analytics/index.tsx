@@ -69,7 +69,7 @@ const AnalyticsPage: React.FC = () => {
       change: '+5.7%',
       trend: 'up',
       icon: UserGroupIcon,
-      color: 'bg-purple-500'
+      color: 'bg-cyan-500'
     },
     {
       title: 'Panier Moyen',
@@ -77,7 +77,7 @@ const AnalyticsPage: React.FC = () => {
       change: '-2.1%',
       trend: 'down',
       icon: ChartBarIcon,
-      color: 'bg-indigo-500'
+      color: 'bg-sky-500'
     }
   ];
 
@@ -140,7 +140,7 @@ const AnalyticsPage: React.FC = () => {
             <select
               value={timeRange}
               onChange={(e) => setTimeRange(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500"
             >
               {timeRanges.map(range => (
                 <option key={range.value} value={range.value}>{range.label}</option>
@@ -294,7 +294,7 @@ const AnalyticsPage: React.FC = () => {
               {topProducts.map((product, index) => (
                 <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div className="flex items-center">
-                    <span className="w-8 h-8 bg-indigo-600 text-white rounded-full text-sm flex items-center justify-center mr-3">
+                    <span className="w-8 h-8 bg-sky-600 text-white rounded-full text-sm flex items-center justify-center mr-3">
                       {index + 1}
                     </span>
                     <div>
@@ -390,7 +390,7 @@ const AnalyticsPage: React.FC = () => {
           <Card className="p-6">
             <h4 className="font-semibold text-gray-900 mb-4">Satisfaction Client</h4>
             <div className="flex items-center justify-between">
-              <span className="text-3xl font-bold text-purple-600">4.7/5</span>
+              <span className="text-3xl font-bold text-cyan-600">4.7/5</span>
               <div className="flex">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <div key={star} className={`w-4 h-4 ${star <= 4 ? 'text-yellow-400' : 'text-gray-300'}`}>

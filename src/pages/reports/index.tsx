@@ -83,7 +83,7 @@ const ReportsPage: React.FC = () => {
       <CardContent className="p-6">
         <div className="flex items-start space-x-4">
           <div className="flex-shrink-0">
-            <report.icon className="h-8 w-8 text-primary-600" />
+            <report.icon className="h-8 w-8 text-sky-600" />
           </div>
           <div className="flex-1">
             <h3 className="text-lg font-medium text-gray-900">{report.name}</h3>
