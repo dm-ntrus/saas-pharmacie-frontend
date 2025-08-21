@@ -7,25 +7,36 @@ import {
   ArrowLeftIcon,
   CheckCircleIcon,
   KeyIcon,
+  ShieldCheckIcon,
+  EyeIcon,
+  EyeSlashIcon,
+  LockClosedIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "@/design-system";
 
+type Step = "email" | "otp" | "password" | "success";
+
 const ForgotPasswordPage: NextPage = () => {
+  const [currentStep, setCurrentStep] = useState<Step>("email");
   const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Handle email submission
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
     try {
-      // Simulation d'envoi d'email de réinitialisation
+      // Simulate API call to send OTP
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      // setEmailSent(true);
-      setError("Une erreur est survenue. Veuillez réessayer.");
+      setCurrentStep("otp");
     } catch (err) {
       setError("Une erreur est survenue. Veuillez réessayer.");
     } finally {
@@ -33,11 +44,78 @@ const ForgotPasswordPage: NextPage = () => {
     }
   };
 
-  if (emailSent) {
+  // Handle OTP input change
+  const handleOtpChange = (index: number, value: string) => {
+    if (value.length > 1) return;
+    if (!/^\d*$/.test(value)) return;
+
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+
+    // Auto-focus next input
+    if (value && index < 5) {
+      const nextInput = document.getElementById(`otp-${index + 1}`);
+      nextInput?.focus();
+    }
+  };
+
+  // Handle OTP verification
+  const handleOtpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (otp.some((digit) => !digit)) {
+      setError("Veuillez saisir le code OTP complet.");
+      return;
+    }
+
+    setIsLoading(true);
+    setError("");
+
+    try {
+      // Simulate API call to verify OTP
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      setCurrentStep("password");
+    } catch (err) {
+      setError("Code OTP invalide. Veuillez réessayer.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle password reset
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    if (newPassword.length < 8) {
+      setError("Le mot de passe doit contenir au moins 8 caractères.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError("Les mots de passe ne correspondent pas.");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      // Simulate API call to reset password
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      setCurrentStep("success");
+    } catch (err) {
+      setError("Une erreur est survenue. Veuillez réessayer.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Success state
+  if (currentStep === "success") {
     return (
       <>
         <Head>
-          <title>Email Envoyé - NakiCode PharmaSaaS</title>
+          <title>Mot de Passe Réinitialisé - NakiCode PharmaSaaS</title>
         </Head>
 
         <div className="min-h-screen bg-gradient-to-br from-sky-900 via-sky-800 to-cyan-800 flex items-center justify-center px-4 sm:px-6 lg:px-8">
@@ -45,60 +123,43 @@ const ForgotPasswordPage: NextPage = () => {
             <div className="text-center">
               <CheckCircleIcon className="h-20 w-20 text-green-400 mx-auto mb-6" />
               <h2 className="text-3xl font-bold text-white mb-4">
-                Email Envoyé !
+                Mot de Passe Réinitialisé !
               </h2>
               <p className="text-xl text-sky-200 mb-8">
-                Nous avons envoyé les instructions de réinitialisation à votre
-                adresse email.
+                Votre mot de passe a été mis à jour avec succès.
               </p>
             </div>
 
             <div className="bg-white/20 rounded-xl p-6 backdrop-blur">
               <h3 className="text-lg font-semibold text-white mb-4">
-                Prochaines étapes :
+                Connexion sécurisée :
               </h3>
               <ul className="space-y-3 text-sky-200">
                 <li className="flex items-start">
-                  <span className="bg-sky-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3 mt-0.5">
-                    1
+                  <span className="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3 mt-0.5">
+                    ✓
                   </span>
-                  Vérifiez votre boîte email (et le dossier spam)
+                  Mot de passe mis à jour
                 </li>
                 <li className="flex items-start">
-                  <span className="bg-sky-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3 mt-0.5">
-                    2
+                  <span className="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3 mt-0.5">
+                    ✓
                   </span>
-                  Cliquez sur le lien de réinitialisation
+                  Compte sécurisé
                 </li>
                 <li className="flex items-start">
-                  <span className="bg-sky-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3 mt-0.5">
-                    3
+                  <span className="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3 mt-0.5">
+                    ✓
                   </span>
-                  Créez un nouveau mot de passe sécurisé
+                  Prêt à vous connecter
                 </li>
               </ul>
             </div>
 
-            <div className="text-center space-y-4">
-              <p className="text-sky-300 text-sm">
-                Vous n'avez pas reçu l'email ? Il peut prendre quelques minutes
-                à arriver.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <button
-                  onClick={() => setEmailSent(false)}
-                  className="flex-1 bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-lg font-semibold transition-colors backdrop-blur border border-white/30"
-                >
-                  Renvoyer l'email
-                </button>
-                <Link
-                  href="/login"
-                  className="flex-1 bg-white text-sky-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors text-center"
-                >
-                  Retour à la connexion
-                </Link>
-              </div>
+            <div className="text-center">
+              <Button size="lg">
+                <Link href="/login">Se connecter maintenant</Link>
+              </Button>
             </div>
           </div>
         </div>
@@ -106,13 +167,54 @@ const ForgotPasswordPage: NextPage = () => {
     );
   }
 
+  const getStepIcon = () => {
+    switch (currentStep) {
+      case "email":
+        return <EnvelopeIcon className="h-16 w-16 text-sky-600 mx-auto mb-2" />;
+      case "otp":
+        return (
+          <ShieldCheckIcon className="h-16 w-16 text-sky-600 mx-auto mb-2" />
+        );
+      case "password":
+        return <KeyIcon className="h-16 w-16 text-sky-600 mx-auto mb-2" />;
+      default:
+        return null;
+    }
+  };
+
+  const getStepTitle = () => {
+    switch (currentStep) {
+      case "email":
+        return "Mot de Passe Oublié ?";
+      case "otp":
+        return "Vérification OTP";
+      case "password":
+        return "Nouveau Mot de Passe";
+      default:
+        return "";
+    }
+  };
+
+  const getStepDescription = () => {
+    switch (currentStep) {
+      case "email":
+        return "Pas de souci ! Entrez votre email et nous vous enverrons un code de vérification.";
+      case "otp":
+        return `Entrez le code de vérification à 6 chiffres envoyé à ${email}`;
+      case "password":
+        return "Créez un nouveau mot de passe sécurisé pour votre compte.";
+      default:
+        return "";
+    }
+  };
+
   return (
     <>
       <Head>
-        <title>Mot de Passe Oublié - NakiCode PharmaSaaS</title>
+        <title>Réinitialisation Mot de Passe - NakiCode PharmaSaaS</title>
         <meta
           name="description"
-          content="Réinitialisez votre mot de passe NakiCode PharmaSaaS en quelques clics."
+          content="Réinitialisez votre mot de passe NakiCode PharmaSaaS en quelques étapes."
         />
       </Head>
 
@@ -122,100 +224,314 @@ const ForgotPasswordPage: NextPage = () => {
           <div className="absolute top-0 left-0 w-72 h-72 bg-sky-200/20 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-200/20 rounded-full translate-x-1/2 translate-y-1/2"></div>
         </div>
+
         <div className="max-w-md w-full py-4 z-50">
           <div className="text-center">
-            <KeyIcon className="h-16 w-16 text-sky-600 mx-auto mb-2" />
+            {getStepIcon()}
             <h2 className="text-2xl md:text-3xl font-bold text-sky-600 mb-1">
-              Mot de Passe Oublié ?
+              {getStepTitle()}
             </h2>
             <p className="text-sm md:text-base text-gray-500 mb-2">
-              Pas de souci ! Entrez votre email et nous vous enverrons les
-              instructions de réinitialisation.
+              {getStepDescription()}
             </p>
           </div>
 
+          {/* Progress indicator */}
+          <div className="flex justify-center mb-6">
+            <div className="flex space-x-2">
+              <div
+                className={`w-3 h-3 rounded-full ${
+                  currentStep === "email"
+                    ? "bg-sky-600"
+                    : currentStep === "otp" || currentStep === "password"
+                    ? "bg-green-500"
+                    : "bg-gray-300"
+                }`}
+              ></div>
+              <div
+                className={`w-3 h-3 rounded-full ${
+                  currentStep === "otp"
+                    ? "bg-sky-600"
+                    : currentStep === "password"
+                    ? "bg-green-500"
+                    : "bg-gray-300"
+                }`}
+              ></div>
+              <div
+                className={`w-3 h-3 rounded-full ${
+                  currentStep === "password" ? "bg-sky-600" : "bg-gray-300"
+                }`}
+              ></div>
+            </div>
+          </div>
+
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded-lg mb-1">
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded-lg mb-4">
               {error}
             </div>
           )}
 
-          <form
-            className="space-y-4 px-6 pb-4 rounded-2xl bg-white shadow-2xl"
-            onSubmit={handleSubmit}
-          >
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-white mb-2"
-              >
-                Email professionnel
-              </label>
-              <div className="relative">
-                <EnvelopeIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 z-10" />
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-white focus:border-white bg-white/90 backdrop-blur text-gray-900"
-                  placeholder="pharmacien@votrePharmacie.cd"
-                />
+          {/* Step 1: Email Form */}
+          {currentStep === "email" && (
+            <form
+              className="space-y-4 px-6 py-6 rounded-2xl bg-white shadow-2xl"
+              onSubmit={handleEmailSubmit}
+            >
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Email
+                </label>
+                <div className="relative">
+                  <EnvelopeIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 z-10" />
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 bg-white text-gray-900"
+                    placeholder="pharmacien@votrePharmacie.cd"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Button
+                  type="submit"
+                  disabled={isLoading || !email}
+                  size="lg"
+                  className={`w-full flex justify-center transition-colors ${
+                    isLoading ? "bg-gray-300 cursor-not-allowed" : ""
+                  }`}
+                >
+                  {isLoading ? (
+                    <div className="flex items-center">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-sky-900 mr-2"></div>
+                      Envoi en cours...
+                    </div>
+                  ) : (
+                    "Envoyer le code OTP"
+                  )}
+                </Button>
+              </div>
+
+              <div className="text-center mt-2">
+                <Link
+                  href="/login"
+                  className="inline-flex items-center text-sm text-sky-500 hover:text-sky-700 font-medium"
+                >
+                  <ArrowLeftIcon className="h-4 w-4 mr-2" />
+                  Retour à la connexion
+                </Link>
+              </div>
+            </form>
+          )}
+
+          {/* Step 2: OTP Form */}
+          {currentStep === "otp" && (
+            <form
+              className="space-y-4 px-6 py-6 rounded-2xl bg-white shadow-2xl"
+              onSubmit={handleOtpSubmit}
+            >
+              <div>
+                <label className="block text-center text-sm font-medium text-gray-700 mb-2">
+                  Code de vérification
+                </label>
+                <div className="flex justify-center space-x-3">
+                  {otp.map((digit, index) => (
+                    <input
+                      key={index}
+                      id={`otp-${index}`}
+                      type="text"
+                      maxLength={1}
+                      value={digit}
+                      onChange={(e) => handleOtpChange(index, e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Backspace" && !digit && index > 0) {
+                          const prevInput = document.getElementById(
+                            `otp-${index - 1}`
+                          );
+                          prevInput?.focus();
+                        }
+                      }}
+                      className="w-12 h-12 text-center text-xl font-semibold border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 bg-white text-gray-900"
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <Button
+                  type="submit"
+                  disabled={isLoading || otp.some((digit) => !digit)}
+                  size="lg"
+                  className={`w-full flex justify-center transition-colors ${
+                    isLoading ? "bg-gray-300 cursor-not-allowed" : ""
+                  }`}
+                >
+                  {isLoading ? (
+                    <div className="flex items-center">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-sky-900 mr-2"></div>
+                      Vérification...
+                    </div>
+                  ) : (
+                    "Vérifier le code"
+                  )}
+                </Button>
+              </div>
+
+              <div className="text-center space-y-4">
+                <button
+                  type="button"
+                  onClick={() => setCurrentStep("email")}
+                  className="text-sm text-sky-500 hover:text-sky-700 font-medium"
+                >
+                  Renvoyer le code
+                </button>
+                <br />
+                <button
+                  type="button"
+                  onClick={() => setCurrentStep("email")}
+                  className="inline-flex cursor-pointer items-center text-sm text-gray-500 hover:text-sky-700"
+                >
+                  <ArrowLeftIcon className="h-4 w-4 mr-2" />
+                  Changer l'email
+                </button>
+              </div>
+            </form>
+          )}
+
+          {/* Step 3: Password Form */}
+          {currentStep === "password" && (
+            <form
+              className="space-y-4 px-6 py-6 rounded-2xl bg-white shadow-2xl"
+              onSubmit={handlePasswordSubmit}
+            >
+              <div>
+                <label
+                  htmlFor="newPassword"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Nouveau mot de passe
+                </label>
+                <div className="relative">
+                  <LockClosedIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 z-10" />
+                  <input
+                    id="newPassword"
+                    name="newPassword"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="pl-10 pr-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 bg-white text-gray-900"
+                    placeholder="Minimum 8 caractères"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                  >
+                    {showPassword ? (
+                      <EyeSlashIcon className="h-5 w-5 text-gray-400" />
+                    ) : (
+                      <EyeIcon className="h-5 w-5 text-gray-400" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Confirmer le mot de passe
+                </label>
+                <div className="relative">
+                  <LockClosedIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 z-10" />
+                  <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="pl-10 pr-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 bg-white text-gray-900"
+                    placeholder="Répétez le mot de passe"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeSlashIcon className="h-5 w-5 text-gray-400" />
+                    ) : (
+                      <EyeIcon className="h-5 w-5 text-gray-400" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <Button
+                  type="submit"
+                  disabled={isLoading || !newPassword || !confirmPassword}
+                  size="lg"
+                  className={`w-full flex justify-center transition-colors ${
+                    isLoading ? "bg-gray-300 cursor-not-allowed" : ""
+                  }`}
+                >
+                  {isLoading ? (
+                    <div className="flex items-center">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-sky-900 mr-2"></div>
+                      Mise à jour...
+                    </div>
+                  ) : (
+                    "Réinitialiser le mot de passe"
+                  )}
+                </Button>
+              </div>
+
+              <div className="text-center mt-2">
+                <button
+                  type="button"
+                  onClick={() => setCurrentStep("otp")}
+                  className="inline-flex cursor-pointer items-center text-sm text-gray-500 hover:text-sky-700"
+                >
+                  <ArrowLeftIcon className="h-4 w-4 mr-2" />
+                  Retour à la vérification
+                </button>
+              </div>
+            </form>
+          )}
+
+          {/* Help section - only show on first step */}
+          {currentStep === "email" && (
+            <div className="bg-black/10 rounded-xl mt-4 px-6 py-4 backdrop-blur">
+              <h3 className="text-lg font-semibold text-gray-600 mb-1">
+                Besoin d'aide ?
+              </h3>
+              <div className="text-sm text-sky-600">
+                <p>• Vérifiez que l'email utilisé correspond à votre compte</p>
+                <p>• Consultez votre dossier spam/courrier indésirable</p>
+                <p>• Le code OTP peut prendre jusqu'à 2 minutes à arriver</p>
+              </div>
+              <div className="mt-1">
+                <Link
+                  href="/contact"
+                  className="text-gray-500 hover:text-sky-700 font-medium text-sm"
+                >
+                  Contacter le support technique →
+                </Link>
               </div>
             </div>
-
-            <div>
-              <Button
-                type="submit"
-                disabled={isLoading || !email}
-                size="lg"
-                className={`w-full flex justify-center transition-colors ${
-                  isLoading ? "bg-gray-300 cursor-not-allowed" : ""
-                }`}
-              >
-                {isLoading ? (
-                  <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-sky-900 mr-2"></div>
-                    Envoi en cours...
-                  </div>
-                ) : (
-                  "Envoyer les instructions"
-                )}
-              </Button>
-            </div>
-
-            <div className="text-center">
-              <Link
-                href="/login"
-                className="inline-flex items-center text-sm text-sky-500 hover:text-sky-700 font-medium"
-              >
-                <ArrowLeftIcon className="h-4 w-4 mr-2" />
-                Retour à la connexion
-              </Link>
-            </div>
-          </form>
-
-          <div className="bg-black/10 rounded-xl mt-4 px-6 py-4 backdrop-blur">
-            <h3 className="text-lg font-semibold text-gray-600 mb-1">
-              Besoin d'aide ?
-            </h3>
-            <div className="text-sm text-sky-600">
-              <p>• Vérifiez que l'email utilisé correspond à votre compte</p>
-              <p>• Consultez votre dossier spam/courrier indésirable</p>
-              <p>• L'email peut prendre jusqu'à 10 minutes à arriver</p>
-            </div>
-            <div className="mt-1">
-              <Link
-                href="/contact"
-                className="text-gray-500 hover:text-sky-700 font-medium text-sm"
-              >
-                Contacter le support technique →
-              </Link>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </>

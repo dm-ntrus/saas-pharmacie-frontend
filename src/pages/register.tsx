@@ -803,7 +803,7 @@ const RegisterPage: NextPage = () => {
             Déjà un compte ?{" "}
             <Link
               href="/login"
-              className="text-sky-600 font-semibold hover:text-sky-800"
+              className="text-sky-600 font-medium hover:text-sky-800"
             >
               Se connecter
             </Link>
