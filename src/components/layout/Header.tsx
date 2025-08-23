@@ -33,6 +33,12 @@ export default function Header() {
 
           <nav className="hidden md:flex items-center space-x-8">
             <Link
+              href="/"
+              className="text-gray-600 hover:text-sky-600 transition-colors font-medium text-sm"
+            >
+              Accueil
+            </Link>
+            <Link
               href="features"
               className="text-gray-600 hover:text-sky-600 transition-colors font-medium text-sm"
             >

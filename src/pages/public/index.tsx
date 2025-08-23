@@ -468,9 +468,27 @@ const PublicHomePage: React.FC = () => {
             </div>
 
             {/* Section IA Avancée */}
-            <div className="bg-gradient-to-br from-sky-600 via-cyan-600 to-cyan-700 rounded-4xl shadow-2xl p-8 md:p-12 text-white relative overflow-hidden">
+            <div className="bg-gradient-to-br from-sky-900 via-sky-800 to-cyan-800 rounded-4xl shadow-2xl p-8 md:p-12 text-white relative overflow-hidden">
               {/* <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32"></div>
               <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24"></div> */}
+              {/* Animated background pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute inset-0 bg-gradient-to-r from-sky-400/20 to-cyan-400/20 animate-pulse"></div>
+            {[...Array(20)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute bg-white/10 rounded-full animate-bounce"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  width: `${Math.random() * 20 + 10}px`,
+                  height: `${Math.random() * 20 + 10}px`,
+                  animationDelay: `${Math.random() * 2}s`,
+                  animationDuration: `${Math.random() * 3 + 2}s`,
+                }}
+              ></div>
+            ))}
+          </div>
 
               <div className="text-center mb-8 relative">
                 {/* <div className="inline-flex items-center bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium mb-4">

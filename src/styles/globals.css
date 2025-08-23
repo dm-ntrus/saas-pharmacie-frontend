@@ -193,3 +193,23 @@ html {
 @media (prefers-color-scheme: dark) {
   /* Dark mode styles will be added here when implemented */
 }
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px; /* largeur de la scrollbar */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--primary-100); /* couleur du track */
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--primary-600); /* couleur du pouce */
+  border-radius: 4px;
+  border: 2px solid var(--primary-100); /* espace autour du pouce */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: var(--primary-700); /* hover */
+}
