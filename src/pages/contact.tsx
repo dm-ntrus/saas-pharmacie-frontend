@@ -182,13 +182,13 @@ const ContactPage: NextPage = () => {
     >
       <div className="bg-white pt-10">
         {/* Hero */}
-        {/* <section className="bg-gradient-to-br from-sky-900 via-sky-800 to-cyan-800 text-white py-20">
+        {/* <section className="bg-gradient-to-b from-sky-50 via-white to-white text-gray-900 py-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <EnvelopeIcon className="h-20 w-20 text-sky-300 mx-auto mb-6" />
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
               Parlons de Votre <span className="text-sky-300">Projet</span>
             </h1>
-            <p className="text-xl text-sky-200 mb-8">
+            <p className="text-xl text-gray-700 mb-8">
               Notre équipe d'experts est prête à vous accompagner dans la
               transformation digitale de votre pharmacie. Démo gratuite,
               conseils personnalisés et support dédié.
@@ -197,7 +197,7 @@ const ContactPage: NextPage = () => {
         </section> */}
 
         {/* Contact Methods */}
-        <section className="py-20 -mt-10 relative z-10">
+        <section className="py-20 bg-gradient-to-b from-sky-50 via-white to-white -mt-10 relative z-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="bg-white rounded-3xl shadow-2xl shadow-sky-900/10 p-8 md:p-12">
               <div className="text-center mb-12">

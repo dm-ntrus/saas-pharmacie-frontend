@@ -312,7 +312,7 @@ const PricingPage: NextPage = () => {
     >
       <div className=" bg-white pt-10">
         {/*  Hero Section */}
-        <section className="relative bg-gradient-to-br from-sky-900 via-sky-800 to-cyan-800 overflow-hidden">
+        <section className="relative bg-gradient-to-b from-sky-50 via-white to-white overflow-hidden">
           {/* Animated background elements */}
           <div className="absolute inset-0 opacity-10">
             <div className="absolute inset-0 bg-gradient-to-r from-sky-400/20 to-cyan-400/20 animate-pulse"></div>
@@ -332,22 +332,22 @@ const PricingPage: NextPage = () => {
             ))}
           </div>
 
-          <div className="relative text-white py-24">
+          <div className="relative text-gray-900 pt-24">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="text-center mb-12">
-                <div className="inline-flex items-center px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full text-sky-200 font-medium mb-6">
+              <div className="text-center mb-10">
+                <div className="inline-flex items-center px-6 py-3 bg-sky-600/10 backdrop-blur-sm rounded-full text-sky-900 font-medium mb-6">
                   {/* <SparklesIcon className="h-5 w-5 mr-2" /> */}
                   Essai gratuit 14 jours • Aucune carte requise
                 </div>
 
-                <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+                <h1 className="text-5xl md:text-7xl font-bold mb-4 leading-tight">
                   Tarifs{" "}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-200 to-cyan-200">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-600 to-cyan-500">
                     Transparents
                   </span>
                 </h1>
 
-                <p className="text-xl text-sky-200 mb-8 max-w-3xl mx-auto leading-relaxed">
+                <p className="text-xl text-gray-700 mb-8 max-w-6xl mx-auto leading-relaxed">
                   Choisissez le plan parfait pour votre pharmacie. Tous les plans incluent un essai gratuit de 14 jours.
                 </p>
               </div>
@@ -356,10 +356,10 @@ const PricingPage: NextPage = () => {
               <div className="flex flex-col lg:flex-row justify-center items-center space-y-6 lg:space-y-0 lg:space-x-12">
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-3">
-                    <CurrencyDollarIcon className="h-5 w-5 text-sky-200" />
-                    <span className="text-sky-200 font-medium">Devise:</span>
+                    <CurrencyDollarIcon className="h-5 w-5 text-gray-700" />
+                    <span className="text-gray-700 font-medium">Devise:</span>
                   </div>
-                  <div className="flex bg-white/10 backdrop-blur-md rounded-xl p-1 border border-white/20">
+                  <div className="flex bg-gray-900/10 backdrop-blur-md rounded-xl px-1.5 py-1 border border-white/20">
                     {Object.entries(currencySymbols).map(([key, curr]) => (
                       <button
                         key={key}
@@ -369,7 +369,7 @@ const PricingPage: NextPage = () => {
                         className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${
                           currency === key
                             ? "bg-white text-sky-900 shadow-lg transform scale-105"
-                            : "text-sky-200 hover:text-white hover:bg-white/10"
+                            : "text-gray-500 hover:text-gray-700 hover:bg-white/10"
                         }`}
                       >
                         {curr.name}
@@ -380,18 +380,18 @@ const PricingPage: NextPage = () => {
 
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-3">
-                    <LightBulbIcon className="h-5 w-5 text-sky-200" />
-                    <span className="text-sky-200 font-medium">
+                    <LightBulbIcon className="h-5 w-5 text-gray-700" />
+                    <span className="text-gray-700 font-medium">
                       Facturation:
                     </span>
                   </div>
-                  <div className="flex bg-white/10 backdrop-blur-md rounded-xl p-1 border border-white/20">
+                  <div className="flex bg-gray-900/10 backdrop-blur-md rounded-xl px-1.5 py-1 border border-white/20">
                     <button
                       onClick={() => setBillingPeriod("monthly")}
                       className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${
                         billingPeriod === "monthly"
                           ? "bg-white text-sky-900 shadow-lg transform scale-105"
-                          : "text-sky-200 hover:text-white hover:bg-white/10"
+                          : "text-gray-500 hover:text-gray-700 hover:bg-white/10"
                       }`}
                     >
                       Mensuel
@@ -401,7 +401,7 @@ const PricingPage: NextPage = () => {
                       className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 relative ${
                         billingPeriod === "annually"
                           ? "bg-white text-sky-900 shadow-lg transform scale-105"
-                          : "text-sky-200 hover:text-white hover:bg-white/10"
+                          : "text-gray-500 hover:text-gray-700 hover:bg-white/10"
                       }`}
                     >
                       Annuel

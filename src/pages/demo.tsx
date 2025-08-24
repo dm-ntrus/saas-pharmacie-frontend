@@ -102,49 +102,49 @@ const DemoPage: NextPage = () => {
       <div className="bg-white pt-10">
 
         {/* Hero Section  */}
-        <section className="bg-gradient-to-br from-sky-900 via-sky-800 to-cyan-800 text-white py-16">
+        <section className="bg-gradient-to-b from-sky-50 via-white to-white text-gray-900 py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
                 <div className="flex items-center mb-8">
-                  <PlayCircleIcon className="h-16 w-16 text-sky-300 mr-4" />
+                  <PlayCircleIcon className="h-16 w-16 text-sky-500 mr-4" />
                   <div>
                     <h1 className="text-4xl md:text-5xl font-bold">
-                      Essayez <span className="text-sky-300">Gratuitement</span>
+                      Essayez <span className="text-sky-600">Gratuitement</span>
                     </h1>
-                    <p className="text-sky-200 mt-2 text-lg">Aucun engagement requis</p>
+                    <p className="text-gray-700 mt-2 text-lg">Aucun engagement requis</p>
                   </div>
                 </div>
                 
-                <p className="text-xl text-sky-200 mb-8 leading-relaxed">
+                <p className="text-xl text-gray-700 mb-8 leading-relaxed">
                   Découvrez en temps réel comment NakiCode PharmaSaaS transforme la gestion des pharmacies. 
                   Interface moderne, fonctionnalités complètes, support Mobile Money intégré.
                 </p>
 
-                <div className="grid grid-cols-3 gap-4 mb-8">
+                <div className="grid grid-cols-3 gap-4 justify-items-start mb-8">
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-sky-300">500+</div>
-                    <div className="text-sm text-sky-200">Pharmacies</div>
+                    <div className="text-3xl font-bold text-gray-900">500+</div>
+                    <div className="text-sm text-gray-700">Pharmacies</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-sky-300">0€</div>
-                    <div className="text-sm text-sky-200">Essai gratuit</div>
+                    <div className="text-3xl font-bold text-gray-900">0€</div>
+                    <div className="text-sm text-gray-700">Essai gratuit</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-sky-300">24/7</div>
-                    <div className="text-sm text-sky-200">Support</div>
+                    <div className="text-3xl font-bold text-gray-900">24/7</div>
+                    <div className="text-sm text-gray-700">Support</div>
                   </div>
                 </div>
 
-                <button className="bg-white text-sky-900 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-sky-50 transition-colors inline-flex items-center shadow-lg">
+                <Button size="lg">
                   <PlayCircleIcon className="h-6 w-6 mr-3" />
                   Démarrer la Démo Maintenant
-                </button>
+                </Button>
               </div>
 
               {/* Demo preview on the right */}
               <div className="lg:block">
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+                <div className="bg-gray-900/10 backdrop-blur-sm rounded-2xl p-8">
                   <div className="aspect-video bg-gray-900 rounded-xl flex items-center justify-center mb-6">
                     <div className="text-center">
                       <PlayCircleIcon className="h-16 w-16 text-sky-400 mx-auto mb-4" />
@@ -153,7 +153,7 @@ const DemoPage: NextPage = () => {
                     </div>
                   </div>
                   <div className="text-center">
-                    <p className="text-sky-200 mb-4">Interface complète disponible immédiatement</p>
+                    <p className="text-gray-900 mb-4">Interface complète disponible immédiatement</p>
                     <Button size="lg">
                       Lancer l'Aperçu
                     </Button>

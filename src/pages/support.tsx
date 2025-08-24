@@ -160,42 +160,42 @@ const SupportPage: NextPage = () => {
       <div className="bg-white pt-10">
 
         {/* Hero Section  */}
-        <section className="bg-gradient-to-br from-sky-900 via-sky-800 to-cyan-800 text-white py-16">
+        <section className="bg-gradient-to-b from-sky-50 via-white to-white text-gray-900 py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
                 <div className="flex items-center mb-6">
-                  <QuestionMarkCircleIcon className="h-16 w-16 text-sky-300 mr-4" />
+                  <QuestionMarkCircleIcon className="h-16 w-16 text-sky-500 mr-4" />
                   <div>
                     <h1 className="text-4xl md:text-5xl font-bold">
-                      Centre de <span className="text-sky-300">Support</span>
+                      Centre de <span className="text-sky-600">Support</span>
                     </h1>
                   </div>
                 </div>
-                <p className="text-xl text-sky-200 mb-8 leading-relaxed">
+                <p className="text-xl text-gray-700 mb-6 leading-relaxed">
                   Nous sommes là pour vous accompagner à chaque étape de votre parcours avec NakiCode PharmaSaaS. Support technique 24/7, formation et documentation complète.
                 </p>
                 
                 {/* Quick stats */}
-                {/* <div className="grid grid-cols-3 gap-4 mb-8">
+                {/* <div className="grid grid-cols-3 justify-items-start gap-4 mb-8">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-sky-300">24/7</div>
-                    <div className="text-sm text-sky-200">Support</div>
+                    <div className="text-2xl font-bold text-gray-900">24/7</div>
+                    <div className="text-sm text-gray-700">Support</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-sky-300">&lt;2min</div>
-                    <div className="text-sm text-sky-200">Réponse</div>
+                    <div className="text-2xl font-bold text-gray-900">&lt;2min</div>
+                    <div className="text-sm text-gray-700">Réponse</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-sky-300">2 Pays</div>
-                    <div className="text-sm text-sky-200">Présence</div>
+                    <div className="text-2xl font-bold text-gray-900">2 Pays</div>
+                    <div className="text-sm text-gray-700">Présence</div>
                   </div>
                 </div> */}
               </div>
               
               <div>
                 {/* Search bar moved to right side */}
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+                <div className="bg-gray-900/10 backdrop-blur-sm rounded-2xl p-8">
                   <h3 className="text-xl font-semibold mb-6 text-center">Trouvez rapidement une réponse</h3>
                   <div className="relative mb-6">
                     <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -282,7 +282,7 @@ const SupportPage: NextPage = () => {
                         onClick={() => setSelectedCategory(category.id)}
                         className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium transition-colors text-left ${
                           selectedCategory === category.id
-                            ? 'bg-sky-600 text-white'
+                            ? 'bg-gradient-to-r from-sky-600 to-cyan-600 text-white'
                             : 'text-gray-600 hover:bg-gray-100'
                         }`}
                       >
@@ -457,9 +457,9 @@ const SupportPage: NextPage = () => {
                   </div>
                   
                   <div className="mt-8 pt-6 border-t border-gray-700">
-                    <button className="w-full bg-sky-600 text-white py-4 px-6 rounded-xl font-semibold hover:bg-sky-700 transition-colors text-lg">
+                    <Button size="lg" className="w-full">
                       Contacter ce Bureau
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))}
