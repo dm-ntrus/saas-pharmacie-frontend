@@ -13,8 +13,21 @@ import {
   TruckIcon,
   CheckCircleIcon,
 } from "@heroicons/react/24/outline";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
+  const pathname = usePathname();
+
+  const navigations = [
+    { path: "/", name: "Accueil" },
+    { path: "/features", name: "Solutions" },
+    { path: "/demo", name: "Démo" },
+    { path: "/pricing", name: "Tarifs" },
+    { path: "/support", name: "Support" },
+    { path: "/about", name: "À Propos" },
+    { path: "/contact", name: "Contact" },
+  ];
+
   return (
     <header className="bg-white shadow-sm fixed w-full top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -32,48 +45,17 @@ export default function Header() {
           </Link>
 
           <nav className="hidden md:flex items-center space-x-8">
-            <Link
-              href="/"
-              className="text-gray-600 hover:text-sky-600 transition-colors font-medium text-sm"
-            >
-              Accueil
-            </Link>
-            <Link
-              href="features"
-              className="text-gray-600 hover:text-sky-600 transition-colors font-medium text-sm"
-            >
-              Solutions
-            </Link>
-            <Link
-              href="demo"
-              className="text-gray-600 hover:text-sky-600 transition-colors font-medium text-sm"
-            >
-              Démo
-            </Link>
-            <Link
-              href="pricing"
-              className="text-gray-600 hover:text-sky-600 transition-colors font-medium text-sm"
-            >
-              Tarifs
-            </Link>
-            <Link
-              href="/support"
-              className="text-gray-600 hover:text-sky-600 transition-colors font-medium text-sm"
-            >
-              Support
-            </Link>
-            <Link
-              href="/about"
-              className="text-gray-600 hover:text-sky-600 transition-colors font-medium text-sm"
-            >
-              À Propos
-            </Link>
-            <Link
-              href="contact"
-              className="text-gray-600 hover:text-sky-600 transition-colors font-medium text-sm"
-            >
-              Contact
-            </Link>
+            {navigations.map((item, index) => (
+              <Link
+                key={index}
+                href={item.path}
+                className={`text-gray-600 hover:text-sky-600 transition-colors font-medium text-sm ${
+                  pathname === item.path || pathname?.startsWith(item.path + "/") ? "text-sky-600" : ""
+                }`}
+              >
+                {item.name}
+              </Link>
+            ))}
           </nav>
 
           <div className="flex items-center space-x-3">
