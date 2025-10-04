@@ -14,6 +14,7 @@ import {
 import { useAuthStore } from "@/lib/store/authStore";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/design-system";
+import { UserRole } from "@/types";
 
 const LoginPage: NextPage = () => {
   const router = useRouter();
@@ -38,18 +39,18 @@ const LoginPage: NextPage = () => {
     try {
       // Simulation de connexion - en production, connecter à l'API
       if (
-        formData.email === "demo@pharmacie.cd" &&
-        formData.password === "demo123"
+        formData.email === "admin@gmail.com" &&
+        formData.password === "admin"
       ) {
         const user = {
           id: "1",
           email: "chriscedrick4@gmail.com",
           firstName: "Chris",
           lastName: "Cedrick",
-          role: "pharmacien",
+          roles: ["pharmacist", "admin"],
+    permissions: ["dispense_drugs", "manage_prescriptions"],
           tenantId: "",
           avatar: "hj",
-          permissions: [""],
           isActive: true,
           lastLogin: "",
           createdAt: "",
@@ -61,7 +62,7 @@ const LoginPage: NextPage = () => {
         login(user, "yutdrsdfghjkiyutrdtfghj");
         // Redirection vers le tableau de bord
         setTimeout(() => {
-          router.push("/dashboard/tenant");
+          router.push("/dashboard/");
         }, 1500);
         setIsLoading(false);
       } else {

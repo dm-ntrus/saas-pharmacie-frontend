@@ -87,7 +87,7 @@ const TenantDashboard: React.FC = () => {
   }
 
   const renderDashboard = () => {
-    switch (user.role) {
+    switch (user?.role || user?.roles?.[0]) {
       case 'admin':
         return <AdminDashboard />;
       case 'pharmacien':

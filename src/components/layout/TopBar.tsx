@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { useAuth } from '@/hooks/useAuth';
-import { useAppStore } from '@/store/appStore';
+import React, { useState } from "react";
+import Link from "next/link";
+import { useAuth } from "@/hooks/useAuth";
+import { useAppStore } from "@/store/appStore";
 import {
   BellIcon,
   Bars3Icon,
@@ -9,16 +9,24 @@ import {
   UserCircleIcon,
   CogIcon,
   ArrowRightOnRectangleIcon,
-} from '@heroicons/react/24/outline';
-import { Menu, Transition } from '@headlessui/react';
-import { Fragment } from 'react';
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "@heroicons/react/24/outline";
+import { Menu, Transition } from "@headlessui/react";
+import { Fragment } from "react";
 
-const TopBar: React.FC = () => {
+type TopbarProps = {
+  onMenuClick: () => void;
+  sidebarOpen: boolean;
+};
+
+const TopBar: React.FC<TopbarProps> = ({ onMenuClick, sidebarOpen }) => {
   const { user, logout } = useAuth();
-  const { notifications, sidebarOpen, setSidebarOpen, markNotificationRead } = useAppStore();
-  const [searchQuery, setSearchQuery] = useState('');
-  
-  const unreadNotifications = notifications.filter(n => !n.read);
+  const { notifications, markNotificationRead } =
+    useAppStore();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const unreadNotifications = notifications.filter((n) => !n.read);
 
   const handleLogout = () => {
     logout();
@@ -32,29 +40,36 @@ const TopBar: React.FC = () => {
     <div className="bg-white shadow-sm border-b border-gray-200">
       <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
         {/* Left section */}
-        <div className="flex items-center">
+        <div className="flex items-center flex-1">
           <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-sky-500"
+            onClick={onMenuClick}
+            className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 lg:hidden"
           >
             <Bars3Icon className="h-6 w-6" />
           </button>
 
+          {/* Toggle button for desktop */}
+          {/* <button
+            onClick={onMenuClick}
+            className="hidden lg:block p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 mr-4"
+          >
+            {sidebarOpen ? (
+              <ChevronLeftIcon className="h-5 w-5" />
+            ) : (
+              <ChevronRightIcon className="h-5 w-5" />
+            )}
+          </button> */}
+
           {/* Search */}
-          <div className="ml-4 max-w-lg w-full lg:max-w-xs">
-            <label htmlFor="search" className="sr-only">
-              Rechercher
-            </label>
+          <div className="ml-2 sm:ml-4 max-w-lg w-full">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
               </div>
               <input
-                id="search"
-                name="search"
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 sm:text-sm"
-                placeholder="Rechercher..."
                 type="search"
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md text-sm placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500"
+                placeholder="Rechercher..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -63,7 +78,7 @@ const TopBar: React.FC = () => {
         </div>
 
         {/* Right section */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2 sm:space-x-4 ml-4">
           {/* Notifications */}
           <Menu as="div" className="relative">
             <Menu.Button className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-sky-500">
@@ -104,9 +119,11 @@ const TopBar: React.FC = () => {
                         <Menu.Item key={notification.id}>
                           {({ active }) => (
                             <button
-                              onClick={() => handleNotificationClick(notification.id)}
+                              onClick={() =>
+                                handleNotificationClick(notification.id)
+                              }
                               className={`${
-                                active ? 'bg-gray-50' : ''
+                                active ? "bg-gray-50" : ""
                               } block w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50`}
                             >
                               <div className="flex justify-between">
@@ -115,11 +132,11 @@ const TopBar: React.FC = () => {
                                 </p>
                                 <span
                                   className={`inline-block w-2 h-2 rounded-full ${
-                                    notification.type === 'error'
-                                      ? 'bg-red-500'
-                                      : notification.type === 'warning'
-                                      ? 'bg-yellow-500'
-                                      : 'bg-blue-500'
+                                    notification.type === "error"
+                                      ? "bg-red-500"
+                                      : notification.type === "warning"
+                                      ? "bg-yellow-500"
+                                      : "bg-blue-500"
                                   }`}
                                 />
                               </div>
@@ -127,7 +144,9 @@ const TopBar: React.FC = () => {
                                 {notification.message}
                               </p>
                               <p className="mt-1 text-xs text-gray-400">
-                                {new Date(notification.timestamp).toLocaleTimeString('fr-FR')}
+                                {new Date(
+                                  notification.timestamp
+                                ).toLocaleTimeString("fr-FR")}
                               </p>
                             </button>
                           )}
@@ -163,7 +182,8 @@ const TopBar: React.FC = () => {
               ) : (
                 <div className="h-8 w-8 bg-sky-600 rounded-full flex items-center justify-center">
                   <span className="text-sm font-medium text-white">
-                    {user?.firstName?.[0]}{user?.lastName?.[0]}
+                    {user?.firstName?.[0]}
+                    {user?.lastName?.[0]}
                   </span>
                 </div>
               )}
@@ -192,7 +212,7 @@ const TopBar: React.FC = () => {
                       <Link
                         href="/profile"
                         className={`${
-                          active ? 'bg-gray-100' : ''
+                          active ? "bg-gray-100" : ""
                         } flex items-center px-4 py-2 text-sm text-gray-700`}
                       >
                         <UserCircleIcon className="mr-3 h-5 w-5" />
@@ -206,7 +226,7 @@ const TopBar: React.FC = () => {
                       <Link
                         href="/settings"
                         className={`${
-                          active ? 'bg-gray-100' : ''
+                          active ? "bg-gray-100" : ""
                         } flex items-center px-4 py-2 text-sm text-gray-700`}
                       >
                         <CogIcon className="mr-3 h-5 w-5" />
@@ -222,7 +242,7 @@ const TopBar: React.FC = () => {
                       <button
                         onClick={handleLogout}
                         className={`${
-                          active ? 'bg-gray-100' : ''
+                          active ? "bg-gray-100" : ""
                         } flex items-center w-full px-4 py-2 text-sm text-gray-700`}
                       >
                         <ArrowRightOnRectangleIcon className="mr-3 h-5 w-5" />

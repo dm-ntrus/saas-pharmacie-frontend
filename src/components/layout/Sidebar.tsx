@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useAuth } from '@/hooks/useAuth';
+import React, { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useAuth } from "@/hooks/useAuth";
 import {
   HomeIcon,
   UsersIcon,
@@ -21,7 +21,8 @@ import {
   StarIcon,
   Bars3Icon,
   XMarkIcon,
-} from '@heroicons/react/24/outline';
+  ChevronLeftIcon,
+} from "@heroicons/react/24/outline";
 
 interface NavItem {
   name: string;
@@ -31,122 +32,171 @@ interface NavItem {
   requiredPermissions?: string[];
   badge?: string | number;
 }
+type SidebarProps = {
+  isOpen: boolean;
+  onClose: () => void;
+};
 
-const Sidebar: React.FC = () => {
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const router = useRouter();
   const { user, hasRole, hasPermission } = useAuth();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   // Temporary static notifications for demo
   const notifications: any[] = [];
 
   const navigation: NavItem[] = [
     {
-      name: 'Tableau de bord',
-      href: '/dashboard',
+      name: "Tableau de bord",
+      href: "/dashboard",
       icon: HomeIcon,
     },
     {
-      name: 'Point de Vente',
-      href: '/pos',
+      name: "Point de Vente",
+      href: "/sales",
       icon: CurrencyDollarIcon,
-      requiredRoles: ['cashier', 'pharmacist', 'admin'],
+      requiredRoles: ["cashier", "pharmacist", "admin"],
     },
     {
-      name: 'Inventaire',
-      href: '/inventory',
+      name: "Inventaire",
+      href: "/inventory",
       icon: BuildingStorefrontIcon,
-      requiredRoles: ['technician', 'pharmacist', 'admin'],
+      requiredRoles: ["technician", "pharmacist", "admin"],
     },
     {
-      name: 'Patients',
-      href: '/patients',
+      name: "Patients",
+      href: "/patients",
       icon: UserGroupIcon,
-      requiredRoles: ['pharmacist', 'admin'],
+      requiredRoles: ["pharmacist", "admin"],
     },
     {
-      name: 'Prescriptions',
-      href: '/prescriptions',
+      name: "Prescriptions",
+      href: "/prescriptions",
       icon: ClipboardDocumentListIcon,
-      requiredRoles: ['pharmacist', 'admin'],
+      requiredRoles: ["pharmacist", "admin"],
       badge: undefined, // notifications.filter((n: any) => n.type === 'prescription').length || undefined,
     },
     {
-      name: 'Laboratoire',
-      href: '/laboratory',
+      name: "Laboratoire",
+      href: "/laboratory",
       icon: BeakerIcon,
-      requiredRoles: ['lab_technician', 'pharmacist', 'admin'],
+      requiredRoles: ["lab_technician", "pharmacist", "admin"],
     },
     {
-      name: 'Livraisons',
-      href: '/delivery',
+      name: "Livraisons",
+      href: "/delivery",
       icon: TruckIcon,
-      requiredRoles: ['delivery_manager', 'admin'],
+      requiredRoles: ["delivery_manager", "admin"],
     },
     {
-      name: 'Rapports',
-      href: '/reports',
+      name: "Rapports",
+      href: "/reports",
       icon: ChartBarIcon,
-      requiredRoles: ['admin', 'pharmacist'],
+      requiredRoles: ["admin", "pharmacist"],
     },
     {
-      name: 'Facturation',
-      href: '/billing',
+      name: "Facturation",
+      href: "/billing",
       icon: DocumentTextIcon,
-      requiredRoles: ['admin', 'accountant'],
+      requiredRoles: ["admin", "accountant"],
     },
     {
-      name: 'Ressources Humaines',
-      href: '/hr',
+      name: "Ressources Humaines",
+      href: "/hr",
       icon: UsersIcon,
-      requiredRoles: ['hr_manager', 'admin'],
+      requiredRoles: ["hr_manager", "admin"],
     },
     {
-      name: 'Fidélité',
-      href: '/loyalty',
+      name: "Fidélité",
+      href: "/loyalty",
       icon: StarIcon,
-      requiredRoles: ['marketing_manager', 'admin'],
+      requiredRoles: ["marketing_manager", "admin"],
     },
     {
-      name: 'Assurance',
-      href: '/insurance',
+      name: "Assurance",
+      href: "/insurance",
       icon: ShieldCheckIcon,
-      requiredRoles: ['insurance_manager', 'admin'],
+      requiredRoles: ["insurance_manager", "admin"],
     },
     {
-      name: 'Comptabilité',
-      href: '/accounting',
+      name: "Comptabilité",
+      href: "/accounting",
       icon: BanknotesIcon,
-      requiredRoles: ['accountant', 'admin'],
+      requiredRoles: ["accountant", "admin"],
     },
+    // {
+    //   name: "Prescriptions",
+    //   href: "/modules/prescriptions",
+    //   icon: ClipboardDocumentListIcon,
+    //   requiredRoles: ["pharmacist", "admin"],
+    //   badge: undefined, // notifications.filter((n: any) => n.type === 'prescription').length || undefined,
+    // },
+    // {
+    //   name: "Rapports",
+    //   href: "/modules/reports",
+    //   icon: ChartBarIcon,
+    //   requiredRoles: ["admin", "pharmacist"],
+    // },
+    // {
+    //   name: "Facturation",
+    //   href: "/modules/billing",
+    //   icon: DocumentTextIcon,
+    //   requiredRoles: ["admin", "accountant"],
+    // },
+    // {
+    //   name: "Ressources Humaines",
+    //   href: "/modules/hr",
+    //   icon: UsersIcon,
+    //   requiredRoles: ["hr_manager", "admin"],
+    // },
+    // {
+    //   name: "Fidélité",
+    //   href: "/modules/loyalty",
+    //   icon: StarIcon,
+    //   requiredRoles: ["marketing_manager", "admin"],
+    // },
+    // {
+    //   name: "Assurance",
+    //   href: "/modules/insurance",
+    //   icon: ShieldCheckIcon,
+    //   requiredRoles: ["insurance_manager", "admin"],
+    // },
   ];
 
   const bottomNavigation: NavItem[] = [
     {
-      name: 'Profil',
-      href: '/profile',
+      name: "Profil",
+      href: "/profile",
       icon: UserIcon,
     },
     {
-      name: 'Paramètres',
-      href: '/settings',
+      name: "Paramètres",
+      href: "/modules/settings",
       icon: CogIcon,
-      requiredRoles: ['admin'],
+      requiredRoles: ["admin"],
     },
   ];
 
   const isItemVisible = (item: NavItem) => {
-    if (item.requiredRoles && !item.requiredRoles.some(role => hasRole(role))) {
+    if (
+      item.requiredRoles &&
+      !item.requiredRoles.some((role) => hasRole(role))
+    ) {
       return false;
     }
-    if (item.requiredPermissions && !item.requiredPermissions.some(permission => hasPermission(permission))) {
+    if (
+      item.requiredPermissions &&
+      !item.requiredPermissions.some((permission) => hasPermission(permission))
+    ) {
       return false;
     }
     return true;
   };
 
   const isCurrentPath = (href: string) => {
-    if (href === '/dashboard') {
-      return router.pathname === '/dashboard' || router.pathname === '/dashboard/tenant';
+    if (href === "/dashboard") {
+      return (
+        router.pathname === "/dashboard" ||
+        router.pathname === "/dashboard/tenant"
+      );
     }
     return router.pathname.startsWith(href);
   };
@@ -154,21 +204,24 @@ const Sidebar: React.FC = () => {
   return (
     <div className="flex flex-col h-full bg-gray-900 text-white">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-700">
-        {sidebarOpen && (
-          <div className="flex items-center">
-            <div className="h-8 w-8 bg-sky-600 rounded-lg flex items-center justify-center mr-3">
-              <HeartIcon className="h-5 w-5 text-white" />
+      <div className="flex items-center justify-between p-3 border-b border-gray-700">
+        {isOpen && (
+          <div className="flex items-center space-x-3">
+            <div className="h-8 w-8 bg-sky-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold">P</span>
             </div>
-            <span className="text-xl font-bold">PharmacySaaS</span>
+            <span className="text-xl font-bold">PharmaSaaS</span>
           </div>
         )}
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
+         <button
+          onClick={onClose}
           className="p-2 rounded-md hover:bg-gray-800 transition-colors"
         >
-          {sidebarOpen ? (
-            <XMarkIcon className="h-5 w-5" />
+          {isOpen ? (
+            <>
+              <ChevronLeftIcon className="h-5 w-5 hidden lg:flex" />
+              <XMarkIcon className="h-5 w-5 flex lg:hidden"/>
+            </>
           ) : (
             <Bars3Icon className="h-5 w-5" />
           )}
@@ -176,12 +229,13 @@ const Sidebar: React.FC = () => {
       </div>
 
       {/* User Info */}
-      {sidebarOpen && user && (
+      {isOpen && user && (
         <div className="p-4 border-b border-gray-700">
           <div className="flex items-center">
             <div className="h-10 w-10 bg-sky-600 rounded-full flex items-center justify-center">
               <span className="text-sm font-medium">
-                {user.firstName?.[0]}{user.lastName?.[0]}
+                {user.firstName?.[0]}
+                {user.lastName?.[0]}
               </span>
             </div>
             <div className="ml-3 flex-1 min-w-0">
@@ -189,7 +243,7 @@ const Sidebar: React.FC = () => {
                 {user.firstName} {user.lastName}
               </p>
               <p className="text-xs text-gray-400 truncate">
-                {user.roles?.[0]?.replace('_', ' ')}
+                {user.roles?.[0]?.replace("_", " ")}
               </p>
             </div>
           </div>
@@ -203,20 +257,22 @@ const Sidebar: React.FC = () => {
           return (
             <Link key={item.name} href={item.href}>
               <div
-                className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
+                className={`group flex items-center pl-3 pr-2 py-2 text-sm font-medium rounded-md transition-colors ${
                   isActive
-                    ? 'bg-gray-800 text-white'
-                    : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                    ? "bg-gray-800 text-white"
+                    : "text-gray-300 hover:bg-gray-700 hover:text-white"
                 }`}
               >
                 <item.icon
-                  className={`mr-3 flex-shrink-0 h-6 w-6 ${
-                    isActive ? 'text-white' : 'text-gray-400 group-hover:text-gray-300'
+                  className={`flex-shrink-0 h-6 w-6 ${
+                    isActive
+                      ? "text-white"
+                      : "text-gray-400 group-hover:text-gray-300"
                   }`}
                 />
-                {sidebarOpen && (
+                {isOpen && (
                   <>
-                    <span className="flex-1">{item.name}</span>
+                    <span className="flex-1 ml-3">{item.name}</span>
                     {item.badge && (
                       <span className="ml-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-600 text-white">
                         {item.badge}
@@ -239,24 +295,26 @@ const Sidebar: React.FC = () => {
               <div
                 className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
                   isActive
-                    ? 'bg-gray-800 text-white'
-                    : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                    ? "bg-gray-800 text-white"
+                    : "text-gray-300 hover:bg-gray-700 hover:text-white"
                 }`}
               >
                 <item.icon
                   className={`mr-3 flex-shrink-0 h-6 w-6 ${
-                    isActive ? 'text-white' : 'text-gray-400 group-hover:text-gray-300'
+                    isActive
+                      ? "text-white"
+                      : "text-gray-400 group-hover:text-gray-300"
                   }`}
                 />
-                {sidebarOpen && <span>{item.name}</span>}
+                {isOpen && <span>{item.name}</span>}
               </div>
             </Link>
           );
         })}
       </div>
 
-      {/* Version info */}
-      {sidebarOpen && (
+      {/* Version */}
+      {isOpen && (
         <div className="p-4 border-t border-gray-700 text-xs text-gray-500">
           Version 1.0.0
         </div>

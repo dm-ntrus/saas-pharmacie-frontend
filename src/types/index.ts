@@ -1,4 +1,6 @@
-// Types de base pour l'authentification
+// ============================================================================
+// AUTHENTICATION & USER MANAGEMENT
+// ============================================================================
 export enum UserRole {
   SUPER_ADMIN = 'super_admin',
   ADMIN = 'admin',
@@ -28,6 +30,9 @@ export interface User {
   updatedAt: string;
 }
 
+// ============================================================================
+// TENANT & SUBSCRIPTIONS
+// ============================================================================
 export interface Tenant {
   id: string;
   name: string;
@@ -41,6 +46,42 @@ export interface Tenant {
   updatedAt: string;
 }
 
+export interface SubscriptionPlan {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  currency: string;
+  interval: 'MONTHLY' | 'YEARLY';
+  features: string[];
+  maxUsers: number;
+  maxProducts: number;
+  storageLimit: number;
+  isActive: boolean;
+}
+
+export interface Subscription {
+  id: string;
+  tenantId: string;
+  planId: string;
+  plan?: SubscriptionPlan;
+  status: 'ACTIVE' | 'PAST_DUE' | 'CANCELED' | 'TRIAL';
+  currentPeriodStart: string;
+  currentPeriodEnd: string;
+  trialEnd?: string;
+  cancelAtPeriodEnd: boolean;
+  amount: number;
+  currency: string;
+  paymentMethod?: PaymentMethod;
+  lastPayment?: string;
+  nextPayment?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ============================================================================
+// PHARMACY CONFIG
+// ============================================================================
 export interface PharmacyConfig {
   id: string;
   tenantId: string;
@@ -58,26 +99,26 @@ export interface PharmacyConfig {
   updatedAt: string;
 }
 
-// Types pour l'inventaire
-export interface Product {
-  id: string;
-  name: string;
-  barcode?: string;
-  description?: string;
-  price: number;
-  cost: number;
-  quantity: number;
-  unit: string;
-  category: ProductCategory;
-  manufacturer: string;
-  expiryDate?: string;
-  batchNumber?: string;
-  prescriptionRequired: boolean;
-  isActive: boolean;
-  lowStockThreshold: number;
-  reorderLevel: number;
-  createdAt: string;
-  updatedAt: string;
+// ============================================================================
+// INVENTORY & PRODUCTS
+// ============================================================================
+export enum ProductType {
+  MEDICATION = 'MEDICATION',
+  OTC = 'OTC',
+  MEDICAL_DEVICE = 'MEDICAL_DEVICE',
+  SUPPLEMENT = 'SUPPLEMENT',
+}
+
+export enum ProductStatus {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  DISCONTINUED = 'DISCONTINUED',
+}
+
+export enum BatchStatus {
+  ACTIVE = 'ACTIVE',
+  EXPIRED = 'EXPIRED',
+  RECALLED = 'RECALLED',
 }
 
 export interface ProductCategory {
@@ -88,25 +129,182 @@ export interface ProductCategory {
   isActive: boolean;
 }
 
-// Types pour les patients
-export interface Patient {
+export interface ProductQueryDto {
+  search?: string;
+  status?: ProductStatus;
+  type?: ProductType;
+  manufacturer?: string;
+  page?: number;
+  limit?: number;
+}
+
+
+export interface CreateProductDto {
+  name: string;
+  sku: string;
+  barcode?: string;
+  description?: string;
+  manufacturer: string;
+  activeIngredient?: string;
+  strength: string;
+  dosageForm: string;
+  type: ProductType;
+  price: number;
+  costPrice: number;
+  requiresPrescription?: boolean;
+  minStockLevel?: number;
+  maxStockLevel?: number;
+  reorderPoint?: number;
+  shelfLocation?: string;
+}
+
+export interface Product extends CreateProductDto {
   id: string;
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;
-  gender: 'M' | 'F' | 'OTHER';
-  phone?: string;
-  email?: string;
-  address?: Address;
-  insuranceNumber?: string;
-  insuranceProvider?: string;
-  allergies: string[];
-  chronicConditions: string[];
-  emergencyContact?: EmergencyContact;
-  loyaltyPoints: number;
+  status: ProductStatus;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ProductBatchDto {
+  productId: string;
+  batchNumber: string;
+  manufactureDate: Date | string;
+  expirationDate: Date | string;
+  receivedDate: Date | string;
+  initialQuantity: number;
+  currentQuantity: number;
+  reservedQuantity?: number;
+  unitCost: number;
+  status: BatchStatus;
+  supplierName?: string;
+}
+
+export interface BatchQueryDto {
+  productId?: string;
+  status?: BatchStatus;
+  expiringDays?: number;
+  lowStock?: boolean;
+  page?: number;
+  limit?: number;
+}
+
+export interface AdjustBatchQuantityDto {
+  quantity: number;
+  reason: string;
+  userId: string;
+}
+
+// export interface InventoryAlert {
+//   id: string;
+//   type: string;
+//   severity: string;
+//   resolved: boolean;
+//   product?: Product;
+//   message: string;
+//   createdAt: Date;
+// }
+
+export enum InventoryLocationType {
+  SHELF = 'shelf',
+  REFRIGERATOR = 'refrigerator',
+  FREEZER = 'freezer',
+  COUNTER = 'counter',
+  WAREHOUSE = 'warehouse',
+}
+
+export enum AlertSeverity {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  CRITICAL = 'critical',
+}
+
+export enum AlertType {
+  LOW_STOCK = 'low_stock',
+  EXPIRING_SOON = 'expiring_soon',
+  EXPIRED = 'expired',
+  OVERSTOCK = 'overstock',
+  ABNORMAL_CONSUMPTION = 'abnormal_consumption',
+}
+
+export interface InventoryLocationDto {
+  name: string;
+  type: InventoryLocationType;
+  displayCategory?: string;
+  description?: string;
+}
+
+export interface InventoryLocation {
+  id: string;
+  name: string;
+  type: InventoryLocationType;
+  displayCategory?: string;
+  description?: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface InventoryAlert {
+  id: string;
+  type: AlertType;
+  severity: AlertSeverity;
+  title: string;
+  description: string;
+  productId?: string;
+  product?: Product;
+  batchNumber?: string;
+  acknowledged: boolean;
+  acknowledgedAt?: string;
+  acknowledgedBy?: string;
+  resolved: boolean;
+  resolvedAt?: string;
+  resolvedBy?: string;
+  snoozedUntil?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export enum DEASchedule {
+  SCHEDULE_I = "schedule_i",
+  SCHEDULE_II = "schedule_ii",
+  SCHEDULE_III = "schedule_iii",
+  SCHEDULE_IV = "schedule_iv",
+  SCHEDULE_V = "schedule_v",
+  UNSCHEDULED = "unscheduled",
+}
+
+export interface ControlledSubstanceLog {
+  id: string;
+  productId: string;
+  batchId: string;
+  action: string;
+  deaSchedule: DEASchedule;
+  quantity: number;
+  createdAt: string;
+  product?: Product;
+  batch?: ProductBatchDto;
+  user?: User;
+  patient?: Patient;
+  prescriber?: User;
+  witness?: User;
+  notes?: string;
+}
+
+// ============================================================================
+// PATIENTS
+// ============================================================================
+export enum Gender {
+  MALE = 'MALE',
+  FEMALE = 'FEMALE',
+  OTHER = 'OTHER',
+}
+
+export enum PatientStatus {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  DECEASED = 'DECEASED',
+  TRANSFERRED = 'TRANSFERRED',
 }
 
 export interface Address {
@@ -123,117 +321,213 @@ export interface EmergencyContact {
   relationship: string;
 }
 
-// Types pour les prescriptions
-export interface Prescription {
-  id: string;
-  patientId: string;
-  patient?: Patient;
-  doctorName: string;
-  doctorLicense: string;
-  prescriptionNumber: string;
-  dateIssued: string;
-  dateReceived: string;
-  status: 'PENDING' | 'PROCESSING' | 'READY' | 'DISPENSED' | 'CANCELED';
-  medications: PrescriptionMedication[];
-  notes?: string;
-  dispensedBy?: string;
-  dispensedAt?: string;
-  totalAmount: number;
-  insuranceCovered: number;
-  copayAmount: number;
-  createdAt: string;
-  updatedAt: string;
+export interface CreatePatientDto {
+  firstName: string;
+  lastName: string;
+  dateOfBirth: Date | string;
+  gender: Gender;
+  phone: string;
+  email?: string;
+  address: string;
+  emergencyContact?: string;
+  emergencyPhone?: string;
+  insuranceProvider?: string;
+  insuranceNumber?: string;
+  allergies?: string;
+  medicalConditions?: string;
+  currentMedications?: string;
 }
 
-export interface PrescriptionMedication {
+export interface Patient extends CreatePatientDto {
   id: string;
+  patientNumber: string;
+  status?: PatientStatus;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface PatientQueryDto {
+  search?: string;
+  page?: number;
+  limit?: number;
+}
+
+// ============================================================================
+// PRESCRIPTIONS
+// ============================================================================
+export enum PrescriptionStatus {
+  RECEIVED = 'RECEIVED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  READY = 'READY',
+  COMPLETED = 'COMPLETED',
+  ON_HOLD = 'ON_HOLD',
+  CANCELLED = 'CANCELLED',
+}
+
+export interface PrescriptionItemDto {
   productId: string;
-  product?: Product;
   quantity: number;
   dosage: string;
   frequency: string;
   duration: string;
-  instructions: string;
-  isGenericAllowed: boolean;
-  dispensedQuantity?: number;
+  instructions?: string;
 }
 
-// Types pour les transactions/facturation
-export interface Transaction {
-  id: string;
-  transactionNumber: string;
-  type: 'SALE' | 'RETURN' | 'ADJUSTMENT';
-  customerId?: string;
-  customer?: Patient;
-  prescriptionId?: string;
-  prescription?: Prescription;
-  items: TransactionItem[];
-  subtotal: number;
-  tax: number;
-  discount: number;
-  total: number;
-  amountPaid: number;
-  change: number;
-  paymentMethod: PaymentMethod;
-  status: 'PENDING' | 'COMPLETED' | 'CANCELED' | 'REFUNDED';
-  processedBy: string;
-  processedAt: string;
-  receiptNumber?: string;
+export interface CreatePrescriptionDto {
+  doctorName: string;
+  doctorLicense?: string;
+  doctorPhone?: string;
+  prescriptionDate: Date | string;
+  validUntil: Date | string;
+  items: PrescriptionItemDto[];
   notes?: string;
+}
+
+export interface DispensePrescriptionDto {
+  dispenserId: string;
+  items: Array<{
+    prescriptionItemId: string;
+    quantityDispensed: number;
+    batchNumber?: string;
+  }>;
+}
+
+export interface Prescription extends CreatePrescriptionDto {
+  id: string;
+  prescriptionNumber: string;
+  patientId: string;
+  status: PrescriptionStatus | string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// ============================================================================
+// SALES & TRANSACTIONS
+// ============================================================================
+export enum SaleStatus {
+  PENDING = 'PENDING',
+  PAID = 'PAID',
+  COMPLETED = 'COMPLETED',
+  REFUNDED = 'REFUNDED',
+  PARTIALLY_REFUNDED = 'PARTIALLY_REFUNDED',
+  CANCELLED = 'CANCELLED',
+}
+
+export enum PaymentMethod {
+  CASH = 'CASH',
+  CARD = 'CARD',
+  MOBILE_MONEY = 'MOBILE_MONEY',
+  INSURANCE = 'INSURANCE',
+  CREDIT = 'CREDIT',
+  CHECK = 'CHECK',
+}
+
+export interface SaleItemDto {
+  productId: string;
+  quantity: number;
+  unitPrice: number;
+  discountAmount?: number;
+  batchNumber?: string;
+}
+
+export interface CreateSaleDto {
+  patientId?: string;
+  cashierId: string;
+  items: SaleItemDto[];
+  paymentMethod: PaymentMethod;
+  amountPaid: number;
+  notes?: string;
+  prescriptionId?: string;
+}
+
+export interface UpdateSaleDto {
+  status?: SaleStatus;
+  notes?: string;
+}
+
+export interface SaleQueryDto {
+  search?: string;
+  page?: number;
+  limit?: number;
+  status?: SaleStatus;
+  paymentMethod?: PaymentMethod;
+  cashierId?: string;
+  patientId?: string;
+  startDate?: string;
+  endDate?: string;
+}
+
+export interface SalesReportQueryDto {
+  startDate: Date | string;
+  endDate: Date | string;
+  cashierId?: string;
+  productId?: string;
+  categoryId?: string;
+}
+
+export interface Sale {
+  id: string;
+  saleNumber: string;
+  patient?: any;
+  cashier: any;
+  status: SaleStatus;
+  subtotal: number;
+  taxAmount: number;
+  discountAmount: number;
+  totalAmount: number;
+  paymentMethod: PaymentMethod;
+  amountPaid: number;
+  changeGiven: number;
+  notes?: string;
+  items: SaleItemDto[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface RefundSaleDto {
+  reason: string;
+}
+
+export interface PartialRefundDto {
+  items: Array<{
+    itemId: string;
+    quantityReturned: number;
+    reason: string;
+  }>;
+}
+
+// ============================================================================
+// DELIVERY
+// ============================================================================
+export const DELIVERY_STATUSES = {
+  PENDING: 'En attente',
+  ASSIGNED: 'Assignée',
+  IN_TRANSIT: 'En route',
+  DELIVERED: 'Livrée',
+  CANCELED: 'Annulée',
+} as const;
+
+export interface Delivery {
+  id: string;
+  orderNumber: string;
+  customerId: string;
+  customer?: Patient;
+  deliveryAddress: Address;
+  items: SaleItemDto[];
+  status: keyof typeof DELIVERY_STATUSES;
+  assignedTo?: string;
+  deliveryFee: number;
+  estimatedDelivery: string;
+  actualDelivery?: string;
+  notes?: string;
+  trackingNumber?: string;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface TransactionItem {
-  id: string;
-  productId: string;
-  product?: Product;
-  quantity: number;
-  unitPrice: number;
-  discount: number;
-  total: number;
-  taxRate: number;
-  batchNumber?: string;
-  expiryDate?: string;
-}
-
-export interface PaymentMethod {
-  type: 'CASH' | 'CARD' | 'MOBILE_MONEY' | 'INSURANCE' | 'CREDIT' | 'CHECK';
-  provider?: string;
-  reference?: string;
-  cardLastFour?: string;
-}
-
-// Types pour les notifications
-export interface Notification {
-  id: string;
-  type: 'info' | 'warning' | 'error' | 'success';
-  title: string;
-  message: string;
-  timestamp: string;
-  read: boolean;
-  userId?: string;
-  data?: Record<string, any>;
-}
-
-// Types pour les rapports
-export interface ReportConfig {
-  id: string;
-  name: string;
-  type: string;
-  parameters: Record<string, any>;
-  schedule?: ReportSchedule;
-  isActive: boolean;
-}
-
-export interface ReportSchedule {
-  frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'QUARTERLY' | 'YEARLY';
-  dayOfWeek?: number;
-  dayOfMonth?: number;
-  time: string;
-}
-
-// Types pour les employés/RH
+// ============================================================================
+// HR & EMPLOYEES
+// ============================================================================
 export interface Employee {
   id: string;
   userId: string;
@@ -252,32 +546,116 @@ export interface Employee {
 }
 
 export interface WorkSchedule {
-  dayOfWeek: number; // 0 = Dimanche, 1 = Lundi, etc.
+  dayOfWeek: number; // 0 = Sunday, 1 = Monday...
   startTime: string;
   endTime: string;
   isWorkDay: boolean;
 }
 
-// Types pour les livraisons
-export interface Delivery {
-  id: string;
-  orderNumber: string;
-  customerId: string;
-  customer?: Patient;
-  deliveryAddress: Address;
-  items: TransactionItem[];
-  status: 'PENDING' | 'ASSIGNED' | 'IN_TRANSIT' | 'DELIVERED' | 'CANCELED';
-  assignedTo?: string;
-  deliveryFee: number;
-  estimatedDelivery: string;
-  actualDelivery?: string;
-  notes?: string;
-  trackingNumber?: string;
-  createdAt: string;
-  updatedAt: string;
+// ============================================================================
+// ACCOUNTING
+// ============================================================================
+export interface CreateAccountDto {
+  accountCode: string;
+  accountName: string;
+  accountType: string;
+  normalBalance: string;
 }
 
-// Types pour les analyses et métriques
+export interface CreateTransactionDto {
+  accountId?: string;
+  debit?: string;
+  credit?: string;
+  description: string;
+  date: Date | string;
+}
+
+export interface CreateInvoiceDto {
+  customerId: string;
+  invoiceNumber: string;
+  invoiceDate: Date | string;
+  dueDate: Date | string;
+  items: Array<{
+    description: string;
+    quantity: number;
+    unitPrice: number;
+    amount: number;
+  }>;
+  subtotal: number;
+  taxAmount: number;
+  totalAmount: number;
+}
+
+export interface CreateExpenseDto {
+  accountId: number;
+  amount: number;
+  description: string;
+  expenseDate: Date | string;
+  category: string;
+  approvedBy?: string;
+}
+
+// ============================================================================
+// NOTIFICATIONS & UI
+// ============================================================================
+export interface Notification {
+  id: string;
+  type: 'info' | 'warning' | 'error' | 'success';
+  title: string;
+  message: string;
+  timestamp: string;
+  read: boolean;
+  userId?: string;
+  data?: Record<string, any>;
+}
+
+export interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  title?: string;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+}
+
+export interface TableColumn<T = any> {
+  key: string;
+  title: string;
+  dataIndex?: keyof T;
+  render?: (value: any, record: T, index: number) => React.ReactNode;
+  sortable?: boolean;
+  filterable?: boolean;
+  width?: number | string;
+  align?: 'left' | 'center' | 'right';
+}
+
+export interface FormOption {
+  value: string;
+  label: string;
+  disabled?: boolean;
+}
+
+export interface SelectOption extends FormOption {}
+
+// ============================================================================
+// ANALYTICS
+// ============================================================================
+export interface DashboardStats {
+  totalSales: number;
+  totalRevenue: number;
+  totalPatients: number;
+  lowStockProducts: number;
+  expiringProducts: number;
+  pendingPrescriptions: number;
+}
+
+export interface SalesAnalytics {
+  period: string;
+  totalSales: number;
+  totalRevenue: number;
+  averageTransactionValue: number;
+  salesByDay: Array<{ date: string; sales: number; revenue: number }>;
+  topProducts: Array<{ productId: string; name: string; quantity: number; revenue: number }>;
+}
+
 export interface DashboardMetrics {
   todaySales: {
     count: number;
@@ -305,41 +683,9 @@ export interface Activity {
   metadata?: Record<string, any>;
 }
 
-// Types pour l'abonnement
-export interface Subscription {
-  id: string;
-  tenantId: string;
-  planId: string;
-  plan?: SubscriptionPlan;
-  status: 'ACTIVE' | 'PAST_DUE' | 'CANCELED' | 'TRIAL';
-  currentPeriodStart: string;
-  currentPeriodEnd: string;
-  trialEnd?: string;
-  cancelAtPeriodEnd: boolean;
-  amount: number;
-  currency: string;
-  paymentMethod?: PaymentMethod;
-  lastPayment?: string;
-  nextPayment?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface SubscriptionPlan {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  currency: string;
-  interval: 'MONTHLY' | 'YEARLY';
-  features: string[];
-  maxUsers: number;
-  maxProducts: number;
-  storageLimit: number;
-  isActive: boolean;
-}
-
-// Types utilitaires
+// ============================================================================
+// UTILS
+// ============================================================================
 export interface PaginatedResponse<T> {
   data: T[];
   total: number;
@@ -353,115 +699,4 @@ export interface ApiResponse<T = any> {
   data?: T;
   message?: string;
   errors?: Record<string, string[]>;
-}
-
-// Types pour les formulaires
-export interface FormOption {
-  value: string;
-  label: string;
-  disabled?: boolean;
-}
-
-export interface SelectOption extends FormOption {}
-
-// Types pour les modals et UI
-export interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  title?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
-}
-
-export interface TableColumn<T = any> {
-  key: string;
-  title: string;
-  dataIndex?: keyof T;
-  render?: (value: any, record: T, index: number) => React.ReactNode;
-  sortable?: boolean;
-  filterable?: boolean;
-  width?: number | string;
-  align?: 'left' | 'center' | 'right';
-}
-
-// Types pour les permissions
-export interface Permission {
-  id: string;
-  name: string;
-  resource: string;
-  action: string;
-  description: string;
-}
-
-export interface Role {
-  id: string;
-  name: string;
-  description: string;
-  permissions: Permission[];
-  isSystemRole: boolean;
-}
-
-// Constantes pour les statuts
-export const PRESCRIPTION_STATUSES = {
-  PENDING: 'En attente',
-  PROCESSING: 'En cours de traitement',
-  READY: 'Prête',
-  DISPENSED: 'Dispensée',
-  CANCELED: 'Annulée',
-} as const;
-
-export const TRANSACTION_STATUSES = {
-  PENDING: 'En attente',
-  COMPLETED: 'Terminée',
-  CANCELED: 'Annulée',
-  REFUNDED: 'Remboursée',
-} as const;
-
-export const DELIVERY_STATUSES = {
-  PENDING: 'En attente',
-  ASSIGNED: 'Assignée',
-  IN_TRANSIT: 'En route',
-  DELIVERED: 'Livrée',
-  CANCELED: 'Annulée',
-} as const;
-
-// Enums manquants pour l'app
-export enum ProductCategory {
-  PRESCRIPTION = 'PRESCRIPTION',
-  OTC = 'OTC',
-  SUPPLEMENT = 'SUPPLEMENT',
-  MEDICAL_DEVICE = 'MEDICAL_DEVICE',
-  COSMETIC = 'COSMETIC',
-  PERSONAL_CARE = 'PERSONAL_CARE',
-}
-
-export enum PatientStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  DECEASED = 'DECEASED',
-  TRANSFERRED = 'TRANSFERRED',
-}
-
-export enum PrescriptionStatus {
-  RECEIVED = 'RECEIVED',
-  IN_PROGRESS = 'IN_PROGRESS',
-  READY = 'READY',
-  COMPLETED = 'COMPLETED',
-  ON_HOLD = 'ON_HOLD',
-  CANCELLED = 'CANCELLED',
-}
-
-export enum SaleStatus {
-  COMPLETED = 'COMPLETED',
-  REFUNDED = 'REFUNDED',
-  PARTIALLY_REFUNDED = 'PARTIALLY_REFUNDED',
-  CANCELLED = 'CANCELLED',
-}
-
-export enum PaymentMethod {
-  CASH = 'CASH',
-  CARD = 'CARD',
-  MOBILE_MONEY = 'MOBILE_MONEY',
-  INSURANCE = 'INSURANCE',
-  CREDIT = 'CREDIT',
-  CHECK = 'CHECK',
 }

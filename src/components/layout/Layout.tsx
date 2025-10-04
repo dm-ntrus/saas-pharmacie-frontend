@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { useAuth } from "@/hooks/useAuth";
+import { useAppStore } from "@/store/appStore";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
 import { Loader } from "@/design-system";
@@ -28,8 +29,24 @@ const Layout: React.FC<LayoutProps> = ({
 }) => {
   const router = useRouter();
   const { user, isAuthenticated, loading, hasAnyRole } = useAuth();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const {sidebarOpen, setSidebarOpen} = useAppStore();
   const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 1024;
+      setIsMobile(mobile);
+      if (mobile) {
+        setSidebarOpen(false);
+      }
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   // Initialiser la navigation clavier
   useKeyboardNavigation();
@@ -89,6 +106,16 @@ const Layout: React.FC<LayoutProps> = ({
 
   const isPublicPage = !requireAuth;
 
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  const closeSidebar = () => {
+    if (isMobile) {
+      setSidebarOpen(false);
+    }
+  };
+
   return (
     <>
       <Head>
@@ -105,7 +132,7 @@ const Layout: React.FC<LayoutProps> = ({
 
       <div className="min-h-screen bg-gray-50">
         {/* Skip links pour la navigation clavier */}
-        <SkipLinks />
+        {/* <SkipLinks /> */}
         {isPublicPage ? (
           // Layout pour les pages publiques
           <div>
@@ -116,41 +143,38 @@ const Layout: React.FC<LayoutProps> = ({
         ) : (
           // Layout pour les pages privées avec sidebar
           <div className="flex h-screen">
-            {showSidebar && (
-              <>
-                {/* Sidebar pour desktop */}
-                <div
-                  className={`hidden lg:flex lg:flex-shrink-0 transition-all duration-300 ${
-                    sidebarOpen ? "lg:w-64" : "lg:w-16"
-                  }`}
-                >
-                  <Sidebar />
-                </div>
+            {/* Sidebar for Desktop - Fixed width transition */}
+            <aside
+              className={`hidden lg:block bg-gray-900 transition-all duration-300 ease-in-out ${
+                sidebarOpen ? "w-64" : "w-[4.5rem]"
+              }`}
+            >
+              <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
+            </aside>
 
-                {/* Overlay pour mobile */}
-                {sidebarOpen && (
-                  <div
-                    className="fixed inset-0 flex z-40 lg:hidden"
-                    onClick={() => setSidebarOpen(false)}
-                  >
-                    <div className="fixed inset-0 bg-gray-600/75" />
-                    <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white">
-                      <Sidebar />
-                    </div>
-                  </div>
-                )}
+            {/* Mobile Sidebar - Overlay */}
+            {isMobile && sidebarOpen && (
+              <>
+                {/* Backdrop */}
+                <div
+                  className="fixed inset-0 bg-gray-900/50 z-40 lg:hidden"
+                  onClick={closeSidebar}
+                />
+
+                {/* Sidebar */}
+                <aside className="fixed inset-y-0 left-0 w-64 z-50 lg:hidden">
+                  <Sidebar isOpen={true} onClose={closeSidebar} />
+                </aside>
               </>
             )}
 
             {/* Contenu principal */}
             <div className="flex flex-col flex-1 overflow-hidden">
-              <TopBar />
+              <TopBar onMenuClick={toggleSidebar} sidebarOpen={sidebarOpen} />
 
               <main className="flex-1 overflow-y-auto">
                 <div className="py-6">
-                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    {children}
-                  </div>
+                  <div className="mx-auto px-4 sm:px-6">{children}</div>
                 </div>
               </main>
             </div>
