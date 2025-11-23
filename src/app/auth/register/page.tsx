@@ -628,9 +628,9 @@ const RegisterPage = () => {
                 key={step.step}
                 className={`flex items-center gap-4 p-4 rounded-2xl transition-all duration-300 ${
                   step.step === currentStep
-                    ? "bg-gradient-to-r from-sky-600/90 via-sky-600/90 to-cyan-600/90 text-white shadow-xl scale-105"
+                    ? "bg-gradient-to-r from-sky-600/90 via-sky-600/90 to-cyan-600/90 text-white scale-105"
                     : step.step < currentStep
-                    ? "bg-gradient-to-r from-sky-700 via-sky-700 to-cyan-700 text-white shadow-lg"
+                    ? "bg-gradient-to-r from-sky-700 via-sky-700 to-cyan-700 text-white"
                     : "bg-gray-100 text-gray-600 border border-gray-200/70"
                 }`}
               >
