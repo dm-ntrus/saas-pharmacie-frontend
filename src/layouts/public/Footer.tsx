@@ -13,6 +13,7 @@ import {
   TruckIcon,
   CheckCircleIcon,
 } from "@heroicons/react/24/outline";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -21,10 +22,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div>
             <div className="flex items-center mb-4">
-              <div className="h-8 w-8 bg-sky-600 rounded-lg flex items-center justify-center mr-3">
-                <HeartIcon className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-xl font-bold">PharmacySaaS</span>
+              <Image src="/images/medpharma.png" width="250" height="70" alt="MEDPharma"/>
             </div>
             <p className="text-gray-400">
               La solution de gestion moderne pour les pharmacies africaines.

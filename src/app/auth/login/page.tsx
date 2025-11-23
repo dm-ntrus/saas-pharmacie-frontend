@@ -11,6 +11,7 @@ import {
 import { Button } from "@/design-system";
 import { useAuth } from "@/context/AuthContext";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -75,12 +76,11 @@ const LoginPage = () => {
           {/* Panel gauche - Formulaire */}
           <div className="w-full h-full  flex-1 flex flex-col justify-center py-12 px-6 lg:flex-none lg:px-20 xl:px-24 bg-white/95 backdrop-blur-xl">
             <div className="mx-auto w-full max-w-sm lg:w-96">
-              <div className="text-center">
+              <div className="flex flex-col items-center text-center w-full">
                 <Link
                   href="/"
-                  className="text-3xl font-bold text-sky-600 mb-2 block"
                 >
-                  MEDPharma
+                  <Image src="/images/medpharma.png" width="300" height="100" alt="MEDPharma"/>
                 </Link>
                 <p className="text-gray-500 mb-6">
                   Connectez-vous
@@ -207,7 +207,7 @@ const LoginPage = () => {
           <div className="hidden lg:flex relative flex-1 w-full h-full flex-col justify-center py-12 px-6 lg:flex-none lg:px-20 xl:px-24">
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
-                <h1 className="text-4xl font-bold">MEDPharma</h1>
+                <Image src="/images/medpharma.png" width="300" height="100" alt="MEDPharma"/>
               </div>
               <p className="text-xl text-sky-200 leading-relaxed">
                 La solution complète pour la gestion moderne de votre pharmacie

@@ -1,6 +1,5 @@
 "use client"
 import React, { useState } from "react";
-import Head from "next/head";
 import Link from "next/link";
 import {
   EnvelopeIcon,
@@ -13,6 +12,7 @@ import {
   LockClosedIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "@/design-system";
+import Image from "next/image";
 
 type Step = "email" | "otp" | "password" | "success";
 
@@ -210,19 +210,11 @@ const ForgotPasswordPage = () => {
 
   return (
     <>
-      <Head>
-        <title>Réinitialisation Mot de Passe - NakiCode PharmaSaaS</title>
-        <meta
-          name="description"
-          content="Réinitialisez votre mot de passe NakiCode PharmaSaaS en quelques étapes."
-        />
-      </Head>
-
-      <div className="min-h-screen flex justify-center items-center relative overflow-hidden px-2 sm:px-0">
-
-        <div className="max-w-md w-full py-6 z-10 px-6 rounded-2xl bg-white/95 backdrop-blur-xl shadow-2xl">
+      <div className="min-h-screen flex flex-col justify-center items-center relative overflow-hidden px-2 sm:px-0">
+<Image src="/images/medpharma.png" width="300" height="100" alt="MEDPharma"/>
+        <div className="max-w-md w-full p-8 z-10 rounded-2xl bg-white/95 backdrop-blur-xl shadow-2xl">
           <div className="text-center">
-            {getStepIcon()}
+            {/* {getStepIcon()} */}
             <h2 className="text-xl md:text-2xl font-bold text-sky-600 mb-1">
               {getStepTitle()}
             </h2>
@@ -232,7 +224,7 @@ const ForgotPasswordPage = () => {
           </div>
 
           {/* Progress indicator */}
-          <div className="flex justify-center mb-6">
+          <div className="flex justify-center mb-2">
             <div className="flex space-x-2">
               <div
                 className={`w-3 h-3 rounded-full ${
@@ -269,7 +261,7 @@ const ForgotPasswordPage = () => {
           {/* Step 1: Email Form */}
           {currentStep === "email" && (
             <form
-              className="space-y-4 px-2 py-6  border-b border-gray-200"
+              className="space-y-4 px-2 py-4  border-b border-gray-200"
               onSubmit={handleEmailSubmit}
             >
               <div>
@@ -330,7 +322,7 @@ const ForgotPasswordPage = () => {
           {/* Step 2: OTP Form */}
           {currentStep === "otp" && (
             <form
-              className="space-y-4 px-2 py-6"
+              className="space-y-4 px-2 py-4"
               onSubmit={handleOtpSubmit}
             >
               <div>
@@ -404,7 +396,7 @@ const ForgotPasswordPage = () => {
           {/* Step 3: Password Form */}
           {currentStep === "password" && (
             <form
-              className="space-y-4 px-2 py-6"
+              className="space-y-4 px-2 py-4"
               onSubmit={handlePasswordSubmit}
             >
               <div>

@@ -12,6 +12,7 @@ import {
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "@/design-system";
+import Image from "next/image";
 
 const RegisterPage = () => {
   const router = useRouter();
@@ -612,12 +613,11 @@ const RegisterPage = () => {
     <>
       <div className="min-h-screen h-full flex items-center relative overflow-hidden">
         <div className="hidden lg:flex flex-col h-full bg-white/95 p-6 w-[22rem]">
-          <div className="text-center mb-4">
+          <div className="flex flex-col items-center text-center w-full mb-4">
             <Link
               href="/"
-              className="text-3xl font-bold text-sky-600 mb-0 block"
             >
-              MEDPharma
+              <Image src="/images/medpharma.png" width="250" height="100" alt="MEDPharma"/>
             </Link>
             <p className="text-gray-500 mb-4">Inscrivez-vous</p>
           </div>
@@ -672,9 +672,9 @@ const RegisterPage = () => {
           </div>
         </div>
         <div className="flex-1 flex flex-col w-full h-full z-10 mx-auto p-4 sm:p-12">
-          <div className="block lg:hidden text-center mb-4">
-            <Link href="/" className="text-3xl font-bold text-white mb-0 block">
-              MEDPharma
+          <div className="flex flex-col items-center lg:hidden text-center mb-4">
+            <Link href="/">
+              <Image src="/images/medpharma.png" width="300" height="100" alt="MEDPharma"/>
             </Link>
             <p className="text-white/70 mb-4">Inscrivez-vous</p>
           </div>

@@ -14,6 +14,7 @@ import {
   CheckCircleIcon,
 } from "@heroicons/react/24/outline";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 export default function Header() {
   const pathname = usePathname();
@@ -33,15 +34,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           <Link href="/" className="flex items-center">
-            <div className="h-10 w-10 bg-gradient-to-br from-sky-600 to-sky-700 rounded-xl flex items-center justify-center mr-3 shadow-lg">
-              <HeartIcon className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <span className="text-xl font-bold text-gray-900">NakiCode</span>
-              <span className="text-sm text-sky-600 block leading-none">
-                PharmacySaaS
-              </span>
-            </div>
+            <Image src="/images/medpharma.png" width="150" height="70" alt="MEDPharma"/>
           </Link>
 
           <nav className="hidden md:flex items-center space-x-8">
