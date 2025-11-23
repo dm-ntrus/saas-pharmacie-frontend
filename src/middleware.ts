@@ -1,81 +1,146 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
+import { JWTPayload } from "./types/types";
 
-// Liste des routes à protéger (regex)
 const protectedRoutes = [
-  /^\/dashboard(\/.*)?$/,
-  /^\/patients(\/.*)?$/,
-  /^\/prescriptions(\/.*)?$/,
-  /^\/inventory(\/.*)?$/,
-  /^\/sales(\/.*)?$/,
-  /^\/reports(\/.*)?$/,
-  /^\/modules(\/.*)?$/,
-  /^\/tenant\/[^/]+\/dashboard(\/.*)?$/,
+  /^\/tenant(\/.*)?$/,
+  /^\/admin(\/.*)?$/,
+  // autres routes protégées...
 ];
 
-// Mapping des routes nécessitant un rôle spécifique
-const roleProtectedRoutes = [
-  { regex: /^\/modules\/settings(\/.*)?$/, allowedRoles: ['ADMIN'] },
-  { regex: /^\/reports(\/.*)?$/, allowedRoles: ['ADMIN', 'PHARMACIST'] },
-  { regex: /^\/modules\/accounting(\/.*)?$/, allowedRoles: ['ADMIN', 'PHARMACIST'] },
-  // Ajoute d'autres routes/rôles ici si besoin
+const publicRoutes = [
+  "/auth/login",
+  "/auth/forgot-password",
+  /^\/tenant\/[^/]+\/auth\/login$/,
+  /^\/tenant\/[^/]+\/auth\/forgot-password$/,
+  "/auth/register",
+  "/unauthorized",
+  "/favicon.ico",
+  "/",
+];
+
+const roleProtectedRoutes: { regex: RegExp; allowedRoles: string[] }[] = [
+  { regex: /^\/admin(\/.*)?$/, allowedRoles: ["SUPER_ADMIN"] },
+  {
+    regex: /^\/tenant\/[^/]+\/accounting(\/.*)?$/,
+    allowedRoles: ["SUPER_ADMIN", "TENANT_ADMIN", "ACCOUNTANT"],
+  },
 ];
 
 // Décodage JWT (sans vérification de signature, juste le payload)
-function decodeJwt(token: string) {
+function safeDecodeJwt(token?: string): JWTPayload | null {
+  if (!token) return null;
   try {
-    const payload = token.split('.')[1];
-    const decoded = Buffer.from(payload, 'base64').toString('utf-8');
-    return JSON.parse(decoded);
+    const payload = token.split(".")[1];
+    return JSON.parse(Buffer.from(payload, "base64").toString("utf-8"));
   } catch {
     return null;
   }
 }
 
-export function middleware(request: NextRequest) {
-  const url = request.nextUrl.clone();
-  const { pathname } = url;
-  const hostname = request.headers.get('host') || '';
+export function middleware(req: NextRequest) {
+  const url = req.nextUrl.clone();
+  const host = req.headers.get("host") || "";
+  const pathname = url.pathname;
 
-  // Multi-tenancy (conserve la logique existante)
+  if (
+    publicRoutes.some((r) =>
+      typeof r === "string" ? r === pathname : r.test(pathname)
+    )
+  ) {
+    return NextResponse.next();
+  }
+
+  // Subdomain -> rewrite to /tenant/[slug] if not main domain
   const mainDomains = [
-    'localhost:5000',
-    '127.0.0.1:5000',
-    'nakicodepharmaciesaas.com',
-    'www.nakicodepharmaciesaas.com'
+    "localhost:3000",
+    "127.0.0.1:3000",
+    "yourapp.com",
+    "www.yourapp.com",
   ];
-  const isReplitDomain = hostname.includes('replit.dev') || hostname.includes('replit.app');
-  const isMainDomain = mainDomains.some(domain => hostname === domain) || isReplitDomain;
-  if (!isMainDomain && hostname.includes('.') && !hostname.startsWith('www.')) {
-    const parts = hostname.split('.');
-    if (parts.length >= 3) {
-      const subdomain = parts[0];
-      const systemSubdomains = ['api', 'admin', 'mail', 'ftp', 'cdn'];
-      if (!systemSubdomains.includes(subdomain)) {
-        url.pathname = `/tenant/${subdomain}${url.pathname}`;
+  const isMain = mainDomains.includes(host);
+  const isReplit = host.includes("replit.app") || host.includes("replit.dev");
+
+  if (!isMain && !isReplit && host.includes(".") && !host.startsWith("www.")) {
+    const parts = host.split(".");
+    const sub = parts[0];
+    const systemSubdomains = ["api", "admin", "mail", "cdn"];
+    if (!systemSubdomains.includes(sub)) {
+      // Avoid rewrite loop
+      if (!pathname.startsWith(`/tenant/${sub}`)) {
+        url.pathname = `/tenant/${sub}${pathname}`;
         return NextResponse.rewrite(url);
       }
     }
   }
 
-  // Protection des routes sensibles
-  const isProtected = protectedRoutes.some((regex) => regex.test(pathname));
-  if (isProtected) {
-    // Vérifie le token d'accès dans le header Authorization ou cookie
-    const authHeader = request.headers.get('authorization');
-    // const accessToken = authHeader?.replace('Bearer ', '') || request.cookies.get('auth_token')?.value;
-    const accessToken = "iuytyuioilkjhguyij";
-    if (!accessToken) {
-      url.pathname = '/login';
+  // Protect routes: ensure token exists and role allowed
+  const matchesProtected = protectedRoutes.some((r) => r.test(pathname));
+  if (matchesProtected) {
+    const authHeader = req.headers.get("authorization") || "";
+    const cookieToken = req.cookies.get("access_token")?.value;
+    const token = authHeader.replace("Bearer ", "") || cookieToken;
+
+    if (!token) {
+      if (pathname.startsWith("/tenant")) {
+        // Récupère le tenantSlug depuis le pathname (/tenant/:slug/...)
+        const pathParts = pathname.split("/");
+        const tenantSlug = pathParts[2] || "default"; // fallback si absent
+        url.pathname = `/tenant/${tenantSlug}/auth/login`;
+      } else {
+        url.pathname = "/auth/login";
+        url.searchParams.set("redirect", pathname);
+      }
+
       return NextResponse.redirect(url);
     }
-    // Vérification du rôle si la route l'exige
-    const roleRoute = roleProtectedRoutes.find(r => r.regex.test(pathname));
+
+    const payload = safeDecodeJwt(token);
+
+    // Récupère l'admin
+    const isAdmin = payload?.realm_access?.roles?.some(
+      (r) => r.toLowerCase() === "system_admin"
+    );
+
+    // Récupère le tenant slug depuis la première organisation
+    const tenantSlug =
+      payload?.organizations?.[0]?.attributes?.subdomain?.[0] ||
+      payload?.tenant_id ||
+      "";
+
+    // Récupère tous les rôles (realm + organization)
+    const userRoles: string[] = [
+      ...(payload?.realm_access?.roles || []),
+      ...(payload?.roles || []),
+      ...(payload?.organizations?.[0]?.roles || []),
+    ].map((r) => r.toUpperCase());
+
+    // const primaryRole = userRoles[0] || "";
+
+    // (1) Admin ne peut pas accéder à /tenant
+    if (pathname.startsWith("/tenant") && isAdmin) {
+      return NextResponse.redirect(new URL("/admin", req.url));
+    }
+
+    // (2) Tenant user ne peut pas accéder à /admin
+    if (pathname.startsWith("/admin") && !isAdmin) {
+      return NextResponse.redirect(new URL(`/tenant/${tenantSlug}`, req.url));
+    }
+
+    // const roleRoute = roleProtectedRoutes.find((r) => r.regex.test(pathname));
+    // if (
+    //   roleRoute &&
+    //   !roleRoute.allowedRoles.map((r) => r.toUpperCase()).includes(primaryRole)
+    // ) {
+    //   url.pathname = "/unauthorized";
+    //   return NextResponse.redirect(url);
+    // }
+
+    const roleRoute = roleProtectedRoutes.find((r) => r.regex.test(pathname));
     if (roleRoute) {
-      const payload = decodeJwt(accessToken);
-      // const userRole = payload?.role || payload?.roles?.[0];
-      const userRole = 'admin';
-      if (!userRole || !roleRoute.allowedRoles.includes(userRole.toUpperCase())) {
-        url.pathname = '/unauthorized';
+      const allowed = roleRoute.allowedRoles.map((r) => r.toUpperCase());
+      const hasRole = userRoles.some((r) => allowed.includes(r));
+      if (!hasRole) {
+        url.pathname = "/unauthorized";
         return NextResponse.redirect(url);
       }
     }
@@ -86,7 +151,8 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // On match toutes les routes, la logique interne filtre ce qui est protégé
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    "/tenant/:path*",
+    "/admin/:path*",
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
   ],
 };

@@ -1,3 +1,42 @@
+export const PERMISSIONS = {
+  // Permissions de base
+  read: 'Lecture des données',
+  write: 'Création/Modification des données',
+  delete: 'Suppression des données',
+  
+  // Permissions métier
+  manage_users: 'Gestion des utilisateurs',
+  manage_settings: 'Gestion des paramètres',
+  manage_inventory: 'Gestion de l\'inventaire',
+  manage_suppliers: 'Gestion des fournisseurs',
+  process_sales: 'Traitement des ventes',
+  manage_payments: 'Gestion des paiements',
+  manage_prescriptions: 'Gestion des prescriptions',
+  manage_patients: 'Gestion des patients',
+  view_reports: 'Consultation des rapports',
+  manage_billing: 'Gestion de la facturation',
+  manage_integrations: 'Gestion des intégrations'
+};
+
+export const KEYCLOAK_CONFIG = {
+  url: 'https://keycloak.yourdomain.com',
+  realm: 'pharma-saas',
+  clientId: 'frontend-app', // Client public pour le frontend
+  
+  endpoints: {
+    token: '/realms/pharma-saas/protocol/openid-connect/token',
+    userInfo: '/realms/pharma-saas/protocol/openid-connect/userinfo',
+    logout: '/realms/pharma-saas/protocol/openid-connect/logout',
+    register: '/realms/pharma-saas/protocol/openid-connect/registrations',
+  }
+};
+
+
+
+
+
+
+
 // Constantes de l'application
 export const APP_CONFIG = {
   name: 'PharmacySaaS',
