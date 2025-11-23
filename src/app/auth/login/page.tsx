@@ -1,18 +1,16 @@
 "use client";
 import React, { useState } from "react";
-import Head from "next/head";
 import Link from "next/link";
 import {
   EyeIcon,
   EyeSlashIcon,
   LockClosedIcon,
   EnvelopeIcon,
-  UserIcon,
-  BuildingStorefrontIcon,
   CheckCircleIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "@/design-system";
 import { useAuth } from "@/context/AuthContext";
+import toast from "react-hot-toast";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -22,14 +20,12 @@ const LoginPage = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError("");
 
     try {
       if (
@@ -57,7 +53,9 @@ const LoginPage = () => {
         throw new Error("Identifiants incorrects");
       }
     } catch (err) {
-      setError("Email ou mot de passe incorrect");
+      toast.error(
+        err?.response?.data?.message || "Email ou mot de passe incorrect"
+      );
       setIsLoading(false);
     }
   };
@@ -70,41 +68,8 @@ const LoginPage = () => {
     }));
   };
 
-  const demoCredentials = [
-    {
-      role: "Pharmacien Titulaire",
-      email: "pharmacien@demo.cd",
-      password: "demo123",
-      description: "Accès complet à tous les modules",
-    },
-    {
-      role: "Caissier",
-      email: "caissier@demo.cd",
-      password: "demo123",
-      description: "Point de vente et gestion clients",
-    },
-    {
-      role: "Technicien",
-      email: "technicien@demo.cd",
-      password: "demo123",
-      description: "Inventaire et approvisionnement",
-    },
-  ];
-
   return (
     <>
-      <Head>
-        <title>Connexion - NakiCode PharmaSaaS</title>
-        <meta
-          name="description"
-          content="Connectez-vous à votre tableau de bord NakiCode PharmaSaaS ou essayez notre démo gratuite."
-        />
-        <meta
-          name="keywords"
-          content="connexion, login, démo, tableau de bord, pharmacie"
-        />
-      </Head>
-
       <div className="flex justify-center items-center relative overflow-hidden p-0 w-full h-full">
         <div className="grid grid-cols-1 md:grid-cols-2 rounded-2xl z-50 w-full h-full">
           {/* Panel gauche - Formulaire */}
@@ -121,12 +86,6 @@ const LoginPage = () => {
                   Connectez-vous
                 </p>
               </div>
-
-              {error && (
-                <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
-                  <p className="text-sm text-red-700">{error}</p>
-                </div>
-              )}
 
               <form className="space-y-5" onSubmit={handleSubmit}>
                 <div>

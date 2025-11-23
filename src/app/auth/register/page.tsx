@@ -1,6 +1,6 @@
 "use client";
+
 import React, { useState } from "react";
-import Head from "next/head";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -185,136 +185,36 @@ const RegisterPage = () => {
     }));
   };
 
-  const renderStepIndicator = () => {
-    const steps = [
-      {
-        step: 1,
-        title: "Choisissez Votre Plan",
-        description: "Sélectionnez l'offre qui correspond à vos besoins",
-      },
-      {
-        step: 2,
-        title: "Créez Votre Compte",
-        description: "Vos informations personnelles",
-      },
-      {
-        step: 3,
-        title: "Informations Pharmacie",
-        description: "Détails de votre établissement",
-      },
-      {
-        step: 4,
-        title: "Finaliser l'Inscription",
-        description: "Choisissez votre méthode de paiement",
-      },
-    ];
-
-    const getStepClasses = (stepNumber: number) => {
-      const baseClasses =
-        "relative flex items-center gap-2 px-2 py-2 flex-1 transition-all duration-300";
-
-      if (stepNumber === currentStep) {
-        return `${baseClasses} bg-sky-600 text-white rounded-2xl shadow-md`;
-      } else if (stepNumber < currentStep) {
-        return `${baseClasses} bg-gradient-to-r from-green-500 to-green-600 text-white rounded-2xl shadow-sm`;
-      } else {
-        return `${baseClasses} bg-gray-100 text-gray-500 rounded-2xl`;
-      }
-    };
-
-    const getIconClasses = (stepNumber: number) => {
-      const baseClasses =
-        "flex items-center justify-center w-12 h-12 rounded-full font-semibold text-sm transition-all duration-300";
-
-      if (stepNumber === currentStep) {
-        return `${baseClasses} bg-white text-sky-600 shadow-md`;
-      } else if (stepNumber < currentStep) {
-        return `${baseClasses} bg-white text-green-600 shadow-sm`;
-      } else {
-        return `${baseClasses} bg-white text-gray-400 border-2 border-gray-300`;
-      }
-    };
-
-    const getTextClasses = (stepNumber: number, isTitle = true) => {
-      const titleClasses = "font-semibold text-sm leading-3";
-      const descClasses = "text-xs leading-3 mt-1";
-
-      if (stepNumber === currentStep) {
-        return isTitle
-          ? `${titleClasses} text-white `
-          : `${descClasses} text-sm text-sky-100`;
-      } else if (stepNumber < currentStep) {
-        return isTitle
-          ? `${titleClasses} text-white `
-          : `${descClasses} text-sm text-green-100`;
-      } else {
-        return isTitle
-          ? `${titleClasses} text-gray-600 `
-          : `${descClasses} text-sm text-gray-400`;
-      }
-    };
-
-    return (
-      <div className="mb-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
-          {steps.map((step) => (
-            <div key={step.step} className={getStepClasses(step.step)}>
-              {/* Icône de l'étape */}
-              <div className={getIconClasses(step.step)}>
-                {step.step < currentStep ? (
-                  <CheckCircleIcon className="h-6 w-6" />
-                ) : (
-                  <span>{step.step}</span>
-                )}
-              </div>
-
-              {/* Contenu de l'étape */}
-              <div className="flex-1 min-w-0">
-                <h3 className={getTextClasses(step.step, true)}>
-                  {step.title}
-                </h3>
-                <p className={getTextClasses(step.step, false)}>
-                  {step.description}
-                </p>
-              </div>
-
-              {/* Indicateur de progression (optionnel) */}
-              {step.step < currentStep && (
-                <div className="absolute top-2 right-2">
-                  <div className="w-2 h-2 bg-green-300 rounded-full animate-pulse"></div>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Barre de progression globale */}
-        <div className="mt-2 bg-gray-200 rounded-full h-2 overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-sky-500 to-sky-600 transition-all duration-500 ease-out"
-            style={{ width: `${(currentStep / steps.length) * 100}%` }}
-          ></div>
-        </div>
-      </div>
-    );
-  };
+  const steps = [
+    {
+      step: 1,
+      title: "Choisissez Votre Plan",
+      description: "Sélectionnez l'offre qui correspond à vos besoins",
+    },
+    {
+      step: 2,
+      title: "Créez Votre Compte",
+      description: "Vos informations personnelles",
+    },
+    {
+      step: 3,
+      title: "Informations Pharmacie",
+      description: "Détails de votre établissement",
+    },
+    {
+      step: 4,
+      title: "Finaliser l'Inscription",
+      description: "Choisissez votre méthode de paiement",
+    },
+  ];
 
   const renderStep1 = () => (
     <div className="pt-2">
-      {/* <div className="text-center mb-2">
-        <h2 className="text-3xl font-bold text-white mb-4">
-          Choisissez Votre Plan
-        </h2>
-        <p className="text-xl text-sky-200">
-          Sélectionnez l'offre qui correspond à vos besoins
-        </p>
-      </div> */}
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {plans.map((plan) => (
           <div
             key={plan.id}
-            className={`relative flex flex-col rounded-xl p-4 cursor-pointer ring-2 transition-all duration-200 hover:scale-105 ${
+            className={`relative flex flex-col rounded-xl p-4 cursor-pointer ring-2 transition-all duration-200 hover:scale-95 ${
               formData.selectedPlan === plan.id
                 ? "ring-sky-400 bg-sky-50 shadow-2xl"
                 : "ring-gray-200 bg-white shadow-lg hover:shadow-2xl hover:border-gray-300"
@@ -372,15 +272,8 @@ const RegisterPage = () => {
   );
 
   const renderStep2 = () => (
-    <div className="mx-auto">
-      {/* <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-white mb-4">
-          Créez Votre Compte
-        </h2>
-        <p className="text-xl text-sky-200">Vos informations personnelles</p>
-      </div> */}
-
-      <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
+    <div className="">
+      <div className="p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <label className="block text-sm font-semibold text-gray-700">
@@ -392,7 +285,7 @@ const RegisterPage = () => {
               required
               value={formData.firstName}
               onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200"
+              className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
               placeholder="Jean"
             />
           </div>
@@ -407,7 +300,7 @@ const RegisterPage = () => {
               required
               value={formData.lastName}
               onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200"
+              className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
               placeholder="Mukasa"
             />
           </div>
@@ -422,7 +315,7 @@ const RegisterPage = () => {
               required
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200"
+              className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
               placeholder="jean@pharmacie-moderne.cd"
             />
           </div>
@@ -437,7 +330,7 @@ const RegisterPage = () => {
               required
               value={formData.phone}
               onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200"
+              className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
               placeholder="+243 99 123 4567"
             />
           </div>
@@ -452,7 +345,7 @@ const RegisterPage = () => {
               required
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200"
+              className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
               placeholder="••••••••"
             />
             <p className="text-xs text-gray-500">
@@ -470,7 +363,7 @@ const RegisterPage = () => {
               required
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200"
+              className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
               placeholder="••••••••"
             />
           </div>
@@ -480,15 +373,8 @@ const RegisterPage = () => {
   );
 
   const renderStep3 = () => (
-    <div className="mx-auto">
-      {/* <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-white mb-4">
-          Informations Pharmacie
-        </h2>
-        <p className="text-xl text-sky-200">Détails de votre établissement</p>
-      </div> */}
-
-      <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
+    <div className="">
+      <div className="p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <label className="block text-sm font-semibold text-gray-700">
@@ -499,7 +385,7 @@ const RegisterPage = () => {
               required
               value={formData.pharmacyType}
               onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200"
+              className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
             >
               <option value="retail">Pharmacie de détail</option>
               <option value="hospital">Pharmacie hospitalière</option>
@@ -518,7 +404,7 @@ const RegisterPage = () => {
               required
               value={formData.pharmacyName}
               onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200"
+              className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
               placeholder="Pharmacie Moderne"
             />
           </div>
@@ -533,7 +419,7 @@ const RegisterPage = () => {
               required
               value={formData.licenseNumber}
               onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200"
+              className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
               placeholder="PH/KIN/2024/001"
             />
           </div>
@@ -547,7 +433,7 @@ const RegisterPage = () => {
               required
               value={formData.country}
               onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200"
+              className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
             >
               <option value="cd">RD Congo</option>
               <option value="bi">Burundi</option>
@@ -567,7 +453,7 @@ const RegisterPage = () => {
               required
               value={formData.city}
               onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200"
+              className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
               placeholder="Kinshasa"
             />
           </div>
@@ -582,7 +468,7 @@ const RegisterPage = () => {
               required
               value={formData.address}
               onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200"
+              className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
               placeholder="Avenue de la Paix, Q/Socimat, Kinshasa"
             />
           </div>
@@ -592,17 +478,8 @@ const RegisterPage = () => {
   );
 
   const renderStep4 = () => (
-    <div className="mx-auto">
-      {/* <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-white mb-4">
-          Finaliser l'Inscription
-        </h2>
-        <p className="text-xl text-sky-200">
-          Choisissez votre méthode de paiement
-        </p>
-      </div> */}
-
-      <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100">
+    <div className="">
+      <div className="">
         <div className="mb-2">
           <h3 className="text-lg font-semibold text-gray-700 mb-2">
             Récapitulatif
@@ -733,33 +610,129 @@ const RegisterPage = () => {
 
   return (
     <>
-      <Head>
-        <title>Inscription - NakiCode PharmaSaaS</title>
-        <meta
-          name="description"
-          content="Créez votre compte NakiCode PharmaSaaS en quelques étapes. Premier mois gratuit, aucun engagement."
-        />
-        <meta
-          name="keywords"
-          content="inscription, register, compte, pharmacie, saas"
-        />
-      </Head>
-
-      <div className="min-h-screen flex flex-col justify-center items-center relative overflow-hidden px-2 sm:px-0 bg-white">
-        <div className="text-center mt-2">
-          <Link href="/" className="text-3xl font-bold text-sky-600 mb-0 block">
-            NakiCode PharmaSaaS
-          </Link>
-          <p className="text-gray-500 mb-4">
-            Connectez-vous à votre espace de gestion pharmaceutique
-          </p>
+      <div className="min-h-screen h-full flex items-center relative overflow-hidden">
+        <div className="hidden lg:flex flex-col h-full bg-white/95 p-6 w-[22rem]">
+          <div className="text-center mb-4">
+            <Link
+              href="/"
+              className="text-3xl font-bold text-sky-600 mb-0 block"
+            >
+              MEDPharma
+            </Link>
+            <p className="text-gray-500 mb-4">Inscrivez-vous</p>
+          </div>
+          {/* Sidebar Step Indicator */}
+          <div className="space-y-3 flex-grow">
+            {steps.map((step) => (
+              <div
+                key={step.step}
+                className={`flex items-center gap-4 p-4 rounded-2xl transition-all duration-300 ${
+                  step.step === currentStep
+                    ? "bg-gradient-to-r from-sky-600/90 via-sky-600/90 to-cyan-600/90 text-white shadow-xl scale-105"
+                    : step.step < currentStep
+                    ? "bg-gradient-to-r from-sky-700 via-sky-700 to-cyan-700 text-white shadow-lg"
+                    : "bg-gray-100 text-gray-600 border border-gray-200/70"
+                }`}
+              >
+                <div
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold transition-all ${
+                    step.step === currentStep
+                      ? "bg-white text-sky-600 shadow-lg"
+                      : step.step < currentStep
+                      ? "bg-white text-green-600"
+                      : "bg-white text-gray-400"
+                  }`}
+                >
+                  {step.step < currentStep ? (
+                    <CheckCircleIcon className="h-6 w-6" />
+                  ) : (
+                    step.step
+                  )}
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-sm">{step.title}</h3>
+                  <p className="text-xs opacity-90">{step.description}</p>
+                </div>
+                {/* {step.step === currentStep && (
+                  <div className="w-2 h-2 bg-white rounded-full animate-ping"></div>
+                )} */}
+              </div>
+            ))}
+          </div>
+          <div className="mt-auto text-center">
+            <p className="text-gray-700">
+              Déjà un compte ?{" "}
+              <Link
+                href="/auth/login"
+                className="text-sky-600 font-medium hover:text-sky-800"
+              >
+                Se connecter
+              </Link>
+            </p>
+          </div>
         </div>
-        <div className="max-w-6xl w-full rounded-2xl bg-white shadow-2xl z-10 mx-auto p-4 sm:p-6 mb-8">
-          {renderStepIndicator()}
+        <div className="flex-1 flex flex-col w-full h-full z-10 mx-auto p-4 sm:p-12">
+          <div className="block lg:hidden text-center mb-4">
+            <Link href="/" className="text-3xl font-bold text-white mb-0 block">
+              MEDPharma
+            </Link>
+            <p className="text-white/70 mb-4">Inscrivez-vous</p>
+          </div>
+          <div className="md:hidden space-y-2 mb-6">
+            {steps.map((step) => (
+              <div
+                key={step.step}
+                className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${
+                  step.step === currentStep
+                    ? "bg-gradient-to-r from-sky-600/90 via-sky-600/90 to-cyan-600/90 text-white shadow-lg"
+                    : step.step < currentStep
+                    ? "bg-gradient-to-r from-sky-700 via-sky-700 to-cyan-700 text-white"
+                    : "bg-gray-100 text-gray-500"
+                }`}
+              >
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
+                    step.step === currentStep
+                      ? "bg-white text-sky-600"
+                      : step.step < currentStep
+                      ? "bg-white text-green-600"
+                      : "bg-white text-gray-400"
+                  }`}
+                >
+                  {step.step < currentStep ? (
+                    <CheckCircleIcon className="h-6 w-6" />
+                  ) : (
+                    step.step
+                  )}
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-sm">{step.title}</h3>
+                  <p className="text-xs opacity-90">{step.description}</p>
+                </div>
+              </div>
+            ))}
+            {/* Progress bar */}
+            <div className="bg-gray-200 rounded-full h-2 overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-sky-500 to-sky-600 transition-all duration-500"
+                style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+              />
+            </div>
+          </div>
 
           <form
             onSubmit={currentStep === totalSteps ? handleSubmit : undefined}
+            className="bg-white/95 flex flex-col p-4 md:p-8 rounded-2xl shadow-2xl flex-grow h-auto"
           >
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-sky-600 via-sky-600 to-cyan-600 mb-1">
+                {steps.find((step) => step.step === currentStep)?.title}
+              </h2>
+              <p className="text-xl text-gray-500/70">
+                {steps.find((step) => step.step === currentStep)?.description}
+              </p>
+            </div>
+
             {currentStep === 1 && renderStep1()}
             {currentStep === 2 && renderStep2()}
             {currentStep === 3 && renderStep3()}
@@ -768,22 +741,28 @@ const RegisterPage = () => {
             <div
               className={`flex items-center ${
                 currentStep > 1 ? "justify-between" : "justify-end"
-              } space-x-4 mt-6`}
+              } space-x-4 mt-auto`}
             >
               {currentStep > 1 && (
-                <Button type="button" variant="secondary" onClick={handleBack}>
+                <Button
+                  type="button"
+                  size="lg"
+                  variant="outline"
+                  onClick={handleBack}
+                >
                   Précédent
                 </Button>
               )}
 
               {currentStep < totalSteps ? (
-                <Button type="button" onClick={handleNext}>
+                <Button type="button" size="lg" onClick={handleNext}>
                   Continuer
                   <ArrowRightIcon className="ml-2 h-5 w-5" />
                 </Button>
               ) : (
                 <Button
                   type="submit"
+                  size="lg"
                   disabled={!formData.acceptTerms || isLoading}
                   className="inline-flex items-center"
                 >
@@ -802,18 +781,6 @@ const RegisterPage = () => {
               )}
             </div>
           </form>
-        </div>
-
-        <div className="pb-8 z-50">
-          <p className="text-gray-700">
-            Déjà un compte ?{" "}
-            <Link
-              href="/auth/login"
-              className="text-sky-600 font-medium hover:text-sky-800"
-            >
-              Se connecter
-            </Link>
-          </p>
         </div>
       </div>
     </>

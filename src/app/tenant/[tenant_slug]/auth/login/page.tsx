@@ -13,6 +13,7 @@ import { Button } from "@/design-system";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import toast from "react-hot-toast";
 
 const LoginPage = () => {
   const params = useParams();
@@ -24,14 +25,12 @@ const LoginPage = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError("");
 
     try {
       if (
@@ -62,7 +61,9 @@ const LoginPage = () => {
         throw new Error("Identifiants incorrects");
       }
     } catch (err) {
-      setError("Email ou mot de passe incorrect");
+      toast.error(
+        err?.response?.data?.message || "Email ou mot de passe incorrect"
+      );
       setIsLoading(false);
     }
   };
@@ -99,12 +100,6 @@ const LoginPage = () => {
                   Connectez-vous à votre espace de gestion
                 </p>
               </div>
-
-              {error && (
-                <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
-                  <p className="text-sm text-red-700">{error}</p>
-                </div>
-              )}
 
               <form className="space-y-5" onSubmit={handleSubmit}>
                 <div>
