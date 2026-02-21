@@ -248,7 +248,7 @@ const PublicHomePage = () => {
                 </Link>
               </div>
 
-              <div className="flex flex-col sm:flex-row justify-end gap-4 text-sm text-gray-500/80 mx-auto animate-fade-in-up delay-1000">
+              <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4 text-sm text-gray-500/80 mx-auto animate-fade-in-up delay-1000">
                 <div className="flex items-center justify-center bg-white/30 backdrop-blur-sm rounded-xl px-4 py-3 hover:bg-white/30 transition-all duration-300 hover:scale-105">
                   <CheckCircleIcon className="h-5 w-5 text-green-500 mr-2 animate-pulse" />
                   <span className="font-medium text-nowrap">

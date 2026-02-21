@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { jwtService } from '@/services/jwt.service';
 import { tokenService } from '@/services/token.service';
+import { getCookie, setCookie } from '@/utils/cookies';
 
 interface Organization {
   id: string;
@@ -9,11 +10,6 @@ interface Organization {
   tenantId: string;
   subdomain: string;
 }
-
-const getCookie = (name: string) => {
-  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-  return match ? match[2] : null;
-};
 
 export const OrganizationSelector: React.FC = () => {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
@@ -44,9 +40,8 @@ export const OrganizationSelector: React.FC = () => {
     setCurrentOrg(orgId);
     
     // Save in cookie only
-    document.cookie = `current_organization=${orgId}; path=/; SameSite=Lax; ${
-      process.env.NODE_ENV === "production" ? "Secure;" : ""
-    }`;
+    setCookie("current_organization", orgId);
+    localStorage.setItem("current_organization", orgId);
     // Recharger la page pour appliquer le nouveau contexte
     // window.location.reload();
   };

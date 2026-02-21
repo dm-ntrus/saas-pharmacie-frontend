@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { jwtService } from "@/services/jwt.service";
 import { tokenService } from "@/services/token.service";
 import { useRouter } from "next/navigation";
+import { getCookie, setCookie } from "@/utils/cookies";
 
 interface AuthUser {
   id: string;
@@ -106,6 +107,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } else {
       const firstOrg = decoded.organizations?.[0];
       const slug = firstOrg?.attributes?.subdomain?.[0];
+      setCookie("slug_organization", slug);
       router.replace(`/tenant/${slug}/dashboard`);
     }
   };
@@ -116,7 +118,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = () => {
     tokenService.clearTokens();
     setUser(null);
-    router.replace("/auth/login");
+    const orgSlug = getCookie("slug_organization");
+    if (orgSlug) {
+      router.replace(`/tenant/${orgSlug}/auth/login`);
+    } else {
+      router.replace("/auth/login");
+    }
   };
 
   //

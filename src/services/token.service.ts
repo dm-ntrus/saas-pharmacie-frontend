@@ -1,11 +1,17 @@
+import { getCookie, removeCookie, setCookie } from "@/utils/cookies";
+
 class TokenService {
-  private readonly ACCESS_TOKEN_KEY = 'access_token';
-  private readonly REFRESH_TOKEN_KEY = 'refresh_token';
-  private readonly TOKEN_EXPIRY_KEY = 'token_expiry';
-  private readonly COOKIE_PATH = '/';
+  private readonly ACCESS_TOKEN_KEY = "access_token";
+  private readonly REFRESH_TOKEN_KEY = "refresh_token";
+  private readonly TOKEN_EXPIRY_KEY = "token_expiry";
+  // private readonly COOKIE_PATH = "/";
 
   // Stocke tokens dans localStorage et cookies côté client
-  setTokens(accessToken: string, refreshToken: string, expiresIn: number): void {
+  setTokens(
+    accessToken: string,
+    refreshToken: string,
+    expiresIn: number
+  ): void {
     const expiryTime = Date.now() + expiresIn * 1000;
 
     // LocalStorage
@@ -14,27 +20,31 @@ class TokenService {
     localStorage.setItem(this.TOKEN_EXPIRY_KEY, expiryTime.toString());
 
     // Cookies
-    document.cookie = `${this.ACCESS_TOKEN_KEY}=${accessToken}; path=${this.COOKIE_PATH}; SameSite=Lax; ${
-      process.env.NODE_ENV === 'production' ? 'Secure;' : ''
-    }`;
-    document.cookie = `${this.REFRESH_TOKEN_KEY}=${refreshToken}; path=${this.COOKIE_PATH}; SameSite=Lax; ${
-      process.env.NODE_ENV === 'production' ? 'Secure;' : ''
-    }`;
-    document.cookie = `${this.TOKEN_EXPIRY_KEY}=${expiryTime}; path=${this.COOKIE_PATH}; SameSite=Lax; ${
-      process.env.NODE_ENV === 'production' ? 'Secure;' : ''
-    }`;
+    setCookie(this.ACCESS_TOKEN_KEY, accessToken);
+    setCookie(this.REFRESH_TOKEN_KEY, refreshToken);
+    setCookie(this.TOKEN_EXPIRY_KEY, String(expiryTime));
   }
 
   getAccessToken(): string | null {
-    return this.getCookie(this.ACCESS_TOKEN_KEY) || localStorage.getItem(this.ACCESS_TOKEN_KEY);
+    return (
+      getCookie(this.ACCESS_TOKEN_KEY) ||
+      localStorage.getItem(this.ACCESS_TOKEN_KEY)
+    );
   }
 
   getRefreshToken(): string | null {
-    return this.getCookie(this.REFRESH_TOKEN_KEY) || localStorage.getItem(this.REFRESH_TOKEN_KEY);
+    return (
+      getCookie(this.REFRESH_TOKEN_KEY) ||
+      localStorage.getItem(this.REFRESH_TOKEN_KEY)
+    );
   }
 
   isTokenExpired(): boolean {
-    const expiry = parseInt(this.getCookie(this.TOKEN_EXPIRY_KEY) || localStorage.getItem(this.TOKEN_EXPIRY_KEY) || '0');
+    const expiry = parseInt(
+      getCookie(this.TOKEN_EXPIRY_KEY) ||
+        localStorage.getItem(this.TOKEN_EXPIRY_KEY) ||
+        "0"
+    );
     return Date.now() > expiry;
   }
 
@@ -45,14 +55,9 @@ class TokenService {
     localStorage.removeItem(this.TOKEN_EXPIRY_KEY);
 
     // Cookies
-    document.cookie = `${this.ACCESS_TOKEN_KEY}=; Max-Age=0; path=${this.COOKIE_PATH}`;
-    document.cookie = `${this.REFRESH_TOKEN_KEY}=; Max-Age=0; path=${this.COOKIE_PATH}`;
-    document.cookie = `${this.TOKEN_EXPIRY_KEY}=; Max-Age=0; path=${this.COOKIE_PATH}`;
-  }
-
-  private getCookie(name: string): string | null {
-    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-    return match ? match[2] : null;
+    removeCookie(this.ACCESS_TOKEN_KEY);
+    removeCookie(this.REFRESH_TOKEN_KEY);
+    removeCookie(this.TOKEN_EXPIRY_KEY);
   }
 }
 

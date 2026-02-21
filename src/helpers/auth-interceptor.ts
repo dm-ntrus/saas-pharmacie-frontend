@@ -1,17 +1,13 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import { tokenService } from "@/services/token.service";
 import { KEYCLOAK_CONFIG } from "@/utils/constants";
+import { getCookie } from "@/utils/cookies";
 
 interface LoginResponse {
   access_token: string;
   refresh_token: string;
   expires_in: number;
 }
-
-const getCookie = (name: string) => {
-  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
-  return match ? match[2] : null;
-};
 
 class AuthInterceptor {
   private axiosInstance: AxiosInstance;
@@ -59,7 +55,12 @@ class AuthInterceptor {
           this.isRefreshing = false;
           this.refreshSubscribers = [];
           tokenService.clearTokens();
-          window.location.href = "/auth/login";
+          const orgSlug = getCookie("slug_organization");
+          if (orgSlug) {
+            window.location.href = `/tenant/${orgSlug}/auth/login`;
+          } else {
+            window.location.href = "/auth/login";
+          }
           return Promise.reject(error);
         }
       } else {

@@ -1,23 +1,7 @@
 "use client";
 
+import { getCookie, removeCookie, setCookie } from "@/utils/cookies";
 import React, { createContext, useContext, useState, useEffect } from "react";
-
-// Helper functions for cookies
-const setCookie = (name: string, value: string, days = 365) => {
-  const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
-  document.cookie = `${name}=${value}; expires=${expires}; path=/; SameSite=Lax; ${
-    process.env.NODE_ENV === "production" ? "Secure;" : ""
-  }`;
-};
-
-const getCookie = (name: string): string | null => {
-  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
-  return match ? match[2] : null;
-};
-
-const removeCookie = (name: string) => {
-  document.cookie = `${name}=; Max-Age=0; path=/;`;
-};
 
 interface AccessibilityContextType {
   fontSize: "small" | "medium" | "large";

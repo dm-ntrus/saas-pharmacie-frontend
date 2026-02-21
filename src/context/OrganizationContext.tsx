@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { jwtService } from "@/services/jwt.service";
 import { tokenService } from "@/services/token.service";
+import { getCookie, setCookie } from "@/utils/cookies";
 
 export interface Organization {
   id: string;
@@ -23,11 +24,6 @@ interface OrganizationContextType {
 const OrganizationContext = createContext<OrganizationContextType | undefined>(
   undefined
 );
-
-const getCookie = (name: string) => {
-  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-  return match ? match[2] : null;
-};
 
 export const OrganizationProvider = ({
   children,
@@ -71,9 +67,7 @@ export const OrganizationProvider = ({
     setCurrentOrganization(org);
 
     // Save in cookie only
-    document.cookie = `current_organization=${orgId}; path=/; SameSite=Lax; ${
-      process.env.NODE_ENV === "production" ? "Secure;" : ""
-    }`;
+    setCookie("current_organization", orgId);
     localStorage.setItem("current_organization", orgId);
   };
 

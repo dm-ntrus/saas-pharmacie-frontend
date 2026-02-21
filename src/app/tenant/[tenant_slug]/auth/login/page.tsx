@@ -14,6 +14,7 @@ import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 const LoginPage = () => {
   const params = useParams();
@@ -84,12 +85,12 @@ const LoginPage = () => {
           <div className="w-full max-w-md mx-auto">
             <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl p-8 space-y-6 border border-white/20">
               {/* Logo */}
-              <div className="text-center pb-4 border-b border-gray-200">
-                <div className="flex items-center justify-center space-x-2 mb-2">
+              <div className="flex flex-col items-center text-center pb-2 border-b border-gray-200">
+                <div className="flex items-center justify-center space-x-2">
                   {/* <BuildingStorefrontIcon className="h-8 w-8 text-sky-600" /> */}
-                  <h2 className="text-2xl font-bold text-sky-600">NakiCode</h2>
+                  <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-sky-600 via-sky-600 to-cyan-600 uppercase">{tenant_slug}</h2>
                 </div>
-                <p className="text-sm text-gray-500">MEDPharma</p>
+                <Image src="/images/medpharma.png" width="80" height="50" alt="MEDPharma"/>
               </div>
 
               <div className="text-center">

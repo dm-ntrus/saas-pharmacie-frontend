@@ -1,33 +1,31 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import { I18N_CONFIG } from "@/i18n/i18n.config";
+import { setCookie, getCookie } from "@/utils/cookies";
 
 const COOKIE_NAME = "language";
 
-const setLanguageCookie = (lang: string) => {
-  document.cookie = `${COOKIE_NAME}=${lang};  path=/; SameSite=Lax; ${
-    process.env.NODE_ENV === "production" ? "Secure;" : ""
-  }`;
-  localStorage.setItem(`${COOKIE_NAME}`, lang);
-};
+// Cache global des traductions (évite de re-télécharger la même langue)
+const translationCache = new Map<string, Record<string, string>>();
 
-const getLanguageCookie = (): string | null => {
-  const match = document.cookie.match(
-    new RegExp("(^| )" + COOKIE_NAME + "=([^;]+)")
-  );
-  return match ? decodeURIComponent(match[2]) : null;
-};
-
-// Context
 interface I18nContextType {
   language: string;
   setLanguage: (lang: string) => void;
   t: (key: string, params?: Record<string, any>) => string;
-  formatDate: (date: Date) => string;
-  formatNumber: (num: number) => string;
-  formatCurrency: (amount: number) => string;
+  formatDate: (date: Date | string | number) => string;
+  formatDateTime: (date: Date | string | number) => string;
+  formatTime: (date: Date | string | number) => string;
+  formatNumber: (num: number | string) => string;
+  formatCurrency: (amount: number | string) => string;
   direction: "ltr" | "rtl";
+  isLoaded: boolean; // Permet d'éviter le flash de langue par défaut
 }
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
@@ -35,100 +33,148 @@ const I18nContext = createContext<I18nContextType | undefined>(undefined);
 export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [language, setLanguageState] = useState<string>(
-    I18N_CONFIG.defaultLanguage
-  );
+  const [language, setLanguageState] = useState<string>(I18N_CONFIG.defaultLanguage);
   const [translations, setTranslations] = useState<Record<string, string>>({});
-  const [isLoaded, setIsLoaded] = useState(false); // Évite flash de langue par défaut
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  // 1. Charger la langue depuis le cookie au montage
-  useEffect(() => {
-    const savedLang = getLanguageCookie() || localStorage.getItem(`${COOKIE_NAME}`);
-    const lang =
-      savedLang && I18N_CONFIG.supportedLanguages.includes(savedLang)
-        ? savedLang
-        : I18N_CONFIG.defaultLanguage;
-
-    setLanguageState(lang);
-    applyLanguageDirection(lang);
-    setIsLoaded(true);
+  // Récupère la langue sauvegardée (cookie → localStorage)
+  const getSavedLanguage = useCallback(() => {
+    const fromCookie = getCookie(COOKIE_NAME);
+    const fromStorage =
+      typeof window !== "undefined" ? localStorage.getItem(COOKIE_NAME) : null;
+    return fromCookie || fromStorage;
   }, []);
 
-  // 2. Charger les traductions quand la langue change
+  // Chargement initial de la langue au montage du composant
   useEffect(() => {
-    if (!isLoaded) return;
-    loadTranslations(language);
-  }, [language, isLoaded]);
+    const saved = getSavedLanguage();
+    const validLang =
+      saved && I18N_CONFIG.supportedLanguages.includes(saved)
+        ? saved
+        : I18N_CONFIG.defaultLanguage;
 
-  const loadTranslations = async (lang: string) => {
+    setLanguageState(validLang);
+    applyDirection(validLang);
+    setIsLoaded(true);
+  }, [getSavedLanguage]);
+
+  // Chargement des fichiers de traduction (avec cache)
+  const loadTranslations = useCallback(async (lang: string) => {
+    // Si déjà en cache → on l'utilise directement
+    if (translationCache.has(lang)) {
+      setTranslations(translationCache.get(lang)!);
+      return;
+    }
+
     try {
-      const response = await fetch(`/locales/${lang}.json`, {
+      // ?t= timestamp pour forcer le refresh en dev
+      const res = await fetch(`/locales/${lang}.json?t=${Date.now()}`, {
         cache: "no-store",
       });
-      const data = await response.json();
+      if (!res.ok) throw new Error(`Impossible de charger ${lang}`);
+      const data = await res.json();
+      translationCache.set(lang, data);
       setTranslations(data);
-    } catch (error) {
-      console.error(`Failed to load translations for ${lang}`, error);
-      setTranslations({});
+    } catch (err) {
+      console.error("Erreur chargement traduction :", err);
+      setTranslations({}); // fallback vide
     }
-  };
+  }, []);
 
-  const applyLanguageDirection = (lang: string) => {
-    const settings = I18N_CONFIG.languageSettings[lang];
-    document.documentElement.dir = settings.direction;
+  // Recharge les traductions quand la langue change (après isLoaded)
+  useEffect(() => {
+    if (isLoaded) loadTranslations(language);
+  }, [language, isLoaded, loadTranslations]);
+
+  // Applique la direction (ltr/rtl) et l'attribut lang sur <html>
+  const applyDirection = (lang: string) => {
+    const dir = I18N_CONFIG.languageSettings[lang]?.direction || "ltr";
+    document.documentElement.dir = dir;
     document.documentElement.lang = lang;
   };
 
+  // Change la langue + persistance (cookie + localStorage)
   const setLanguage = (lang: string) => {
     if (!I18N_CONFIG.supportedLanguages.includes(lang)) return;
 
     setLanguageState(lang);
-    setLanguageCookie(lang); // Cookie persistant
-    applyLanguageDirection(lang);
+    setCookie(COOKIE_NAME, lang, 365); // 1 an
+    localStorage.setItem(COOKIE_NAME, lang);
+    applyDirection(lang);
   };
 
+  // Fonction de traduction avec support des clés imbriquées et des paramètres
   const t = (key: string, params?: Record<string, any>): string => {
-    let translation = translations[key] || key;
+    // Support des clés comme "errors.validation.required"
+    const keys = key.split(".");
+    let value: any = translations;
+    for (const k of keys) {
+      value = value?.[k];
+    }
+    value = value ?? key; // fallback sur la clé si introuvable
 
+    // Remplacement des paramètres {{variable}}
     if (params) {
       Object.entries(params).forEach(([k, v]) => {
-        translation = translation.replace(
-          new RegExp(`{{${k}}}`, "g"),
-          String(v)
-        );
+        value = value.replace(new RegExp(`{{${k}}}`, "g"), String(v));
       });
     }
 
-    return translation;
+    return value;
   };
 
-  const formatDate = (date: Date) => {
-    const settings = I18N_CONFIG.languageSettings[language];
-    return new Intl.DateTimeFormat(settings.numberFormat, {
+  // Récupère le locale (ex: "fr-FR") selon la langue actuelle
+  const getLocale = () =>
+    I18N_CONFIG.languageSettings[language]?.numberFormat || "fr-FR";
+
+  const formatDate = (date: Date | string | number): string => {
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return "Date invalide";
+    return new Intl.DateTimeFormat(getLocale(), {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
-    }).format(date);
+    }).format(d);
   };
 
-  const formatNumber = (num: number) => {
-    const settings = I18N_CONFIG.languageSettings[language];
-    return new Intl.NumberFormat(settings.numberFormat).format(num);
+  const formatDateTime = (date: Date | string | number): string => {
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return "Date invalide";
+    return new Intl.DateTimeFormat(getLocale(), {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(d);
   };
 
-  const formatCurrency = (amount: number) => {
+  const formatTime = (date: Date | string | number): string => {
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return "--:--";
+    return new Intl.DateTimeFormat(getLocale(), {
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(d);
+  };
+
+  const formatNumber = (num: number | string): string => {
+    return new Intl.NumberFormat(getLocale()).format(Number(num));
+  };
+
+  const formatCurrency = (amount: number | string): string => {
     const settings = I18N_CONFIG.languageSettings[language];
-    return new Intl.NumberFormat(settings.numberFormat, {
+    return new Intl.NumberFormat(getLocale(), {
       style: "currency",
       currency: settings.currency,
-    }).format(amount);
+    }).format(Number(amount));
   };
 
   const direction = I18N_CONFIG.languageSettings[language]?.direction || "ltr";
 
   // Évite de rendre avant que la langue soit chargée (évite flash)
   if (!isLoaded) {
-    return null; // ou un petit loader
+    return null;
   }
 
   return (
@@ -138,9 +184,12 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({
         setLanguage,
         t,
         formatDate,
+        formatDateTime,
+        formatTime,
         formatNumber,
         formatCurrency,
         direction,
+        isLoaded,
       }}
     >
       {children}
@@ -148,8 +197,10 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
-export const useI18n = () => {
+export const useI18n = (): I18nContextType => {
   const context = useContext(I18nContext);
-  if (!context) throw new Error("useI18n must be used within I18nProvider");
+  if (!context) {
+    throw new Error("useI18n doit être utilisé à l'intérieur d'un I18nProvider");
+  }
   return context;
 };
