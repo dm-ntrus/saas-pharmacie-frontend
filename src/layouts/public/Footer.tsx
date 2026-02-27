@@ -73,7 +73,7 @@ export default function Footer() {
                     <input 
                       type="email" 
                       placeholder="votre@email.com"
-                      className="w-full pl-16 pr-6 py-5 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all font-medium"
+                      className="w-full pl-16 pr-6 py-5 bg-slate-50 text-slate-900  border border-slate-200 rounded-2xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all font-medium"
                     />
                   </div>
                   <button className="w-full py-5 bg-slate-900 text-white rounded-2xl font-bold text-lg hover:bg-slate-800 transition-all shadow-xl shadow-slate-200">

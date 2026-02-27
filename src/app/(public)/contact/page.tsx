@@ -109,7 +109,7 @@ export default function ContactPage() {
                       <input 
                         type="text" 
                         required 
-                        className="w-full px-8 py-5 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all shadow-sm"
+                        className="w-full px-8 py-5 bg-white text-slate-900 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all shadow-sm"
                         placeholder="Jean Mukasa"
                       />
                     </div>
@@ -118,7 +118,7 @@ export default function ContactPage() {
                       <input 
                         type="email" 
                         required 
-                        className="w-full px-8 py-5 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all shadow-sm"
+                        className="w-full px-8 py-5 bg-white text-slate-900 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all shadow-sm"
                         placeholder="jean@pharmacie.cd"
                       />
                     </div>
@@ -129,14 +129,14 @@ export default function ContactPage() {
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Pharmacie</label>
                       <input 
                         type="text" 
-                        className="w-full px-8 py-5 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all shadow-sm"
+                        className="w-full px-8 py-5 bg-white text-slate-900 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all shadow-sm"
                         placeholder="Pharmacie de la Paix"
                       />
                     </div>
                     <div className="space-y-4">
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Sujet</label>
                       <div className="relative">
-                        <select className="w-full px-8 py-5 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all appearance-none cursor-pointer shadow-sm">
+                        <select className="w-full px-8 py-5 bg-white text-slate-900 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all appearance-none cursor-pointer shadow-sm">
                           <option>Demande de Démo</option>
                           <option>Question sur les Tarifs</option>
                           <option>Support Technique</option>
@@ -155,7 +155,7 @@ export default function ContactPage() {
                     <textarea 
                       required 
                       rows={6}
-                      className="w-full px-8 py-5 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none resize-none transition-all shadow-sm"
+                      className="w-full px-8 py-5 bg-white text-slate-900 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none resize-none transition-all shadow-sm"
                       placeholder="Comment pouvons-nous vous aider ?"
                     ></textarea>
                   </div>
