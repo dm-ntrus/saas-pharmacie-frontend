@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Space_Grotesk } from 'next/font/google';
 import "./globals.css";
 import { AccessibilityProvider } from "@/design-system/AccessibilityProvider";
 import QueryProvider from "@/providers/queryProvider";
@@ -8,21 +8,23 @@ import { AuthProvider } from "@/context/AuthContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AccessibilityPanel } from "@/design-system";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-sans',
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  variable: '--font-display',
 });
 
 export const metadata: Metadata = {
-  title: "MedPharma - SaaS Multi-Tenant pour Pharmacies",
-  description:
-    "MedPharma est une plateforme SaaS sécurisée et évolutive conçue pour les pharmacies. Gérez vos ventes, inventaire, patients, prescriptions, rapports et plus encore, le tout dans un environnement multi-tenant adapté à votre activité pharmaceutique.",
-  keywords: ["MedPharma", "Pharmacies", "patients", "inventaire"],
+  title: {
+    default: 'SyntixPharma | Gestion Intelligente de Pharmacie',
+    template: '%s | SyntixPharma'
+  },
+  description: 'Logiciel de gestion de pharmacie tout-en-un : POS, Inventaire, Patients et IA.',
+  keywords: ["SyntixPharma", "Pharmacies", "patients", "inventaire"],
 };
 
 export default function RootLayout({
@@ -33,7 +35,7 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}
       >
         <ErrorBoundary>
           <QueryProvider>

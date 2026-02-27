@@ -1,590 +1,225 @@
-"use client";
-import React, { useState } from "react";
-import Link from "next/link";
-import {
-  EnvelopeIcon,
-  PhoneIcon,
-  MapPinIcon,
-  UserIcon,
-  BuildingStorefrontIcon,
-  ClockIcon,
-  CheckCircleIcon,
-  GlobeAltIcon,
-  ChatBubbleLeftRightIcon,
-  CalendarIcon,
-} from "@heroicons/react/24/outline";
-import { Button } from "@/design-system";
+'use client';
 
-const ContactPage = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    company: "",
-    country: "",
-    pharmacyType: "",
-    subject: "",
-    message: "",
-    preferredContact: "email",
-  });
+import { motion } from 'motion/react';
+import { Mail, Phone, MapPin, Send, Loader2, CheckCircle2, Globe, Clock, ChevronRight, ArrowUpRight } from 'lucide-react';
+import { useState } from 'react';
 
+export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-
-    // Simulation d'envoi
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
+    await new Promise(resolve => setTimeout(resolve, 2000));
     setIsSubmitting(false);
-    setSubmitted(true);
+    setIsSuccess(true);
   };
-
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const contactMethods = [
-    {
-      name: "Email",
-      value: "Réponse sous 4h",
-      icon: EnvelopeIcon,
-      gradient: "from-blue-500 to-blue-600",
-      contact: "contact@nakicode.com",
-      description: "Pour les demandes détaillées",
-    },
-    {
-      name: "Téléphone",
-      value: "Support immédiat",
-      icon: PhoneIcon,
-      gradient: "from-green-500 to-emerald-600",
-      contact: "+243 99 123 4567",
-      description: "Pour un contact direct",
-    },
-    {
-      name: "Chat",
-      value: "En ligne maintenant",
-      icon: ChatBubbleLeftRightIcon,
-      gradient: "from-cyan-500 to-cyan-600",
-      contact: "Chat 24/7",
-      description: "Assistance instantanée",
-    },
-    {
-      name: "Démo",
-      value: "Rendez-vous personnalisé",
-      icon: CalendarIcon,
-      gradient: "from-orange-500 to-amber-600",
-      contact: "Réservation en ligne",
-      description: "Présentation complète",
-    },
-  ];
-
-  const offices = [
-    {
-      city: "Kinshasa",
-      country: "République Démocratique du Congo",
-      address: "Avenue Colonel Ebeya, Q/Socimat, Commune de Gombe",
-      phone: "+243 99 123 4567",
-      email: "kinshasa@nakicode.com",
-      hours: "Lun-Ven: 8h-18h WAT",
-      timezone: "WAT (UTC+1)",
-      flag: "🇨🇩",
-      isMain: true,
-    },
-    {
-      city: "Bujumbura",
-      country: "République du Burundi",
-      address: "Boulevard du 28 Novembre, Q/Rohero",
-      phone: "+257 79 123 456",
-      email: "bujumbura@nakicode.com",
-      hours: "Lun-Ven: 8h-18h CAT",
-      timezone: "CAT (UTC+2)",
-      flag: "🇧🇮",
-      isMain: false,
-    },
-  ];
-
-  if (submitted) {
-    return (
-      <>
-        <div className="min-h-screen bg-white">
-          <nav className="bg-white border-b border-gray-200">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex justify-between items-center py-4">
-                <Link href="/" className="text-xl font-bold text-sky-600">
-                  NakiCode PharmaSaaS
-                </Link>
-              </div>
-            </div>
-          </nav>
-
-          <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full space-y-8 text-center">
-              <div>
-                <CheckCircleIcon className="mx-auto h-24 w-24 text-green-500" />
-                <h2 className="mt-6 text-3xl font-bold text-gray-900">
-                  Message Envoyé !
-                </h2>
-                <p className="mt-2 text-gray-600">
-                  Merci pour votre message. Notre équipe vous répondra dans les
-                  plus brefs délais.
-                </p>
-              </div>
-
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <p className="text-sm text-green-800">
-                  <strong>Temps de réponse estimé :</strong> Moins de 4 heures
-                  pendant les heures ouvrables
-                </p>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link
-                  href="/"
-                  className="flex-1 bg-sky-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-sky-700 transition-colors"
-                >
-                  Retour à l'accueil
-                </Link>
-                <Link
-                  href="/support"
-                  className="flex-1 border border-gray-300 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
-                >
-                  Centre de support
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  }
 
   return (
-    <div className="bg-white pt-10">
-      {/* Hero */}
-      {/* <section className="bg-gradient-to-b from-sky-50 via-white to-white text-gray-900 py-20">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <EnvelopeIcon className="h-20 w-20 text-sky-300 mx-auto mb-6" />
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Parlons de Votre <span className="text-sky-300">Projet</span>
+    <div className="min-h-screen pt-32 pb-16 bg-white">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid lg:grid-cols-12 gap-20 items-start">
+          <div className="lg:col-span-5">
+            <div className="inline-flex items-center gap-3 px-5 py-2 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-black mb-4 border border-emerald-100 uppercase tracking-[0.2em]">
+              Contact
+            </div>
+            <h1 className="text-5xl lg:text-7xl font-display font-bold text-slate-900 mb-4 tracking-[-0.04em] leading-[0.9]">
+              Parlons de <br />
+              <span className="text-emerald-600">Demain.</span>
             </h1>
-            <p className="text-xl text-gray-700 mb-8">
-              Notre équipe d'experts est prête à vous accompagner dans la
-              transformation digitale de votre pharmacie. Démo gratuite,
-              conseils personnalisés et support dédié.
+            <p className="text-xl text-slate-500 mb-8  leading-relaxed font-medium">
+              Vous avez des questions sur SyntixPharma ? Notre équipe d&apos;experts est là pour vous accompagner dans votre transformation numérique.
             </p>
-          </div>
-        </section> */}
 
-      {/* Contact Methods */}
-      <section className="py-20 bg-gradient-to-b from-sky-50 via-white to-white -mt-10 relative z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-3xl shadow-2xl shadow-sky-900/10 p-8 md:p-12">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent mb-3">
-                Choisissez Votre Mode de Contact
-              </h2>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                Plusieurs options pour répondre à vos besoins
-              </p>
+            <div className="space-y-8 mb-6">
+              <div className="flex gap-8 group">
+                <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center group-hover:bg-emerald-50 transition-colors shrink-0">
+                  <Mail className="w-6 h-6 text-slate-400 group-hover:text-emerald-600 transition-colors" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Email</p>
+                  <p className="text-lg font-bold text-slate-900">contact@medpharma.cd</p>
+                  <p className="text-slate-500">support@medpharma.cd</p>
+                </div>
+              </div>
+
+              <div className="flex gap-8 group">
+                <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center group-hover:bg-blue-50 transition-colors shrink-0">
+                  <Phone className="w-6 h-6 text-slate-400 group-hover:text-blue-600 transition-colors" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Téléphone</p>
+                  <p className="text-lg font-bold text-slate-900">+243 99 000 0000</p>
+                  <p className="text-slate-500">+257 22 00 00 00</p>
+                </div>
+              </div>
+
+              <div className="flex gap-8 group">
+                <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center group-hover:bg-purple-50 transition-colors shrink-0">
+                  <MapPin className="w-6 h-6 text-slate-400 group-hover:text-purple-600 transition-colors" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Bureaux</p>
+                  <p className="text-lg font-bold text-slate-900">Kinshasa : Gombe</p>
+                  <p className="text-slate-500">Bujumbura : Centre-ville</p>
+                </div>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {contactMethods.map((method, index) => (
-                <div
-                  key={index}
-                  className="group relative bg-gradient-to-br from-white to-gray-50 rounded-3xl p-4 border border-gray-200 hover:border-gray-300 transition-all duration-300 hover:shadow-xl hover:-translate-y-2"
-                >
-                  <div className="text-center space-y-2">
-                    <div
-                      className={`relative w-10 h-10 mx-auto flex items-center justify-center rounded-full bg-gradient-to-r ${method.gradient} p-2 group-hover:scale-110 transition-transform duration-300`}
-                    >
-                      <method.icon className="size-10 text-white" />
-                      <div className="absolute inset-0 bg-white/20 rounded-2xl group-hover:animate-pulse"></div>
-                    </div>
+            <div className="p-10 bg-slate-900 rounded-[3rem] text-white relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-3xl rounded-full group-hover:scale-150 transition-transform duration-700"></div>
+              <h4 className="text-2xl font-display font-bold mb-4">Besoin d&apos;une démo ?</h4>
+              <p className="text-slate-400 mb-8 leading-relaxed">Nos experts peuvent vous faire une présentation complète adaptée à vos besoins.</p>
+              <button className="px-8 py-4 bg-emerald-600 text-white rounded-2xl font-bold hover:bg-emerald-700 transition-all flex items-center gap-3 shadow-xl shadow-emerald-600/20">
+                Réserver une démo
+                <ArrowUpRight className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
 
-                    <div className="space-y-0">
-                      <h3 className="text-xl font-bold text-gray-900">
-                        {method.name}
-                      </h3>
-                      <p className="text-sm font-medium text-sky-600">
-                        {method.value}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {method?.description}
-                      </p>
-                      <p className="text-sm font-medium text-gray-700 pt-2">
-                        {method.contact}
-                      </p>
+          <div className="lg:col-span-7">
+            <div className="bg-slate-50 p-10 lg:p-20 rounded-[4rem] border border-slate-100 relative overflow-hidden">
+              <div className="absolute -top-20 -right-20 w-64 h-64 bg-emerald-500/5 rounded-full blur-[100px]"></div>
+              {isSuccess ? (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="h-full flex flex-col items-center justify-center text-center py-20"
+                >
+                  <div className="w-24 h-24 bg-emerald-100 rounded-[2rem] flex items-center justify-center mb-10 shadow-2xl shadow-emerald-500/10">
+                    <CheckCircle2 className="w-12 h-12 text-emerald-600" />
+                  </div>
+                  <h2 className="text-4xl font-display font-bold text-slate-900 mb-6 tracking-tight">Message Envoyé !</h2>
+                  <p className="text-xl text-slate-500 mb-12 leading-relaxed max-w-md">
+                    Merci de nous avoir contactés. Un expert SyntixPharma vous répondra dans les plus brefs délais.
+                  </p>
+                  <button 
+                    onClick={() => setIsSuccess(false)}
+                    className="px-12 py-5 bg-slate-900 text-white rounded-2xl font-bold hover:bg-emerald-600 transition-all shadow-2xl shadow-slate-900/10"
+                  >
+                    Envoyer un autre message
+                  </button>
+                </motion.div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-10 relative z-10">
+                  <div className="grid sm:grid-cols-2 gap-10">
+                    <div className="space-y-4">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Nom Complet</label>
+                      <input 
+                        type="text" 
+                        required 
+                        className="w-full px-8 py-5 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all shadow-sm"
+                        placeholder="Jean Mukasa"
+                      />
+                    </div>
+                    <div className="space-y-4">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Email</label>
+                      <input 
+                        type="email" 
+                        required 
+                        className="w-full px-8 py-5 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all shadow-sm"
+                        placeholder="jean@pharmacie.cd"
+                      />
                     </div>
                   </div>
 
-                  <div className="absolute inset-0 bg-gradient-to-r from-sky-500/0 to-cyan-500/0 group-hover:from-sky-500/5 group-hover:to-cyan-500/5 rounded-2xl transition-all duration-300"></div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* Bureaux */}
-
-          {/* Offices Section - Enhanced */}
-          <section className="lg:col-span-1">
-            {/* <div className="sticky top-20 space-y-6"> */}
-            <div className="space-y-6">
-              <div className="text-center lg:text-left">
-                <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent mb-2">
-                  Nos Bureaux en Afrique
-                </h2>
-                <p className="text-gray-600">
-                  Support local et expertise régionale
-                </p>
-              </div>
-
-              <div className="space-y-6">
-                {offices.map((office, index) => (
-                  <div
-                    key={index}
-                    className={`relative bg-white rounded-2xl p-6 border-2 transition-all duration-300 hover:shadow-lg ${
-                      office.isMain
-                        ? "border-sky-200 shadow-sky-900/5"
-                        : "border-gray-200 hover:border-gray-300"
-                    }`}
-                  >
-                    {office.isMain && (
-                      <div className="absolute -top-3 left-6 bg-gradient-to-r from-sky-600 to-cyan-600 text-white px-4 py-1 rounded-full text-sm font-medium">
-                        Bureau Principal
-                      </div>
-                    )}
-
-                    <div className="flex items-center mb-6">
-                      <div className="text-3xl mr-4">{office.flag}</div>
-                      <div>
-                        <h3 className="text-xl font-bold text-gray-900">
-                          {office.city}
-                        </h3>
-                        <p className="text-gray-600 text-sm">
-                          {office.country}
-                        </p>
-                      </div>
+                  <div className="grid sm:grid-cols-2 gap-10">
+                    <div className="space-y-4">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Pharmacie</label>
+                      <input 
+                        type="text" 
+                        className="w-full px-8 py-5 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all shadow-sm"
+                        placeholder="Pharmacie de la Paix"
+                      />
                     </div>
-
-                    <div className="space-y-3 text-sm">
-                      <div className="flex items-start space-x-3">
-                        <MapPinIcon className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                        <p className="text-gray-600">{office.address}</p>
-                      </div>
-
-                      <div className="flex items-center space-x-3">
-                        <PhoneIcon className="h-4 w-4 text-gray-400 flex-shrink-0" />
-                        <a
-                          href={`tel:${office.phone}`}
-                          className="text-sky-600 hover:text-sky-800 transition-colors"
-                        >
-                          {office.phone}
-                        </a>
-                      </div>
-
-                      <div className="flex items-center space-x-3">
-                        <EnvelopeIcon className="h-4 w-4 text-gray-400 flex-shrink-0" />
-                        <a
-                          href={`mailto:${office.email}`}
-                          className="text-sky-600 hover:text-sky-800 transition-colors"
-                        >
-                          {office.email}
-                        </a>
-                      </div>
-
-                      <div className="flex items-start space-x-3">
-                        <ClockIcon className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                        <div>
-                          <p className="text-gray-600">{office.hours}</p>
-                          <p className="text-xs text-gray-500">
-                            {office.timezone}
-                          </p>
+                    <div className="space-y-4">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Sujet</label>
+                      <div className="relative">
+                        <select className="w-full px-8 py-5 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all appearance-none cursor-pointer shadow-sm">
+                          <option>Demande de Démo</option>
+                          <option>Question sur les Tarifs</option>
+                          <option>Support Technique</option>
+                          <option>Partenariat</option>
+                          <option>Autre</option>
+                        </select>
+                        <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none">
+                          <ChevronRight className="w-5 h-5 text-slate-400 rotate-90" />
                         </div>
                       </div>
                     </div>
-
-                    <Button variant="secondary" className="w-full mt-3">
-                      Contacter ce bureau
-                    </Button>
                   </div>
-                ))}
-              </div>
+
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Message</label>
+                    <textarea 
+                      required 
+                      rows={6}
+                      className="w-full px-8 py-5 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none resize-none transition-all shadow-sm"
+                      placeholder="Comment pouvons-nous vous aider ?"
+                    ></textarea>
+                  </div>
+
+                  <button 
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full py-6 bg-emerald-600 text-white rounded-[2rem] font-bold text-xl hover:bg-emerald-700 transition-all flex items-center justify-center gap-4 disabled:opacity-70 shadow-2xl shadow-emerald-600/20 group"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-6 h-6 animate-spin" />
+                        Envoi en cours...
+                      </>
+                    ) : (
+                      <>
+                        Envoyer le Message
+                        <Send className="w-6 h-6 group-hover:translate-x-2 group-hover:-translate-y-2 transition-transform" />
+                      </>
+                    )}
+                  </button>
+                </form>
+              )}
             </div>
-          </section>
-
-          {/* Formulaire de contact */}
-          <section className="md:col-span-2">
-            <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 border border-gray-200">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                  Demandez une Démo Personnalisée
-                </h2>
-                <p className="text-xl text-gray-600">
-                  Remplissez ce formulaire et nous vous recontactons sous 24h
-                </p>
-              </div>
-
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label
-                      htmlFor="name"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      Nom complet *
-                    </label>
-                    <div className="relative">
-                      <UserIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        required
-                        value={formData.name}
-                        onChange={handleChange}
-                        className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                        placeholder="Dr. Jean Mukasa"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="email"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      Email professionnel *
-                    </label>
-                    <div className="relative">
-                      <EnvelopeIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        required
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                        placeholder="jean@pharmacie-moderne.cd"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="phone"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      Téléphone *
-                    </label>
-                    <div className="relative">
-                      <PhoneIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <input
-                        type="tel"
-                        id="phone"
-                        name="phone"
-                        required
-                        value={formData.phone}
-                        onChange={handleChange}
-                        className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                        placeholder="+243 99 123 4567"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="company"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      Nom de la pharmacie *
-                    </label>
-                    <div className="relative">
-                      <BuildingStorefrontIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <input
-                        type="text"
-                        id="company"
-                        name="company"
-                        required
-                        value={formData.company}
-                        onChange={handleChange}
-                        className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                        placeholder="Pharmacie Moderne"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="country"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      Pays *
-                    </label>
-                    <div className="relative">
-                      <GlobeAltIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <select
-                        id="country"
-                        name="country"
-                        required
-                        value={formData.country}
-                        onChange={handleChange}
-                        className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                      >
-                        <option value="">Sélectionnez votre pays</option>
-                        <option value="cd">
-                          République Démocratique du Congo
-                        </option>
-                        <option value="bi">République du Burundi</option>
-                        <option value="rw">Rwanda</option>
-                        <option value="ug">Ouganda</option>
-                        <option value="tz">Tanzanie</option>
-                        <option value="ke">Kenya</option>
-                        <option value="other">Autre</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="pharmacyType"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      Type de pharmacie *
-                    </label>
-                    <select
-                      id="pharmacyType"
-                      name="pharmacyType"
-                      required
-                      value={formData.pharmacyType}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                    >
-                      <option value="">Sélectionnez le type</option>
-                      <option value="retail">Pharmacie de détail</option>
-                      <option value="hospital">Pharmacie hospitalière</option>
-                      <option value="wholesale">Grossiste/Distributeur</option>
-                      <option value="chain">Chaîne de pharmacies</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="subject"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Sujet de votre demande *
-                  </label>
-                  <select
-                    id="subject"
-                    name="subject"
-                    required
-                    value={formData.subject}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                  >
-                    <option value="">Choisissez un sujet</option>
-                    <option value="demo">Demande de démonstration</option>
-                    <option value="pricing">Questions sur les tarifs</option>
-                    <option value="features">
-                      Questions sur les fonctionnalités
-                    </option>
-                    <option value="integration">Besoins d'intégration</option>
-                    <option value="migration">
-                      Migration depuis un autre système
-                    </option>
-                    <option value="partnership">Partenariat/Revendeur</option>
-                    <option value="other">Autre</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="message"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Décrivez vos besoins *
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    required
-                    rows={5}
-                    value={formData.message}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                    placeholder="Parlez-nous de votre pharmacie, vos défis actuels et vos objectifs. Plus nous comprenons vos besoins, mieux nous pouvons vous aider."
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
-                    Mode de contact préféré
-                  </label>
-                  <div className="flex flex-wrap gap-4">
-                    {["email", "phone", "video"].map((method) => (
-                      <label key={method} className="flex items-center">
-                        <input
-                          type="radio"
-                          name="preferredContact"
-                          value={method}
-                          checked={formData.preferredContact === method}
-                          onChange={handleChange}
-                          className="h-4 w-4 text-sky-600 focus:ring-sky-500 border-gray-300"
-                        />
-                        <span className="ml-2 text-sm text-gray-700">
-                          {method === "email"
-                            ? "Email"
-                            : method === "phone"
-                            ? "Téléphone"
-                            : "Visioconférence"}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                <Button
-                  type="submit"
-                  size="lg"
-                  disabled={isSubmitting}
-                  className={`w-full transition-colors ${
-                    isSubmitting
-                      ? "bg-gray-400 text-gray-600 cursor-not-allowed"
-                      : ""
-                  }`}
-                >
-                  {isSubmitting ? "Envoi en cours..." : "Envoyer ma demande"}
-                </Button>
-
-                <p className="text-sm text-gray-500 text-center">
-                  En soumettant ce formulaire, vous acceptez d'être contacté par
-                  notre équipe commerciale. Nous respectons votre vie privée et
-                  ne partageons jamais vos informations.
-                </p>
-              </form>
-            </div>
-          </section>
+          </div>
         </div>
       </div>
+      {/* Office Locations */}
+      <section className="py-16 px-6 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-slate-50 text-slate-500 rounded-full text-[10px] font-black mb-6 border border-slate-100 uppercase tracking-[0.2em]">
+              Présence Locale
+            </div>
+            <h2 className="text-5xl lg:text-7xl font-display font-bold text-slate-900 mb-8 tracking-tight">Nos <span className="text-emerald-600">Bureaux.</span></h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { city: "Kinshasa", address: "Avenue de la Justice, Gombe", phone: "+243 81 000 0000", email: "kin@medpharma.cd" },
+              { city: "Lubumbashi", address: "Avenue Mobutu, Centre-Ville", phone: "+243 81 000 0001", email: "lsh@medpharma.cd" },
+              { city: "Abidjan", address: "Plateau, Rue des Banques", phone: "+225 07 00 00 00", email: "abj@medpharma.cd" },
+            ].map((office, i) => (
+              <div key={i} className="p-12 rounded-[3rem] border border-slate-100 bg-slate-50/50 hover:bg-white hover:shadow-2xl transition-all duration-500">
+                <h3 className="text-3xl font-display font-bold text-slate-900 mb-6">{office.city}</h3>
+                <div className="space-y-4 text-slate-500 font-medium">
+                  <p className="flex items-center gap-3">
+                    <MapPin className="w-5 h-5 text-emerald-600" />
+                    {office.address}
+                  </p>
+                  <p className="flex items-center gap-3">
+                    <Phone className="w-5 h-5 text-emerald-600" />
+                    {office.phone}
+                  </p>
+                  <p className="flex items-center gap-3">
+                    <Mail className="w-5 h-5 text-emerald-600" />
+                    {office.email}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
-};
-
-export default ContactPage;
+}
