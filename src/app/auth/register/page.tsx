@@ -137,10 +137,6 @@ export default function RegisterPage() {
             </div>
           </div>
         </div>
-
-        <div className="absolute bottom-10 left-20 right-20 flex justify-between text-[10px] text-slate-500 font-black uppercase tracking-[0.2em] z-20">
-          <span>© {new Date().getFullYear()} SyntixPharma</span>
-        </div>
       </div>
 
       {/* Form Area */}
