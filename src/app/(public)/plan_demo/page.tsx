@@ -28,7 +28,7 @@ export default function DemoPage() {
             <div className="inline-flex items-center gap-3 px-5 py-2 bg-emerald-500/10 text-emerald-400 rounded-full text-[10px] font-black mb-4 border border-emerald-500/20 uppercase tracking-[0.2em]">
               Expérience Immersive
             </div>
-            <h1 className="text-5xl lg:text-7xl font-display font-bold mb-8 tracking-[-0.04em] leading-[0.9]">
+            <h1 className="text-5xl lg:text-7xl font-display font-bold mb-4 tracking-[-0.04em] leading-[0.9]">
               Découvrez SyntixPharma <br />
               <span className="text-emerald-500 text-outline-white">en Action.</span>
             </h1>

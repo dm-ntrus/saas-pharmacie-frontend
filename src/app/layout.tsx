@@ -6,7 +6,6 @@ import QueryProvider from "@/providers/queryProvider";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "@/context/AuthContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { AccessibilityPanel } from "@/design-system";
 
 const inter = Inter({
   subsets: ['latin'],
@@ -65,7 +64,6 @@ export default function RootLayout({
                 }}
               />
               <AccessibilityProvider>
-                <AccessibilityPanel />
                 {children}
               </AccessibilityProvider>
             </AuthProvider>

@@ -1,3 +1,4 @@
+"use client";
 import type { ReactNode } from "react";
 import TenantLayout from "@/layouts/tenant/TenantLayout";
 import { useTenant } from "@/hooks/useTenant";

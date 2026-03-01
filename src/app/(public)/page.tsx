@@ -436,7 +436,7 @@ const PublicHomePage = () => {
                 </div>
                 <div className="absolute top-12 -right-20 w-1/2 h-full bg-slate-200 rounded-[2rem] rotate-12 group-hover:rotate-6 transition-transform duration-700 hidden lg:block overflow-hidden">
                   <Image 
-                    src="/images/hero.png" 
+                    src="/images/tenant.jpg" 
                     className="object-cover opacity-50" 
                     alt="POS" 
                     fill
@@ -520,7 +520,7 @@ const PublicHomePage = () => {
               }`}
             >
               {plan.popular && (
-                <div className="absolute -top-6 left-1/2 -translate-x-1/2 px-6 py-2 bg-emerald-600 text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-emerald-600 text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl">
                   Recommandé
                 </div>
               )}
@@ -533,7 +533,7 @@ const PublicHomePage = () => {
                 <p className={`mt-6 text-lg leading-relaxed ${plan.popular ? 'text-slate-400' : 'text-slate-500'}`}>{plan.desc}</p>
               </div>
 
-              <ul className="space-y-6 mb-12">
+              <ul className="space-y-3 mb-10">
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex items-center gap-4">
                     <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${plan.popular ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-600'}`}>
@@ -565,7 +565,7 @@ const PublicHomePage = () => {
       {/* CTA Section */}
       <section className="py-16 px-6 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-slate-900 rounded-[4rem] p-12 lg:p-24 relative overflow-hidden">
+          <div className="bg-slate-900 rounded-[6rem] p-12 lg:p-24 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-1/2 h-full bg-emerald-600/10 blur-[120px]"></div>
             <div className="grid lg:grid-cols-3 gap-16 items-center relative z-10">
               <div className="lg:col-span-2">

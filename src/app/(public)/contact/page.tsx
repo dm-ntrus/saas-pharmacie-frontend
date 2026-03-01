@@ -32,7 +32,7 @@ export default function ContactPage() {
               Vous avez des questions sur SyntixPharma ? Notre équipe d&apos;experts est là pour vous accompagner dans votre transformation numérique.
             </p>
 
-            <div className="space-y-8 mb-6">
+            <div className="space-y-4 mb-4">
               <div className="flex gap-8 group">
                 <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center group-hover:bg-emerald-50 transition-colors shrink-0">
                   <Mail className="w-6 h-6 text-slate-400 group-hover:text-emerald-600 transition-colors" />
@@ -67,11 +67,11 @@ export default function ContactPage() {
               </div>
             </div>
 
-            <div className="p-10 bg-slate-900 rounded-[3rem] text-white relative overflow-hidden group">
+            <div className="py-6 px-8 bg-slate-900 rounded-[2.5rem] text-white relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-3xl rounded-full group-hover:scale-150 transition-transform duration-700"></div>
-              <h4 className="text-2xl font-display font-bold mb-4">Besoin d&apos;une démo ?</h4>
-              <p className="text-slate-400 mb-8 leading-relaxed">Nos experts peuvent vous faire une présentation complète adaptée à vos besoins.</p>
-              <button className="px-8 py-4 bg-emerald-600 text-white rounded-2xl font-bold hover:bg-emerald-700 transition-all flex items-center gap-3 shadow-xl shadow-emerald-600/20">
+              <h4 className="text-xl font-display font-bold mb-0.5">Besoin d&apos;une démo ?</h4>
+              <p className="text-slate-400 text-sm mb-2.5 leading-relaxed">Nos experts peuvent vous faire une présentation complète adaptée à vos besoins.</p>
+              <button className="px-6 py-3 bg-emerald-600 text-white rounded-2xl font-bold hover:bg-emerald-700 transition-all flex items-center gap-3 shadow-xl shadow-emerald-600/20">
                 Réserver une démo
                 <ArrowUpRight className="w-5 h-5" />
               </button>
@@ -186,22 +186,22 @@ export default function ContactPage() {
       {/* Office Locations */}
       <section className="py-16 px-6 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-slate-50 text-slate-500 rounded-full text-[10px] font-black mb-6 border border-slate-100 uppercase tracking-[0.2em]">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-slate-50 text-slate-500 rounded-full text-[10px] font-black mb-4 border border-slate-100 uppercase tracking-[0.2em]">
               Présence Locale
             </div>
-            <h2 className="text-5xl lg:text-7xl font-display font-bold text-slate-900 mb-8 tracking-tight">Nos <span className="text-emerald-600">Bureaux.</span></h2>
+            <h2 className="text-4xl lg:text-6xl font-display font-bold text-slate-900 mb-4 tracking-tight">Nos <span className="text-emerald-600">Bureaux.</span></h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-6">
             {[
               { city: "Kinshasa", address: "Avenue de la Justice, Gombe", phone: "+243 81 000 0000", email: "kin@medpharma.cd" },
               { city: "Lubumbashi", address: "Avenue Mobutu, Centre-Ville", phone: "+243 81 000 0001", email: "lsh@medpharma.cd" },
               { city: "Abidjan", address: "Plateau, Rue des Banques", phone: "+225 07 00 00 00", email: "abj@medpharma.cd" },
             ].map((office, i) => (
-              <div key={i} className="p-12 rounded-[3rem] border border-slate-100 bg-slate-50/50 hover:bg-white hover:shadow-2xl transition-all duration-500">
-                <h3 className="text-3xl font-display font-bold text-slate-900 mb-6">{office.city}</h3>
-                <div className="space-y-4 text-slate-500 font-medium">
+              <div key={i} className="p-10 rounded-[3rem] border border-slate-100 bg-slate-50/50 hover:bg-white hover:shadow-2xl transition-all duration-500">
+                <h3 className="text-3xl font-display font-bold text-slate-900 mb-2">{office.city}</h3>
+                <div className="space-y-1 text-slate-500 font-medium">
                   <p className="flex items-center gap-3">
                     <MapPin className="w-5 h-5 text-emerald-600" />
                     {office.address}

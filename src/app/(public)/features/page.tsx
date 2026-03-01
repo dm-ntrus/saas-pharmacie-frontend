@@ -59,7 +59,7 @@ export default function FeaturesPage() {
   return (
     <div className="min-h-screen pt-32 pb-0 bg-white">
       {/* Header */}
-      <section className="px-6 mb-24 text-center">
+      <section className="px-6 mb-10 text-center">
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -68,7 +68,7 @@ export default function FeaturesPage() {
             <div className="inline-flex items-center gap-3 px-5 py-2 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-black mb-4 border border-emerald-100 uppercase tracking-[0.2em]">
               Fonctionnalités
             </div>
-            <h1 className="text-5xl lg:text-7xl font-display font-bold text-slate-900 mb-8 tracking-tight">
+            <h1 className="text-5xl lg:text-7xl font-display font-bold text-slate-900 mb-4 tracking-tight">
               Tout ce dont vous avez besoin pour <span className="text-emerald-600">réussir</span>.
             </h1>
             <p className="text-xl text-slate-500 leading-relaxed max-w-2xl mx-auto">
@@ -91,11 +91,11 @@ export default function FeaturesPage() {
                 transition={{ delay: i * 0.1 }}
                 className="p-10 rounded-[3rem] border border-slate-100 bg-slate-50/50 hover:bg-white hover:shadow-2xl hover:shadow-emerald-600/5 transition-all group"
               >
-                <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-8 shadow-sm group-hover:bg-emerald-600 transition-colors">
+                <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-sm group-hover:bg-emerald-600 transition-colors">
                   <f.icon className="w-8 h-8 text-emerald-600 group-hover:text-white transition-colors" />
                 </div>
-                <h3 className="text-2xl font-display font-bold text-slate-900 mb-4">{f.title}</h3>
-                <p className="text-slate-500 mb-8 leading-relaxed">{f.desc}</p>
+                <h3 className="text-2xl font-display font-bold text-slate-900 mb-2">{f.title}</h3>
+                <p className="text-slate-500 mb-6 leading-relaxed">{f.desc}</p>
                 <ul className="space-y-3">
                   {f.details.map((detail, j) => (
                     <li key={j} className="flex items-center gap-3 text-sm text-slate-600 font-medium">
@@ -115,10 +115,10 @@ export default function FeaturesPage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
             <div>
-              <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-black mb-6 border border-emerald-100 uppercase tracking-[0.2em]">
+              <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-black mb-4 border border-emerald-100 uppercase tracking-[0.2em]">
                 Écosystème
               </div>
-              <h2 className="text-5xl lg:text-7xl font-display font-bold text-slate-900 mb-8 tracking-tight">Connecté à votre <span className="text-emerald-600">monde.</span></h2>
+              <h2 className="text-5xl lg:text-7xl font-display font-bold text-slate-900 mb-4 tracking-tight">Connecté à votre <span className="text-emerald-600">monde.</span></h2>
               <p className="text-xl text-slate-500 leading-relaxed font-medium mb-12">
                 SyntixPharma s&apos;intègre parfaitement avec les outils que vous utilisez déjà, créant un flux de travail sans friction.
               </p>
@@ -157,17 +157,17 @@ export default function FeaturesPage() {
       {/* Process Section */}
       <section className="py-24 px-6 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-24">
-            <div className="inline-flex items-center gap-3 px-5 py-2 bg-slate-50 text-slate-500 rounded-full text-[10px] font-black mb-10 border border-slate-100 uppercase tracking-[0.2em]">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-3 px-5 py-2 bg-slate-50 text-slate-500 rounded-full text-[10px] font-black mb-4 border border-slate-100 uppercase tracking-[0.2em]">
               Déploiement
             </div>
-            <h2 className="text-5xl lg:text-7xl font-display font-bold text-slate-900 mb-8 tracking-tight">Prêt en <span className="text-emerald-600">3 étapes.</span></h2>
+            <h2 className="text-5xl lg:text-7xl font-display font-bold text-slate-900 mb-4 tracking-tight">Prêt en <span className="text-emerald-600">3 étapes.</span></h2>
             <p className="text-2xl text-slate-500 max-w-3xl mx-auto font-medium">
               Une transition fluide vers la pharmacie du futur.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-16 relative">
+          <div className="grid md:grid-cols-3 gap-8 relative">
             <div className="hidden md:block absolute top-1/2 left-0 w-full h-px bg-slate-100 -translate-y-1/2 z-0"></div>
             {[
               {
@@ -187,10 +187,10 @@ export default function FeaturesPage() {
               }
             ].map((item, i) => (
               <div key={i} className="relative z-10 bg-white p-12 rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-500 group">
-                <div className="text-6xl font-display font-bold text-emerald-100 mb-8 group-hover:text-emerald-600 transition-colors duration-500">
+                <div className="text-6xl font-display font-bold text-emerald-100 mb-4 group-hover:text-emerald-600 transition-colors duration-500">
                   {item.step}
                 </div>
-                <h3 className="text-3xl font-display font-bold text-slate-900 mb-6">{item.title}</h3>
+                <h3 className="text-3xl font-display font-bold text-slate-900 mb-2">{item.title}</h3>
                 <p className="text-xl text-slate-500 leading-relaxed font-medium">
                   {item.desc}
                 </p>
@@ -206,13 +206,13 @@ export default function FeaturesPage() {
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
             <div>
-              <h2 className="text-4xl lg:text-6xl font-display font-bold mb-8 leading-tight">
+              <h2 className="text-4xl lg:text-6xl font-display font-bold mb-2 leading-tight">
                 Une interface <span className="text-emerald-400">intuitive</span>, aucune formation requise.
               </h2>
-              <p className="text-xl text-slate-400 mb-12 leading-relaxed">
+              <p className="text-xl text-slate-400 mb-10 leading-relaxed">
                 Nous avons passé des milliers d&apos;heures à observer le travail en officine pour créer l&apos;interface la plus fluide du marché. Vos employés seront opérationnels en moins de 30 minutes.
               </p>
-              <div className="space-y-6 mb-12">
+              <div className="space-y-4 mb-10">
                 {[
                   "Mode sombre pour le travail de nuit",
                   "Raccourcis clavier pour les experts",
@@ -237,7 +237,7 @@ export default function FeaturesPage() {
               <div className="relative bg-slate-800 rounded-[2.5rem] border border-slate-700 p-4 shadow-2xl">
                 <div className="bg-slate-900 rounded-[2rem] aspect-video flex items-center justify-center overflow-hidden">
                    <Image 
-                    src="/images/hero.png" 
+                    src="/images/tenant.jpg" 
                     alt="Dashboard Preview" 
                     fill
                     className="object-cover opacity-80"

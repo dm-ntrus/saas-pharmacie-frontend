@@ -36,7 +36,7 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen pt-32 pb-24 bg-white">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center max-w-4xl mx-auto mb-24">
+        <div className="text-center max-w-4xl mx-auto mb-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -44,7 +44,7 @@ export default function PricingPage() {
             <div className="inline-flex items-center gap-3 px-5 py-2 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-black mb-4 border border-emerald-100 uppercase tracking-[0.2em]">
               Tarification
             </div>
-            <h1 className="text-5xl lg:text-7xl font-display font-bold text-slate-900 mb-8 tracking-[-0.04em] leading-[0.9]">
+            <h1 className="text-5xl lg:text-7xl font-display font-bold text-slate-900 mb-4 tracking-[-0.04em] leading-[0.9]">
               Investissez dans <br />
               votre <span className="text-emerald-600">Succès.</span>
             </h1>
@@ -54,7 +54,7 @@ export default function PricingPage() {
           </motion.div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-10 mb-24">
+        <div className="grid lg:grid-cols-3 gap-10 mb-16">
           {pricingPlans.map((plan, i) => (
             <motion.div
               key={plan.name}
@@ -68,7 +68,7 @@ export default function PricingPage() {
               }`}
             >
               {plan.popular && (
-                <div className="absolute -top-6 left-1/2 -translate-x-1/2 px-6 py-2 bg-emerald-600 text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-emerald-600 text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl">
                   Recommandé
                 </div>
               )}
@@ -81,7 +81,7 @@ export default function PricingPage() {
                 <p className={`mt-6 text-lg leading-relaxed ${plan.popular ? 'text-slate-400' : 'text-slate-500'}`}>{plan.desc}</p>
               </div>
 
-              <ul className="space-y-6 mb-12">
+              <ul className="space-y-3 mb-10">
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex items-center gap-4">
                     <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${plan.popular ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-600'}`}>
@@ -109,18 +109,18 @@ export default function PricingPage() {
 
         {/* Comparison Table */}
         <section className="mb-24">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-6xl font-display font-bold text-slate-900 mb-6 tracking-tight">Comparatif Détaillé</h2>
+          <div className="text-center mb-10">
+            <h2 className="text-4xl lg:text-6xl font-display font-bold text-slate-900 mb-4 tracking-tight">Comparatif Détaillé</h2>
             <p className="text-xl text-slate-500 font-medium">Comparez les fonctionnalités pour trouver le plan idéal.</p>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-slate-100">
-                  <th className="py-10 px-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Fonctionnalité</th>
-                  <th className="py-10 px-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] text-center">Simple</th>
-                  <th className="py-10 px-6 text-[10px] font-black text-emerald-600 uppercase tracking-[0.3em] text-center">Standard</th>
-                  <th className="py-10 px-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] text-center">Grossiste</th>
+                  <th className="py-6 px-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Fonctionnalité</th>
+                  <th className="py-6 px-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] text-center">Simple</th>
+                  <th className="py-6 px-6 text-[10px] font-black text-emerald-600 uppercase tracking-[0.3em] text-center">Standard</th>
+                  <th className="py-6 px-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] text-center">Grossiste</th>
                 </tr>
               </thead>
               <tbody className="text-slate-900 font-medium">
@@ -135,14 +135,14 @@ export default function PricingPage() {
                  { name: 'Support Prioritaire', simple: false, standard: false, grossiste: true },
                 ].map((row, i) => (
                   <tr key={i} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                    <td className="py-8 px-6 text-lg">{row.name}</td>
-                    <td className="py-8 px-6 text-center">
+                    <td className="py-6 px-6 text-lg">{row.name}</td>
+                    <td className="py-6 px-6 text-center">
                       {typeof row.simple === 'boolean' ? (row.simple ? <CheckCircle2 className="w-6 h-6 text-emerald-500 mx-auto" /> : <X className="w-6 h-6 text-slate-200 mx-auto" />) : row.simple}
                     </td>
-                    <td className="py-8 px-6 text-center text-emerald-600 font-bold">
+                    <td className="py-6 px-6 text-center text-emerald-600 font-bold">
                       {typeof row.standard === 'boolean' ? (row.standard ? <CheckCircle2 className="w-6 h-6 text-emerald-500 mx-auto" /> : <X className="w-6 h-6 text-slate-200 mx-auto" />) : row.standard}
                     </td>
-                    <td className="py-8 px-6 text-center">
+                    <td className="py-6 px-6 text-center">
                       {typeof row.grossiste === 'boolean' ? (row.grossiste ? <CheckCircle2 className="w-6 h-6 text-emerald-500 mx-auto" /> : <X className="w-6 h-6 text-slate-200 mx-auto" />) : row.grossiste}
                     </td>
                   </tr>

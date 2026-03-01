@@ -15,6 +15,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import { Loader2 } from 'lucide-react';
+import { motion } from 'motion/react';
 
 const LoginPage = () => {
   const params = useParams();
@@ -77,39 +79,44 @@ const LoginPage = () => {
     }));
   };
 
+  const inputClass = "w-full pl-10 pr-5 py-3 rounded-2xl text-slate-900 border border-slate-100 focus:ring-2 focus:ring-emerald-500 outline-none focus:bg-white shadow-sm transition-all font-medium";
+  const labelClass = "text-sm font-bold text-slate-700";
+
   return (
     <div className="min-h-screen flex relative overflow-hidden">
       <div className="relative z-10 w-full flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
         <div className="w-full max-w-6xl grid grid-cols-1 gap-8 items-center">
           {/* Login Form */}
           <div className="w-full max-w-md mx-auto">
-            <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl p-8 space-y-6 border border-white/20">
+            <motion.div
+                key="step1"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.25 }} className="bg-white backdrop-blur-xl rounded-3xl shadow-2xl p-8 space-y-6 border border-white/20">
               {/* Logo */}
               <div className="flex flex-col items-center text-center pb-2 border-b border-gray-200">
                 <div className="flex items-center justify-center space-x-2">
                   {/* <BuildingStorefrontIcon className="h-8 w-8 text-sky-600" /> */}
-                  <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-sky-600 via-sky-600 to-cyan-600 uppercase">{tenant_slug}</h2>
+                  <h2 className="text-4xl font-bold text-emerald-600 uppercase">{tenant_slug}</h2>
                 </div>
-                <Image src="/images/medpharma.png" width="80" height="50" alt="MEDPharma"/>
+                <span className="font-display font-bold text-md text-emerald-600 tracking-tight">Syntix<span className="text-slate-900">Pharma</span></span>
               </div>
 
               <div className="text-center">
-                <h2 className="text-3xl font-bold text-gray-900">
-                  {/* Bon retour ! */}
-                </h2>
-                <p className="text-gray-600 mt-2">
+                {/* <h2 className="text-3xl font-bold text-gray-900">
+                  Bon retour !
+                </h2> */}
+                <p className="text-slate-500 mb-2 leading-relaxed">
                   Connectez-vous à votre espace de gestion
                 </p>
               </div>
 
               <form className="space-y-5" onSubmit={handleSubmit}>
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Email professionnel
-                  </label>
+                <div className="space-y-2">
+                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">
+                Email professionnel
+              </label>
                   <div className="relative">
                     <EnvelopeIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 z-10" />
                     <input
@@ -120,19 +127,16 @@ const LoginPage = () => {
                       required
                       value={formData.email}
                       onChange={handleChange}
-                      className="pl-11 w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
+                      className={inputClass}
                       placeholder="pharmacien@votrePharmacie.cd"
                     />
                   </div>
                 </div>
 
-                <div>
-                  <label
-                    htmlFor="password"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Mot de passe
-                  </label>
+                <div className="space-y-2">
+                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">
+                  Mot de passe
+                </label>
                   <div className="relative">
                     <LockClosedIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 z-10" />
                     <input
@@ -143,7 +147,7 @@ const LoginPage = () => {
                       required
                       value={formData.password}
                       onChange={handleChange}
-                      className="pl-11 pr-11 w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
+                      className={inputClass}
                       placeholder="••••••••"
                     />
                     <button
@@ -172,7 +176,7 @@ const LoginPage = () => {
                     />
                     <label
                       htmlFor="rememberMe"
-                      className="ml-2 block text-sm text-gray-700"
+                      className="ml-2 text-sm font-bold text-slate-600 cursor-pointer"
                     >
                       Se souvenir de moi
                     </label>
@@ -181,32 +185,26 @@ const LoginPage = () => {
                   <div className="text-sm">
                     <Link
                       href={`/tenant/${tenant_slug}/auth/forgot-password`}
-                      className="text-sky-600 hover:text-sky-700 font-medium transition-colors"
+                      className="text-[10px] font-black text-emerald-600 hover:text-emerald-700 uppercase tracking-widest"
                     >
                       Mot de passe oublié ?
                     </Link>
                   </div>
                 </div>
 
-                <Button
-                  type="submit"
-                  size="lg"
-                  disabled={isLoading}
-                  className={`w-full flex justify-center transition-colors ${
-                    isLoading ? "bg-gray-300 cursor-not-allowed" : ""
-                  }`}
-                >
-                  {isLoading ? (
-                    <div className="flex items-center">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-sky-900 mr-2"></div>
-                      Connexion...
-                    </div>
+                <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full py-4 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg shadow-emerald-600/20"
+                  >
+                    {isLoading ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
                   ) : (
                     "Se connecter"
                   )}
-                </Button>
+                  </button>
               </form>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>

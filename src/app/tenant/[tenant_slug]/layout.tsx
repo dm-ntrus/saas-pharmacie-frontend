@@ -1,8 +1,11 @@
+'use client';
+
 import { OrganizationProvider } from "@/context/OrganizationContext";
 import React from "react";
 import type { ReactNode } from "react";
 import Head from "next/head";
 import { FeatureFlagProvider } from "@/context/FeatureFlagContext";
+import { AccessibilityPanel } from "@/design-system";
 
 type LayoutProps = {
   children: ReactNode;
@@ -12,8 +15,8 @@ type LayoutProps = {
 export default function Layout({ children, params }: LayoutProps) {
   const { tenant_slug } = React.use(params);
 
-  const title = `MedPharma - ${tenant_slug} | SaaS multi-tenant pour pharmacies`;
-  const description = `MedPharma pour ${tenant_slug} adapté à votre activité pharmaceutique.`;
+  const title = `SyntixPharma - ${tenant_slug} | Gestion Intelligente de Pharmacie`;
+  const description = `SyntixPharma pour ${tenant_slug} adapté à votre activité pharmaceutique.`;
 
   return (
     <>
@@ -21,6 +24,7 @@ export default function Layout({ children, params }: LayoutProps) {
         <title>{title}</title>
         <meta name="description" content={description} />
       </Head>
+      <AccessibilityPanel />
       <OrganizationProvider>
         <FeatureFlagProvider>{children}</FeatureFlagProvider>
       </OrganizationProvider>

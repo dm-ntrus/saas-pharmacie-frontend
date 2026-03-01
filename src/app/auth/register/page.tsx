@@ -1,37 +1,47 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import {
-  CheckCircleIcon,
-  ArrowRightIcon,
-  CreditCardIcon,
-  DevicePhoneMobileIcon,
-  BuildingStorefrontIcon,
-  UserGroupIcon,
-} from "@heroicons/react/24/outline";
-import { Button } from "@/design-system";
-import Image from "next/image";
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { motion, AnimatePresence } from 'motion/react';
+import { 
+  Check, 
+  ArrowRight, 
+  User, 
+  Building2, 
+  CreditCard, 
+  ShieldCheck, 
+  Loader2,
+  ChevronLeft,
+  ChevronRight,
+  Star,
+  Eye,
+  EyeOff,
+  MapPin,
+  Globe,
+  Phone,
+  Mail,
+  ArrowLeft,
+  Zap,
+  Shield
+} from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-const RegisterPage = () => {
-  const router = useRouter();
+const plans = [
+  { id: 'simple', name: 'Simple', price: '29', features: ['1 Pharmacien', 'Inventaire de base', 'Ventes POS', 'Support Email'] },
+  { id: 'standard', name: 'Standard', price: '99', features: ['Illimité', 'IA Prédictive', 'Comptabilité', 'Multi-devises'] },
+  { id: 'grossiste', name: 'Grossiste', price: '199', features: ['Multi-sites', 'Gestion Entrepôt', 'API Accès', 'Manager Dédié'] },
+];
+
+export default function RegisterPage() {
   const searchParams = useSearchParams();
-  const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 4;
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Récupérer le plan depuis l'URL si disponible
-  React.useEffect(() => {
-    const plan = searchParams.get("plan");
-    if (plan) {
-      setFormData((prev) => ({ ...prev, selectedPlan: plan }));
-    }
-  }, [searchParams]);
+  const [step, setStep] = useState(1);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [formData, setFormData] = useState({
     // Étape 1 - Plan
-    selectedPlan: "moyenne",
+    plan: 'standard',
 
     // Étape 2 - Compte
     firstName: "",
@@ -46,7 +56,7 @@ const RegisterPage = () => {
     licenseNumber: "",
     address: "",
     city: "",
-    country: "cd",
+    country: "RD Congo",
     pharmacyType: "retail",
 
     // Étape 4 - Paiement
@@ -55,736 +65,588 @@ const RegisterPage = () => {
     marketingConsent: false,
   });
 
-  const plans = [
-    {
-      id: "simple",
-      name: "Simple",
-      price: "25",
-      description: "Perfect for small pharmacies",
-      features: [
-        "POS Basic",
-        "Inventory Management",
-        "Customer Records",
-        "Basic Reports",
-      ],
-      recommended: false,
-    },
-    {
-      id: "moyenne",
-      name: "Moyenne",
-      price: "45",
-      description: "Most popular choice",
-      features: [
-        "All Simple features",
-        "Prescription Management",
-        "Advanced Analytics",
-        "Mobile Money",
-      ],
-      recommended: true,
-    },
-    {
-      id: "standard",
-      name: "Standard",
-      price: "85",
-      description: "Full-featured solution",
-      features: [
-        "All Moyenne features",
-        "AI Validation",
-        "E-commerce",
-        "API Access",
-        "Priority Support",
-      ],
-      recommended: false,
-    },
-    {
-      id: "grossiste",
-      name: "Grossiste",
-      price: "150",
-      description: "For distributors and chains",
-      features: [
-        "All Standard features",
-        "Multi-location",
-        "Wholesale Management",
-        "Custom Integrations",
-      ],
-      recommended: false,
-    },
-  ];
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
-  const paymentMethods = [
-    {
-      id: "mobile_money",
-      name: "Mobile Money",
-      description: "AirtelMoney, OrangeMoney, M-Pesa",
-      icon: DevicePhoneMobileIcon,
-      popular: true,
-    },
-    {
-      id: "card",
-      name: "Carte Bancaire",
-      description: "Visa, Mastercard",
-      icon: CreditCardIcon,
-      popular: false,
-    },
-    {
-      id: "bank_transfer",
-      name: "Virement Bancaire",
-      description: "Transfert direct",
-      icon: BuildingStorefrontIcon,
-      popular: false,
-    },
-  ];
-
-  const handleNext = () => {
-    if (currentStep < totalSteps) {
-      setCurrentStep(currentStep + 1);
+  // Récupérer le plan depuis l'URL si disponible
+  useEffect(() => {
+    const plan = searchParams.get("plan");
+    if (plan) {
+      setFormData((prev) => ({ ...prev, plan }));
     }
-  };
+  }, [searchParams]);
 
-  const handleBack = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
+  const nextStep = () => setStep(s => s + 1);
+  const prevStep = () => setStep(s => s - 1);
+
+  const update = (field: keyof typeof formData) => (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const value = e.target.type === 'checkbox'
+      ? (e.target as HTMLInputElement).checked
+      : e.target.value;
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!formData.acceptTerms) {
-      alert("Vous devez accepter les conditions d'utilisation");
+    if (step < 5) {
+      nextStep();
       return;
     }
-
-    setIsLoading(true);
-
-    try {
-      // Simulation de création de compte avec API
-      console.log("Registration data:", formData);
-
-      // Simulation d'appel API
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-
-      // Redirection vers confirmation ou tableau de bord
-      router.push("/registration-success");
-    } catch (error) {
-      console.error("Erreur lors de l'inscription:", error);
-      alert("Erreur lors de l'inscription. Veuillez réessayer.");
-    } finally {
-      setIsLoading(false);
-    }
+    
+    setIsSubmitting(true);
+    // Simulation d'inscription
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    router.push('/auth/registration-success');
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value, type } = e.target;
-    const checked = (e.target as HTMLInputElement).checked;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  const steps = [
-    {
-      step: 1,
-      title: "Choisissez Votre Plan",
-      description: "Sélectionnez l'offre qui correspond à vos besoins",
-    },
-    {
-      step: 2,
-      title: "Créez Votre Compte",
-      description: "Vos informations personnelles",
-    },
-    {
-      step: 3,
-      title: "Informations Pharmacie",
-      description: "Détails de votre établissement",
-    },
-    {
-      step: 4,
-      title: "Finaliser l'Inscription",
-      description: "Choisissez votre méthode de paiement",
-    },
-  ];
-
-  const renderStep1 = () => (
-    <div className="pt-2">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {plans.map((plan) => (
-          <div
-            key={plan.id}
-            className={`relative flex flex-col rounded-xl p-4 cursor-pointer ring-2 transition-all duration-200 hover:scale-95 ${
-              formData.selectedPlan === plan.id
-                ? "ring-sky-400 bg-sky-50 shadow-2xl"
-                : "ring-gray-200 bg-white shadow-lg hover:shadow-2xl hover:border-gray-300"
-            }`}
-            onClick={() =>
-              setFormData((prev) => ({ ...prev, selectedPlan: plan.id }))
-            }
-          >
-            {plan.recommended && (
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <span className="bg-sky-500 text-white px-4 py-1 text-sm font-semibold rounded-full">
-                  Recommandé
-                </span>
-              </div>
-            )}
-
-            <div className="text-center mb-4">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
-                {plan.name}
-              </h3>
-              <div className="text-3xl font-bold text-sky-600 mb-2">
-                ${plan.price}
-                <span className="text-lg text-gray-600">/mois</span>
-              </div>
-              <p className="text-gray-600">{plan.description}</p>
-            </div>
-
-            <ul className="space-y-2 mb-2">
-              {plan.features.map((feature, index) => (
-                <li
-                  key={index}
-                  className="flex items-center text-sm text-gray-600"
-                >
-                  <CheckCircleIcon className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                  {feature}
-                </li>
-              ))}
-            </ul>
-
-            <div
-              className={`w-full mt-auto py-2 px-4 rounded-lg text-center font-semibold text-sm ${
-                formData.selectedPlan === plan.id
-                  ? "bg-sky-600 text-white"
-                  : "bg-gray-100 text-gray-700"
-              }`}
-            >
-              {formData.selectedPlan === plan.id
-                ? "Sélectionné"
-                : "Choisir ce plan"}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-
-  const renderStep2 = () => (
-    <div className="">
-      <div className="p-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700">
-              Nom *
-            </label>
-            <input
-              type="text"
-              name="firstName"
-              required
-              value={formData.firstName}
-              onChange={handleChange}
-              className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
-              placeholder="Jean"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700">
-              Prénom *
-            </label>
-            <input
-              type="text"
-              name="lastName"
-              required
-              value={formData.lastName}
-              onChange={handleChange}
-              className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
-              placeholder="Mukasa"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700">
-              Email professionnel *
-            </label>
-            <input
-              type="email"
-              name="email"
-              required
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
-              placeholder="jean@pharmacie-moderne.cd"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700">
-              Téléphone *
-            </label>
-            <input
-              type="tel"
-              name="phone"
-              required
-              value={formData.phone}
-              onChange={handleChange}
-              className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
-              placeholder="+243 99 123 4567"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
-              Mot de passe *
-            </label>
-            <input
-              type="password"
-              name="password"
-              required
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
-              placeholder="••••••••"
-            />
-            <p className="text-xs text-gray-500">
-              Au moins 8 caractères avec majuscules et chiffres
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700">
-              Confirmer le mot de passe *
-            </label>
-            <input
-              type="password"
-              name="confirmPassword"
-              required
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
-              placeholder="••••••••"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderStep3 = () => (
-    <div className="">
-      <div className="p-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700">
-              Type de pharmacie *
-            </label>
-            <select
-              name="pharmacyType"
-              required
-              value={formData.pharmacyType}
-              onChange={handleChange}
-              className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
-            >
-              <option value="retail">Pharmacie de détail</option>
-              <option value="hospital">Pharmacie hospitalière</option>
-              <option value="wholesale">Grossiste/Distributeur</option>
-              <option value="chain">Chaîne de pharmacies</option>
-            </select>
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700">
-              Nom de la pharmacie *
-            </label>
-            <input
-              type="text"
-              name="pharmacyName"
-              required
-              value={formData.pharmacyName}
-              onChange={handleChange}
-              className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
-              placeholder="Pharmacie Moderne"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700">
-              Numéro de licence *
-            </label>
-            <input
-              type="text"
-              name="licenseNumber"
-              required
-              value={formData.licenseNumber}
-              onChange={handleChange}
-              className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
-              placeholder="PH/KIN/2024/001"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700">
-              Pays *
-            </label>
-            <select
-              name="country"
-              required
-              value={formData.country}
-              onChange={handleChange}
-              className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
-            >
-              <option value="cd">RD Congo</option>
-              <option value="bi">Burundi</option>
-              <option value="rw">Rwanda</option>
-              <option value="ug">Ouganda</option>
-              <option value="tz">Tanzanie</option>
-            </select>
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700">
-              Ville *
-            </label>
-            <input
-              type="text"
-              name="city"
-              required
-              value={formData.city}
-              onChange={handleChange}
-              className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
-              placeholder="Kinshasa"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700">
-              Adresse complète *
-            </label>
-            <input
-              type="text"
-              name="address"
-              required
-              value={formData.address}
-              onChange={handleChange}
-              className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent bg-white text-gray-900 transition-all"
-              placeholder="Avenue de la Paix, Q/Socimat, Kinshasa"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderStep4 = () => (
-    <div className="">
-      <div className="">
-        <div className="mb-2">
-          <h3 className="text-lg font-semibold text-gray-700 mb-2">
-            Récapitulatif
-          </h3>
-          <div className="bg-sky-50 rounded-xl px-4 py-2 border border-sky-100">
-            <div className="flex justify-between items-center">
-              <span className="font-semibold text-gray-700">
-                Plan{" "}
-                {formData.selectedPlan.charAt(0).toUpperCase() +
-                  formData.selectedPlan.slice(1)}
-              </span>
-              <span className="font-bold text-xl text-sky-600">
-                ${plans.find((p) => p.id === formData.selectedPlan)?.price}/mois
-              </span>
-            </div>
-            <div className="flex justify-between items-center text-green-600/70 mb-1">
-              <span className="flex items-center font-light">
-                Premier mois gratuit
-              </span>
-              <span className="font-semibold">
-                -${plans.find((p) => p.id === formData.selectedPlan)?.price}
-              </span>
-            </div>
-            <hr className="border-gray-300 my-2" />
-            <div className="flex justify-between items-center">
-              <span className="text-lg font-bold text-gray-900">
-                Total aujourd'hui
-              </span>
-              <span className="text-xl font-bold text-green-600">$0</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="mb-2">
-          <h3 className="text-lg font-semibold text-gray-700 mb-2">
-            Méthode de paiement
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {paymentMethods.map((method) => {
-              const IconComponent = method.icon;
-              return (
-                <div
-                  key={method.id}
-                  className={`relative border-2 rounded-xl p-2 cursor-pointer transition-all duration-200 hover:scale-105 ${
-                    formData.paymentMethod === method.id
-                      ? "border-sky-400 bg-sky-50 shadow-lg"
-                      : "border-gray-200 hover:border-gray-300"
-                  }`}
-                  onClick={() =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      paymentMethod: method.id,
-                    }))
-                  }
-                >
-                  {method.popular && (
-                    <div className="absolute -top-2 -right-2">
-                      <span className="bg-sky-500 text-white text-xs px-2 py-1 rounded-full font-bold">
-                        Populaire
-                      </span>
-                    </div>
-                  )}
-                  <div className="text-center">
-                    <IconComponent
-                      className={`h-8 w-8 mx-auto mb-1 ${
-                        formData.paymentMethod === method.id
-                          ? "text-sky-500"
-                          : "text-gray-400"
-                      }`}
-                    />
-                    <h4 className="font-semibold text-gray-900">
-                      {method.name}
-                    </h4>
-                    <p className="text-sm text-gray-600">
-                      {method.description}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="space-y-1 mt-6">
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              name="acceptTerms"
-              required
-              checked={formData.acceptTerms}
-              onChange={handleChange}
-              className="h-4 w-4 text-sky-600 focus:ring-sky-500 border-gray-300 rounded"
-            />
-            <span className="ml-2 text-sm text-gray-700">
-              J'accepte les{" "}
-              <Link
-                href="/terms"
-                className="text-sky-600 hover:text-sky-800 underline"
-              >
-                conditions d'utilisation
-              </Link>{" "}
-              et la{" "}
-              <Link
-                href="/privacy"
-                className="text-sky-600 hover:text-sky-800 underline"
-              >
-                politique de confidentialité
-              </Link>
-            </span>
-          </label>
-
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              name="marketingConsent"
-              checked={formData.marketingConsent}
-              onChange={handleChange}
-              className="h-4 w-4 text-sky-600 focus:ring-sky-500 border-gray-300 rounded"
-            />
-            <span className="ml-2 text-sm text-gray-700">
-              J'accepte de recevoir des communications marketing (optionnel)
-            </span>
-          </label>
-        </div>
-      </div>
-    </div>
-  );
+  const inputClass = "w-full px-5 py-3 rounded-2xl text-slate-900 border border-slate-100 focus:ring-2 focus:ring-emerald-500 outline-none bg-slate-50/50 focus:bg-white shadow-sm transition-all font-medium";
+  const labelClass = "text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]";
 
   return (
-    <>
-      <div className="min-h-screen h-full flex items-center relative overflow-hidden">
-        <div className="hidden lg:flex flex-col h-full bg-white/95 p-6 w-[22rem]">
-          <div className="flex flex-col items-center text-center w-full mb-4">
-            <Link
-              href="/"
-            >
-              <Image src="/images/medpharma.png" width="250" height="100" alt="MEDPharma"/>
-            </Link>
-            <p className="text-gray-500 mb-4">Inscrivez-vous</p>
+    <div className="min-h-screen bg-white flex overflow-hidden">
+      {/* Left Panel - Editorial */}
+      <div className="hidden lg:flex w-[450px] bg-slate-900 p-20 flex-col text-white relative overflow-hidden shrink-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/30 to-slate-900/90 z-10"></div>
+        <Image
+          src="/images/tenant.jpg"
+          alt="Pharmacy"
+          fill
+          className="absolute inset-0 w-full h-full object-cover opacity-40 grayscale"
+          referrerPolicy="no-referrer"
+        />
+        
+        <Link href="/" className="flex items-center gap-4 relative z-20 group mb-24">
+          <span className="font-display font-bold text-2xl text-emerald-600 tracking-tight">Syntix<span className="text-slate-900">Pharma</span></span>
+        </Link>
+
+        <div className="relative z-20 mt-auto">
+          <div className="flex gap-1 text-emerald-500 mb-4">
+            {[1, 2, 3, 4, 5].map(s => <Star key={s} className="w-5 h-5 fill-current" />)}
           </div>
-          {/* Sidebar Step Indicator */}
-          <div className="space-y-3 flex-grow">
-            {steps.map((step) => (
-              <div
-                key={step.step}
-                className={`flex items-center gap-4 p-4 rounded-2xl transition-all duration-300 ${
-                  step.step === currentStep
-                    ? "bg-gradient-to-r from-sky-600/90 via-sky-600/90 to-cyan-600/90 text-white scale-105"
-                    : step.step < currentStep
-                    ? "bg-gradient-to-r from-sky-700 via-sky-700 to-cyan-700 text-white"
-                    : "bg-gray-100 text-gray-600 border border-gray-200/70"
-                }`}
-              >
-                <div
-                  className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold transition-all ${
-                    step.step === currentStep
-                      ? "bg-white text-sky-600 shadow-lg"
-                      : step.step < currentStep
-                      ? "bg-white text-green-600"
-                      : "bg-white text-gray-400"
-                  }`}
-                >
-                  {step.step < currentStep ? (
-                    <CheckCircleIcon className="h-6 w-6" />
-                  ) : (
-                    step.step
-                  )}
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-bold text-sm">{step.title}</h3>
-                  <p className="text-xs opacity-90">{step.description}</p>
-                </div>
-                {/* {step.step === currentStep && (
-                  <div className="w-2 h-2 bg-white rounded-full animate-ping"></div>
-                )} */}
-              </div>
-            ))}
-          </div>
-          <div className="mt-auto text-center">
-            <p className="text-gray-700">
-              Déjà un compte ?{" "}
-              <Link
-                href="/auth/login"
-                className="text-sky-600 font-medium hover:text-sky-800"
-              >
-                Se connecter
-              </Link>
-            </p>
+          <h2 className="text-2xl font-display font-bold leading-[1.1] mb-12 italic">
+            &quot;La technologie au service de la santé. SyntixPharma redéfinit l&apos;excellence opérationnelle en officine.&quot;
+          </h2>
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-500 flex items-center justify-center font-bold text-2xl shadow-2xl shadow-emerald-500/20 overflow-hidden relative border-2 border-white/20">
+            </div>
+            <div>
+              <p className="text-lg font-bold">Dr. David Luvuezo</p>
+              <p className="text-emerald-400 font-black uppercase tracking-[0.2em] text-[8px]">Pharmacie de l&apos;Espoir</p>
+            </div>
           </div>
         </div>
-        <div className="flex-1 flex flex-col w-full h-full z-10 mx-auto p-4 sm:p-12">
-          <div className="flex flex-col items-center lg:hidden text-center mb-4">
-            <Link href="/">
-              <Image src="/images/medpharma.png" width="300" height="100" alt="MEDPharma"/>
-            </Link>
-            <p className="text-white/70 mb-4">Inscrivez-vous</p>
-          </div>
-          <div className="md:hidden space-y-2 mb-6">
-            {steps.map((step) => (
-              <div
-                key={step.step}
-                className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${
-                  step.step === currentStep
-                    ? "bg-gradient-to-r from-sky-600/90 via-sky-600/90 to-cyan-600/90 text-white shadow-lg"
-                    : step.step < currentStep
-                    ? "bg-gradient-to-r from-sky-700 via-sky-700 to-cyan-700 text-white"
-                    : "bg-gray-100 text-gray-500"
-                }`}
-              >
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
-                    step.step === currentStep
-                      ? "bg-white text-sky-600"
-                      : step.step < currentStep
-                      ? "bg-white text-green-600"
-                      : "bg-white text-gray-400"
-                  }`}
-                >
-                  {step.step < currentStep ? (
-                    <CheckCircleIcon className="h-6 w-6" />
-                  ) : (
-                    step.step
-                  )}
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-sm">{step.title}</h3>
-                  <p className="text-xs opacity-90">{step.description}</p>
-                </div>
+
+        <div className="absolute bottom-10 left-20 right-20 flex justify-between text-[10px] text-slate-500 font-black uppercase tracking-[0.2em] z-20">
+          <span>© {new Date().getFullYear()} SyntixPharma</span>
+        </div>
+      </div>
+
+      {/* Form Area */}
+      <div className="flex-1 flex flex-col overflow-y-auto bg-white relative">
+        {/* Top Progress Indicator */}
+        <div className="sticky top-0 z-30 bg-white/90 backdrop-blur-xl px-12 pt-4">
+          <div className="max-w-4xl mx-auto flex items-center justify-between gap-12">
+            <div className="flex-1">
+              <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
+                <motion.div 
+                  className="h-full bg-emerald-500"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${(step / 5) * 100}%` }}
+                  transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+                />
               </div>
-            ))}
-            {/* Progress bar */}
-            <div className="bg-gray-200 rounded-full h-2 overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-sky-500 to-sky-600 transition-all duration-500"
-                style={{ width: `${(currentStep / totalSteps) * 100}%` }}
-              />
+            </div>
+            <div className="hidden sm:flex items-center gap-4">
+              {[1, 2, 3, 4, 5].map((s) => (
+                <div 
+                  key={s}
+                  className={`relative group transition-all duration-500 ${step === s ? 'scale-110' : ''}`}
+                >
+                  <div className={`w-8 h-8 rounded-2xl flex items-center justify-center text-xs font-black transition-all duration-500 border-2 ${
+                    step === s 
+                      ? 'bg-emerald-600 border-emerald-600 text-white shadow-2xl shadow-emerald-600/30' 
+                      : step > s 
+                        ? 'bg-white border-emerald-500 text-emerald-600' 
+                        : 'bg-white border-slate-100 text-slate-300'
+                  }`}>
+                    {step > s ? <Check className="w-5 h-5" /> : `0${s}`}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
+        </div>
 
-          <form
-            onSubmit={currentStep === totalSteps ? handleSubmit : undefined}
-            className="bg-white/95 flex flex-col p-4 md:p-8 rounded-2xl shadow-2xl flex-grow h-auto"
-          >
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-sky-600 via-sky-600 to-cyan-600 mb-1">
-                {steps.find((step) => step.step === currentStep)?.title}
-              </h2>
-              <p className="text-xl text-gray-500/70">
-                {steps.find((step) => step.step === currentStep)?.description}
-              </p>
-            </div>
-
-            {currentStep === 1 && renderStep1()}
-            {currentStep === 2 && renderStep2()}
-            {currentStep === 3 && renderStep3()}
-            {currentStep === 4 && renderStep4()}
-
-            <div
-              className={`flex items-center ${
-                currentStep > 1 ? "justify-between" : "justify-end"
-              } space-x-4 mt-auto`}
+        <div className="max-w-4xl w-full mx-auto px-8 py-2">
+          <form onSubmit={handleSubmit}>
+            <motion.div
+              key={step}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-4"
             >
-              {currentStep > 1 && (
-                <Button
-                  type="button"
-                  size="lg"
-                  variant="outline"
-                  onClick={handleBack}
-                >
-                  Précédent
-                </Button>
+              {/* ── STEP 1 – Plan ── */}
+              {step === 1 && (
+                <div className="space-y-4">
+                  <div className="max-w-2xl">
+                    <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-[8px] font-black mb-2 border border-emerald-100 uppercase tracking-[0.2em]">
+                      Configuration
+                    </div>
+                    <h1 className="text-4xl lg:text-5xl font-display font-bold text-slate-900 mb-1 tracking-tight leading-[0.9]">
+                      Choisissez Votre{" "}
+                      <span className="text-emerald-600">Plan.</span>
+                    </h1>
+                    <p className="text-slate-500 leading-relaxed font-medium">
+                      Sélectionnez l&apos;offre qui correspond le mieux à la taille et aux besoins de votre officine.
+                    </p>
+                  </div>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    {plans.map((plan) => (
+                      <motion.div
+                        key={plan.id}
+                        whileHover={{ y: -10 }}
+                        onClick={() => setFormData({ ...formData, plan: plan.id })}
+                        className={`p-8 rounded-[3rem] border-2 cursor-pointer transition-all duration-500 relative group flex flex-col ${
+                          formData.plan === plan.id 
+                            ? 'border-emerald-500 bg-white shadow-[0_50px_100px_-20px_rgba(16,185,129,0.15)] scale-105 z-10' 
+                            : 'border-slate-100 bg-slate-50/50 hover:bg-white hover:border-slate-200'
+                        }`}
+                      >
+                        <h3 className="font-display font-bold text-2xl mb-1 text-slate-900">{plan.name}</h3>
+                        <div className="flex items-baseline gap-1 mb-4">
+                          <span className="text-4xl font-display font-bold text-slate-900">{plan.price} $</span>
+                          <span className="text-slate-400 text-[10px] font-black uppercase tracking-widest">/ mois</span>
+                        </div>
+                        <ul className="space-y-1 mb-4 flex-1">
+                          {plan.features.map(f => (
+                            <li key={f} className="text-sm text-slate-600 flex items-center gap-4 font-medium">
+                              <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
+                              {f}
+                            </li>
+                          ))}
+                        </ul>
+                        <div className={`w-full py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] text-center transition-all duration-500 ${
+                          formData.plan === plan.id ? 'bg-emerald-600 text-white shadow-xl shadow-emerald-600/20' : 'bg-white text-slate-400 border border-slate-100 group-hover:bg-slate-900 group-hover:text-white'
+                        }`}>
+                          {formData.plan === plan.id ? 'Sélectionné' : 'Choisir'}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
               )}
 
-              {currentStep < totalSteps ? (
-                <Button type="button" size="lg" onClick={handleNext}>
-                  Continuer
-                  <ArrowRightIcon className="ml-2 h-5 w-5" />
-                </Button>
-              ) : (
-                <Button
+              {/* ── STEP 2 – Compte ── */}
+              {step === 2 && (
+                <div className="space-y-2">
+                  <div className="max-w-2xl pb-2">
+                    <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-black mb-2 border border-emerald-100 uppercase tracking-[0.2em]">
+                      Identité
+                    </div>
+                    <h1 className="text-4xl lg:text-5xl font-display font-bold text-slate-900 mb-1 tracking-tight leading-[0.9]">
+                      Créez Votre{" "}
+                      <span className="text-emerald-600">Compte.</span>
+                    </h1>
+                    <p className="text-slate-500 leading-relaxed font-medium">
+                      Ces informations seront utilisées pour votre accès administrateur principal.
+                    </p>
+                  </div>
+
+                  {/* Prénom / Nom */}
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className={labelClass}>Prénom</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Jean"
+                        className={inputClass}
+                        value={formData.firstName}
+                        onChange={update('firstName')}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className={labelClass}>Nom</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Mukasa"
+                        className={inputClass}
+                        value={formData.lastName}
+                        onChange={update('lastName')}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Email / Téléphone */}
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className={labelClass}>Email professionnel</label>
+                      <input
+                        type="email"
+                        required
+                        placeholder="jean@pharmacie.cd"
+                        className={inputClass}
+                        value={formData.email}
+                        onChange={update('email')}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className={labelClass}>Téléphone</label>
+                      <input
+                        type="tel"
+                        placeholder="+243 800 000 000"
+                        className={inputClass}
+                        value={formData.phone}
+                        onChange={update('phone')}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Mot de passe / Confirmation */}
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className={labelClass}>Mot de passe</label>
+                      <div className="relative">
+                        <input
+                          type={showPassword ? 'text' : 'password'}
+                          required
+                          placeholder="••••••••"
+                          className={`${inputClass} pr-12`}
+                          value={formData.password}
+                          onChange={update('password')}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(v => !v)}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                        >
+                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label className={labelClass}>Confirmer le mot de passe</label>
+                      <div className="relative">
+                        <input
+                          type={showConfirmPassword ? 'text' : 'password'}
+                          required
+                          placeholder="••••••••"
+                          className={`${inputClass} pr-12`}
+                          value={formData.confirmPassword}
+                          onChange={update('confirmPassword')}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirmPassword(v => !v)}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                        >
+                          {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <p className="text-[11px] text-slate-400">
+                    Minimum 8 caractères, incluant une majuscule et un chiffre.
+                  </p>
+                </div>
+              )}
+
+              {/* ── STEP 3 – Pharmacie ── */}
+              {step === 3 && (
+                <div className="space-y-2">
+                  <div className="max-w-2xl pb-2">
+                    <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-black mb-2 border border-emerald-100 uppercase tracking-[0.2em]">
+                      Établissement
+                    </div>
+                    <h1 className="text-4xl lg:text-5xl font-display font-bold text-slate-900 mb-1 tracking-tight leading-[0.9]">
+                      Votre{" "}
+                      <span className="text-emerald-600">Pharmacie.</span>
+                    </h1>
+                    <p className="text-slate-500 leading-relaxed font-medium">
+                      Dites-nous en plus sur votre établissement pour configurer votre environnement.
+                    </p>
+                  </div>
+
+                  {/* Nom pharmacie */}
+                  <div className="space-y-2">
+                    <label className={labelClass}>Nom de la Pharmacie</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Pharmacie de la Paix"
+                      className={inputClass}
+                      value={formData.pharmacyName}
+                      onChange={update('pharmacyName')}
+                    />
+                  </div>
+
+                  {/* Licence / Type */}
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className={labelClass}>Numéro de Licence</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="LIC-2024-XXXX"
+                        className={inputClass}
+                        value={formData.licenseNumber}
+                        onChange={update('licenseNumber')}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className={labelClass}>Type d&apos;établissement</label>
+                      <select
+                        className={`${inputClass} appearance-none cursor-pointer`}
+                        value={formData.pharmacyType}
+                        onChange={update('pharmacyType')}
+                      >
+                        <option value="retail">Officine (Détail)</option>
+                        <option value="wholesale">Grossiste</option>
+                        <option value="hospital">Pharmacie Hospitalière</option>
+                        <option value="clinic">Clinique</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Pays / Ville */}
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className={labelClass}>Pays</label>
+                      <select
+                        className={`${inputClass} appearance-none cursor-pointer`}
+                        value={formData.country}
+                        onChange={update('country')}
+                      >
+                        <option value="RD Congo">RD Congo</option>
+                        <option value="Burundi">Burundi</option>
+                        <option value="Rwanda">Rwanda</option>
+                        <option value="Congo-Brazzaville">Congo-Brazzaville</option>
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <label className={labelClass}>Ville</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Kinshasa"
+                        className={inputClass}
+                        value={formData.city}
+                        onChange={update('city')}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Adresse */}
+                  <div className="space-y-2">
+                    <label className={labelClass}>Adresse Complète</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Avenue de la Justice, Gombe"
+                      className={inputClass}
+                      value={formData.address}
+                      onChange={update('address')}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* ── STEP 4 – Paiement ── */}
+              {step === 4 && (
+                <div className="space-y-4">
+                  <div className="max-w-2xl">
+                    <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-black mb-2 border border-emerald-100 uppercase tracking-[0.2em]">
+                      Paiement
+                    </div>
+                    <h1 className="text-4xl lg:text-5xl font-display font-bold text-slate-900 mb-1 tracking-tight leading-[0.9]">
+                      Mode de{" "}
+                      <span className="text-emerald-600">Paiement.</span>
+                    </h1>
+                    <p className="text-slate-500 leading-relaxed font-medium">
+                      Choisissez comment vous souhaitez régler votre abonnement SyntixPharma.
+                    </p>
+                  </div>
+
+                  {/* Plan recap */}
+                  <div className="p-6 rounded-[2rem] bg-emerald-600 text-white flex items-center justify-between shadow-2xl shadow-emerald-600/20">
+                    <div>
+                      <p className="text-[10px] font-black text-emerald-200 uppercase tracking-[0.3em] mb-1">Plan Sélectionné</p>
+                      <p className="text-3xl font-display font-bold">
+                        {plans.find(p => p.id === formData.plan)?.name}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-4xl font-display font-bold">
+                        {plans.find(p => p.id === formData.plan)?.price} $
+                      </p>
+                      <p className="text-[10px] font-black text-emerald-200 uppercase tracking-widest">/ mois</p>
+                    </div>
+                  </div>
+
+                  {/* Méthode de paiement */}
+                  <div className="space-y-3">
+                    <label className={labelClass}>Méthode de paiement</label>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
+                      {[
+                        { id: 'mobile_money', label: 'Mobile Money', desc: 'M-Pesa, Airtel Money, Orange Money' },
+                        { id: 'bank_transfer', label: 'Virement Bancaire', desc: 'Transfert depuis votre compte bancaire' },
+                        { id: 'card', label: 'Carte Bancaire', desc: 'Visa, Mastercard — paiement sécurisé' },
+                      ].map(method => (
+                        <button
+                          key={method.id}
+                          type="button"
+                          onClick={() => setFormData(prev => ({ ...prev, paymentMethod: method.id }))}
+                          className={`flex items-center justify-between px-6 py-4 rounded-2xl border-2 text-left transition-all duration-300 ${
+                            formData.paymentMethod === method.id
+                              ? 'border-emerald-500 bg-emerald-50'
+                              : 'border-slate-100 bg-slate-50/50 hover:border-slate-200 hover:bg-white'
+                          }`}
+                        >
+                          <div>
+                            <p className={`text-sm font-black uppercase tracking-widest ${formData.paymentMethod === method.id ? 'text-emerald-700' : 'text-slate-500'}`}>
+                              {method.label}
+                            </p>
+                            <p className="text-xs text-slate-400 font-medium mt-0.5">{method.desc}</p>
+                          </div>
+                          <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
+                            formData.paymentMethod === method.id
+                              ? 'border-emerald-500 bg-emerald-500'
+                              : 'border-slate-200'
+                          }`}>
+                            {formData.paymentMethod === method.id && <Check className="w-3 h-3 text-white" />}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ── STEP 5 – Récapitulatif ── */}
+              {step === 5 && (
+                <div className="space-y-4">
+                  <div className="max-w-2xl">
+                    <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-black mb-2 border border-emerald-100 uppercase tracking-[0.2em]">
+                      Récapitulatif
+                    </div>
+                    <h1 className="text-4xl lg:text-5xl font-display font-bold text-slate-900 mb-1 tracking-tight leading-[0.9]">
+                      Presque{" "}
+                      <span className="text-emerald-600">Terminé.</span>
+                    </h1>
+                    <p className="text-slate-500 leading-relaxed font-medium">
+                      Vérifiez vos informations avant de lancer votre espace SyntixPharma.
+                    </p>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-2">
+                    <div className="p-4 rounded-[1.5rem] bg-slate-50 border border-slate-100">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-1">Administrateur</p>
+                      <p className="text-lg font-display font-bold text-slate-900 mb-0">{formData.firstName} {formData.lastName}</p>
+                      <p className="text-slate-500 font-medium">{formData.email}</p>
+                      {formData.phone && <p className="text-slate-400 text-sm font-medium">{formData.phone}</p>}
+                    </div>
+                    <div className="p-4 rounded-[1.5rem] bg-slate-50 border border-slate-100">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-1">Établissement</p>
+                      <p className="text-lg font-display font-bold text-slate-900 mb-0">{formData.pharmacyName}</p>
+                      <p className="text-slate-500 font-medium">{formData.city}, {formData.country}</p>
+                      {formData.licenseNumber && <p className="text-slate-400 text-sm font-medium">{formData.licenseNumber}</p>}
+                    </div>
+                  </div>
+
+                  <div className="p-6 rounded-[2rem] bg-emerald-600 text-white flex items-center justify-between shadow-2xl shadow-emerald-600/20">
+                    <div>
+                      <p className="text-[10px] font-black text-emerald-200 uppercase tracking-[0.3em] mb-1">Plan Sélectionné</p>
+                      <p className="text-3xl font-display font-bold">
+                        {plans.find(p => p.id === formData.plan)?.name}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-4xl font-display font-bold">
+                        {plans.find(p => p.id === formData.plan)?.price} $
+                      </p>
+                      <p className="text-[10px] font-black text-emerald-200 uppercase tracking-widest">/ mois • {
+                        { mobile_money: 'Mobile Money', bank_transfer: 'Virement', card: 'Carte Bancaire' }[formData.paymentMethod]
+                      }</p>
+                    </div>
+                  </div>
+
+                  {/* Consentements */}
+                  <div className="space-y-1">
+                    <div className="flex items-start gap-2">
+                      <input
+                        id="terms"
+                        type="checkbox"
+                        required
+                        className="w-5 h-5 mt-0.5 text-emerald-600 border-slate-200 rounded-lg focus:ring-emerald-500 cursor-pointer transition-all shrink-0"
+                        checked={formData.acceptTerms}
+                        onChange={update('acceptTerms')}
+                      />
+                      <label htmlFor="terms" className="text-sm font-bold text-slate-600 cursor-pointer leading-relaxed">
+                        J&apos;accepte les <Link href="/terms" className="text-emerald-600 underline">conditions d&apos;utilisation</Link> et la <Link href="/privacy" className="text-emerald-600 underline">politique de confidentialité</Link> de SyntixPharma.
+                      </label>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <input
+                        id="marketing"
+                        type="checkbox"
+                        className="w-5 h-5 mt-0.5 text-emerald-600 border-slate-200 rounded-lg focus:ring-emerald-500 cursor-pointer transition-all shrink-0"
+                        checked={formData.marketingConsent}
+                        onChange={update('marketingConsent')}
+                      />
+                      <label htmlFor="marketing" className="text-sm font-bold text-slate-500 cursor-pointer leading-relaxed">
+                        J&apos;accepte de recevoir des communications marketing et des mises à jour produit.
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ── Navigation ── */}
+              <div className="flex items-center justify-between pt-4 border-t border-slate-200">
+                {step > 1 ? (
+                  <button
+                    type="button"
+                    onClick={prevStep}
+                    className="flex items-center gap-3 text-slate-600 font-bold hover:text-slate-900 transition-colors group"
+                  >
+                    <ChevronLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
+                    Retour
+                  </button>
+                ) : (
+                  <p className="text-slate-500 font-medium">
+                    Déjà un compte ?{' '}
+                    <Link href="/auth/login" className="font-black text-emerald-600 hover:text-emerald-700 uppercase tracking-widest text-[10px] ml-2">
+                      Se connecter
+                    </Link>
+                  </p>
+                )}
+
+                <button
                   type="submit"
-                  size="lg"
-                  disabled={!formData.acceptTerms || isLoading}
-                  className="inline-flex items-center"
+                  disabled={isSubmitting}
+                  className="px-12 py-4 bg-emerald-600 text-white rounded-[2rem] font-bold text-lg hover:bg-emerald-700 transition-all flex items-center gap-3 disabled:opacity-70 shadow-xl shadow-emerald-600/20 group"
                 >
-                  {isLoading ? (
+                  {isSubmitting ? (
                     <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-sky-900 mr-2"></div>
+                      <Loader2 className="w-6 h-6 animate-spin" />
                       Création en cours...
                     </>
                   ) : (
                     <>
-                      <UserGroupIcon className="mr-2 h-5 w-5" />
-                      Créer mon compte
+                      {step === 5 ? 'Créer mon compte' : 'Continuer'}
+                      <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
                     </>
                   )}
-                </Button>
-              )}
-            </div>
+                </button>
+              </div>
+            </motion.div>
           </form>
         </div>
       </div>
-    </>
+    </div>
   );
-};
-
-export default RegisterPage;
+}

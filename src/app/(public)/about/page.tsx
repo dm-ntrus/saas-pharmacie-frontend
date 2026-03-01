@@ -98,10 +98,10 @@ export default function AboutPage() {
       <section className="py-16 px-6 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-slate-50 text-slate-500 rounded-full text-[10px] font-black mb-6 border border-slate-100 uppercase tracking-[0.2em]">
+            <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-slate-50 text-slate-500 rounded-full text-[10px] font-black mb-4 border border-slate-100 uppercase tracking-[0.2em]">
               Notre Parcours
             </div>
-            <h2 className="text-4xl lg:text-6xl font-display font-bold text-slate-900 mb-8 tracking-tight">Une croissance <span className="text-emerald-600">accélérée.</span></h2>
+            <h2 className="text-4xl lg:text-6xl font-display font-bold text-slate-900 mb-4 tracking-tight">Une croissance <span className="text-emerald-600">accélérée.</span></h2>
           </div>
 
           <div className="relative">
@@ -136,7 +136,7 @@ export default function AboutPage() {
       {/* Values */}
       <section className="py-16 px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
+          <div className="text-center mb-10">
             <h2 className="text-4xl lg:text-5xl font-display font-bold text-slate-900 mb-4">Nos Valeurs Fondamentales</h2>
             <p className="text-xl text-slate-500 max-w-2xl mx-auto">
               Ce qui nous guide au quotidien dans le développement de nos solutions.
@@ -150,10 +150,10 @@ export default function AboutPage() {
               { icon: Users, title: "Collaboration", desc: "Nous grandissons avec nos clients en écoutant leurs besoins réels." },
             ].map((value, i) => (
               <div key={i} className="p-8 rounded-[2rem] border border-slate-100 bg-white hover:shadow-xl transition-shadow text-center group">
-                <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-6 mx-auto group-hover:bg-emerald-50 transition-colors">
+                <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-4 mx-auto group-hover:bg-emerald-50 transition-colors">
                   <value.icon className="w-8 h-8 text-slate-400 group-hover:text-emerald-600 transition-colors" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-4">{value.title}</h3>
+                <h3 className="text-xl font-bold text-slate-900 mb-2">{value.title}</h3>
                 <p className="text-slate-500 leading-relaxed">{value.desc}</p>
               </div>
             ))}
@@ -185,7 +185,7 @@ export default function AboutPage() {
       </section>
 
       {/* Team Section Placeholder */}
-      <section className="py-24 bg-slate-900 text-white px-6 rounded-[4rem] mx-6">
+      <section className="py-24 bg-slate-900 text-white px-6 rounded-[6rem] mx-6">
         <div className="max-w-7xl mx-auto px-4 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
             <div>
