@@ -380,7 +380,7 @@ const PublicHomePage = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 border-t border-l border-slate-100">
             {features.map((feature, index) => (
               <motion.div
-                key={feature.name}
+                key={feature.title}
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
