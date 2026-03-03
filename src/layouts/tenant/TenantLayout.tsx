@@ -32,7 +32,7 @@ export default function TenantLayout({ children }: TenantLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50">
       <div className="flex h-screen">
         {/* Sidebar for Desktop - Fixed width transition */}
         <aside

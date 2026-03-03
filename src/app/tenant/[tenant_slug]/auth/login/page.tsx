@@ -17,6 +17,12 @@ import toast from "react-hot-toast";
 import Image from "next/image";
 import { Loader2 } from 'lucide-react';
 import { motion } from 'motion/react';
+import {
+  getMockAdminTokens,
+  getMockTenantTokens,
+  isMockAdmin,
+  isMockTenant,
+} from "@/services/mock-auth.service";
 
 const LoginPage = () => {
   const params = useParams();
@@ -34,39 +40,28 @@ const LoginPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
+    const email = formData.email
+    const password = formData.password
     try {
-      if (
-        formData.email === "admin@gmail.com" &&
-        formData.password === "admin"
-      ) {
-        const user = {
-          id: "1",
-          email: "chriscedrick4@gmail.com",
-          firstName: "Chris",
-          lastName: "Cedrick",
-          roles: ["pharmacist", "admin"],
-          permissions: ["dispense_drugs", "manage_prescriptions"],
-          tenantId: "",
-          avatar: "hj",
-          isActive: true,
-          lastLogin: "",
-          createdAt: "",
-          updatedAt: "",
-        };
-
-        // Simulate login
-        setTimeout(() => {
-          alert("Connexion réussie!");
-          setIsLoading(false);
-        }, 1000);
-      } else {
-        throw new Error("Identifiants incorrects");
+      if (isMockAdmin(email, password)) {
+        const { access, refresh } = getMockAdminTokens();
+        await login(access, refresh, 86400);
+        toast.success("Connexion admin réussie");
+        return;
       }
-    } catch (err) {
+      if (isMockTenant(email, password)) {
+        const { access, refresh } = getMockTenantTokens();
+        await login(access, refresh, 86400);
+        toast.success("Connexion pharmacie réussie");
+        return;
+      }
+      toast.error("Email ou mot de passe incorrect");
+    } catch (error) {
+      console.error(error);
       toast.error(
-        err?.response?.data?.message || "Email ou mot de passe incorrect"
+        error instanceof Error ? error.message : "Email ou mot de passe incorrect"
       );
+    } finally {
       setIsLoading(false);
     }
   };

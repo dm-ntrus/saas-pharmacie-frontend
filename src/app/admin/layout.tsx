@@ -1,3 +1,5 @@
+"use client";
+
 import { AdminProvider } from "@/context/AdminContext";
 import { useAdmin } from "@/hooks/useAdmin";
 import AdminLayout from "@/layouts/admin/AdminLayout";

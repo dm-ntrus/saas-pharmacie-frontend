@@ -3,8 +3,26 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 import { useOrganization } from "@/context/OrganizationContext";
 import { useFeatureFlags } from "@/context/FeatureFlagContext";
+import { motion } from 'motion/react';
+import { 
+  PlusCircle, 
+  LayoutDashboard, 
+  Package, 
+  Users, 
+  FileText, 
+  BarChart3, 
+  Settings,
+  LogOut,
+  ChevronRight,
+  Search,
+  Bell,
+  Building2,
+  MapPin,
+  ChevronDown
+} from 'lucide-react';
 import {
   HomeIcon,
   UsersIcon,
@@ -45,36 +63,38 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const pathname = usePathname();
   const params = useParams();
   const tenant_slug = params?.tenant_slug;
-  const { currentOrganization, hasRole, hasPermission } = useOrganization();
+  const { user, logout } = useAuth();
+  const { currentOrganization, organizations, switchOrganization, hasRole, hasPermission } = useOrganization();
   const { isFeatureEnabled } = useFeatureFlags();
   const [sidebarOpen, setSidebarOpen] = useState(isOpen);
+  const [isOrgMenuOpen, setIsOrgMenuOpen] = useState(false);
 
   const basePath = tenant_slug ? `/tenant/${tenant_slug}` : "";
 
   const navigation: NavItem[] = [
-    { name: "Tableau de bord", href: "/dashboard", icon: HomeIcon },
+    { name: "Tableau de bord", href: "/dashboard", icon: LayoutDashboard },
     {
       name: "Point de Vente",
       href: "/sales",
-      icon: CurrencyDollarIcon,
+      icon: PlusCircle,
       requiredRoles: ["cashier", "pharmacist", "admin"],
     },
     {
       name: "Inventaire",
       href: "/inventory",
-      icon: BuildingStorefrontIcon,
+      icon: Package,
       requiredRoles: ["technician", "pharmacist", "admin"],
     },
     {
       name: "Patients",
       href: "/patients",
-      icon: UserGroupIcon,
+      icon: Users,
       requiredRoles: ["pharmacist", "admin"],
     },
     {
       name: "Prescriptions",
       href: "/prescriptions",
-      icon: ClipboardDocumentListIcon,
+      icon: FileText,
       requiredRoles: ["pharmacist", "admin"],
     },
     {
@@ -92,7 +112,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     {
       name: "Rapports",
       href: "/reports",
-      icon: ChartBarIcon,
+      icon: BarChart3,
       requiredRoles: ["admin", "pharmacist"],
     },
     {
@@ -126,6 +146,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       icon: BanknotesIcon,
       requiredRoles: ["accountant", "admin"],
     },
+    {
+      name: "Paramètres",
+      href: "/settings",
+      icon: Settings,
+      requiredRoles: ["admin"],
+    },
   ];
 
   const bottomNavigation: NavItem[] = [
@@ -133,7 +159,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     {
       name: "Paramètres",
       href: "/settings",
-      icon: CogIcon,
+      icon: Settings,
       requiredRoles: ["admin"],
     },
   ];
@@ -150,15 +176,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     return true;
   };
 
-  const isCurrentPath = (href: string) => pathname.startsWith(`${basePath}${href}`);
-
   return (
-    <div className="flex flex-col h-full bg-gray-900 text-white">
+    <div className="w-64 bg-white border-r border-slate-200 flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between p-3 border-b border-gray-700">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
         {sidebarOpen && (
           <div className="flex items-center space-x-3">
-            <span className="text-xl font-bold">MEDPharma</span>
+            <span className="font-display font-bold text-xl text-emerald-600 tracking-tight">
+              Syntix<span className="text-slate-900">Pharma</span>
+            </span>
           </div>
         )}
         <button
@@ -176,80 +202,96 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         </button>
       </div>
 
-      {/* User Info */}
-      {sidebarOpen && currentOrganization && (
-        <div className="p-4 border-b border-gray-700">
-          <div className="flex items-center">
-            <div className="h-10 w-10 bg-sky-600 rounded-full flex items-center justify-center text-sm font-medium">
-              {currentOrganization.name[0]}
-            </div>
-            <div className="ml-3 flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">
-                {currentOrganization.name}
-              </p>
-              <p className="text-xs text-gray-400 truncate">
-                {currentOrganization.roles.join(", ")}
-              </p>
-            </div>
+      {/* organization Switcher */}
+      <div className="relative">
+            <button 
+              onClick={() => setIsOrgMenuOpen(!isOrgMenuOpen)}
+              className="w-full flex items-center gap-2 px-2 py-2 bg-slate-50 border border-slate-100 hover:bg-slate-100 transition-all group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-slate-400 border border-slate-100 group-hover:text-primary transition-colors">
+                <Building2 className="w-4 h-4" />
+              </div>
+              <div className="flex-1 text-left min-w-0">
+                {/* <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Branche</p> */}
+                <p className="text-sm font-bold text-slate-900 truncate">{currentOrganization?.name || 'Sélectionner'}</p>
+              </div>
+              <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${isOrgMenuOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {isOrgMenuOpen && (
+              <>
+                <div 
+                  className="fixed inset-0 z-40" 
+                  onClick={() => setIsOrgMenuOpen(false)}
+                ></div>
+                <div className="absolute top-full left-0 w-full mt-0 bg-white border border-slate-100 rounded-xl shadow-xl z-50 overflow-hidden py-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <p className="px-2 py-1 text-[8px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50 mb-1">
+                    Vos Branches
+                  </p>
+                  {organizations.map((org) => (
+                    <button
+                      key={org.id}
+                      onClick={() => {
+                        switchOrganization(org.id);
+                        setIsOrgMenuOpen(false);
+                      }}
+                      className={`w-full cursor-pointer flex items-center gap-3 px-4 py-2 text-sm transition-colors ${
+                        currentOrganization?.id === org.id 
+                          ? 'bg-primary/10 text-primary' 
+                          : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                      }`}
+                    >
+                      <MapPin className={`w-4 h-4 ${currentOrganization?.id === org.id ? 'text-primary' : 'text-slate-400'}`} />
+                      <div className="text-left">
+                        <p className="font-bold">{org.name}</p>
+                        {/* <p className="text-[10px] opacity-70">{org.city}</p> */}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
-        </div>
-      )}
 
       {/* Navigation */}
-      <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-2 py-2 space-y-1 overflow-y-auto">
         {navigation.filter(isItemVisible).map((item) => {
-          const isActive = isCurrentPath(item.href);
+          const href = `${basePath}${item.href}`;
+          const isActive = pathname === href || (item.href !== '/dashboard' && pathname.startsWith(href));
           return (
-            <Link key={item.name} href={`${basePath}${item.href}`}>
-              <div
-                className={`group flex items-center pl-3 pr-2 py-2 text-sm font-medium rounded-md transition-colors ${
-                  isActive
-                    ? "bg-gray-800 text-white"
-                    : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                }`}
-              >
-                <item.icon
-                  className={`flex-shrink-0 h-6 w-6 ${
-                    isActive
-                      ? "text-white"
-                      : "text-gray-400 group-hover:text-gray-300"
-                  }`}
-                />
-                {sidebarOpen && (
-                  <span className="ml-3 flex-1">{item.name}</span>
-                )}
-              </div>
+            <Link key={item.name}
+            href={href}
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+              isActive 
+                ? 'bg-primary/10 text-primary' 
+                : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+            }`}>
+                 <item.icon className={`w-5 h-5 ${isActive ? 'text-primary' : 'text-slate-400'}`} />
+                 {sidebarOpen && <span className="ml-2 flex-1">{item.name}</span>}
             </Link>
           );
         })}
       </nav>
 
       {/* Bottom Navigation */}
-      <div className="border-t border-gray-700 p-2 space-y-1">
-        {bottomNavigation.filter(isItemVisible).map((item) => {
-          const isActive = isCurrentPath(item.href);
-          return (
-            <Link key={item.name} href={`${basePath}${item.href}`}>
-              <div
-                className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
-                  isActive
-                    ? "bg-gray-800 text-white"
-                    : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                }`}
-              >
-                <item.icon className="mr-3 h-6 w-6" />
-                {sidebarOpen && <span>{item.name}</span>}
-              </div>
-            </Link>
-          );
-        })}
-      </div>
-
-      {sidebarOpen && (
-        <div className="p-4 border-t border-gray-700 text-xs text-gray-500">
-          Version 1.0.0
+      <div className="p-2 border-t border-slate-100">
+          <div className="flex items-center gap-3 px-2 py-1 mb-1">
+            <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 text-xs font-bold">
+              {user?.name?.[0]}{user?.family_name?.[0]}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-slate-900 truncate">{user?.name} {user?.family_name}</p>
+              <p className="text-xs text-slate-500 truncate capitalize">{user?.email}</p>
+            </div>
+          </div>
+          <button
+            onClick={logout}
+            className="flex w-full items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+          >
+            <LogOut className="w-5 h-5" />
+            Déconnexion
+          </button>
         </div>
-      )}
     </div>
   );
 };

@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { jwtService } from "@/services/jwt.service";
 import { tokenService } from "@/services/token.service";
 import { getCookie, setCookie } from "@/utils/cookies";
+import { useRouter } from "next/navigation";
 
 export interface Organization {
   id: string;
@@ -30,6 +31,7 @@ export const OrganizationProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const router = useRouter();
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [currentOrganization, setCurrentOrganization] =
     useState<Organization | null>(null);
@@ -65,10 +67,12 @@ export const OrganizationProvider = ({
     if (!org) return;
 
     setCurrentOrganization(org);
-
     // Save in cookie only
     setCookie("current_organization", orgId);
     localStorage.setItem("current_organization", orgId);
+    setCookie("slug_organization", org.subdomain);
+    localStorage.setItem("slug_organization", org.subdomain);
+    router.replace(`/tenant/${org.subdomain}/dashboard`);
   };
 
   // Role check

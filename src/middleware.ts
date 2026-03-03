@@ -19,7 +19,7 @@ const publicRoutes = [
 ];
 
 const roleProtectedRoutes: { regex: RegExp; allowedRoles: string[] }[] = [
-  { regex: /^\/admin(\/.*)?$/, allowedRoles: ["SUPER_ADMIN"] },
+  { regex: /^\/admin(\/.*)?$/, allowedRoles: ["SUPER_ADMIN", "SYSTEM_ADMIN"] },
   {
     regex: /^\/tenant\/[^/]+\/accounting(\/.*)?$/,
     allowedRoles: ["SUPER_ADMIN", "TENANT_ADMIN", "ACCOUNTANT"],
@@ -27,11 +27,15 @@ const roleProtectedRoutes: { regex: RegExp; allowedRoles: string[] }[] = [
 ];
 
 // Décodage JWT (sans vérification de signature, juste le payload)
+// Support base64url (JWT standard) et base64
 function safeDecodeJwt(token?: string): JWTPayload | null {
   if (!token) return null;
   try {
-    const payload = token.split(".")[1];
-    return JSON.parse(Buffer.from(payload, "base64").toString("utf-8"));
+    const payloadB64url = token.split(".")[1];
+    if (!payloadB64url) return null;
+    const payloadB64 = payloadB64url.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = payloadB64 + "=".repeat((4 - (payloadB64.length % 4)) % 4);
+    return JSON.parse(Buffer.from(padded, "base64").toString("utf-8"));
   } catch {
     return null;
   }

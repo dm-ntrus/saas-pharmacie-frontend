@@ -1,18 +1,18 @@
-"use client"
-import React, { useState, useEffect, useContext, createContext, ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
-import { apiClient } from '@/lib/apiClient';
-import type { User, UserRole } from '@/types';
+"use client";
 
-// Ajout : gestion du feedback utilisateur
-import { toast } from 'react-hot-toast';
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useAuth as useAuthContext } from "@/context/AuthContext";
+import type { User, UserRole } from "@/types";
 
-interface AuthContextType {
+export { AuthProvider } from "@/context/AuthContext";
+
+export interface AuthContextType {
   user: User | null;
   loading: boolean;
   isAuthenticated: boolean;
-  login: (userData: any) => Promise<void>;
-  register: (userData: any) => Promise<void>;
+  login: (userData: unknown) => Promise<void>;
+  register: (userData: unknown) => Promise<void>;
   logout: () => void;
   hasRole: (role: string) => boolean;
   hasPermission: (permission: string) => boolean;
@@ -20,146 +20,63 @@ interface AuthContextType {
   refetchUser: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+/**
+ * Adapter: utilise le AuthProvider réel (context/AuthContext) et expose
+ * une API compatible avec les pages qui utilisent useAuth / useRequireAuth.
+ */
+export const useAuth = (): AuthContextType => {
+  const auth = useAuthContext();
+  const realmRoles = auth.user?.roles ?? [];
+  const orgRoles = auth.user?.organizations?.[0]?.roles ?? [];
+  const allRoles = [...new Set([...realmRoles, ...orgRoles])];
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
+  const hasRole = (role: string): boolean =>
+    allRoles.some((r) => r.toLowerCase() === role.toLowerCase());
 
-  // Vérification de l'authentification au chargement
-  useEffect(() => {
-    checkAuth();
-  }, []);
+  const hasAnyRole = (roles: string[]): boolean =>
+    roles.some((role) => hasRole(role));
 
-  // Ajout : gestion du refresh token automatique
-  useEffect(() => {
-    // Intercepte les erreurs 401 pour tenter un refresh
-    const interceptor = apiClient['client'].interceptors.response.use(
-      (response) => response,
-      async (error) => {
-        if (error.response?.status === 401) {
-          try {
-            // Tente de rafraîchir le token
-            await apiClient.refreshToken();
-            // Rejoue la requête originale
-            return apiClient['client'](error.config);
-          } catch (refreshError) {
-            // Échec du refresh : déconnexion + feedback
-            toast.error('Votre session a expiré. Veuillez vous reconnecter.');
-            logout();
-            return Promise.reject(refreshError);
-          }
-        }
-        return Promise.reject(error);
+  const hasPermission = (_permission: string): boolean => {
+    return false;
+  };
+
+  const userAsUserType: User | null = auth.user
+    ? {
+        id: auth.user.id,
+        email: auth.user.email,
+        firstName: auth.user.given_name,
+        lastName: auth.user.family_name,
+        avatar: undefined,
+        roles: auth.user.roles as UserRole[],
+        permissions: [],
+        tenantId: auth.user.tenantId ?? undefined,
+        isActive: true,
+        lastLogin: undefined,
+        createdAt: "",
+        updatedAt: "",
       }
-    );
-    return () => {
-      apiClient['client'].interceptors.response.eject(interceptor);
-    };
-  }, []);
+    : null;
 
-  const checkAuth = async () => {
-    try {
-      const token = apiClient.getToken();
-      
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-
-      const userData = await apiClient.getCurrentUser();
-      setUser(userData);
-    } catch (error) {
-      console.error('Erreur d\'authentification:', error);
-      apiClient.logout(); // Nettoyer le token invalide
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const login = async (userData: any) => {
-    try {
-      setLoading(true);
-      // const { user: userData } = await apiClient.login(email, password);
-      setUser(userData);
-      
-      // Redirection vers le tableau de bord
-      router.push('/dashboard');
-    } catch (error) {
-      throw error; // Laisser le composant gérer l'erreur
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const register = async (userData: any) => {
-    try {
-      setLoading(true);
-      const { user: newUser } = await apiClient.register(userData);
-      setUser(newUser);
-      
-      // Redirection vers le tableau de bord
-      router.push('/dashboard');
-    } catch (error) {
-      throw error; // Laisser le composant gérer l'erreur
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const logout = () => {
-    apiClient.logout();
-    setUser(null);
-    router.push('/login');
-  };
-
-  const hasRole = (role: string): boolean => {
-    return user?.roles?.includes(role as UserRole) || false;
-  };
-
-  const hasPermission = (permission: string): boolean => {
-    return user?.permissions?.includes(permission) || false;
-  };
-
-  const hasAnyRole = (roles: string[]): boolean => {
-    return roles.some(role => hasRole(role));
-  };
-
-  const refetchUser = async () => {
-    try {
-      const userData = await apiClient.getCurrentUser();
-      setUser(userData);
-    } catch (error) {
-      console.error('Erreur lors de la récupération de l\'utilisateur:', error);
-    }
-  };
-
-  const value: AuthContextType = {
-    user,
-    loading,
-    isAuthenticated: !!user,
-    login,
-    register,
-    logout,
+  return {
+    user: userAsUserType,
+    loading: auth.loading,
+    isAuthenticated: auth.isAuthenticated,
+    login: async () => {
+      throw new Error("Utilisez la page de login pour vous connecter.");
+    },
+    register: async () => {
+      throw new Error("Utilisez la page d'inscription pour créer un compte.");
+    },
+    logout: auth.logout,
     hasRole,
     hasPermission,
     hasAnyRole,
-    refetchUser,
+    refetchUser: async () => {
+      auth.refreshUser();
+    },
   };
-
-  return React.createElement(AuthContext.Provider, { value }, children);
 };
 
-export const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth doit être utilisé dans un AuthProvider');
-  }
-  return context;
-};
-
-// Hook pour protéger les routes
 export const useRequireAuth = (requiredRoles?: string[]) => {
   const { user, loading, isAuthenticated, hasAnyRole } = useAuth();
   const router = useRouter();
@@ -168,21 +85,26 @@ export const useRequireAuth = (requiredRoles?: string[]) => {
     if (loading) return;
 
     if (!isAuthenticated) {
-      router.push('/login');
+      router.replace("/auth/login");
       return;
     }
 
-    if (requiredRoles && requiredRoles.length > 0 && !hasAnyRole(requiredRoles)) {
-      router.push('/unauthorized');
+    if (
+      requiredRoles &&
+      requiredRoles.length > 0 &&
+      !hasAnyRole(requiredRoles)
+    ) {
+      router.replace("/unauthorized");
       return;
     }
-  }, [user, loading, isAuthenticated, hasAnyRole, requiredRoles, router]);
+  }, [loading, isAuthenticated, hasAnyRole, requiredRoles, router]);
 
   return { user, loading, isAuthenticated };
 };
 
-// Hook pour rediriger si déjà connecté
-export const useRedirectIfAuthenticated = (redirectTo: string = '/dashboard') => {
+export const useRedirectIfAuthenticated = (
+  redirectTo: string = "/dashboard"
+) => {
   const { isAuthenticated, loading } = useAuth();
   const router = useRouter();
 

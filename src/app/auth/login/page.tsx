@@ -5,7 +5,14 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'motion/react';
 import { useAuth } from "@/context/AuthContext";
-import { Mail, Lock, Eye, EyeOff, Loader2, ArrowRight, ShieldCheck, Zap, Users, Star } from 'lucide-react';
+import toast from "react-hot-toast";
+import { Mail, Lock, Eye, EyeOff, Loader2, ArrowRight, Star } from 'lucide-react';
+import {
+  getMockAdminTokens,
+  getMockTenantTokens,
+  isMockAdmin,
+  isMockTenant,
+} from "@/services/mock-auth.service";
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -18,10 +25,24 @@ export default function LoginPage() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      await login('mock_token', 'mock_refresh_token');
+      if (isMockAdmin(email, password)) {
+        const { access, refresh } = getMockAdminTokens();
+        await login(access, refresh, 86400);
+        toast.success("Connexion admin réussie");
+        return;
+      }
+      if (isMockTenant(email, password)) {
+        const { access, refresh } = getMockTenantTokens();
+        await login(access, refresh, 86400);
+        toast.success("Connexion pharmacie réussie");
+        return;
+      }
+      toast.error("Email ou mot de passe incorrect");
     } catch (error) {
       console.error(error);
+      toast.error(
+        error instanceof Error ? error.message : "Email ou mot de passe incorrect"
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -132,6 +153,9 @@ export default function LoginPage() {
               <Link href="/auth/register" className="font-black text-emerald-600 hover:text-emerald-700 uppercase tracking-widest text-[10px] ml-2">
                 Créer un compte
               </Link>
+            </p>
+            <p className="mt-3 text-xs text-slate-400">
+              Mock (dev) : <strong>admin@gmail.com</strong> / admin → Admin · <strong>tenant@pharma.cd</strong> / tenant → Pharmacie
             </p>
           </div>
         </div>
