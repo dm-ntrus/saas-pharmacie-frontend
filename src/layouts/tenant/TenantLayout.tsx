@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import useIsMobile from "@/hooks/useIsMobile";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
+import { useAppStore } from "@/store/appStore";
 
 interface TenantLayoutProps {
   children: ReactNode;
@@ -12,69 +13,97 @@ interface TenantLayoutProps {
 
 export default function TenantLayout({ children }: TenantLayoutProps) {
   const isMobile = useIsMobile(1024);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const { theme } = useAppStore();
+  const [sidebarOverlayOpen, setSidebarOverlayOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  // Auto-close sidebar on mobile
+  // Auto-close overlay on mobile when resizing to desktop
   useEffect(() => {
-    if (isMobile) {
-      setSidebarOpen(false);
+    if (!isMobile) {
+      setSidebarOverlayOpen(false);
     }
   }, [isMobile]);
 
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
+  const toggleSidebarOverlay = () => {
+    setSidebarOverlayOpen((prev) => !prev);
   };
 
-  const closeSidebar = () => {
-    if (isMobile) {
-      setSidebarOpen(false);
-    }
+  const closeSidebarOverlay = () => {
+    if (isMobile) setSidebarOverlayOpen(false);
   };
+
+  const toggleSidebarCollapsed = () => {
+    setSidebarCollapsed((prev) => !prev);
+  };
+
+  const isDark = theme === "dark";
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div
+      className={`min-h-screen transition-colors ${
+        isDark
+          ? "bg-slate-900 text-slate-100"
+          : "bg-slate-50 text-slate-900"
+      } ${isDark ? "dark" : ""}`}
+    >
       <div className="flex h-screen">
-        {/* Sidebar for Desktop - Fixed width transition */}
+        {/* Desktop Sidebar - collapsible */}
         <aside
-          className={`hidden lg:block bg-gray-900 transition-all duration-300 ease-in-out ${
-            sidebarOpen ? "w-64" : "w-[4.5rem]"
+          className={`hidden lg:block shrink-0 transition-[width] duration-300 ease-in-out ${
+            sidebarCollapsed ? "w-[4.5rem]" : "w-64"
           }`}
         >
-          <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
+          <Sidebar
+            isCollapsed={sidebarCollapsed}
+            isMobileOverlay={false}
+            onCloseOverlay={closeSidebarOverlay}
+          />
         </aside>
 
-        {/* Mobile Sidebar - Overlay */}
-        {isMobile && sidebarOpen && (
+        {/* Mobile Sidebar - overlay */}
+        {isMobile && sidebarOverlayOpen && (
           <>
-            {/* Backdrop */}
             <div
-              className="fixed inset-0 bg-gray-900/50 z-40 lg:hidden"
-              onClick={closeSidebar}
+              className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+              onClick={closeSidebarOverlay}
+              aria-hidden="true"
             />
-
-            {/* Sidebar */}
             <aside className="fixed inset-y-0 left-0 w-64 z-50 lg:hidden">
-              <Sidebar isOpen={true} onClose={closeSidebar} />
+              <Sidebar
+                isCollapsed={false}
+                isMobileOverlay
+                onCloseOverlay={closeSidebarOverlay}
+              />
             </aside>
           </>
         )}
 
-        {/* Contenu principal */}
-        <div className="flex flex-col flex-1 overflow-hidden">
-          <TopBar onMenuClick={toggleSidebar} sidebarOpen={sidebarOpen} />
+        {/* Main content */}
+        <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+          <TopBar
+            onMenuClick={toggleSidebarOverlay}
+            onCollapseClick={toggleSidebarCollapsed}
+            sidebarCollapsed={sidebarCollapsed}
+            isMobile={isMobile}
+          />
 
           <main className="flex-1 overflow-y-auto">
-            <div className="py-6">
-              <div className="mx-auto px-4 sm:px-6">{children}</div>
+            <div className="py-4 sm:py-6">
+              <div className="mx-auto px-3 sm:px-4 md:px-6 max-w-[1600px]">
+                {children}
+              </div>
             </div>
           </main>
         </div>
       </div>
 
-      {/* Indicateur de statut WebSocket (en développement) */}
       {process.env.NODE_ENV === "development" && (
         <div className="fixed bottom-4 right-4 z-50">
-          <div className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          <div
+            className={`px-3 py-1 rounded-full text-xs font-medium ${
+              isDark ? "bg-green-900/80 text-green-200" : "bg-green-100 text-green-800"
+            }`}
+          >
             WS: Connecté
           </div>
         </div>
