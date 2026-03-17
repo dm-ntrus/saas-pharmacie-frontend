@@ -1,387 +1,238 @@
 "use client";
+
 import React, { useState } from "react";
-import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { ModuleGuard } from "@/components/guards/ModuleGuard";
+import { ProtectedAction } from "@/components/guards/ProtectedAction";
+import { useTenantPath } from "@/hooks/useTenantPath";
+import { Permission } from "@/types/permissions";
 import {
-  PlusIcon,
-  MagnifyingGlassIcon,
-  ClipboardDocumentListIcon,
-  ClockIcon,
-  CheckCircleIcon,
-  ExclamationCircleIcon,
-} from "@heroicons/react/24/outline";
+  usePrescriptions,
+  usePrescriptionStats,
+} from "@/hooks/api/usePrescriptions";
+import {
+  PrescriptionStatus,
+  PRESCRIPTION_STATUS_LABELS,
+} from "@/types/prescriptions";
 import {
   Button,
-  Input,
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/design-system";
-import { apiClient } from "@/lib/api";
-import { useRequireAuth } from "@/hooks/useAuth";
-import { UserRole, type Prescription, PrescriptionStatus } from "@/types";
+  Badge,
+  Input,
+  EmptyState,
+  ErrorBanner,
+  Skeleton,
+} from "@/components/ui";
+import { Search, FileText, ChevronRight, Plus } from "lucide-react";
+import { formatDate } from "@/utils/formatters";
 
-const PrescriptionsPage: React.FC = () => {
-  useRequireAuth([UserRole.ADMIN, UserRole.PHARMACIST, UserRole.TECHNICIAN]);
+const STATUS_BADGE: Record<string, "success" | "danger" | "warning" | "info" | "default"> = {
+  [PrescriptionStatus.PENDING]: "default",
+  [PrescriptionStatus.VERIFIED]: "info",
+  [PrescriptionStatus.IN_PROGRESS]: "warning",
+  [PrescriptionStatus.READY]: "info",
+  [PrescriptionStatus.DISPENSED]: "success",
+  [PrescriptionStatus.CANCELLED]: "danger",
+  [PrescriptionStatus.ON_HOLD]: "warning",
+};
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [statusFilter, setStatusFilter] = useState<PrescriptionStatus | "all">(
-    "all"
+export default function PrescriptionsPage() {
+  return (
+    <ModuleGuard
+      module="prescriptions"
+      requiredPermissions={[Permission.PRESCRIPTIONS_READ]}
+    >
+      <PrescriptionsContent />
+    </ModuleGuard>
   );
-  const pageSize = 20;
+}
 
-  const { data: prescriptionsData, isLoading } = useQuery({
-    queryKey: ["prescriptions", currentPage, searchTerm, statusFilter],
-    queryFn: () => apiClient.getPrescriptions(currentPage, pageSize),
+function PrescriptionsContent() {
+  const router = useRouter();
+  const { buildPath } = useTenantPath();
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
+
+  const { data: prescriptions = [], isLoading, error, refetch } = usePrescriptions(
+    statusFilter || undefined
+  );
+  const { data: stats } = usePrescriptionStats();
+
+  const filtered = prescriptions.filter((p: { prescription_number?: string; patient_id?: string }) => {
+    if (!search) return true;
+    const s = search.toLowerCase();
+    return (
+      p.prescription_number?.toLowerCase().includes(s) ||
+      String(p.patient_id ?? "").toLowerCase().includes(s)
+    );
   });
 
-  const getStatusColor = (status: PrescriptionStatus) => {
-    const colors = {
-      [PrescriptionStatus.RECEIVED]: "bg-blue-100 text-blue-800",
-      [PrescriptionStatus.IN_PROGRESS]: "bg-yellow-100 text-yellow-800",
-      [PrescriptionStatus.READY]: "bg-green-100 text-green-800",
-      [PrescriptionStatus.COMPLETED]: "bg-gray-100 text-gray-800",
-      [PrescriptionStatus.ON_HOLD]: "bg-red-100 text-red-800",
-      [PrescriptionStatus.CANCELLED]: "bg-gray-100 text-gray-800",
-    };
-
-    return colors[status];
-  };
-
-  const getStatusLabel = (status: PrescriptionStatus) => {
-    const labels = {
-      [PrescriptionStatus.RECEIVED]: "Reçue",
-      [PrescriptionStatus.IN_PROGRESS]: "En cours",
-      [PrescriptionStatus.READY]: "Prête",
-      [PrescriptionStatus.COMPLETED]: "Complétée",
-      [PrescriptionStatus.ON_HOLD]: "En attente",
-      [PrescriptionStatus.CANCELLED]: "Annulée",
-    };
-
-    return labels[status];
-  };
-
-  const getStatusIcon = (status: PrescriptionStatus) => {
-    switch (status) {
-      case PrescriptionStatus.RECEIVED:
-        return <ClipboardDocumentListIcon className="h-5 w-5 text-blue-500" />;
-      case PrescriptionStatus.IN_PROGRESS:
-        return <ClockIcon className="h-5 w-5 text-yellow-500" />;
-      case PrescriptionStatus.READY:
-        return <CheckCircleIcon className="h-5 w-5 text-green-500" />;
-      case PrescriptionStatus.COMPLETED:
-        return <CheckCircleIcon className="h-5 w-5 text-gray-500" />;
-      case PrescriptionStatus.ON_HOLD:
-        return <ExclamationCircleIcon className="h-5 w-5 text-red-500" />;
-      case PrescriptionStatus.CANCELLED:
-        return <ExclamationCircleIcon className="h-5 w-5 text-gray-500" />;
-      default:
-        return <ClipboardDocumentListIcon className="h-5 w-5 text-gray-500" />;
-    }
-  };
-
-  const PrescriptionCard = ({
-    prescription,
-  }: {
-    prescription: Prescription;
-  }) => (
-    <Card className="hover:shadow-md transition-shadow duration-200">
-      <CardContent className="p-6">
-        <div className="flex items-start justify-between">
-          <div className="flex items-start space-x-4">
-            <div className="flex-shrink-0">
-              {getStatusIcon(prescription.status)}
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium text-gray-900">
-                  Prescription #{prescription.prescriptionNumber}
-                </h3>
-                <span
-                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
-                    prescription.status
-                  )}`}
-                >
-                  {getStatusLabel(prescription.status)}
-                </span>
-              </div>
-
-              <div className="mt-2 space-y-1">
-                <p className="text-sm text-gray-600">
-                  <span className="font-medium">Patient:</span>{" "}
-                  {prescription.patient?.firstName}{" "}
-                  {prescription.patient?.lastName}
-                </p>
-                <p className="text-sm text-gray-600">
-                  <span className="font-medium">Prescripteur:</span> Dr.{" "}
-                  {prescription.prescriber?.lastName}
-                </p>
-                <p className="text-sm text-gray-600">
-                  <span className="font-medium">Date:</span>{" "}
-                  {new Date(prescription.dateWritten).toLocaleDateString(
-                    "fr-FR"
-                  )}
-                </p>
-              </div>
-
-              {prescription.items && prescription.items.length > 0 && (
-                <div className="mt-3">
-                  <p className="text-sm text-gray-500">
-                    {prescription.items.length} médicament(s):
-                  </p>
-                  <ul className="mt-1 space-y-1">
-                    {prescription.items.slice(0, 2).map((item, index) => (
-                      <li key={index} className="text-sm text-gray-600">
-                        • {item.product?.name} - Qté: {item.quantity}
-                      </li>
-                    ))}
-                    {prescription.items.length > 2 && (
-                      <li className="text-sm text-gray-500">
-                        ... et {prescription.items.length - 2} autre(s)
-                      </li>
-                    )}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-4 flex items-center justify-between">
-          <div className="flex items-center space-x-4 text-sm text-gray-500">
-            {prescription.dateFilled && (
-              <span>
-                Délivrée le{" "}
-                {new Date(prescription.dateFilled).toLocaleDateString("fr-FR")}
-              </span>
-            )}
-            {prescription.copayAmount && (
-              <span>Copayment: {prescription.copayAmount.toFixed(2)} €</span>
-            )}
-          </div>
-          <div className="flex space-x-2">
-            <Button variant="outline" size="sm" asChild>
-              <Link href={`/prescriptions/${prescription.id}`}>
-                Voir détails
-              </Link>
-            </Button>
-            {prescription.status === PrescriptionStatus.READY && (
-              <Button size="sm">Délivrer</Button>
-            )}
-            {prescription.status === PrescriptionStatus.IN_PROGRESS && (
-              <Button size="sm" variant="outline">
-                Marquer prête
-              </Button>
-            )}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-
-  const StatusFilters = () => (
-    <div className="flex flex-wrap gap-2">
-      <Button
-        variant={statusFilter === "all" ? "default" : "outline"}
-        size="sm"
-        onClick={() => setStatusFilter("all")}
-      >
-        Toutes
-      </Button>
-      {Object.values(PrescriptionStatus).map((status) => (
-        <Button
-          key={status}
-          variant={statusFilter === status ? "default" : "outline"}
-          size="sm"
-          onClick={() => setStatusFilter(status)}
-        >
-          {getStatusLabel(status)}
-        </Button>
-      ))}
-    </div>
-  );
-
-  const Stats = () => {
-    const stats =
-      prescriptionsData?.data.reduce((acc, prescription) => {
-        acc[prescription.status] = (acc[prescription.status] || 0) + 1;
-        return acc;
-      }, {} as Record<PrescriptionStatus, number>) || {};
-
-    return (
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <ClipboardDocumentListIcon className="h-6 w-6 text-blue-400" />
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
-                    Reçues
-                  </dt>
-                  <dd className="text-lg font-medium text-gray-900">
-                    {stats[PrescriptionStatus.RECEIVED] || 0}
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <ClockIcon className="h-6 w-6 text-yellow-400" />
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
-                    En cours
-                  </dt>
-                  <dd className="text-lg font-medium text-gray-900">
-                    {stats[PrescriptionStatus.IN_PROGRESS] || 0}
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <CheckCircleIcon className="h-6 w-6 text-green-400" />
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
-                    Prêtes
-                  </dt>
-                  <dd className="text-lg font-medium text-gray-900">
-                    {stats[PrescriptionStatus.READY] || 0}
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <CheckCircleIcon className="h-6 w-6 text-gray-400" />
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
-                    Complétées
-                  </dt>
-                  <dd className="text-lg font-medium text-gray-900">
-                    {stats[PrescriptionStatus.COMPLETED] || 0}
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  };
-
-  const EmptyState = () => (
-    <div className="text-center py-12">
-      <ClipboardDocumentListIcon className="h-12 w-12 text-gray-400 mx-auto" />
-      <h3 className="mt-2 text-sm font-medium text-gray-900">
-        Aucune prescription
-      </h3>
-      <p className="mt-1 text-sm text-gray-500">
-        Commencez par ajouter une nouvelle prescription.
-      </p>
-      <div className="mt-6">
-        <Button asChild>
-          <Link href="/prescriptions/new">
-            <PlusIcon className="h-4 w-4 mr-2" />
-            Nouvelle prescription
-          </Link>
-        </Button>
-      </div>
-    </div>
-  );
+  const safeId = (id: string) =>
+    typeof id === "string" && id.includes(":") ? id.split(":")[1] : id;
 
   return (
     <div className="space-y-6">
-      {/* En-tête */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Prescriptions</h1>
-          <p className="text-gray-600">
-            Gérez les prescriptions de vos patients
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+            Ordonnances
+          </h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            Liste et suivi des ordonnances
           </p>
         </div>
-        <Button asChild>
-          <Link href="/prescriptions/new">
-            <PlusIcon className="h-4 w-4 mr-2" />
-            Nouvelle prescription
-          </Link>
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => router.push(buildPath("/prescriptions/alerts"))}
+          >
+            Alertes fin de traitement
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => router.push(buildPath("/prescriptions/digital"))}
+          >
+            e-Ordonnance
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => router.push(buildPath("/prescriptions/medication-review"))}
+          >
+            BPM
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => router.push(buildPath("/prescriptions/dose-preparation"))}
+          >
+            Préparation de doses
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => router.push(buildPath("/prescriptions/controlled-substances"))}
+          >
+            Substances contrôlées
+          </Button>
+        </div>
       </div>
 
-      {/* Statistiques */}
-      <Stats />
-
-      {/* Filtres et recherche */}
-      <Card>
-        <CardContent className="p-6 space-y-4">
-          <div className="flex items-center space-x-4">
-            <div className="flex-1">
-              <Input
-                placeholder="Rechercher par numéro, patient, prescripteur..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-              />
-            </div>
-            <Button variant="outline">Exporter</Button>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Filtrer par statut
-            </label>
-            <StatusFilters />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Liste des prescriptions */}
-      {isLoading ? (
-        <div className="grid gap-6">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="animate-pulse">
-              <div className="bg-gray-200 rounded-lg h-40"></div>
-            </div>
-          ))}
-        </div>
-      ) : !prescriptionsData?.data.length ? (
-        <EmptyState />
-      ) : (
-        <div className="grid gap-6">
-          {prescriptionsData.data.map((prescription) => (
-            <PrescriptionCard
-              key={prescription.id}
-              prescription={prescription}
-            />
+      {stats && typeof stats === "object" && Object.keys(stats).length > 0 && (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {Object.entries(stats as Record<string, number>).map(([key, val]) => (
+            <Card key={key}>
+              <CardContent className="p-3">
+                <p className="text-xs text-slate-500 uppercase tracking-wide">{key}</p>
+                <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">{Number(val)}</p>
+              </CardContent>
+            </Card>
           ))}
         </div>
       )}
+
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex-1">
+          <Input
+            placeholder="Rechercher par n° ordonnance ou patient..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            leftIcon={<Search className="w-4 h-4" />}
+          />
+        </div>
+        <select
+          className="rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm"
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+        >
+          <option value="">Tous les statuts</option>
+          {Object.values(PrescriptionStatus).map((s) => (
+            <option key={s} value={s}>
+              {PRESCRIPTION_STATUS_LABELS[s]}
+            </option>
+          ))}
+        </select>
+        <ProtectedAction permission={Permission.PRESCRIPTIONS_WRITE}>
+          <Button
+            leftIcon={<Plus className="w-4 h-4" />}
+            onClick={() => router.push(buildPath("/prescriptions/new"))}
+          >
+            Nouvelle ordonnance
+          </Button>
+        </ProtectedAction>
+      </div>
+
+      {isLoading ? (
+        <div className="space-y-3">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-16 w-full rounded-lg" />
+          ))}
+        </div>
+      ) : error ? (
+        <ErrorBanner
+          message="Erreur de chargement des ordonnances"
+          onRetry={() => refetch()}
+        />
+      ) : filtered.length === 0 ? (
+        <EmptyState
+          title="Aucune ordonnance"
+          description="Aucune ordonnance trouvée pour les critères sélectionnés."
+        />
+      ) : (
+        <Card>
+          <CardContent className="p-0">
+            <div className="divide-y divide-slate-100 dark:divide-slate-800">
+              {filtered.map((p: any) => (
+                <div
+                  key={p.id}
+                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                >
+                  <button
+                    className="text-left flex-1 min-w-0"
+                    onClick={() =>
+                      router.push(buildPath(`/prescriptions/${safeId(p.id)}`))
+                    }
+                  >
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <FileText className="w-4 h-4 text-slate-400 shrink-0" />
+                      <span className="font-medium text-slate-900 dark:text-slate-100">
+                        {p.prescription_number ?? p.id}
+                      </span>
+                      <Badge
+                        variant={STATUS_BADGE[p.status] ?? "default"}
+                        size="sm"
+                      >
+                        {PRESCRIPTION_STATUS_LABELS[p.status as PrescriptionStatus] ?? p.status}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-slate-500 mt-0.5">
+                      Prescripteur: {p.prescriber_name ?? "—"} ·{" "}
+                      {p.prescribed_date
+                        ? formatDate(p.prescribed_date)
+                        : p.created_at
+                        ? formatDate(p.created_at)
+                        : ""}
+                    </p>
+                  </button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() =>
+                      router.push(buildPath(`/prescriptions/${safeId(p.id)}`))
+                    }
+                    leftIcon={<ChevronRight className="w-4 h-4" />}
+                  >
+                    Voir
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
-};
-
-export default PrescriptionsPage;
+}

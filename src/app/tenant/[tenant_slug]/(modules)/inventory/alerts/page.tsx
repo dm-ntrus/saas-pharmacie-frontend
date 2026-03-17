@@ -1,406 +1,394 @@
 "use client";
+
 import React, { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Formik, Form, Field } from "formik";
+import { useRouter } from "next/navigation";
+import { ModuleGuard } from "@/components/guards/ModuleGuard";
+import { ProtectedAction } from "@/components/guards/ProtectedAction";
+import { useTenantPath } from "@/hooks/useTenantPath";
+import { Permission } from "@/types/permissions";
 import {
-  ExclamationTriangleIcon,
-  CheckCircleIcon,
-  ClockIcon,
-  EyeSlashIcon,
-} from "@heroicons/react/24/outline";
-import { Button, Card, CardContent, Modal } from "@/design-system";
-import { Pagination } from "@/components/Pagination";
-import { apiClient } from "@/lib/api";
-import { useRequireAuth } from "@/hooks/useAuth";
-import { UserRole, AlertSeverity, AlertType } from "@/types";
-import { toast } from "react-hot-toast";
-import { usePagination } from "@/hooks/usePerformance";
-import Link from "next/link";
+  useInventoryAlerts,
+  useAlertStatistics,
+  useAcknowledgeAlert,
+  useResolveAlert,
+  useSnoozeAlert,
+  useEscalateAlert,
+} from "@/hooks/api/useInventory";
+import {
+  AlertSeverity,
+  AlertType,
+  AlertStatus,
+  ALERT_TYPE_LABELS,
+  ALERT_SEVERITY_LABELS,
+} from "@/types/inventory";
+import type { InventoryAlert } from "@/types/inventory";
+import { useAuth } from "@/context/AuthContext";
+import {
+  Button,
+  Card,
+  CardContent,
+  Badge,
+  EmptyState,
+  ErrorBanner,
+  Skeleton,
+  Modal,
+  Input,
+} from "@/components/ui";
+import {
+  ArrowLeft,
+  AlertTriangle,
+  CheckCircle2,
+  Eye,
+  Bell,
+  BellOff,
+  Package,
+  Thermometer,
+  Clock,
+  ArrowUpCircle,
+} from "lucide-react";
+import { formatDateTime } from "@/utils/formatters";
 
-const InventoryAlertsPage: React.FC = () => {
-  useRequireAuth([UserRole.ADMIN, UserRole.PHARMACIST, UserRole.TECHNICIAN]);
+const SEVERITY_BADGE: Record<string, "success" | "danger" | "warning" | "info" | "default"> = {
+  [AlertSeverity.LOW]: "info",
+  [AlertSeverity.MEDIUM]: "warning",
+  [AlertSeverity.HIGH]: "danger",
+  [AlertSeverity.CRITICAL]: "danger",
+};
 
-  const queryClient = useQueryClient();
-  const [filters, setFilters] = useState({
-    severity: "",
-    type: "",
-    resolved: false,
-    page: 1,
-    limit: 20,
-  });
-  const [resolveModalOpen, setResolveModalOpen] = useState(false);
-  const [selectedAlert, setSelectedAlert] = useState<any>(null);
+/** Guide §6.2: Critique red-600, Haute orange-500, Moyenne amber-400, Basse blue-400 */
+const SEVERITY_BG: Record<string, string> = {
+  [AlertSeverity.CRITICAL]: "bg-red-100 dark:bg-red-900/30 border-red-300 dark:border-red-700",
+  [AlertSeverity.HIGH]: "bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800",
+  [AlertSeverity.MEDIUM]: "bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800",
+  [AlertSeverity.LOW]: "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800",
+};
 
-  const { data: alertsData, isLoading } = useQuery({
-    queryKey: ["inventory-alerts", filters],
-    queryFn: () => apiClient.getInventoryAlerts(filters),
-  });
+const SEVERITY_ICON_COLOR: Record<string, string> = {
+  [AlertSeverity.CRITICAL]: "text-red-600",
+  [AlertSeverity.HIGH]: "text-orange-500",
+  [AlertSeverity.MEDIUM]: "text-amber-400",
+  [AlertSeverity.LOW]: "text-blue-400",
+};
 
-  const acknowledgeMutation = useMutation({
-    mutationFn: ({ id, userId }: { id: string; userId: string }) =>
-      apiClient.acknowledgeAlert(id, { userId, notes: "" }),
-    onSuccess: () => {
-      toast.success("Alerte acquittée");
-      queryClient.invalidateQueries({ queryKey: ["inventory-alerts"] });
-    },
-  });
+const TYPE_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  [AlertType.LOW_STOCK]: Package,
+  [AlertType.OUT_OF_STOCK]: Package,
+  [AlertType.EXPIRING_SOON]: AlertTriangle,
+  [AlertType.EXPIRED]: AlertTriangle,
+  [AlertType.OVERSTOCK]: Package,
+  [AlertType.RECALL]: Bell,
+  [AlertType.TEMPERATURE_DEVIATION]: Thermometer,
+};
 
-  const resolveMutation = useMutation({
-    mutationFn: ({
-      id,
-      resolvedBy,
-      resolutionNotes,
-    }: {
-      id: string;
-      resolvedBy: string;
-      resolutionNotes: string;
-    }) => apiClient.resolveAlert(id, { resolvedBy, resolutionNotes }),
-    onSuccess: () => {
-      toast.success("Alerte résolue");
-      queryClient.invalidateQueries({ queryKey: ["inventory-alerts"] });
-      setResolveModalOpen(false);
-      setSelectedAlert(null);
-    },
-  });
-
-  const snoozeMutation = useMutation({
-    mutationFn: ({ id, userId }: { id: string; userId: string }) =>
-      apiClient.snoozeAlert(id, {
-        snoozeUntil: new Date(Date.now() + 24 * 60 * 60 * 1000),
-        userId,
-      }),
-    onSuccess: () => {
-      toast.success("Alerte reportée de 24h");
-      queryClient.invalidateQueries({ queryKey: ["inventory-alerts"] });
-    },
-  });
-
-  const pagination = usePagination(
-    alertsData?.total || 0,
-    filters.limit,
-    filters.page
-  );
-
-  const getSeverityColor = (severity: AlertSeverity) => {
-    const colors = {
-      [AlertSeverity.LOW]: "bg-blue-100 text-blue-800",
-      [AlertSeverity.MEDIUM]: "bg-yellow-100 text-yellow-800",
-      [AlertSeverity.HIGH]: "bg-orange-100 text-orange-800",
-      [AlertSeverity.CRITICAL]: "bg-red-100 text-red-800",
-    };
-    return colors[severity];
-  };
-
-  const getSeverityIcon = (severity: AlertSeverity) => {
-    if (severity === AlertSeverity.CRITICAL) {
-      return <ExclamationTriangleIcon className="h-5 w-5 text-red-500" />;
-    }
-    return <ExclamationTriangleIcon className="h-5 w-5 text-yellow-500" />;
-  };
-
-  const getTypeLabel = (type: AlertType) => {
-    const labels = {
-      [AlertType.LOW_STOCK]: "Stock faible",
-      [AlertType.EXPIRING_SOON]: "Expiration proche",
-      [AlertType.EXPIRED]: "Produit expiré",
-      [AlertType.OVERSTOCK]: "Surstock",
-      [AlertType.ABNORMAL_CONSUMPTION]: "Consommation anormale",
-    };
-    return labels[type] || type;
-  };
-
-  const ResolveAlertModal = () => (
-    <Modal
-      isOpen={resolveModalOpen}
-      onClose={() => {
-        setResolveModalOpen(false);
-        setSelectedAlert(null);
-      }}
-      title="Résoudre l'alerte"
-      size="md"
+export default function InventoryAlertsPage() {
+  return (
+    <ModuleGuard
+      module="inventory"
+      requiredPermissions={[Permission.INVENTORY_ALERTS_READ]}
     >
-      <Formik
-        initialValues={{ resolutionNotes: "" }}
-        onSubmit={(values) => {
-          if (selectedAlert) {
-            resolveMutation.mutate({
-              id: selectedAlert.id,
-              resolvedBy: "current-user-id",
-              resolutionNotes: values.resolutionNotes,
-            });
-          }
-        }}
-      >
-        {() => (
-          <Form className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Notes de résolution <span className="text-red-600">*</span>
-              </label>
-              <Field
-                as="textarea"
-                name="resolutionNotes"
-                rows={4}
-                required
-                className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-600 focus:ring-offset-2"
-                placeholder="Décrivez comment cette alerte a été résolue..."
-              />
-            </div>
-            <div className="flex justify-end space-x-3">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  setResolveModalOpen(false);
-                  setSelectedAlert(null);
-                }}
-                className="flex-1"
-              >
-                Annuler
-              </Button>
-              <Button
-                type="submit"
-                loading={resolveMutation.isPending}
-                className="flex-1"
-              >
-                Confirmer la résolution
-              </Button>
-            </div>
-          </Form>
-        )}
-      </Formik>
-    </Modal>
+      <AlertsContent />
+    </ModuleGuard>
   );
+}
 
-  const AlertCard = ({ alert }: { alert: any }) => (
-    <Card
-      className={`border-l-4 ${
-        alert.severity === AlertSeverity.CRITICAL
-          ? "border-l-red-500"
-          : alert.severity === AlertSeverity.HIGH
-          ? "border-l-orange-500"
-          : alert.severity === AlertSeverity.MEDIUM
-          ? "border-l-yellow-500"
-          : "border-l-blue-500"
-      }`}
-    >
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between">
-          <div className="flex items-start space-x-4">
-            {getSeverityIcon(alert.severity)}
-            <div className="flex-1">
-              <div className="flex items-center space-x-2 mb-2">
-                <h3 className="text-lg font-medium text-gray-900">
-                  {alert.title}
-                </h3>
-                <span
-                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getSeverityColor(
-                    alert.severity
-                  )}`}
-                >
-                  {getTypeLabel(alert.type)}
-                </span>
-                {alert.acknowledged && (
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                    Acquittée
-                  </span>
-                )}
-                {alert.resolved && (
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    Résolue
-                  </span>
-                )}
-              </div>
+const TYPE_FILTER_OPTIONS: { value: string; label: string }[] = [
+  { value: "", label: "Tous types" },
+  { value: AlertType.LOW_STOCK, label: ALERT_TYPE_LABELS[AlertType.LOW_STOCK] },
+  { value: AlertType.OUT_OF_STOCK, label: ALERT_TYPE_LABELS[AlertType.OUT_OF_STOCK] },
+  { value: AlertType.EXPIRING_SOON, label: ALERT_TYPE_LABELS[AlertType.EXPIRING_SOON] },
+  { value: AlertType.EXPIRED, label: ALERT_TYPE_LABELS[AlertType.EXPIRED] },
+  { value: AlertType.RECALL, label: ALERT_TYPE_LABELS[AlertType.RECALL] },
+  { value: AlertType.TEMPERATURE_DEVIATION, label: ALERT_TYPE_LABELS[AlertType.TEMPERATURE_DEVIATION] },
+];
 
-              <p className="text-gray-600 mb-3">{alert.description}</p>
+const STATUS_FILTER_OPTIONS: { value: string; label: string }[] = [
+  { value: "", label: "Tous statuts" },
+  { value: AlertStatus.ACTIVE, label: "Active" },
+  { value: AlertStatus.ACKNOWLEDGED, label: "Accusée" },
+  { value: AlertStatus.RESOLVED, label: "Résolue" },
+  { value: "snoozed", label: "Reportée" },
+  { value: "escalated", label: "Escaladée" },
+];
 
-              <div className="text-sm text-gray-500 space-y-1">
-                <p>Produit: {alert.product?.name || "N/A"}</p>
-                <p>Lot: {alert.batchNumber || "N/A"}</p>
-                <p>
-                  Créée le:{" "}
-                  {new Date(alert.createdAt).toLocaleDateString("fr-FR")}
-                </p>
-                {alert.acknowledgedAt && (
-                  <p>
-                    Acquittée le:{" "}
-                    {new Date(alert.acknowledgedAt).toLocaleDateString("fr-FR")}
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+function AlertsContent() {
+  const router = useRouter();
+  const { buildPath } = useTenantPath();
+  const { user } = useAuth();
 
-        {!alert.resolved && (
-          <div className="flex space-x-2 mt-4">
-            {!alert.acknowledged && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  acknowledgeMutation.mutate({
-                    id: alert.id,
-                    userId: "current-user-id",
-                  })
-                }
-                icon={<EyeSlashIcon className="h-4 w-4" />}
-              >
-                Acquitter
-              </Button>
-            )}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                snoozeMutation.mutate({
-                  id: alert.id,
-                  userId: "current-user-id",
-                })
-              }
-              icon={<ClockIcon className="h-4 w-4" />}
-            >
-              Reporter 24h
-            </Button>
-            <Button
-              size="sm"
-              onClick={() => {
-                setSelectedAlert(alert);
-                setResolveModalOpen(true);
-              }}
-              icon={<CheckCircleIcon className="h-4 w-4" />}
-            >
-              Résoudre
-            </Button>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
+  const [severityFilter, setSeverityFilter] = useState<AlertSeverity | "">("");
+  const [typeFilter, setTypeFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [snoozeAlertId, setSnoozeAlertId] = useState<string | null>(null);
+  const [escalateAlertId, setEscalateAlertId] = useState<string | null>(null);
+  const [snoozeUntil, setSnoozeUntil] = useState("");
+  const [escalateReason, setEscalateReason] = useState("");
+
+  const { data, isLoading, error, refetch } = useInventoryAlerts({
+    severity: severityFilter || undefined,
+    status: statusFilter || undefined,
+    type: typeFilter || undefined,
+    limit: 50,
+  });
+  const { data: stats } = useAlertStatistics();
+  const acknowledgeMutation = useAcknowledgeAlert();
+  const resolveMutation = useResolveAlert();
+  const snoozeMutation = useSnoozeAlert();
+  const escalateMutation = useEscalateAlert();
+
+  const alerts: InventoryAlert[] = data?.data ?? [];
+
+  const severityCounts = React.useMemo(() => {
+    const c = { [AlertSeverity.CRITICAL]: 0, [AlertSeverity.HIGH]: 0, [AlertSeverity.MEDIUM]: 0, [AlertSeverity.LOW]: 0 };
+    alerts.forEach((a) => {
+      if (a.severity && c[a.severity] !== undefined) c[a.severity]++;
+    });
+    return c;
+  }, [alerts]);
+
+  const userAction = {
+    userId: user?.id ?? "",
+    userName: user?.firstName ? `${user.firstName} ${user.lastName ?? ""}`.trim() : "Utilisateur",
+  };
+
+  const handleAcknowledge = (alertId: string) => {
+    acknowledgeMutation.mutate({
+      alertId,
+      action: { userId: userAction.userId, notes: undefined },
+    });
+  };
+
+  const handleResolve = (alertId: string) => {
+    resolveMutation.mutate({
+      alertId,
+      action: {
+        resolvedBy: userAction.userId,
+        resolutionNotes: "Résolu par l'utilisateur",
+      },
+    });
+  };
+
+  const handleSnooze = () => {
+    if (!snoozeAlertId || !snoozeUntil) return;
+    snoozeMutation.mutate({
+      alertId: snoozeAlertId,
+      snoozeUntil: new Date(snoozeUntil).toISOString(),
+      userId: userAction.userId,
+      userName: userAction.userName,
+    }, { onSuccess: () => { setSnoozeAlertId(null); setSnoozeUntil(""); } });
+  };
+
+  const handleEscalate = () => {
+    if (!escalateAlertId) return;
+    escalateMutation.mutate({
+      alertId: escalateAlertId,
+      reason: escalateReason || "Escalade manuelle",
+      userId: userAction.userId,
+      userName: userAction.userName,
+    }, { onSuccess: () => { setEscalateAlertId(null); setEscalateReason(""); } });
+  };
 
   return (
     <div className="space-y-6">
-      {/* En-tête */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Alertes d'inventaire
-          </h1>
-          <p className="text-gray-600">
-            Surveillez et gérez les alertes de votre stock
-          </p>
-        </div>
-        <div className="flex gap-3 flex-wrap">
-          <Button variant="outline" asChild>
-            <Link href="/inventory">Voir les produits</Link>
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => router.push(buildPath("/inventory"))}
+            leftIcon={<ArrowLeft className="h-4 w-4" />}
+          >
+            Retour
           </Button>
-          <Button variant="outline">Vérifier les alertes</Button>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+              Alertes d&apos;inventaire
+            </h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Surveillez les ruptures, péremptions et anomalies
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Filtres */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <select
-              value={filters.severity}
-              onChange={(e) =>
-                setFilters({ ...filters, severity: e.target.value, page: 1 })
-              }
-              className="rounded-md border border-gray-300 bg-white px-3  h-10 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-sky-600 focus:ring-offset-2"
-            >
-              <option value="">Toutes les sévérités</option>
-              {Object.values(AlertSeverity).map((severity) => (
-                <option key={severity} value={severity}>
-                  {severity}
-                </option>
-              ))}
-            </select>
-
-            <select
-              value={filters.type}
-              onChange={(e) =>
-                setFilters({ ...filters, type: e.target.value, page: 1 })
-              }
-              className="rounded-md border border-gray-300 bg-white px-3  h-10 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-sky-600 focus:ring-offset-2"
-            >
-              <option value="">Tous les types</option>
-              {Object.values(AlertType).map((type) => (
-                <option key={type} value={type}>
-                  {getTypeLabel(type)}
-                </option>
-              ))}
-            </select>
-
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                checked={filters.resolved}
-                onChange={(e) =>
-                  setFilters({
-                    ...filters,
-                    resolved: e.target.checked,
-                    page: 1,
-                  })
-                }
-                className="h-5 w-5 rounded border-gray-300 text-sky-600 focus:ring-sky-500"
-              />
-              <span className="ml-2 text-sm text-gray-600">
-                Afficher résolues
-              </span>
-            </label>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Liste des alertes */}
-      {isLoading ? (
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="animate-pulse">
-              <div className="bg-gray-200 rounded-lg h-32"></div>
-            </div>
-          ))}
+      {/* AlertsStatsBar — Compteurs par sévérité (§6.2) */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <StatCard label="Critique" value={severityCounts[AlertSeverity.CRITICAL] ?? 0} color="text-red-600" />
+        <StatCard label="Haute" value={severityCounts[AlertSeverity.HIGH] ?? 0} color="text-orange-500" />
+        <StatCard label="Moyenne" value={severityCounts[AlertSeverity.MEDIUM] ?? 0} color="text-amber-400" />
+        <StatCard label="Basse" value={severityCounts[AlertSeverity.LOW] ?? 0} color="text-blue-400" />
+      </div>
+      {stats && (
+        <div className="flex flex-wrap gap-4 text-sm text-slate-500">
+          <span>Actives: <strong className="text-slate-700 dark:text-slate-300">{stats.active ?? 0}</strong></span>
+          <span>Accusées: <strong className="text-slate-700 dark:text-slate-300">{stats.acknowledged ?? 0}</strong></span>
+          <span>Résolues: <strong className="text-slate-700 dark:text-slate-300">{stats.resolved ?? 0}</strong></span>
+          <span>Reportées: <strong className="text-slate-700 dark:text-slate-300">{stats.snoozed ?? 0}</strong></span>
         </div>
-      ) : !alertsData?.alerts?.length ? (
-        <div className="text-center py-12">
-          <CheckCircleIcon className="h-12 w-12 text-green-500 mx-auto" />
-          <h3 className="mt-2 text-sm font-medium text-gray-900">
-            Aucune alerte
-          </h3>
-          <p className="mt-1 text-sm text-gray-500">
-            Toutes les alertes sont traitées ou aucun problème détecté.
-          </p>
-        </div>
-      ) : (
-        <>
-          <div className="space-y-4">
-            {alertsData?.alerts?.map((alert: any) => (
-              <AlertCard key={alert.id} alert={alert} />
-            ))}
-          </div>
-
-          {/* Pagination */}
-          {alertsData && alertsData.total > filters.limit && (
-            <Pagination
-              currentPage={filters.page}
-              totalPages={pagination.totalPages}
-              totalItems={alertsData.total}
-              itemsPerPage={filters.limit}
-              onPageChange={(page) => setFilters({ ...filters, page })}
-              onItemsPerPageChange={(limit) =>
-                setFilters({ ...filters, limit, page: 1 })
-              }
-              showItemsPerPage
-            />
-          )}
-        </>
       )}
 
-      {/* Modal de résolution */}
-      <ResolveAlertModal />
+      {/* AlertsFilters — Type, Sévérité, Statut (§6.2) */}
+      <div className="space-y-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-sm font-medium text-slate-600 dark:text-slate-400">Sévérité:</span>
+          <Badge variant={severityFilter === "" ? "info" : "default"} className="cursor-pointer" onClick={() => setSeverityFilter("")}>Toutes</Badge>
+          {Object.values(AlertSeverity).map((sev) => (
+            <Badge key={sev} variant={severityFilter === sev ? "info" : "default"} className="cursor-pointer" onClick={() => setSeverityFilter(sev)}>
+              {ALERT_SEVERITY_LABELS[sev]}
+            </Badge>
+          ))}
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-sm font-medium text-slate-600 dark:text-slate-400">Type:</span>
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2 py-1 text-sm"
+          >
+            {TYPE_FILTER_OPTIONS.map((o) => (
+              <option key={o.value || "all"} value={o.value}>{o.label}</option>
+            ))}
+          </select>
+          <span className="text-sm font-medium text-slate-600 dark:text-slate-400 ml-2">Statut:</span>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2 py-1 text-sm"
+          >
+            {STATUS_FILTER_OPTIONS.map((o) => (
+              <option key={o.value || "all"} value={o.value}>{o.label}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* Alerts List */}
+      {isLoading ? (
+        <div className="space-y-3">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Skeleton key={i} className="h-20 w-full rounded-lg" />
+          ))}
+        </div>
+      ) : error ? (
+        <ErrorBanner
+          message="Impossible de charger les alertes"
+          onRetry={() => refetch()}
+        />
+      ) : alerts.length === 0 ? (
+        <EmptyState
+          icon={<BellOff className="w-8 h-8 text-slate-400" />}
+          title="Aucune alerte"
+          description="Tout est en ordre pour le moment."
+        />
+      ) : (
+        <div className="space-y-3">
+          {alerts.map((alert) => {
+            const Icon = TYPE_ICONS[alert.alert_type] ?? AlertTriangle;
+            const severityBg = SEVERITY_BG[alert.severity] ?? "bg-slate-50 dark:bg-slate-800";
+            const iconColor = SEVERITY_ICON_COLOR[alert.severity] ?? "text-slate-500";
+            const isActive = alert.status === AlertStatus.ACTIVE;
+            const canAct = isActive || alert.status === AlertStatus.ACKNOWLEDGED;
+            return (
+              <Card key={alert.id} className={severityBg}>
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${severityBg}`}>
+                      <Icon className={`w-5 h-5 ${iconColor}`} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{alert.message}</p>
+                          <div className="flex items-center gap-2 mt-1 flex-wrap">
+                            <Badge variant={SEVERITY_BADGE[alert.severity] ?? "default"} size="sm">
+                              {ALERT_SEVERITY_LABELS[alert.severity]}
+                            </Badge>
+                            <Badge variant="default" size="sm">
+                              {ALERT_TYPE_LABELS[alert.alert_type] ?? alert.alert_type}
+                            </Badge>
+                            <span className="text-xs text-slate-400">{formatDateTime(alert.created_at)}</span>
+                          </div>
+                        </div>
+                        <div className="flex gap-1 shrink-0 flex-wrap">
+                          {isActive && (
+                            <ProtectedAction permission={Permission.INVENTORY_ALERTS_UPDATE}>
+                              <Button variant="outline" size="sm" leftIcon={<Eye className="w-3 h-3" />} onClick={() => handleAcknowledge(alert.id)} loading={acknowledgeMutation.isPending}>
+                                Accuser
+                              </Button>
+                            </ProtectedAction>
+                          )}
+                          {canAct && (
+                            <ProtectedAction permission={Permission.INVENTORY_ALERTS_UPDATE}>
+                              <Button variant="outline" size="sm" leftIcon={<CheckCircle2 className="w-3 h-3" />} onClick={() => handleResolve(alert.id)} loading={resolveMutation.isPending}>
+                                Résoudre
+                              </Button>
+                            </ProtectedAction>
+                          )}
+                          {canAct && (
+                            <ProtectedAction permission={Permission.INVENTORY_ALERTS_UPDATE}>
+                              <Button variant="outline" size="sm" leftIcon={<Clock className="w-3 h-3" />} onClick={() => { setSnoozeAlertId(alert.id); setSnoozeUntil(""); }} loading={snoozeMutation.isPending}>
+                                Reporter
+                              </Button>
+                            </ProtectedAction>
+                          )}
+                          {canAct && (
+                            <ProtectedAction permission={Permission.INVENTORY_ALERTS_UPDATE}>
+                              <Button variant="outline" size="sm" leftIcon={<ArrowUpCircle className="w-3 h-3" />} onClick={() => { setEscalateAlertId(alert.id); setEscalateReason(""); }} loading={escalateMutation.isPending}>
+                                Escalader
+                              </Button>
+                            </ProtectedAction>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Modal Reporter (Snooze) */}
+      <Modal open={!!snoozeAlertId} onOpenChange={(o) => !o && setSnoozeAlertId(null)} title="Reporter l'alerte">
+        <div className="space-y-4">
+          <Input label="Reporter jusqu'au" type="datetime-local" value={snoozeUntil} onChange={(e) => setSnoozeUntil(e.target.value)} />
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setSnoozeAlertId(null)}>Annuler</Button>
+            <Button onClick={handleSnooze} disabled={!snoozeUntil || snoozeMutation.isPending}>Reporter</Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Modal Escalader */}
+      <Modal open={!!escalateAlertId} onOpenChange={(o) => !o && setEscalateAlertId(null)} title="Escalader l'alerte">
+        <div className="space-y-4">
+          <Input label="Raison (optionnel)" value={escalateReason} onChange={(e) => setEscalateReason(e.target.value)} placeholder="Ex: nécessite validation responsable" />
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setEscalateAlertId(null)}>Annuler</Button>
+            <Button onClick={handleEscalate} disabled={escalateMutation.isPending}>Escalader</Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
-};
+}
 
-export default InventoryAlertsPage;
+function StatCard({
+  label,
+  value,
+  color,
+}: {
+  label: string;
+  value: number;
+  color: string;
+}) {
+  return (
+    <Card>
+      <CardContent className="p-4 text-center">
+        <p className={`text-2xl font-bold ${color}`}>{value}</p>
+        <p className="text-xs text-slate-500 mt-1">{label}</p>
+      </CardContent>
+    </Card>
+  );
+}

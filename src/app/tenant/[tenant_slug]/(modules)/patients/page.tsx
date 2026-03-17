@@ -1,249 +1,161 @@
 "use client";
+
 import React, { useState } from "react";
-import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { ModuleGuard } from "@/components/guards/ModuleGuard";
+import { ProtectedAction } from "@/components/guards/ProtectedAction";
+import { useTenantPath } from "@/hooks/useTenantPath";
+import { Permission } from "@/types/permissions";
+import { usePatients } from "@/hooks/api/usePatients";
+import { PATIENT_STATUS_LABELS, PatientStatus } from "@/types/patients";
 import {
-  PlusIcon,
-  MagnifyingGlassIcon,
-  ArrowDownTrayIcon,
-  UserIcon,
-  PhoneIcon,
-  CalendarIcon,
-  FunnelIcon,
-} from "@heroicons/react/24/outline";
-import { Button, Input, Card, CardContent } from "@/design-system";
-import { Pagination } from "@/components/Pagination";
-import { apiClient } from "@/lib/api";
-import { useRequireAuth } from "@/hooks/useAuth";
-import { usePagination } from "@/hooks/usePerformance";
-import { UserRole, type Patient, PatientStatus, Gender } from "@/types";
+  Button,
+  Card,
+  CardContent,
+  Badge,
+  Input,
+  EmptyState,
+  ErrorBanner,
+  Skeleton,
+} from "@/components/ui";
+import { Search, User, ChevronRight, Plus, AlertTriangle } from "lucide-react";
 
-const PatientsPage: React.FC = () => {
-  useRequireAuth([UserRole.ADMIN, UserRole.PHARMACIST, UserRole.TECHNICIAN]);
+const STATUS_BADGE: Record<string, "success" | "danger" | "warning" | "default"> = {
+  [PatientStatus.ACTIVE]: "success",
+  [PatientStatus.INACTIVE]: "default",
+  [PatientStatus.DECEASED]: "danger",
+  [PatientStatus.TRANSFERRED]: "warning",
+};
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(20);
-  const [showFilters, setShowFilters] = useState(false);
-
-  const { data: patientsData, isLoading } = useQuery({
-    queryKey: ["patients", currentPage, itemsPerPage, searchTerm],
-    queryFn: () =>
-      apiClient.getPatients({
-        search: searchTerm,
-        page: currentPage,
-        limit: itemsPerPage,
-      }),
-  });
-
-  const pagination = usePagination(
-    patientsData?.meta?.total || 0,
-    itemsPerPage,
-    currentPage
+export default function PatientsPage() {
+  return (
+    <ModuleGuard
+      module="patients"
+      requiredPermissions={[Permission.PATIENTS_READ]}
+    >
+      <PatientsContent />
+    </ModuleGuard>
   );
-  const handleExport = () => {
-    if (!patientsData?.data) return;
+}
 
-    const csvContent = [
-      ["Numéro"],
-      ...patientsData.data.map((patient) => [patient.patientNumber]),
-    ]
-      .map((row) => row.join(","))
-      .join("\n");
+function PatientsContent() {
+  const router = useRouter();
+  const { buildPath } = useTenantPath();
+  const [search, setSearch] = useState("");
 
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `ventes-${new Date().toISOString().split("T")[0]}.csv`;
-    a.click();
-  };
+  const { data: patientsList = [], isLoading, error, refetch } = usePatients();
 
-  const getStatusBadge = (status: PatientStatus) => {
-    const styles = {
-      [PatientStatus.ACTIVE]: "bg-green-100 text-green-800",
-      [PatientStatus.INACTIVE]: "bg-gray-100 text-gray-800",
-      [PatientStatus.DECEASED]: "bg-red-100 text-red-800",
-      [PatientStatus.TRANSFERRED]: "bg-blue-100 text-blue-800",
-    };
+  const filtered = Array.isArray(patientsList)
+    ? patientsList.filter((p: any) => {
+        if (!search) return true;
+        const s = search.toLowerCase();
+        const fullName = `${p.first_name ?? ""} ${p.last_name ?? ""}`.toLowerCase();
+        return (
+          fullName.includes(s) ||
+          p.phone?.toLowerCase().includes(s) ||
+          p.email?.toLowerCase().includes(s) ||
+          (p.insurance_number && String(p.insurance_number).toLowerCase().includes(s))
+        );
+      })
+    : [];
 
-    const labels = {
-      [PatientStatus.ACTIVE]: "Actif",
-      [PatientStatus.INACTIVE]: "Inactif",
-      [PatientStatus.DECEASED]: "Décédé",
-      [PatientStatus.TRANSFERRED]: "Transféré",
-    };
-
-    return (
-      <span
-        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[status]}`}
-      >
-        {labels[status]}
-      </span>
-    );
-  };
-
-  const calculateAge = (birthDate: string) => {
-    const today = new Date();
-    const birth = new Date(birthDate);
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birth.getDate())
-    ) {
-      age--;
-    }
-
-    return age;
-  };
-
-  const PatientCard = ({ patient }: { patient: Patient }) => (
-    <Card className="hover:shadow-md transition-shadow duration-200">
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between">
-          <div className="flex items-start space-x-4">
-            <div className="h-12 w-12 bg-gradient-to-br from-sky-400 to-cyan-500 rounded-full flex items-center justify-center">
-              <UserIcon className="h-6 w-6 text-white" />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-lg font-medium text-gray-900">
-                {patient.firstName} {patient.lastName}
-              </h3>
-              <p className="text-sm text-gray-500">
-                N° {patient.patientNumber}
-              </p>
-              <div className="mt-2 flex items-center space-x-4 text-sm text-gray-500">
-                <div className="flex items-center">
-                  <CalendarIcon className="h-4 w-4 mr-1" />
-                  {calculateAge(patient.dateOfBirth.toString())} ans
-                </div>
-                <div className="flex items-center">
-                  <PhoneIcon className="h-4 w-4 mr-1" />
-                  {patient.phone}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center space-x-2">
-            {getStatusBadge(patient.status)}
-          </div>
-        </div>
-
-        {patient.allergies && patient.allergies.length > 0 && (
-          <div className="mb-4 p-3 bg-red-50 border-l-4 border-red-400">
-            <p className="text-sm font-medium text-red-800 mb-1">Allergies</p>
-            <p className="text-sm text-red-700">
-              {patient.allergies.join(", ")}
-            </p>
-          </div>
-        )}
-
-        <div className="mt-4 flex items-center justify-between">
-          <div className="text-sm text-gray-500">
-            Patient depuis{" "}
-            {new Date(patient.createdAt).toLocaleDateString("fr-FR")}
-          </div>
-          <div className="flex space-x-2">
-            <Button variant="outline" size="sm" asChild>
-              <Link href={`/patients/${patient.id}`}>Voir détails</Link>
-            </Button>
-            <Button variant="outline" size="sm" asChild>
-              <Link href={`/patients/${patient.id}/edit`}>Modifier</Link>
-            </Button>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
+  const safeId = (id: string) =>
+    typeof id === "string" && id.includes(":") ? id.split(":")[1] : id;
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Patients</h1>
-          <p className="text-gray-600">
-            Gérez les informations de vos patients
-          </p>
-        </div>
-        <Button asChild icon={<PlusIcon className="h-4 w-4" />}>
-          <Link href="/patients/new">Nouveau patient</Link>
-        </Button>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+          Patients
+        </h1>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          Dossiers patients et liaison utilisateur
+        </p>
       </div>
 
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center space-x-4">
-            <div className="flex-1">
-              <Input
-                placeholder="Rechercher par nom, téléphone, email..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <Button
-              variant="outline"
-              onClick={() => setShowFilters(!showFilters)}
-              icon={<FunnelIcon className="h-5 w-5" />}
-            >
-              Filtres
-            </Button>
-            <Button
-              variant="outline"
-              onClick={handleExport}
-              icon={<ArrowDownTrayIcon className="h-5 w-5" />}
-            >
-              Exporter
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex-1">
+          <Input
+            placeholder="Rechercher par nom, tél, email ou n° assurance..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            leftIcon={<Search className="w-4 h-4" />}
+          />
+        </div>
+        <ProtectedAction permission={Permission.PATIENTS_WRITE}>
+          <Button
+            leftIcon={<Plus className="w-4 h-4" />}
+            onClick={() => router.push(buildPath("/patients/new"))}
+          >
+            Nouveau patient
+          </Button>
+        </ProtectedAction>
+      </div>
 
       {isLoading ? (
-        <div className="grid gap-4">
-          {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="animate-pulse">
-              <div className="bg-gray-200 rounded-lg h-32"></div>
-            </div>
+        <div className="space-y-3">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-20 w-full rounded-lg" />
           ))}
         </div>
-      ) : !patientsData?.data.length ? (
-        <div className="text-center py-12">
-          <UserIcon className="h-12 w-12 text-gray-400 mx-auto" />
-          <h3 className="mt-2 text-sm font-medium text-gray-900">
-            Aucun patient
-          </h3>
-          <p className="mt-1 text-sm text-gray-500">
-            Commencez par ajouter un nouveau patient.
-          </p>
-          <div className="mt-6">
-            <Button asChild icon={<PlusIcon className="h-4 w-4" />}>
-              <Link href="/patients/new">Nouveau patient</Link>
-            </Button>
-          </div>
-        </div>
+      ) : error ? (
+        <ErrorBanner
+          message="Erreur de chargement des patients"
+          onRetry={() => refetch()}
+        />
+      ) : filtered.length === 0 ? (
+        <EmptyState
+          title="Aucun patient"
+          description="Aucun patient trouvé. Créez un premier dossier patient."
+          onAction={() => router.push(buildPath("/patients/new"))}
+          actionLabel="Nouveau patient"
+        />
       ) : (
-        <>
-          <div className="grid gap-4">
-            {patientsData.data.map((patient) => (
-              <PatientCard key={patient.id} patient={patient} />
-            ))}
-          </div>
-
-          <Pagination
-            currentPage={currentPage}
-            totalPages={pagination.totalPages}
-            totalItems={patientsData.meta?.total}
-            itemsPerPage={itemsPerPage}
-            onPageChange={setCurrentPage}
-            onItemsPerPageChange={setItemsPerPage}
-            showItemsPerPage
-          />
-        </>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filtered.map((p: any) => (
+            <Card
+              key={p.id}
+              className="hover:shadow-md transition-shadow cursor-pointer"
+              onClick={() =>
+                router.push(buildPath(`/patients/${safeId(p.id)}`))
+              }
+            >
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center shrink-0">
+                      <User className="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-medium text-slate-900 dark:text-slate-100 truncate">
+                        {p.first_name} {p.last_name}
+                      </p>
+                      <p className="text-sm text-slate-500 truncate">
+                        {p.phone ?? p.email ?? "—"}
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
+                </div>
+                {p.allergies && (
+                  <div className="mt-2 flex items-center gap-1 text-amber-600 dark:text-amber-400 text-xs">
+                    <AlertTriangle className="w-3 h-3" />
+                    <span>Allergies</span>
+                  </div>
+                )}
+                <div className="mt-2">
+                  <Badge
+                    variant={STATUS_BADGE[p.status] ?? "default"}
+                    size="sm"
+                  >
+                    {PATIENT_STATUS_LABELS[p.status as PatientStatus] ?? p.status}
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       )}
     </div>
   );
-};
-
-export default PatientsPage;
+}

@@ -1,520 +1,406 @@
 "use client";
+
 import React, { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useParams, useRouter } from "next/navigation";
+import { ModuleGuard } from "@/components/guards/ModuleGuard";
+import { ProtectedAction } from "@/components/guards/ProtectedAction";
+import { useTenantPath } from "@/hooks/useTenantPath";
+import { Permission } from "@/types/permissions";
+import { useSaleById, useRefundSale } from "@/hooks/api/useSales";
 import {
-  ArrowLeftIcon,
-  PrinterIcon,
-  ArrowPathIcon,
-  TrashIcon,
-  CheckCircleIcon,
-} from "@heroicons/react/24/outline";
+  SaleStatus,
+  SALE_STATUS_LABELS,
+  PAYMENT_METHOD_LABELS,
+} from "@/types/sales";
 import {
   Button,
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/design-system";
-import { apiClient } from "@/lib/api";
-import { useRequireAuth } from "@/hooks/useAuth";
-import { UserRole, SaleStatus, PaymentMethod } from "@/types";
-import { toast } from "react-hot-toast";
-import { RefundModal } from "@/components/sales/RefundModal";
-import { DeleteSaleModal } from "@/components/sales/DeleteSaleModal";
-import { PrintReceiptModal } from "@/components/sales/PrintReceiptModal";
-import { useParams, useRouter } from "next/navigation";
+  Badge,
+  Input,
+  Modal,
+  ErrorBanner,
+  Skeleton,
+} from "@/components/ui";
+import {
+  ArrowLeft,
+  Printer,
+  RotateCcw,
+  CheckCircle,
+  Clock,
+  User,
+  CreditCard,
+} from "lucide-react";
+import { formatCurrency, formatDateTime } from "@/utils/formatters";
 
-const SaleDetailPage: React.FC = () => {
-  const router = useRouter();
+const STATUS_BADGE: Record<string, "success" | "danger" | "warning" | "default" | "info"> = {
+  [SaleStatus.COMPLETED]: "success",
+  [SaleStatus.REFUNDED]: "danger",
+  [SaleStatus.CANCELLED]: "default",
+  [SaleStatus.PENDING]: "warning",
+  [SaleStatus.PARTIALLY_PAID]: "info",
+};
+
+export default function SaleDetailPage() {
+  return (
+    <ModuleGuard module="sales" requiredPermissions={[Permission.SALES_READ]}>
+      <SaleDetailContent />
+    </ModuleGuard>
+  );
+}
+
+function SaleDetailContent() {
   const params = useParams();
-  const id = params?.id;
-  const queryClient = useQueryClient();
+  const router = useRouter();
+  const { buildPath } = useTenantPath();
+  const id = params?.id as string;
 
-  useRequireAuth([
-    UserRole.ADMIN,
-    UserRole.PHARMACIST,
-    UserRole.TECHNICIAN,
-    UserRole.CASHIER,
-  ]);
+  const { data: sale, isLoading, error, refetch } = useSaleById(id);
+  const refundMutation = useRefundSale();
 
-  const [isRefundModalOpen, setIsRefundModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
+  const [refundModalOpen, setRefundModalOpen] = useState(false);
+  const [refundReason, setRefundReason] = useState("");
 
-  // Fetch sale details
-  const {
-    data: sale,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["sale", id],
-    queryFn: () => apiClient.getSale(id as string),
-    enabled: !!id,
-  });
-
-  // Refund mutation
-  const refundMutation = useMutation({
-    mutationFn: ({ id, reason }: { id: string; reason: string }) =>
-      apiClient.refundSale(id, reason),
-    onSuccess: () => {
-      toast.success("Vente remboursée avec succès!");
-      queryClient.invalidateQueries({ queryKey: ["sale", id] });
-      queryClient.invalidateQueries({ queryKey: ["sales"] });
-      setIsRefundModalOpen(false);
-    },
-    onError: (error: any) => {
-      toast.error(
-        error.response?.data?.message || "Erreur lors du remboursement"
-      );
-    },
-  });
-
-  // Delete mutation (si l'API le supporte)
-  const deleteMutation = useMutation({
-    mutationFn: (id: string) => apiClient.deleteSale(id),
-    onSuccess: () => {
-      toast.success("Vente supprimée avec succès!");
-      router.push("/sales");
-    },
-    onError: (error: any) => {
-      toast.error(
-        error.response?.data?.message || "Erreur lors de la suppression"
-      );
-    },
-  });
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("fr-FR", {
-      style: "currency",
-      currency: "EUR",
-    }).format(amount);
-  };
-
-  const getStatusColor = (status: SaleStatus) => {
-    const colors = {
-      [SaleStatus.COMPLETED]: "bg-green-100 text-green-800 border-green-200",
-      [SaleStatus.REFUNDED]: "bg-red-100 text-red-800 border-red-200",
-      [SaleStatus.PARTIALLY_REFUNDED]:
-        "bg-yellow-100 text-yellow-800 border-yellow-200",
-      [SaleStatus.CANCELLED]: "bg-gray-100 text-gray-800 border-gray-200",
-    };
-    return colors[status];
-  };
-
-  const getStatusLabel = (status: SaleStatus) => {
-    const labels = {
-      [SaleStatus.COMPLETED]: "Complétée",
-      [SaleStatus.REFUNDED]: "Remboursée",
-      [SaleStatus.PARTIALLY_REFUNDED]: "Partiellement remboursée",
-      [SaleStatus.CANCELLED]: "Annulée",
-    };
-    return labels[status];
-  };
-
-  const getPaymentMethodLabel = (method: PaymentMethod) => {
-    const labels = {
-      [PaymentMethod.CASH]: "Espèces",
-      [PaymentMethod.CARD]: "Carte bancaire",
-      [PaymentMethod.INSURANCE]: "Assurance",
-      [PaymentMethod.MIXED]: "Paiement mixte",
-    };
-    return labels[method];
-  };
-
-  const handleRefund = (reason: string) => {
-    if (sale) {
-      refundMutation.mutate({ id: sale.id, reason });
-    }
-  };
-
-  const handleDelete = () => {
-    if (sale) {
-      deleteMutation.mutate(sale.id);
-    }
+  const handleRefund = () => {
+    if (!sale) return;
+    refundMutation.mutate(
+      { id: sale.id, reason: refundReason },
+      { onSuccess: () => { setRefundModalOpen(false); setRefundReason(""); } },
+    );
   };
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-600" />
+      <div className="space-y-6">
+        <Skeleton className="h-10 w-64" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-6">
+            <Skeleton className="h-48 w-full rounded-xl" />
+            <Skeleton className="h-64 w-full rounded-xl" />
+          </div>
+          <div className="space-y-6">
+            <Skeleton className="h-48 w-full rounded-xl" />
+            <Skeleton className="h-48 w-full rounded-xl" />
+          </div>
+        </div>
       </div>
     );
   }
 
   if (error || !sale) {
     return (
-      <div className="text-center py-12">
-        <p className="text-red-600">Erreur lors du chargement de la vente</p>
-        <Button onClick={() => router.push("/sales")} className="mt-4">
-          Retour aux ventes
-        </Button>
-      </div>
+      <ErrorBanner
+        message="Impossible de charger les détails de la vente"
+        onRetry={() => refetch()}
+      />
     );
   }
 
   return (
-    <div>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => router.back()}
-              icon={<ArrowLeftIcon className="h-4 w-4" />}
-            >
-              Retour
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                Vente #{sale.saleNumber}
-              </h1>
-              <p className="text-gray-600">
-                {new Date(sale.createdAt).toLocaleString("fr-FR", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <span
-              className={`px-4 py-2 rounded-full text-sm font-medium border ${getStatusColor(
-                sale?.status
-              )}`}
-            >
-              {getStatusLabel(sale?.status)}
-            </span>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => router.push(buildPath("/sales"))}
+            leftIcon={<ArrowLeft className="h-4 w-4" />}
+          >
+            Retour
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+              Vente #{sale.sale_number}
+            </h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              {formatDateTime(sale.created_at)}
+            </p>
           </div>
         </div>
+        <Badge variant={STATUS_BADGE[sale.status] ?? "default"}>
+          {SALE_STATUS_LABELS[sale.status] ?? sale.status}
+        </Badge>
+      </div>
 
-        {/* Actions */}
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
+      {/* Actions */}
+      <Card>
+        <CardContent className="p-4 flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            leftIcon={<Printer className="h-4 w-4" />}
+          >
+            Imprimer le reçu
+          </Button>
+          {sale.status === SaleStatus.COMPLETED && (
+            <ProtectedAction permission={Permission.SALES_UPDATE}>
               <Button
                 variant="outline"
-                onClick={() => setIsPrintModalOpen(true)}
-                icon={<PrinterIcon className="h-4 w-4" />}
+                size="sm"
+                leftIcon={<RotateCcw className="h-4 w-4" />}
+                onClick={() => setRefundModalOpen(true)}
               >
-                Imprimer le reçu
+                Rembourser
               </Button>
+            </ProtectedAction>
+          )}
+        </CardContent>
+      </Card>
 
-              {sale.status === SaleStatus.COMPLETED && (
-                <Button
-                  variant="outline"
-                  onClick={() => setIsRefundModalOpen(true)}
-                  icon={<ArrowPathIcon className="h-4 w-4" />}
-                >
-                  Rembourser
-                </Button>
-              )}
-
-              {sale.status !== SaleStatus.REFUNDED && (
-                <Button
-                  variant="destructive"
-                  onClick={() => setIsDeleteModalOpen(true)}
-                  icon={<TrashIcon className="h-4 w-4" />}
-                >
-                  Supprimer
-                </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Details */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Customer Info */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Informations client</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {sale.patient ? (
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-sm text-gray-600">Nom complet</p>
-                      <p className="font-medium text-gray-900">
-                        {sale.patient.firstName} {sale.patient.lastName}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-600">Téléphone</p>
-                      <p className="font-medium text-gray-900">
-                        {sale.patient.phone || "Non renseigné"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-600">Email</p>
-                      <p className="font-medium text-gray-900">
-                        {sale.patient.email || "Non renseigné"}
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  <p className="text-gray-500 italic">
-                    Vente sans client enregistré
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Patient */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <User className="w-5 h-5 text-emerald-600" />
+                Informations client
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {sale.patient ? (
+                <div className="space-y-2">
+                  <p className="font-medium text-slate-900 dark:text-slate-100">
+                    {sale.patient.firstName} {sale.patient.lastName}
                   </p>
-                )}
-              </CardContent>
-            </Card>
+                </div>
+              ) : (
+                <p className="text-sm text-slate-500 dark:text-slate-400 italic">
+                  Vente sans client enregistré
+                </p>
+              )}
+            </CardContent>
+          </Card>
 
-            {/* Items */}
-            <Card>
-              <CardHeader>
-                <CardTitle>
-                  Articles vendus ({sale.items?.length || 0})
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+          {/* Items */}
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                Articles vendus ({sale.items_count ?? sale.items?.length ?? 0})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {sale.items && sale.items.length > 0 ? (
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-slate-100 dark:border-slate-700/50">
+                        <th className="px-4 py-2 text-left text-xs font-semibold uppercase text-slate-500">
                           Produit
                         </th>
-                        <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">
-                          Quantité
+                        <th className="px-4 py-2 text-center text-xs font-semibold uppercase text-slate-500">
+                          Qté
                         </th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
-                          Prix unitaire
+                        <th className="px-4 py-2 text-right text-xs font-semibold uppercase text-slate-500">
+                          Prix unit.
                         </th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
-                          Remise
-                        </th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                        <th className="px-4 py-2 text-right text-xs font-semibold uppercase text-slate-500">
                           Total
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {sale.items?.map((item, index) => (
-                        <tr key={index}>
-                          <td className="px-4 py-4">
-                            <div>
-                              <p className="font-medium text-gray-900">
-                                {item.product?.name}
-                              </p>
-                              {item.batchNumber && (
-                                <p className="text-xs text-gray-500">
-                                  Lot: {item.batchNumber}
-                                </p>
-                              )}
-                            </div>
+                    <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+                      {sale.items.map((item, i) => (
+                        <tr key={i}>
+                          <td className="px-4 py-3 text-sm text-slate-900 dark:text-slate-100">
+                            {item.productId}
+                            {item.batchNumber && (
+                              <span className="block text-xs text-slate-400">
+                                Lot: {item.batchNumber}
+                              </span>
+                            )}
                           </td>
-                          <td className="px-4 py-4 text-center">
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-sky-100 text-sky-800">
-                              {item.quantity}
-                            </span>
+                          <td className="px-4 py-3 text-center">
+                            <Badge variant="info" size="sm">{item.quantity}</Badge>
                           </td>
-                          <td className="px-4 py-4 text-right text-gray-900">
+                          <td className="px-4 py-3 text-right text-sm">
                             {formatCurrency(item.unitPrice)}
                           </td>
-                          <td className="px-4 py-4 text-right text-red-600">
-                            {item.discountAmount
-                              ? `-${formatCurrency(item.discountAmount)}`
-                              : "-"}
-                          </td>
-                          <td className="px-4 py-4 text-right font-medium text-gray-900">
-                            {formatCurrency(item.totalPrice)}
+                          <td className="px-4 py-3 text-right text-sm font-medium">
+                            {formatCurrency(
+                              item.quantity * item.unitPrice -
+                                (item.discountAmount ?? 0),
+                            )}
                           </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
+              ) : (
+                <p className="text-sm text-slate-500 text-center py-4">
+                  Détails des articles non disponibles
+                </p>
+              )}
+            </CardContent>
+          </Card>
+
+          {sale.notes && (
+            <Card>
+              <CardHeader><CardTitle>Notes</CardTitle></CardHeader>
+              <CardContent>
+                <p className="text-sm text-slate-700 dark:text-slate-300">
+                  {sale.notes}
+                </p>
               </CardContent>
             </Card>
+          )}
+        </div>
 
-            {/* Notes */}
-            {sale.notes && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Notes</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-700">{sale.notes}</p>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-
-          {/* Right Column - Summary */}
-          <div className="space-y-6">
-            {/* Transaction Info */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Informations de transaction</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+        {/* Right Column */}
+        <div className="space-y-6">
+          {/* Transaction Info */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CreditCard className="w-5 h-5 text-emerald-600" />
+                Transaction
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div>
+                <p className="text-xs text-slate-500">Caissier</p>
+                <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                  {sale.cashier
+                    ? `${sale.cashier.firstName} ${sale.cashier.lastName}`
+                    : sale.cashier_id}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-500">Paiement</p>
+                <Badge variant="default">
+                  {PAYMENT_METHOD_LABELS[sale.payment_method] ?? sale.payment_method}
+                </Badge>
+              </div>
+              {sale.source_type && (
                 <div>
-                  <p className="text-sm text-gray-600">Caissier</p>
-                  <p className="font-medium text-gray-900">
-                    {sale.cashier?.firstName} {sale.cashier?.lastName}
+                  <p className="text-xs text-slate-500">Source</p>
+                  <p className="text-sm text-slate-700 dark:text-slate-300 capitalize">
+                    {sale.source_type}
+                    {sale.source_number && ` — ${sale.source_number}`}
                   </p>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-600">Mode de paiement</p>
-                  <p className="font-medium text-gray-900">
-                    {getPaymentMethodLabel(sale.paymentMethod)}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">Date de création</p>
-                  <p className="font-medium text-gray-900">
-                    {new Date(sale.createdAt).toLocaleString("fr-FR")}
-                  </p>
-                </div>
-                {sale.updatedAt !== sale.createdAt && (
-                  <div>
-                    <p className="text-sm text-gray-600">
-                      Dernière modification
-                    </p>
-                    <p className="font-medium text-gray-900">
-                      {new Date(sale.updatedAt).toLocaleString("fr-FR")}
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+              )}
+            </CardContent>
+          </Card>
 
-            {/* Financial Summary */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Résumé financier</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
+          {/* Financial Summary */}
+          <Card>
+            <CardHeader><CardTitle>Résumé financier</CardTitle></CardHeader>
+            <CardContent className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-slate-500">Sous-total</span>
+                <span className="font-medium text-slate-900 dark:text-slate-100">
+                  {formatCurrency(sale.subtotal)}
+                </span>
+              </div>
+              {parseFloat(sale.discount_amount || "0") > 0 && (
+                <div className="flex justify-between text-red-600">
+                  <span>Remise</span>
+                  <span>-{formatCurrency(sale.discount_amount)}</span>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <span className="text-slate-500">TVA</span>
+                <span>{formatCurrency(sale.tax_amount)}</span>
+              </div>
+              <div className="border-t border-slate-100 dark:border-slate-700/50 pt-2">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Sous-total</span>
-                  <span className="font-medium">
-                    {formatCurrency(sale.subtotal)}
+                  <span className="font-bold text-slate-900 dark:text-slate-100">Total</span>
+                  <span className="font-bold text-emerald-600">
+                    {formatCurrency(sale.total_amount)}
                   </span>
                 </div>
-
-                {sale.discountAmount > 0 && (
-                  <div className="flex justify-between text-red-600">
-                    <span>Remise totale</span>
-                    <span className="font-medium">
-                      -{formatCurrency(sale.discountAmount)}
-                    </span>
-                  </div>
-                )}
-
-                <div className="flex justify-between">
-                  <span className="text-gray-600">TVA (18%)</span>
-                  <span className="font-medium">
-                    {formatCurrency(sale.taxAmount)}
-                  </span>
+              </div>
+              <div className="border-t border-slate-100 dark:border-slate-700/50 pt-2 space-y-1">
+                <div className="flex justify-between text-green-600">
+                  <span>Payé</span>
+                  <span>{formatCurrency(sale.amount_paid)}</span>
                 </div>
-
-                <div className="border-t border-gray-200 pt-3">
+                {parseFloat(sale.change_given || "0") > 0 && (
                   <div className="flex justify-between">
-                    <span className="text-lg font-bold text-gray-900">
-                      Total
-                    </span>
-                    <span className="text-lg font-bold text-sky-600">
-                      {formatCurrency(sale.totalAmount)}
-                    </span>
+                    <span className="text-slate-500">Monnaie rendue</span>
+                    <span>{formatCurrency(sale.change_given)}</span>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Timeline */}
+          <Card>
+            <CardHeader><CardTitle>Historique</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex items-start gap-3">
+                <CheckCircle className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-slate-900 dark:text-slate-100">Vente créée</p>
+                  <p className="text-xs text-slate-500">{formatDateTime(sale.created_at)}</p>
+                </div>
+              </div>
+              {sale.completed_at && (
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-slate-900 dark:text-slate-100">Complétée</p>
+                    <p className="text-xs text-slate-500">{formatDateTime(sale.completed_at)}</p>
                   </div>
                 </div>
-
-                <div className="border-t border-gray-200 pt-3 space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Montant payé</span>
-                    <span className="font-medium text-green-600">
-                      {formatCurrency(sale.amountPaid)}
-                    </span>
-                  </div>
-
-                  {sale.changeGiven > 0 && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Rendu au client</span>
-                      <span className="font-medium text-green-600">
-                        {formatCurrency(sale.changeGiven)}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Status History */}
-            {sale.status !== SaleStatus.COMPLETED && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Historique</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-start gap-3">
-                      <CheckCircleIcon className="h-5 w-5 text-green-600 mt-0.5" />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900">
-                          Vente complétée
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {new Date(sale.createdAt).toLocaleString("fr-FR")}
-                        </p>
-                      </div>
-                    </div>
-
-                    {sale.status === SaleStatus.REFUNDED && (
-                      <div className="flex items-start gap-3">
-                        <ArrowPathIcon className="h-5 w-5 text-orange-600 mt-0.5" />
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900">
-                            Remboursement effectué
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {new Date(sale.updatedAt).toLocaleString("fr-FR")}
-                          </p>
-                        </div>
-                      </div>
+              )}
+              {sale.refunded_at && (
+                <div className="flex items-start gap-3">
+                  <RotateCcw className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-slate-900 dark:text-slate-100">Remboursée</p>
+                    <p className="text-xs text-slate-500">{formatDateTime(sale.refunded_at)}</p>
+                    {sale.refund_reason && (
+                      <p className="text-xs text-slate-400 mt-0.5">
+                        Raison : {sale.refund_reason}
+                      </p>
                     )}
                   </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
 
-      {/* Modals */}
-      {sale && (
-        <>
-          <RefundModal
-            isOpen={isRefundModalOpen}
-            onClose={() => setIsRefundModalOpen(false)}
-            sale={sale}
-            onConfirm={handleRefund}
-            isLoading={refundMutation.isPending}
+      {/* Refund Modal */}
+      <Modal
+        open={refundModalOpen}
+        onOpenChange={() => { setRefundModalOpen(false); setRefundReason(""); }}
+        title="Rembourser la vente"
+        description={`Vente ${sale.sale_number} — ${formatCurrency(sale.total_amount)}`}
+        size="sm"
+      >
+        <div className="space-y-4">
+          <Input
+            label="Raison du remboursement"
+            value={refundReason}
+            onChange={(e) => setRefundReason(e.target.value)}
+            placeholder="Ex: Retour produit défectueux"
+            required
           />
-
-          <DeleteSaleModal
-            isOpen={isDeleteModalOpen}
-            onClose={() => setIsDeleteModalOpen(false)}
-            sale={sale}
-            onConfirm={handleDelete}
-            isLoading={deleteMutation.isPending}
-          />
-
-          <PrintReceiptModal
-            isOpen={isPrintModalOpen}
-            onClose={() => setIsPrintModalOpen(false)}
-            sale={sale}
-          />
-        </>
-      )}
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setRefundModalOpen(false)}>
+              Annuler
+            </Button>
+            <Button
+              variant="danger"
+              onClick={handleRefund}
+              loading={refundMutation.isPending}
+              disabled={!refundReason.trim()}
+            >
+              Confirmer
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
-};
-
-export default SaleDetailPage;
+}

@@ -1,566 +1,850 @@
 "use client";
-import React, { useState, useMemo } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
+
+import React, { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { ModuleGuard } from "@/components/guards/ModuleGuard";
+import { ProtectedAction } from "@/components/guards/ProtectedAction";
+import { useTenantPath } from "@/hooks/useTenantPath";
+import { Permission } from "@/types/permissions";
 import {
-  PlusIcon,
-  MapPinIcon,
-  PencilIcon,
-  TrashIcon,
-  ArchiveBoxIcon,
-  BuildingStorefrontIcon,
-  TruckIcon,
-  FunnelIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+  useLocations,
+  useCapacityDashboard,
+  useOverstockedLocations,
+} from "@/hooks/api/useInventory";
+import type { InventoryLocation } from "@/types/inventory";
+import {
+  LocationType,
+  LOCATION_TYPE_LABELS,
+} from "@/types/inventory";
 import {
   Button,
-  Input,
   Card,
   CardContent,
   CardHeader,
   CardTitle,
+  Badge,
+  Input,
   Modal,
-} from "@/design-system";
-import Link from "next/link";
-import { apiClient } from "@/lib/api";
-import { useRequireAuth } from "@/hooks/useAuth";
-import { UserRole, InventoryLocationType } from "@/types";
-import { toast } from "react-hot-toast";
-import { Pagination } from "@/components/Pagination";
-import { usePagination } from "@/hooks/usePerformance";
+  EmptyState,
+  ErrorBanner,
+  Skeleton,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui";
+import { formatDate } from "@/utils/formatters";
+import {
+  ArrowLeft,
+  Plus,
+  Search,
+  MapPin,
+  Thermometer,
+  Lock,
+  Package,
+  ChevronRight,
+  LayoutGrid,
+  Layers,
+  BarChart3,
+  List,
+  Building2,
+  Snowflake,
+  Archive,
+  Shield,
+  Layout,
+  Box,
+  FlaskConical,
+  Presentation,
+  Megaphone,
+  Truck,
+  AlertTriangle,
+} from "lucide-react";
+import { cn } from "@/utils/cn";
 
-const locationSchema = Yup.object().shape({
-  name: Yup.string()
-    .min(3, "Minimum 3 caractères")
-    .required("Le nom est requis"),
-  type: Yup.string().required("Le type est requis"),
-  displayCategory: Yup.string().optional(),
-  description: Yup.string().optional(),
-});
+const LOCATION_TYPE_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  warehouse: Building2,
+  pharmacy_floor: Layout,
+  shelf: Package,
+  drawer: Archive,
+  refrigerator: Thermometer,
+  freezer: Snowflake,
+  secure_cabinet: Lock,
+  safe: Shield,
+  counter: Layout,
+  storage_room: Box,
+  dispensary: FlaskConical,
+  display: Presentation,
+  promotional_stand: Megaphone,
+  receiving_area: Truck,
+  shipping_area: Truck,
+};
 
-const InventoryLocationsPage: React.FC = () => {
-  useRequireAuth([UserRole.ADMIN, UserRole.PHARMACIST, UserRole.TECHNICIAN]);
+function getLocationIcon(type: string) {
+  const key = (type || "").toLowerCase().replace(/-/g, "_");
+  return LOCATION_TYPE_ICONS[key] ?? MapPin;
+}
 
-  const queryClient = useQueryClient();
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [editingLocation, setEditingLocation] = useState<any>(null);
-  const [filters, setFilters] = useState({
-    type: "",
-    category: "",
-    search: "",
-    page: 1,
-    limit: 20,
-  });
-  const [showFilters, setShowFilters] = useState(false);
+function normalizeLoc(loc: any): InventoryLocation {
+  return {
+    id: loc.id,
+    code: loc.code ?? loc.id,
+    name: loc.name ?? loc.code ?? "—",
+    parent_location_id: loc.parent_location_id ?? loc.parentLocationId ?? null,
+    location_type: loc.location_type ?? loc.locationType ?? "shelf",
+    zone_code: loc.zone_code ?? loc.zoneCode,
+    aisle_number: loc.aisle_number ?? loc.aisleNumber,
+    shelf_level: loc.shelf_level ?? loc.shelfLevel,
+    position_code: loc.position_code ?? loc.positionCode,
+    coordinates_3d: loc.coordinates_3d ?? loc.coordinates3d,
+    is_secured: loc.is_secured ?? loc.isSecured ?? false,
+    requires_badge: loc.requires_badge ?? loc.requiresBadge ?? false,
+    is_refrigerated: loc.is_refrigerated ?? loc.isRefrigerated ?? false,
+    max_capacity: loc.max_capacity ?? loc.maxCapacity,
+    current_item_count: loc.current_item_count ?? loc.currentItemCount ?? loc.current_items ?? 0,
+    utilization_percentage: Number(
+      loc.utilization_percentage ?? loc.utilizationPercentage ?? loc.usage_percent ?? 
+      (loc.max_capacity && loc.current_item_count ? (loc.current_item_count / loc.max_capacity) * 100 : 0)
+    ),
+    temperature_min: loc.temperature_min ?? loc.temperatureMin,
+    temperature_max: loc.temperature_max ?? loc.temperatureMax,
+    temperature_current: loc.temperature_current ?? loc.temperatureCurrent,
+    active: loc.active !== false,
+    temporarily_blocked: loc.temporarily_blocked ?? loc.temporarilyBlocked ?? loc.blocked ?? false,
+    blocked_reason: loc.blocked_reason ?? loc.blockedReason,
+    blocked_until: loc.blocked_until ?? loc.blockedUntil,
+  };
+}
 
-  const { data: locationsData, isLoading } = useQuery({
-    queryKey: ["inventory-locations", filters],
-    queryFn: () => apiClient.getInventoryLocations(filters),
-  });
+function utilizationColor(pct: number): string {
+  if (pct < 10) return "bg-slate-300 dark:bg-slate-600";
+  if (pct <= 80) return "bg-emerald-500";
+  if (pct < 90) return "bg-amber-500";
+  return "bg-red-500";
+}
 
-  const createMutation = useMutation({
-    mutationFn: (data: any) => apiClient.createInventoryLocation(data),
-    onSuccess: () => {
-      toast.success("Emplacement créé avec succès!");
-      queryClient.invalidateQueries({ queryKey: ["inventory-locations"] });
-      setIsCreateModalOpen(false);
-    },
-    onError: () => {
-      toast.error("Erreur lors de la création");
-    },
-  });
+export default function InventoryLocationsPage() {
+  return (
+    <ModuleGuard module="inventory" requiredPermissions={[Permission.INVENTORY_LOCATIONS_READ]}>
+      <TooltipProvider>
+        <LocationsContent />
+      </TooltipProvider>
+    </ModuleGuard>
+  );
+}
 
-  const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) =>
-      apiClient.updateInventoryLocation(id, data),
-    onSuccess: () => {
-      toast.success("Emplacement mis à jour!");
-      queryClient.invalidateQueries({ queryKey: ["inventory-locations"] });
-      setEditingLocation(null);
-    },
-  });
+type ViewMode = "hierarchy" | "rack" | "heatmap" | "list";
 
-  const deleteMutation = useMutation({
-    mutationFn: (id: string) => apiClient.deleteInventoryLocation(id),
-    onSuccess: () => {
-      toast.success("Emplacement supprimé!");
-      queryClient.invalidateQueries({ queryKey: ["inventory-locations"] });
-    },
-  });
+function LocationsContent() {
+  const router = useRouter();
+  const { buildPath } = useTenantPath();
+  const [search, setSearch] = useState("");
+  const [viewMode, setViewMode] = useState<ViewMode>("hierarchy");
+  const [breadcrumb, setBreadcrumb] = useState<InventoryLocation[]>([]);
+  const [badgeModalLoc, setBadgeModalLoc] = useState<InventoryLocation | null>(null);
+  const [selectedLocForDetail, setSelectedLocForDetail] = useState<InventoryLocation | null>(null);
 
-  const pagination = usePagination(
-    locationsData?.total || 0,
-    filters.limit,
-    filters.page
+  const { data: locationsRaw, isLoading, error, refetch } = useLocations();
+  const { data: dashboard } = useCapacityDashboard();
+  const { data: overstocked } = useOverstockedLocations(90);
+
+  const locations: InventoryLocation[] = useMemo(() => {
+    const list = Array.isArray(locationsRaw) ? locationsRaw : dashboard?.locations ?? [];
+    if (Array.isArray(list)) return list.map(normalizeLoc);
+    return [];
+  }, [locationsRaw, dashboard?.locations]);
+
+  const overstockedIds = useMemo(
+    () => new Set((overstocked ?? []).map((l: any) => l.id ?? l)),
+    [overstocked],
   );
 
-  // Obtenir toutes les catégories uniques pour le filtre
-  const categories = useMemo(() => {
-    if (!locationsData?.locations) return [];
-    const uniqueCategories = new Set(
-      locationsData?.locations
-        .map((location) => location.displayCategory)
-        .filter(Boolean)
-        .sort()
+  const tree = useMemo(() => {
+    const byParent = new Map<string | null, InventoryLocation[]>();
+    byParent.set(null, []);
+    locations.forEach((loc) => {
+      const pid = loc.parent_location_id ?? null;
+      if (!byParent.has(pid)) byParent.set(pid, []);
+      byParent.get(pid)!.push(loc);
+    });
+    byParent.get(null)!.sort((a, b) => (a.name || a.code).localeCompare(b.name || b.code));
+    byParent.forEach((arr) => arr.sort((a, b) => (a.name || a.code).localeCompare(b.name || b.code)));
+    return byParent;
+  }, [locations]);
+
+  const currentLevel = useMemo(() => {
+    const parentId = breadcrumb.length > 0 ? breadcrumb[breadcrumb.length - 1].id : null;
+    return tree.get(parentId) ?? [];
+  }, [tree, breadcrumb]);
+
+  const rackLocations = useMemo(() => {
+    return locations.filter(
+      (l) => (l.shelf_level || l.position_code) && ["shelf", "drawer", "refrigerator", "freezer", "secure_cabinet"].includes(String(l.location_type).toLowerCase()),
     );
-    return Array.from(uniqueCategories);
-  }, [locationsData]);
+  }, [locations]);
 
-  const getLocationIcon = (type: InventoryLocationType) => {
-    const icons = {
-      [InventoryLocationType.SHELF]: ArchiveBoxIcon,
-      [InventoryLocationType.REFRIGERATOR]: BuildingStorefrontIcon,
-      [InventoryLocationType.FREEZER]: TruckIcon,
-      [InventoryLocationType.COUNTER]: MapPinIcon,
-      [InventoryLocationType.WAREHOUSE]: BuildingStorefrontIcon,
-    };
-    return icons[type] || MapPinIcon;
-  };
-
-  const getLocationTypeLabel = (type: InventoryLocationType) => {
-    const labels = {
-      [InventoryLocationType.SHELF]: "Rayon",
-      [InventoryLocationType.REFRIGERATOR]: "Réfrigérateur",
-      [InventoryLocationType.FREEZER]: "Congélateur",
-      [InventoryLocationType.COUNTER]: "Comptoir",
-      [InventoryLocationType.WAREHOUSE]: "Entrepôt",
-    };
-    return labels[type] || type;
-  };
-
-  const resetFilters = () => {
-    setFilters({ ...filters, type: "", category: "", search: "" });
-  };
-
-  const hasActiveFilters = filters.type || filters.category || filters.search;
-
-  const CreateLocationModal = () => (
-    <Modal
-      isOpen={isCreateModalOpen}
-      onClose={() => setIsCreateModalOpen(false)}
-      title="Nouvel emplacement"
-      size="lg"
-    >
-      <Formik
-        initialValues={{
-          name: "",
-          type: InventoryLocationType.SHELF,
-          displayCategory: "",
-          description: "",
-        }}
-        validationSchema={locationSchema}
-        onSubmit={(values) => createMutation.mutate(values)}
-      >
-        {() => (
-          <Form className="space-y-4">
-            <div>
-              <Field
-                as={Input}
-                name="name"
-                label="Nom"
-                required
-                placeholder="Ex: Rayon A, Réfrigérateur principal..."
-              />
-              <ErrorMessage
-                name="name"
-                component="p"
-                className="text-red-500 text-sm mt-1"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Type <span className="text-red-600">*</span>
-              </label>
-              <Field
-                as="select"
-                name="type"
-                className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-600 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {Object.values(InventoryLocationType).map((type) => {
-                  const Icon = getLocationIcon(type);
-                  return (
-                    <option key={type} value={type}>
-                      {getLocationTypeLabel(type)}
-                    </option>
-                  );
-                })}
-              </Field>
-            </div>
-
-            <div>
-              <Field
-                as={Input}
-                name="displayCategory"
-                label="Catégorie d'affichage"
-                placeholder="Ex: Médicaments, Soins..."
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Description
-              </label>
-              <Field
-                as="textarea"
-                name="description"
-                rows={3}
-                className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-600 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                placeholder="Description de l'emplacement..."
-              />
-            </div>
-
-            <div className="flex justify-end space-x-3 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setIsCreateModalOpen(false)}
-                className="flex-1"
-              >
-                Annuler
-              </Button>
-              <Button
-                type="submit"
-                loading={createMutation.isPending}
-                className="flex-1"
-              >
-                Créer l'emplacement
-              </Button>
-            </div>
-          </Form>
-        )}
-      </Formik>
-    </Modal>
-  );
-
-  const EditLocationModal = () => (
-    <Modal
-      isOpen={!!editingLocation}
-      onClose={() => setEditingLocation(null)}
-      title="Modifier l'emplacement"
-      size="lg"
-    >
-      <Formik
-        initialValues={editingLocation || {}}
-        validationSchema={locationSchema}
-        onSubmit={(values) =>
-          updateMutation.mutate({ id: editingLocation.id, data: values })
-        }
-      >
-        {() => (
-          <Form className="space-y-4">
-            <div>
-              <Field as={Input} name="name" label="Nom" required />
-              <ErrorMessage
-                name="name"
-                component="p"
-                className="text-red-500 text-sm mt-1"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Type <span className="text-red-600">*</span>
-              </label>
-              <Field
-                as="select"
-                name="type"
-                className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-600 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {Object.values(InventoryLocationType).map((type) => (
-                  <option key={type} value={type}>
-                    {getLocationTypeLabel(type)}
-                  </option>
-                ))}
-              </Field>
-            </div>
-
-            <div>
-              <Field
-                as={Input}
-                name="displayCategory"
-                label="Catégorie d'affichage"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Description
-              </label>
-              <Field
-                as="textarea"
-                name="description"
-                rows={3}
-                className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-600 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              />
-            </div>
-
-            <div className="flex justify-end space-x-3 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setEditingLocation(null)}
-                className="flex-1"
-              >
-                Annuler
-              </Button>
-              <Button
-                type="submit"
-                loading={updateMutation.isPending}
-                className="flex-1"
-              >
-                Mettre à jour
-              </Button>
-            </div>
-          </Form>
-        )}
-      </Formik>
-    </Modal>
-  );
-
-  const LocationCard = ({ location }: { location: any }) => {
-    const Icon = getLocationIcon(location.type);
-
-    return (
-      <Card className="hover:shadow-md transition-shadow duration-200">
-        <CardContent className="p-4">
-          <div className="flex items-start justify-between">
-            <div className="flex items-start space-x-4">
-              <div className="flex-shrink-0">
-                <Icon className="h-8 w-8 text-sky-600" />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-medium text-gray-900">
-                  {location.name}
-                </h3>
-                <p className="text-sm text-gray-500 mt-1">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-sky-100 text-sky-800">
-                    {getLocationTypeLabel(location.type)}
-                  </span>
-                  {location.displayCategory && (
-                    <span className="ml-2 text-gray-600">
-                      • {location.displayCategory}
-                    </span>
-                  )}
-                </p>
-                {location.description && (
-                  <p className="text-sm text-gray-600 mt-2">
-                    {location.description}
-                  </p>
-                )}
-                <div className="mt-3 text-sm text-gray-500">
-                  <p>
-                    Créé le{" "}
-                    {new Date(location.createdAt).toLocaleDateString("fr-FR")}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="flex space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                icon={<PencilIcon className="h-4 w-4" />}
-                onClick={() => setEditingLocation(location)}
-              >
-                Modifier
-              </Button>
-              <Button
-                variant="destructive"
-                size="sm"
-                icon={<TrashIcon className="h-4 w-4" />}
-                onClick={() => {
-                  if (
-                    confirm(
-                      "Êtes-vous sûr de vouloir supprimer cet emplacement?"
-                    )
-                  ) {
-                    deleteMutation.mutate(location.id);
-                  }
-                }}
-              >
-                Supprimer
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+  const filteredList = useMemo(() => {
+    if (!search.trim()) return locations;
+    const q = search.toLowerCase();
+    return locations.filter(
+      (l) =>
+        l.name?.toLowerCase().includes(q) ||
+        l.code?.toLowerCase().includes(q) ||
+        l.zone_code?.toLowerCase().includes(q),
     );
+  }, [locations, search]);
+
+  const handleDrill = (loc: InventoryLocation) => {
+    const hasChildren = tree.has(loc.id) && (tree.get(loc.id)?.length ?? 0) > 0;
+    if (hasChildren) setBreadcrumb((prev) => [...prev, loc]);
+    else router.push(buildPath(`/inventory/locations/${loc.id}`));
+  };
+
+  const handleBreadcrumbClick = (index: number) => {
+    setBreadcrumb((prev) => prev.slice(0, index + 1));
   };
 
   return (
     <div className="space-y-6">
-      {/* En-tête */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Emplacements d'inventaire
-          </h1>
-          <p className="text-gray-600">
-            Gérez les différents emplacements de stockage de votre pharmacie
-          </p>
-        </div>
-        <div className="flex gap-3 flex-wrap">
-          <Button variant="outline" asChild>
-            <Link href="/inventory">Voir les produits</Link>
-          </Button>
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
-            icon={<PlusIcon className="h-4 w-4" />}
-            onClick={() => setIsCreateModalOpen(true)}
+            variant="outline"
+            size="sm"
+            onClick={() => router.push(buildPath("/inventory"))}
+            leftIcon={<ArrowLeft className="h-4 w-4" />}
           >
-            Nouvel emplacement
+            Retour
           </Button>
-        </div>
-      </div>
-
-      {/* Barre de recherche et filtres */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="space-y-4">
-            {/* Barre de recherche */}
-            <div className="flex items-center gap-4">
-              <div className="flex-1">
-                <Input
-                  placeholder="Rechercher par nom, description ou catégorie..."
-                  value={filters.search}
-                  onChange={(e) =>
-                    setFilters({ ...filters, search: e.target.value })
-                  }
-                />
-              </div>
-              <Button
-                variant="outline"
-                icon={<FunnelIcon className="h-4 w-4" />}
-                onClick={() => setShowFilters(!showFilters)}
-              >
-                Filtres
-              </Button>
-            </div>
-
-            {/* Filtres avancés */}
-            {showFilters && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-200">
-                {/* Filtre par type */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Type d'emplacement
-                  </label>
-                  <select
-                    value={filters.type}
-                    onChange={(e) =>
-                      setFilters({ ...filters, type: e.target.value })
-                    }
-                    className="w-full rounded-md border border-gray-300 bg-white px-3 h-10 text-sm focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
-                  >
-                    <option value="">Tous les types</option>
-                    {Object.values(InventoryLocationType).map((type) => (
-                      <option key={type} value={type}>
-                        {getLocationTypeLabel(type)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Filtre par catégorie */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Catégorie
-                  </label>
-                  <select
-                    value={filters.category}
-                    onChange={(e) =>
-                      setFilters({ ...filters, category: e.target.value })
-                    }
-                    className="w-full rounded-md border border-gray-300 bg-white px-3 h-10 text-sm focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
-                  >
-                    <option value="">Toutes les catégories</option>
-                    {categories.map((category) => (
-                      <option key={category} value={category}>
-                        {category}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="flex items-end justify-end">
-                  <Button variant="outline" size="sm" onClick={resetFilters}>
-                    Réinitialiser les filtres
-                  </Button>
-                </div>
-              </div>
-            )}
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+              Emplacements
+            </h1>
+            <p className="text-sm text-slate-500 mt-0.5">
+              Navigation hiérarchique, vue rack et heatmap de capacité
+            </p>
           </div>
-        </CardContent>
-      </Card>
+          <ProtectedAction permission={Permission.INVENTORY_LOCATIONS_CREATE}>
+            <Button
+              leftIcon={<Plus className="w-4 h-4" />}
+              onClick={() => router.push(buildPath("/inventory/locations/new"))}
+            >
+              Nouvel emplacement
+            </Button>
+          </ProtectedAction>
+        </div>
 
-      {/* Liste des emplacements */}
-      {isLoading ? (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="animate-pulse">
-              <div className="bg-gray-200 rounded-lg h-48"></div>
+        {/* Breadcrumb (fil d'Ariane) */}
+        <div className="flex flex-wrap items-center gap-1 text-sm">
+          <button
+            type="button"
+            onClick={() => setBreadcrumb([])}
+            className="flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"
+          >
+            <MapPin className="w-4 h-4 text-emerald-600" />
+            <span>Tous les emplacements</span>
+          </button>
+          {breadcrumb.map((loc, i) => {
+            const Icon = getLocationIcon(loc.location_type);
+            return (
+              <React.Fragment key={loc.id}>
+                <ChevronRight className="w-4 h-4 text-slate-400" />
+                <button
+                  type="button"
+                  onClick={() => handleBreadcrumbClick(i)}
+                  className="flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300"
+                >
+                  <Icon className="w-4 h-4 text-emerald-600" />
+                  <span>{loc.name || loc.code}</span>
+                </button>
+              </React.Fragment>
+            );
+          })}
+        </div>
+
+        {/* KPIs + View toggle */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          {dashboard && (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <Card>
+                <CardContent className="p-3 text-center">
+                  <p className="text-xl font-bold text-slate-900 dark:text-slate-100">
+                    {dashboard.total_locations ?? locations.length}
+                  </p>
+                  <p className="text-xs text-slate-500">Emplacements</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-3 text-center">
+                  <p className="text-xl font-bold text-emerald-600">
+                    {dashboard.available ?? "—"}
+                  </p>
+                  <p className="text-xs text-slate-500">Disponibles</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-3 text-center">
+                  <p className="text-xl font-bold text-amber-600">
+                    {dashboard.near_capacity ?? "—"}
+                  </p>
+                  <p className="text-xs text-slate-500">Proches capacité</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-3 text-center">
+                  <p className="text-xl font-bold text-red-600">
+                    {overstocked?.length ?? 0}
+                  </p>
+                  <p className="text-xs text-slate-500">Surchargés</p>
+                </CardContent>
+              </Card>
             </div>
-          ))}
-        </div>
-      ) : !locationsData?.locations.length ? (
-        <div className="text-center py-12">
-          <MapPinIcon className="h-12 w-12 text-gray-400 mx-auto" />
-          <h3 className="mt-2 text-sm font-medium text-gray-900">
-            {hasActiveFilters
-              ? "Aucun emplacement trouvé"
-              : "Aucun emplacement"}
-          </h3>
-          <p className="mt-1 text-sm text-gray-500">
-            {hasActiveFilters
-              ? "Essayez de modifier vos critères de recherche ou de filtrage."
-              : "Commencez par créer votre premier emplacement d'inventaire."}
-          </p>
-          <div className="mt-6">
-            {hasActiveFilters ? (
-              <Button variant="outline" onClick={resetFilters}>
-                Réinitialiser les filtres
-              </Button>
-            ) : (
-              <Button
-                icon={<PlusIcon className="h-4 w-4" />}
-                onClick={() => setIsCreateModalOpen(true)}
+          )}
+          <div className="flex items-center gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg w-fit">
+            {[
+              { key: "hierarchy" as ViewMode, label: "Hiérarchie", icon: Layers },
+              { key: "rack" as ViewMode, label: "Rack", icon: LayoutGrid },
+              { key: "heatmap" as ViewMode, label: "Remplissage", icon: BarChart3 },
+              { key: "list" as ViewMode, label: "Liste", icon: List },
+            ].map(({ key, label, icon: Icon }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setViewMode(key)}
+                className={cn(
+                  "flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                  viewMode === key
+                    ? "bg-white dark:bg-slate-700 text-emerald-700 dark:text-emerald-400 shadow-sm"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200",
+                )}
               >
-                Nouvel emplacement
-              </Button>
-            )}
-          </div>
-        </div>
-      ) : (
-        <>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {locationsData?.locations.map((location) => (
-              <LocationCard key={location.id} location={location} />
+                <Icon className="w-4 h-4" /> {label}
+              </button>
             ))}
           </div>
+        </div>
 
-          {/* Pagination */}
-          {locationsData && locationsData.total > filters.limit && (
-            <Pagination
-              currentPage={filters.page}
-              totalPages={pagination.totalPages}
-              totalItems={locationsData.total}
-              itemsPerPage={filters.limit}
-              onPageChange={(page) => setFilters({ ...filters, page })}
-              onItemsPerPageChange={(limit) =>
-                setFilters({ ...filters, limit, page: 1 })
-              }
-              showItemsPerPage
-            />
-          )}
-        </>
+        {viewMode !== "hierarchy" && (
+          <Input
+            placeholder="Rechercher (nom, code, zone)..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            leftIcon={<Search className="w-4 h-4" />}
+          />
+        )}
+      </div>
+
+      {isLoading ? (
+        <div className="space-y-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-20 w-full rounded-lg" />
+          ))}
+        </div>
+      ) : error ? (
+        <ErrorBanner
+          message="Impossible de charger les emplacements"
+          onRetry={() => refetch()}
+        />
+      ) : viewMode === "hierarchy" && currentLevel.length === 0 && breadcrumb.length === 0 ? (
+        <EmptyState
+          icon={<MapPin className="w-8 h-8 text-slate-400" />}
+          title="Aucun emplacement"
+          description="Configurez vos emplacements de stockage ou créez le premier."
+        />
+      ) : viewMode === "hierarchy" ? (
+        <HierarchyView
+          currentLevel={currentLevel}
+          tree={tree}
+          onDrill={handleDrill}
+          onOpenDetail={setSelectedLocForDetail}
+          overstockedIds={overstockedIds}
+          onSecuredClick={(loc) => (loc.requires_badge ? setBadgeModalLoc(loc) : setSelectedLocForDetail(loc))}
+        />
+      ) : viewMode === "rack" ? (
+        <RackView
+          locations={search ? filteredList.filter((l) => l.shelf_level || l.position_code) : rackLocations}
+          onOpenDetail={setSelectedLocForDetail}
+          onSecuredClick={(loc) => (loc.requires_badge ? setBadgeModalLoc(loc) : setSelectedLocForDetail(loc))}
+        />
+      ) : viewMode === "heatmap" ? (
+        <HeatmapView
+          locations={search ? filteredList : locations}
+          overstockedIds={overstockedIds}
+        />
+      ) : (
+        <ListView
+          locations={filteredList}
+          overstockedIds={overstockedIds}
+          onOpenDetail={setSelectedLocForDetail}
+        />
       )}
 
-      {/* Modals */}
-      <CreateLocationModal />
-      <EditLocationModal />
+      {/* Modal badge requis (zone sécurisée) */}
+      {badgeModalLoc && (
+        <Modal
+          open={!!badgeModalLoc}
+          onClose={() => setBadgeModalLoc(null)}
+          title="Accès sécurisé"
+        >
+          <div className="space-y-4">
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              L&apos;emplacement <strong>{badgeModalLoc.name || badgeModalLoc.code}</strong> requiert
+              une authentification par badge pour toute interaction.
+            </p>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setBadgeModalLoc(null)}>
+                Annuler
+              </Button>
+              <Button
+                onClick={() => {
+                  setSelectedLocForDetail(badgeModalLoc);
+                  setBadgeModalLoc(null);
+                }}
+              >
+                Continuer (badge validé)
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
+
+      {selectedLocForDetail && (
+        <Modal
+          open={!!selectedLocForDetail}
+          onClose={() => setSelectedLocForDetail(null)}
+          title={selectedLocForDetail.name || selectedLocForDetail.code}
+        >
+          <LocationDetailModal
+            loc={selectedLocForDetail}
+            onClose={() => setSelectedLocForDetail(null)}
+            onNavigate={() => {
+              setSelectedLocForDetail(null);
+              router.push(buildPath(`/inventory/locations/${selectedLocForDetail.id}`));
+            }}
+          />
+        </Modal>
+      )}
     </div>
   );
-};
+}
 
-export default InventoryLocationsPage;
+function HierarchyView({
+  currentLevel,
+  tree,
+  onDrill,
+  onOpenDetail,
+  overstockedIds,
+  onSecuredClick,
+}: {
+  currentLevel: InventoryLocation[];
+  tree: Map<string | null, InventoryLocation[]>;
+  onDrill: (loc: InventoryLocation) => void;
+  onOpenDetail: (loc: InventoryLocation) => void;
+  overstockedIds: Set<string>;
+  onSecuredClick: (loc: InventoryLocation) => void;
+}) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {currentLevel.map((loc) => {
+        const hasChildren = tree.has(loc.id) && (tree.get(loc.id)?.length ?? 0) > 0;
+        const Icon = getLocationIcon(loc.location_type);
+        const typeLabel = LOCATION_TYPE_LABELS[loc.location_type as LocationType] ?? loc.location_type;
+        const utilization = loc.utilization_percentage ?? 0;
+        const isOver = overstockedIds.has(loc.id);
+
+        return (
+          <Card
+            key={loc.id}
+            className={cn(
+              "transition-all hover:border-emerald-300 dark:hover:border-emerald-700",
+              loc.temporarily_blocked && "opacity-90",
+              isOver && "border-red-200 dark:border-red-800",
+            )}
+          >
+            <CardContent className="p-4">
+              <div className="flex items-start justify-between gap-2 mb-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="p-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
+                    <Icon className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-medium text-slate-900 dark:text-slate-100 truncate">
+                      {loc.name || loc.code}
+                    </p>
+                    <p className="text-xs text-slate-500">{typeLabel}</p>
+                  </div>
+                </div>
+                <div className="flex gap-1 shrink-0">
+                  {loc.is_refrigerated && (
+                    <Badge variant="info" size="sm">
+                      <Thermometer className="w-3 h-3" />
+                    </Badge>
+                  )}
+                  {loc.is_secured && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSecuredClick(loc);
+                      }}
+                      className="rounded p-1 text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/30"
+                      title="Zone sécurisée"
+                    >
+                      <Lock className="w-4 h-4" />
+                    </button>
+                  )}
+                  {loc.temporarily_blocked && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span className="rounded p-1 text-amber-600 bg-amber-100 dark:bg-amber-900/30">
+                          <AlertTriangle className="w-4 h-4" />
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Bloqué: {loc.blocked_reason ?? "Inventaire / Nettoyage"}</p>
+                        {loc.blocked_until && (
+                          <p className="text-xs mt-1">Jusqu&apos;au {formatDate(loc.blocked_until)}</p>
+                        )}
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                </div>
+              </div>
+
+              {/* Heatmap bar (vertical) - capacité */}
+              {loc.max_capacity != null && (
+                <div className="flex items-center gap-2 mt-2">
+                  <div className="w-1.5 h-12 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden flex flex-col-reverse">
+                    <div
+                      className={cn("w-full rounded-full transition-all min-h-[2px]", utilizationColor(utilization))}
+                      style={{ height: `${Math.min(utilization, 100)}%` }}
+                    />
+                  </div>
+                  <div className="text-xs text-slate-500">
+                    <span className="font-medium text-slate-700 dark:text-slate-300">{Math.round(utilization)}%</span>
+                    <br />
+                    {loc.current_item_count} / {loc.max_capacity}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex gap-2 mt-3">
+                {hasChildren ? (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => onDrill(loc)}
+                    rightIcon={<ChevronRight className="w-4 h-4" />}
+                  >
+                    Ouvrir
+                  </Button>
+                ) : null}
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => onOpenDetail(loc)}
+                >
+                  Détail
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
+    </div>
+  );
+}
+
+function RackView({
+  locations,
+  onOpenDetail,
+  onSecuredClick,
+}: {
+  locations: InventoryLocation[];
+  onOpenDetail: (loc: InventoryLocation) => void;
+  onSecuredClick: (loc: InventoryLocation) => void;
+}) {
+  const grid = useMemo(() => {
+    const byShelf = new Map<string, InventoryLocation[]>();
+    locations.forEach((loc) => {
+      const shelf = loc.shelf_level ?? loc.zone_code ?? "default";
+      if (!byShelf.has(shelf)) byShelf.set(shelf, []);
+      byShelf.get(shelf)!.push(loc);
+    });
+    byShelf.forEach((arr) => arr.sort((a, b) => (a.position_code || "").localeCompare(b.position_code || "")));
+    return byShelf;
+  }, [locations]);
+
+  const shelves = Array.from(grid.keys()).sort();
+
+  return (
+    <div className="space-y-6">
+      {shelves.length === 0 ? (
+        <EmptyState
+          title="Aucune donnée rack"
+          description="Les emplacements avec niveau d'étagère et code position apparaîtront ici."
+        />
+      ) : (
+        shelves.map((shelfKey) => (
+          <Card key={shelfKey}>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Package className="w-4 h-4 text-emerald-600" />
+                Niveau {shelfKey}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex gap-4 flex-wrap">
+                {(grid.get(shelfKey) ?? []).map((loc) => (
+                  <RackCell
+                    key={loc.id}
+                    loc={loc}
+                    onOpen={onOpenDetail}
+                    onSecuredClick={onSecuredClick}
+                  />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        ))
+      )}
+    </div>
+  );
+}
+
+function RackCell({
+  loc,
+  onOpen,
+  onSecuredClick,
+}: {
+  loc: InventoryLocation;
+  onOpen: (loc: InventoryLocation) => void;
+  onSecuredClick: (loc: InventoryLocation) => void;
+}) {
+  const temp = loc.temperature_current != null ? Number(loc.temperature_current) : null;
+  const tempMax = loc.temperature_max != null ? Number(loc.temperature_max) : null;
+  const overTemp = temp != null && tempMax != null && temp > tempMax;
+  const utilization = loc.utilization_percentage ?? 0;
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          type="button"
+          onClick={() => (loc.requires_badge ? onSecuredClick(loc) : onOpen(loc))}
+          className={cn(
+            "relative w-24 h-20 rounded-lg border-2 flex flex-col items-center justify-center text-xs font-medium transition-all hover:scale-105 hover:border-emerald-400 dark:hover:border-emerald-600",
+            "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700",
+            loc.is_refrigerated && "bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-950/30 dark:to-blue-950/30 border-cyan-200 dark:border-cyan-800",
+            loc.temporarily_blocked && "opacity-80 bg-[repeating-linear-gradient(-45deg,transparent,transparent_4px,rgba(0,0,0,0.03)_4px,rgba(0,0,0,0.03)_8px)] dark:bg-[repeating-linear-gradient(-45deg,transparent,transparent_4px,rgba(255,255,255,0.05)_4px,rgba(255,255,255,0.05)_8px)]",
+            overTemp && "animate-pulse border-red-400 dark:border-red-500",
+          )}
+        >
+          {loc.is_secured && (
+            <span className="absolute top-1 right-1 text-amber-600 dark:text-amber-400">
+              <Lock className="w-3.5 h-3.5" />
+            </span>
+          )}
+          {temp != null && (
+            <span className={cn("absolute top-1 left-1 text-xs font-mono", overTemp ? "text-red-600 font-bold" : "text-slate-500")}>
+              {temp}°C
+            </span>
+          )}
+          <span className="text-slate-700 dark:text-slate-300 truncate max-w-full px-1">
+            {loc.position_code || loc.code || loc.name}
+          </span>
+          <span className="text-slate-500 mt-0.5">{Math.round(utilization)}%</span>
+          {loc.temporarily_blocked && (
+            <span className="absolute inset-0 flex items-center justify-center bg-amber-500/10 rounded-lg" title={`Bloqué: ${loc.blocked_reason ?? ""} Jusqu'au ${loc.blocked_until ?? ""}`} />
+          )}
+        </button>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p className="font-medium">{loc.name || loc.code}</p>
+        <p className="text-xs">Capacité: {Math.round(utilization)}%</p>
+        {loc.temperature_current != null && <p className="text-xs">Température: {loc.temperature_current}°C</p>}
+        {loc.temporarily_blocked && (
+          <p className="text-xs text-amber-600 mt-1">
+            Bloqué: {loc.blocked_reason} — Jusqu&apos;au {formatDate(loc.blocked_until)}
+          </p>
+        )}
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
+function HeatmapView({
+  locations,
+  overstockedIds,
+}: {
+  locations: InventoryLocation[];
+  overstockedIds: Set<string>;
+}) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <BarChart3 className="w-5 h-5 text-emerald-600" />
+          Remplissage par emplacement
+        </CardTitle>
+        <p className="text-sm text-slate-500 mt-1">
+          &lt;10% gris (vide) · 10-80% vert (optimal) · 90%+ orange/rouge (alerte putaway)
+        </p>
+      </CardHeader>
+      <CardContent>
+        <div className="flex flex-col gap-2 max-h-[70vh] overflow-y-auto">
+          {locations.map((loc) => {
+            const pct = loc.utilization_percentage ?? 0;
+            const isOver = overstockedIds.has(loc.id);
+            return (
+              <div
+                key={loc.id}
+                className="flex items-center gap-3 py-1.5 border-b border-slate-100 dark:border-slate-800 last:border-0"
+              >
+                <div className="w-32 shrink-0 text-sm font-medium text-slate-900 dark:text-slate-100 truncate" title={loc.name || loc.code}>
+                  {loc.name || loc.code}
+                </div>
+                <div className="flex-1 flex items-center gap-2">
+                  <div className="w-full max-w-xs h-6 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden flex">
+                    <div
+                      className={cn("h-full rounded-full transition-all", utilizationColor(pct), isOver && "ring-2 ring-red-400")}
+                      style={{ width: `${Math.min(pct, 100)}%` }}
+                    />
+                  </div>
+                  <span className="text-sm font-mono text-slate-600 dark:text-slate-400 w-12 text-right">
+                    {Math.round(pct)}%
+                  </span>
+                </div>
+                <span className="text-xs text-slate-500 w-20 text-right">
+                  {loc.current_item_count ?? 0} / {loc.max_capacity ?? "—"}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+        {locations.length === 0 && (
+          <EmptyState title="Aucun emplacement" description="Aucune donnée à afficher." />
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function ListView({
+  locations,
+  overstockedIds,
+  onOpenDetail,
+}: {
+  locations: InventoryLocation[];
+  overstockedIds: Set<string>;
+  onOpenDetail: (loc: InventoryLocation) => void;
+}) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {locations.map((loc) => {
+        const utilization = loc.utilization_percentage ?? 0;
+        const isOver = overstockedIds.has(loc.id);
+        const Icon = getLocationIcon(loc.location_type);
+        return (
+          <Card
+            key={loc.id}
+            className={cn(
+              "hover:border-emerald-300 dark:hover:border-emerald-700 transition-colors cursor-pointer",
+              loc.temporarily_blocked && "opacity-90",
+              isOver && "border-red-200 dark:border-red-800",
+            )}
+            onClick={() => onOpenDetail(loc)}
+          >
+            <CardContent className="p-4">
+              <div className="flex items-start justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <Icon className="w-4 h-4 text-emerald-600" />
+                  <div>
+                    <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{loc.name ?? loc.code}</p>
+                    <p className="text-xs text-slate-500">{loc.zone_code ?? loc.location_type ?? "—"}</p>
+                  </div>
+                </div>
+                <div className="flex gap-1">
+                  {loc.is_refrigerated && <Badge variant="info" size="sm"><Thermometer className="w-3 h-3" /></Badge>}
+                  {loc.is_secured && <Badge variant="warning" size="sm"><Lock className="w-3 h-3" /></Badge>}
+                  {loc.temporarily_blocked && <Badge variant="warning" size="sm">Bloqué</Badge>}
+                </div>
+              </div>
+              {loc.max_capacity != null && (
+                <div>
+                  <div className="flex justify-between text-xs text-slate-500 mb-1">
+                    <span>Capacité</span>
+                    <span>{Math.round(utilization)}%</span>
+                  </div>
+                  <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                    <div
+                      className={cn("h-full rounded-full transition-all", utilizationColor(utilization))}
+                      style={{ width: `${Math.min(utilization, 100)}%` }}
+                    />
+                  </div>
+                  <p className="text-xs text-slate-400 mt-1">
+                    {loc.current_item_count ?? 0} / {loc.max_capacity} articles
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        );
+      })}
+    </div>
+  );
+}
+
+function LocationDetailModal({
+  loc,
+  onClose,
+  onNavigate,
+}: {
+  loc: InventoryLocation;
+  onClose: () => void;
+  onNavigate: () => void;
+}) {
+  const Icon = getLocationIcon(loc.location_type);
+  const typeLabel = LOCATION_TYPE_LABELS[loc.location_type as LocationType] ?? loc.location_type;
+  const utilization = loc.utilization_percentage ?? 0;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
+          <Icon className="w-6 h-6 text-emerald-600" />
+        </div>
+        <div>
+          <p className="font-medium text-slate-900 dark:text-slate-100">{loc.name || loc.code}</p>
+          <p className="text-sm text-slate-500">{typeLabel} · {loc.code}</p>
+        </div>
+      </div>
+      <dl className="grid grid-cols-2 gap-2 text-sm">
+        {loc.zone_code && <><dt className="text-slate-500">Zone</dt><dd>{loc.zone_code}</dd></>}
+        {loc.aisle_number && <><dt className="text-slate-500">Allée</dt><dd>{loc.aisle_number}</dd></>}
+        {loc.shelf_level && <><dt className="text-slate-500">Niveau</dt><dd>{loc.shelf_level}</dd></>}
+        {loc.position_code && <><dt className="text-slate-500">Position</dt><dd>{loc.position_code}</dd></>}
+        {loc.max_capacity != null && (
+          <>
+            <dt className="text-slate-500">Capacité</dt>
+            <dd>{loc.current_item_count ?? 0} / {loc.max_capacity} ({Math.round(utilization)}%)</dd>
+          </>
+        )}
+        {loc.temperature_current != null && (
+          <><dt className="text-slate-500">Température</dt><dd>{loc.temperature_current}°C</dd></>
+        )}
+        {loc.temporarily_blocked && (
+          <>
+            <dt className="text-slate-500">Bloqué</dt>
+            <dd className="text-amber-600">{loc.blocked_reason ?? "—"} {loc.blocked_until && `jusqu'au ${formatDate(loc.blocked_until)}`}</dd>
+          </>
+        )}
+      </dl>
+      <div className="flex justify-end gap-2 pt-2">
+        <Button variant="outline" onClick={onClose}>Fermer</Button>
+        <Button onClick={onNavigate}>Voir la fiche complète</Button>
+      </div>
+    </div>
+  );
+}

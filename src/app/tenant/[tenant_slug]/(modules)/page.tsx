@@ -1,13 +1,16 @@
 "use client";
 
-import { useTenant } from "@/hooks/useTenant";
+import { useRouter } from "next/navigation";
+import { useTenantPath } from "@/hooks/useTenantPath";
+import { useEffect } from "react";
 
 export default function TenantHomePage() {
-  const { tenantSlug } = useTenant();
+  const router = useRouter();
+  const { buildPath } = useTenantPath();
 
-  return (
-    <div>
-      <h1>Welcome to tenant: {tenantSlug}</h1>
-    </div>
-  );
+  useEffect(() => {
+    router.replace(buildPath("/dashboard"));
+  }, [router, buildPath]);
+
+  return null;
 }

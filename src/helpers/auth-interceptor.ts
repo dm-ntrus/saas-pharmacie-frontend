@@ -3,6 +3,15 @@ import { tokenService } from "@/services/token.service";
 import { KEYCLOAK_CONFIG } from "@/utils/constants";
 import { getCookie } from "@/utils/cookies";
 
+/** Base URL de l'API backend : inclut /api/v1 (aligné avec main.ts setGlobalPrefix + enableVersioning). */
+export function getApiBaseUrl(): string {
+  const raw = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  const base = raw.replace(/\/+$/, "");
+  if (base.endsWith("/api/v1")) return base;
+  if (base.includes("/api/v1")) return base;
+  return `${base}/api/v1`;
+}
+
 interface LoginResponse {
   access_token: string;
   refresh_token: string;
@@ -16,7 +25,7 @@ class AuthInterceptor {
 
   constructor() {
     this.axiosInstance = axios.create({
-      baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000",
+      baseURL: getApiBaseUrl(),
       headers: {
         "Content-Type": "application/json",
       },
@@ -75,6 +84,13 @@ class AuthInterceptor {
     // Read org, language, currency from cookies
     const orgId = getCookie("current_organization");
     if (orgId) config.headers["X-Organization-ID"] = orgId;
+
+    // Pour les routes tenant (ex. /tenants/:id/billing), envoyer X-Tenant-ID (aligné backend TenantContextMiddleware)
+    const path = config.url ?? "";
+    if (path.includes("/tenants/")) {
+      const tenantId = getCookie("tenant_id");
+      if (tenantId) config.headers["X-Tenant-ID"] = tenantId;
+    }
 
     const language = getCookie("language") || "fr";
     const currency = getCookie("currency") || "XOF";

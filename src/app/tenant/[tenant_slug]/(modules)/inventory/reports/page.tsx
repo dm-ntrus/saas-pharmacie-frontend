@@ -1,508 +1,161 @@
 "use client";
+
 import React, { useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ModuleGuard } from "@/components/guards/ModuleGuard";
+import { useTenantPath } from "@/hooks/useTenantPath";
+import { Permission } from "@/types/permissions";
+import { useOrganization } from "@/context/OrganizationContext";
+import apiService from "@/services/api.service";
 import { useQuery } from "@tanstack/react-query";
-import {
-  CubeIcon,
-  ExclamationTriangleIcon,
-  ClockIcon,
-  ArrowTrendingUpIcon,
-  ArrowTrendingDownIcon,
-  BellIcon,
-  CheckCircleIcon,
-} from "@heroicons/react/24/outline";
-import {
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
-import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/design-system";
-import { apiClient } from "@/lib/api";
-import { useRequireAuth } from "@/hooks/useAuth";
-import { UserRole } from "@/types";
+import { Button, Card, CardContent, CardHeader, CardTitle, Badge, EmptyState, ErrorBanner, Skeleton } from "@/components/ui";
+import { ArrowLeft, BarChart3, TrendingDown, TrendingUp, Package, AlertTriangle, Calendar, DollarSign, Download } from "lucide-react";
+import { formatCurrency, formatDate } from "@/utils/formatters";
 
-const COLORS = ["#0ea5e9", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
+export default function InventoryReportsPage() {
+  return (
+    <ModuleGuard module="inventory" requiredPermissions={[Permission.INVENTORY_ITEMS_READ]}>
+      <ReportsContent />
+    </ModuleGuard>
+  );
+}
 
-const InventoryReports: React.FC = () => {
-  useRequireAuth([UserRole.ADMIN, UserRole.PHARMACIST, UserRole.TECHNICIAN]);
+function ReportsContent() {
+  const router = useRouter();
+  const { buildPath } = useTenantPath();
+  const { currentOrganization } = useOrganization();
+  const pharmacyId = currentOrganization?.id ?? "";
+  const [activeReport, setActiveReport] = useState<"kpi" | "expiring" | "turnover" | "valuation">("kpi");
 
-  const [alertFilter, setAlertFilter] = useState<
-    "all" | "critical" | "warning"
-  >("all");
-
-  // Fetch dashboard data
-  const { data: alerts } = useQuery({
-    queryKey: ["inventory-alerts"],
-    queryFn: () => apiClient.getInventoryAlerts({ resolved: false }),
+  const { data: kpis, isLoading: loadingKpis } = useQuery({
+    queryKey: ["inventory-kpis", pharmacyId],
+    queryFn: () => apiService.get(`/pharmacies/${pharmacyId}/inventory/kpis`),
+    enabled: !!pharmacyId && activeReport === "kpi",
   });
 
-  const { data: expiringBatches } = useQuery({
-    queryKey: ["expiring-batches"],
-    queryFn: () => apiClient.getExpiringBatches(30),
+  const { data: expiring } = useQuery({
+    queryKey: ["inventory-expiring", pharmacyId],
+    queryFn: () => apiService.get(`/pharmacies/${pharmacyId}/inventory/kpis/expiration-risk`),
+    enabled: !!pharmacyId && activeReport === "expiring",
   });
 
-  const { data: stockLevels } = useQuery({
-    queryKey: ["stock-levels"],
-    queryFn: () => apiClient.getStockLevelsReport(),
+  const { data: turnover } = useQuery({
+    queryKey: ["inventory-turnover", pharmacyId],
+    queryFn: () => apiService.get(`/pharmacies/${pharmacyId}/inventory/kpis/turnover`),
+    enabled: !!pharmacyId && activeReport === "turnover",
   });
 
   const { data: valuation } = useQuery({
-    queryKey: ["inventory-valuation"],
-    queryFn: () => apiClient.getInventoryValuation(),
+    queryKey: ["inventory-valuation", pharmacyId],
+    queryFn: () => apiService.get(`/pharmacies/${pharmacyId}/inventory/kpis/stock-valuation`),
+    enabled: !!pharmacyId && activeReport === "valuation",
   });
 
-  const { data: expirationReport } = useQuery({
-    queryKey: ["expiration-report"],
-    queryFn: () => apiClient.getExpirationReport(),
-  });
-
-  const { data: lowStockReport } = useQuery({
-    queryKey: ["low-stock-report"],
-    queryFn: () => apiClient.getLowStockReport(),
-  });
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("fr-FR", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
-  };
-
-  const getAlertIcon = (severity: string) => {
-    if (severity === "critical") {
-      return <ExclamationTriangleIcon className="h-5 w-5 text-red-600" />;
-    }
-    return <ExclamationTriangleIcon className="h-5 w-5 text-yellow-600" />;
-  };
-
-  const getAlertColor = (severity: string) => {
-    if (severity === "critical") {
-      return "bg-red-50 border-red-200";
-    }
-    return "bg-yellow-50 border-yellow-200";
-  };
-
-  const filteredAlerts = alerts?.alerts.filter((alert: any) => {
-    if (alertFilter === "all") return true;
-    return alert.severity === alertFilter;
-  });
-
-  // Mock data for charts (replace with real data)
-  const stockByCategory = [
-    { name: "Médicaments", value: 450, fill: COLORS[0] },
-    { name: "OTC", value: 280, fill: COLORS[1] },
-    { name: "Dispositifs", value: 120, fill: COLORS[2] },
-    { name: "Compléments", value: 90, fill: COLORS[3] },
-  ];
-
-  const stockTrend = [
-    { date: "Jan", value: 850 },
-    { date: "Fév", value: 920 },
-    { date: "Mar", value: 880 },
-    { date: "Avr", value: 940 },
-    { date: "Mai", value: 910 },
-    { date: "Juin", value: 940 },
-  ];
-
-  const topProducts = [
-    { id: 1, name: "Paracétamol 500mg", stock: 450, value: 2250 },
-    { id: 1, name: "Amoxicilline 250mg", stock: 280, value: 4200 },
-    { id: 1, name: "Ibuprofène 400mg", stock: 350, value: 2800 },
-    { id: 1, name: "Aspirine 500mg", stock: 200, value: 1600 },
-    { id: 1, name: "Oméprazole 20mg", stock: 180, value: 2700 },
-  ];
-
-  const stats = [
-    {
-      title: "Valeur Stock Total",
-      value: formatCurrency(valuation?.totalValue || 125000),
-      change: "+12.5%",
-      trend: "up",
-      icon: CubeIcon,
-      color: "bg-blue-500",
-    },
-    {
-      title: "Alertes Actives",
-      value: alerts?.total || 0,
-      change: "-5",
-      trend: "down",
-      icon: BellIcon,
-      color: "bg-yellow-500",
-    },
-    {
-      title: "Expiration < 30j",
-      value: expiringBatches?.length || 0,
-      change: "+3",
-      trend: "up",
-      icon: ClockIcon,
-      color: "bg-red-500",
-    },
-    {
-      title: "Produits Actifs",
-      value: stockLevels?.totalProducts || 0,
-      change: "+8",
-      trend: "up",
-      icon: CheckCircleIcon,
-      color: "bg-green-500",
-    },
+  const tabs = [
+    { key: "kpi" as const, label: "KPIs", icon: BarChart3 },
+    { key: "expiring" as const, label: "Expirations", icon: Calendar },
+    { key: "turnover" as const, label: "Rotation", icon: TrendingUp },
+    { key: "valuation" as const, label: "Valorisation", icon: DollarSign },
   ];
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between gap-2 flex-wrap">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Rapports de l'Inventaire
-          </h1>
-          <p className="text-gray-600">
-            Vue d'ensemble de votre stock et alertes
-          </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <Button variant="outline" size="sm" onClick={() => router.push(buildPath("/inventory"))} leftIcon={<ArrowLeft className="h-4 w-4" />}>Retour</Button>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Rapports inventaire</h1>
+            <p className="text-sm text-slate-500 mt-1">Analyse et indicateurs de performance du stock</p>
+          </div>
         </div>
-        <div className="flex gap-3 flex-wrap">
-          <Button variant="outline" asChild>
-            <Link href="/inventory">Produits</Link>
-          </Button>
-          <Button variant="outline" asChild>
-            <Link href="/inventory/batches">Lots</Link>
-          </Button>
-        </div>
+        <Button variant="outline" size="sm" leftIcon={<Download className="w-4 h-4" />}>Exporter</Button>
       </div>
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat, index) => (
-          <Card key={index}>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    {stat.title}
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900 mt-1">
-                    {stat.value}
-                  </p>
-                  <div className="flex items-center mt-2">
-                    {stat.trend === "up" ? (
-                      <ArrowTrendingUpIcon
-                        className={`h-4 w-4 ${
-                          stat.title.includes("Alerte") ||
-                          stat.title.includes("Expiration")
-                            ? "text-red-600"
-                            : "text-green-600"
-                        }`}
-                      />
-                    ) : (
-                      <ArrowTrendingDownIcon
-                        className={`h-4 w-4 ${
-                          stat.title.includes("Alerte")
-                            ? "text-green-600"
-                            : "text-red-600"
-                        }`}
-                      />
-                    )}
-                    <span
-                      className={`ml-1 text-sm ${
-                        stat.trend === "up" &&
-                        (stat.title.includes("Alerte") ||
-                          stat.title.includes("Expiration"))
-                          ? "text-red-600"
-                          : stat.trend === "down" &&
-                            stat.title.includes("Alerte")
-                          ? "text-green-600"
-                          : stat.trend === "up"
-                          ? "text-green-600"
-                          : "text-red-600"
-                      }`}
-                    >
-                      {stat.change}
-                    </span>
-                  </div>
-                </div>
-                <div className={`${stat.color} p-3 rounded-lg`}>
-                  <stat.icon className="h-6 w-6 text-white" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+      <div className="flex gap-2 flex-wrap">
+        {tabs.map((t) => (
+          <Button key={t.key} variant={activeReport === t.key ? "primary" : "outline"} size="sm" onClick={() => setActiveReport(t.key)} leftIcon={<t.icon className="w-4 h-4" />}>
+            {t.label}
+          </Button>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Alerts Section */}
-        <div className="lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Alertes Actives</CardTitle>
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => setAlertFilter("all")}
-                    className={`px-3 py-1 text-sm rounded-lg ${
-                      alertFilter === "all"
-                        ? "bg-sky-600 text-white"
-                        : "bg-gray-100 text-gray-700"
-                    }`}
-                  >
-                    Toutes
-                  </button>
-                  <button
-                    onClick={() => setAlertFilter("critical")}
-                    className={`px-3 py-1 text-sm rounded-lg ${
-                      alertFilter === "critical"
-                        ? "bg-red-600 text-white"
-                        : "bg-gray-100 text-gray-700"
-                    }`}
-                  >
-                    Critiques
-                  </button>
-                  <button
-                    onClick={() => setAlertFilter("warning")}
-                    className={`px-3 py-1 text-sm rounded-lg ${
-                      alertFilter === "warning"
-                        ? "bg-yellow-600 text-white"
-                        : "bg-gray-100 text-gray-700"
-                    }`}
-                  >
-                    Avertissements
-                  </button>
+      {activeReport === "kpi" && (
+        loadingKpis ? <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-24 rounded-xl" />)}</div> : kpis ? (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <KPICard label="Produits actifs" value={kpis.active_products ?? "—"} icon={<Package className="w-5 h-5 text-emerald-600" />} />
+            <KPICard label="Ruptures de stock" value={kpis.out_of_stock ?? "—"} icon={<AlertTriangle className="w-5 h-5 text-red-600" />} alert={kpis.out_of_stock > 0} />
+            <KPICard label="Stock bas" value={kpis.low_stock ?? "—"} icon={<TrendingDown className="w-5 h-5 text-amber-600" />} alert={kpis.low_stock > 0} />
+            <KPICard label="Valeur totale" value={formatCurrency(kpis.total_value ?? 0)} icon={<DollarSign className="w-5 h-5 text-blue-600" />} />
+          </div>
+        ) : <EmptyState title="Aucune donnée" description="KPIs non disponibles pour cette pharmacie." />
+      )}
+
+      {activeReport === "expiring" && (
+        <Card>
+          <CardHeader><CardTitle>Produits à risque d'expiration</CardTitle></CardHeader>
+          <CardContent>
+            {!expiring || (Array.isArray(expiring) && expiring.length === 0) ? (
+              <EmptyState title="Aucun produit" description="Aucun produit proche de la date d'expiration." />
+            ) : (
+              <div className="space-y-3">
+                {(Array.isArray(expiring) ? expiring : []).map((item: any, i: number) => (
+                  <div key={item.id ?? i} className="flex items-center justify-between p-3 rounded-lg border border-slate-100 dark:border-slate-700/50">
+                    <div><p className="text-sm font-medium text-slate-900 dark:text-slate-100">{item.name ?? item.product_name}</p><p className="text-xs text-slate-500">Lot: {item.batch_number ?? "—"}</p></div>
+                    <div className="text-right"><Badge variant={item.days_until_expiry <= 30 ? "danger" : item.days_until_expiry <= 90 ? "warning" : "default"} size="sm">{item.days_until_expiry}j</Badge><p className="text-xs text-slate-500 mt-1">{formatDate(item.expiry_date)}</p></div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {activeReport === "turnover" && (
+        <Card>
+          <CardHeader><CardTitle>Rotation des stocks</CardTitle></CardHeader>
+          <CardContent>
+            {!turnover || (Array.isArray(turnover) && turnover.length === 0) ? (
+              <EmptyState title="Aucune donnée" description="Données de rotation non disponibles." />
+            ) : (
+              <div className="space-y-3">
+                {(Array.isArray(turnover) ? turnover : []).map((item: any, i: number) => (
+                  <div key={item.id ?? i} className="flex items-center justify-between p-3 rounded-lg border border-slate-100 dark:border-slate-700/50">
+                    <div><p className="text-sm font-medium text-slate-900 dark:text-slate-100">{item.name ?? item.product_name}</p><p className="text-xs text-slate-500">Catégorie: {item.category ?? "—"}</p></div>
+                    <div className="text-right"><p className="text-sm font-bold">{item.turnover_rate?.toFixed(2) ?? "—"}</p><p className="text-xs text-slate-500">Taux de rotation</p></div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {activeReport === "valuation" && (
+        <Card>
+          <CardHeader><CardTitle>Valorisation du stock</CardTitle></CardHeader>
+          <CardContent>
+            {!valuation ? (
+              <EmptyState title="Aucune donnée" description="Valorisation non disponible." />
+            ) : (
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="p-4 rounded-lg bg-emerald-50 dark:bg-emerald-900/20"><p className="text-xs text-emerald-700 dark:text-emerald-400">Valeur totale</p><p className="text-xl font-bold text-emerald-800 dark:text-emerald-300">{formatCurrency(valuation.total_value ?? 0)}</p></div>
+                  <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20"><p className="text-xs text-blue-700 dark:text-blue-400">Coût moyen</p><p className="text-xl font-bold text-blue-800 dark:text-blue-300">{formatCurrency(valuation.average_cost ?? 0)}</p></div>
+                  <div className="p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20"><p className="text-xs text-amber-700 dark:text-amber-400">Stock mort</p><p className="text-xl font-bold text-amber-800 dark:text-amber-300">{formatCurrency(valuation.dead_stock_value ?? 0)}</p></div>
                 </div>
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3 max-h-96 overflow-y-auto">
-                {filteredAlerts && filteredAlerts.length > 0 ? (
-                  filteredAlerts.map((alert: any) => (
-                    <div
-                      key={alert.id}
-                      className={`p-4 border rounded-lg ${getAlertColor(
-                        alert.severity
-                      )}`}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-start space-x-3">
-                          {getAlertIcon(alert.severity)}
-                          <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-900">
-                              {alert.message}
-                            </p>
-                            <p className="text-xs text-gray-600 mt-1">
-                              {alert.product?.name || "N/A"}
-                            </p>
-                            <p className="text-xs text-gray-500 mt-1">
-                              {new Date(alert.createdAt).toLocaleString(
-                                "fr-FR"
-                              )}
-                            </p>
-                          </div>
-                        </div>
-                        <Button variant="ghost" size="sm">
-                          Résoudre
-                        </Button>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center py-8">
-                    <CheckCircleIcon className="h-12 w-12 text-green-500 mx-auto" />
-                    <p className="mt-2 text-sm text-gray-600">
-                      Aucune alerte active
-                    </p>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Expiring Batches */}
-        <div>
-          <Card>
-            <CardHeader>
-              <CardTitle>Lots expirant bientôt</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3 max-h-96 overflow-y-auto">
-                {expiringBatches && expiringBatches.length > 0 ? (
-                  expiringBatches.slice(0, 5).map((batch: any) => (
-                    <div
-                      key={batch.id}
-                      className="p-3 bg-orange-50 border border-orange-200 rounded-lg"
-                    >
-                      <p className="text-sm font-medium text-gray-900">
-                        {batch.product?.name || "N/A"}
-                      </p>
-                      <p className="text-xs text-gray-600">
-                        Lot: {batch.batchNumber}
-                      </p>
-                      <p className="text-xs text-orange-600 mt-1">
-                        Expire le:{" "}
-                        {new Date(batch.expirationDate).toLocaleDateString(
-                          "fr-FR"
-                        )}
-                      </p>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center py-8">
-                    <ClockIcon className="h-12 w-12 text-gray-400 mx-auto" />
-                    <p className="mt-2 text-sm text-gray-600">
-                      Aucun lot expirant prochainement
-                    </p>
-                  </div>
-                )}
-                {expiringBatches && expiringBatches.length > 5 && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full"
-                    asChild
-                  >
-                    <Link href="/inventory/batches?expiringDays=30">
-                      Voir tous ({expiringBatches.length})
-                    </Link>
-                  </Button>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Stock by Category */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Stock par catégorie</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={stockByCategory}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) =>
-                    `${name}: ${(percent * 100).toFixed(0)}%`
-                  }
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {stockByCategory.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.fill} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
+            )}
           </CardContent>
         </Card>
-
-        {/* Stock Trend */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Évolution du stock</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={stockTrend}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="value"
-                  stroke="#0ea5e9"
-                  strokeWidth={2}
-                  name="Valeur totale"
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Top Products */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Top 5 produits par valeur</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead>
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Rang
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Produit
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Stock
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Valeur
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {topProducts.map((product, index) => (
-                  <tr key={index}>
-                    <td className="px-6 py-4">
-                      <span className="inline-flex items-center justify-center w-8 h-8 bg-sky-100 text-sky-600 rounded-full text-sm font-bold">
-                        {index + 1}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                      {product.name}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      {product.stock} unités
-                    </td>
-                    <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                      {formatCurrency(product.value)}
-                    </td>
-                    <td className="px-6 py-4">
-                      <Button variant="ghost" size="sm">
-                        <Link href={`/inventory/products/${product.id}`}>
-                          Voir
-                        </Link>
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+      )}
     </div>
   );
-};
+}
 
-export default InventoryReports;
+function KPICard({ label, value, icon, alert }: { label: string; value: string | number; icon: React.ReactNode; alert?: boolean }) {
+  return (
+    <Card className={alert ? "border-red-200 dark:border-red-800" : ""}>
+      <CardContent className="p-4"><div className="flex items-center justify-between mb-2">{icon}{alert && <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />}</div><p className="text-xl font-bold text-slate-900 dark:text-slate-100">{value}</p><p className="text-xs text-slate-500">{label}</p></CardContent>
+    </Card>
+  );
+}
