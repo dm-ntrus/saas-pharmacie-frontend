@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
@@ -23,7 +23,7 @@ export default function SupplyChainPurchaseOrdersPage() {
 }
 
 function PurchaseOrdersList() {
-  const path = useTenantPath();
+  const { buildPath } = useTenantPath();
   const [search, setSearch] = useState("");
   const { data: orders, isLoading, error, refetch } = useSupplyChainPurchaseOrders();
   const { data: suppliers } = useSuppliers();
@@ -52,7 +52,7 @@ function PurchaseOrdersList() {
         const o = row as unknown as PurchaseOrder;
         const oid = typeof o.id === "string" && o.id.includes(":") ? o.id.split(":")[1] : o.id;
         return (
-          <Link href={path(`/supply-chain/purchase-orders/${oid}`)} className="font-medium text-emerald-600 hover:underline">
+          <Link href={buildPath(`/supply-chain/purchase-orders/${oid}`)} className="font-medium text-emerald-600 hover:underline">
             {String(o.order_number ?? o.po_number ?? o.id)}
           </Link>
         );
@@ -65,15 +65,15 @@ function PurchaseOrdersList() {
     { key: "total_amount", title: "Total", align: "right", render: (_, row) => formatCurrency(Number((row as unknown as PurchaseOrder).total_amount ?? (row as unknown as PurchaseOrder).subtotal ?? 0)) },
   ];
 
-  if (error) return (<div className="space-y-6"><Button variant="ghost" size="sm" asChild><Link href={path("/supply-chain")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link></Button><ErrorBanner title="Erreur" message="Impossible de charger les commandes" onRetry={() => refetch()} /></div>);
+  if (error) return (<div className="space-y-6"><Button variant="ghost" size="sm" asChild><Link href={buildPath("/supply-chain")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link></Button><ErrorBanner title="Erreur" message="Impossible de charger les commandes" onRetry={() => refetch()} /></div>);
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" asChild><Link href={path("/supply-chain")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link></Button>
+          <Button variant="ghost" size="sm" asChild><Link href={buildPath("/supply-chain")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link></Button>
           <div><h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Commandes d&apos;achat</h1><p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Liste des bons de commande</p></div>
         </div>
-        <ProtectedAction permission={Permission.PURCHASE_ORDERS_CREATE}><Button asChild><Link href={path("/supply-chain/purchase-orders/new")}><Plus className="w-4 h-4 mr-2" /> Nouvelle commande</Link></Button></ProtectedAction>
+        <ProtectedAction permission={Permission.PURCHASE_ORDERS_CREATE}><Button asChild><Link href={buildPath("/supply-chain/purchase-orders/new")}><Plus className="w-4 h-4 mr-2" /> Nouvelle commande</Link></Button></ProtectedAction>
       </div>
       <Card>
         <div className="p-4 border-b border-slate-200 dark:border-slate-700"><Input placeholder="Rechercher par n° ou fournisseur..." value={search} onChange={(e) => setSearch(e.target.value)} leftIcon={<Search className="w-4 h-4" />} className="max-w-md" /></div>

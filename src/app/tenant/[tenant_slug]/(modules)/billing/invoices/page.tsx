@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
@@ -33,7 +33,7 @@ export default function BillingInvoicesPage() {
 }
 
 function InvoicesList() {
-  const path = useTenantPath();
+  const { buildPath } = useTenantPath();
   const [status, setStatus] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -67,7 +67,7 @@ function InvoicesList() {
         const inv = row as unknown as BillingInvoice;
         return (
           <Link
-            href={path(`/billing/invoices/${inv.id}`)}
+            href={buildPath(`/billing/invoices/${inv.id}`)}
             className="font-medium text-emerald-600 hover:underline"
           >
             {inv.invoice_number}
@@ -154,7 +154,7 @@ function InvoicesList() {
         </div>
         <ProtectedAction permission={Permission.INVOICES_CREATE}>
           <Button asChild>
-            <Link href={path("/billing/invoices/new")}>
+            <Link href={buildPath("/billing/invoices/new")}>
               <Plus className="w-4 h-4 mr-2" />
               Nouvelle facture
             </Link>

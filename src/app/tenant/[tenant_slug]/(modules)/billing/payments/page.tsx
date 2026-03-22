@@ -29,7 +29,7 @@ export default function BillingPaymentsPage() {
 }
 
 function PaymentsList() {
-  const path = useTenantPath();
+  const { buildPath } = useTenantPath();
   const { data: payments, isLoading, error } = useBillingPaymentHistory();
   const list = (payments ?? []) as BillingPayment[];
 
@@ -41,7 +41,7 @@ function PaymentsList() {
       render: (_, row) => {
         const p = row as unknown as BillingPayment;
         return (
-          <Link href={path(`/billing/payments/${p.id}`)} className="font-medium text-emerald-600 hover:underline">
+          <Link href={buildPath(`/billing/payments/${p.id}`)} className="font-medium text-emerald-600 hover:underline">
             {(p as any).payment_number ?? p.id}
           </Link>
         );
@@ -66,8 +66,8 @@ function PaymentsList() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="sm" asChild>
-          <Link href={path("/billing")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link>
+        <Button variant="ghost" size="sm">
+          <Link href={buildPath("/billing")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link>
         </Button>
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Historique des paiements</h1>

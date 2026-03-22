@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { jwtService } from '@/services/jwt.service';
 import { tokenService } from '@/services/token.service';

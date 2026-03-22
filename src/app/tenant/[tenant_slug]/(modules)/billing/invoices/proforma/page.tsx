@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -20,7 +20,7 @@ export default function ProformaPage() {
 }
 
 function ProformaList() {
-  const path = useTenantPath();
+  const { buildPath } = useTenantPath();
   const { data: invoices, isLoading, error } = useBillingInvoices({ limit: 100 });
   const convertProforma = useConvertProformaToInvoice();
 
@@ -36,7 +36,7 @@ function ProformaList() {
       render: (_, row) => {
         const inv = row as unknown as BillingInvoice;
         return (
-          <Link href={path(`/billing/invoices/${inv.id}`)} className="font-medium text-emerald-600 hover:underline">
+          <Link href={buildPath(`/billing/invoices/${inv.id}`)} className="font-medium text-emerald-600 hover:underline">
             {inv.invoice_number}
           </Link>
         );
@@ -77,7 +77,7 @@ function ProformaList() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="sm" asChild>
-            <Link href={path("/billing")}><ArrowRight className="w-4 h-4 mr-1 rotate-180" /> Retour</Link>
+            <Link href={buildPath("/billing")}><ArrowRight className="w-4 h-4 mr-1 rotate-180" /> Retour</Link>
           </Button>
           <div>
             <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Proformas</h1>
@@ -85,7 +85,7 @@ function ProformaList() {
           </div>
         </div>
         <Button asChild>
-          <Link href={path("/billing/invoices/new")}><Plus className="w-4 h-4 mr-2" /> Nouvelle proforma</Link>
+          <Link href={buildPath("/billing/invoices/new")}><Plus className="w-4 h-4 mr-2" /> Nouvelle proforma</Link>
         </Button>
       </div>
       <Card>

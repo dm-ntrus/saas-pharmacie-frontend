@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -28,7 +28,7 @@ export default function NewPurchaseOrderPage() {
 
 function NewPurchaseOrderForm() {
   const router = useRouter();
-  const path = useTenantPath();
+  const { buildPath } = useTenantPath();
   const createPo = useCreateSupplyChainPurchaseOrder();
   const { data: suppliers, isLoading: ls } = useSuppliers();
   const { register, control, handleSubmit, formState: { errors } } = useForm<FormData>({
@@ -43,7 +43,7 @@ function NewPurchaseOrderForm() {
     createPo.mutate(payload as unknown as Record<string, unknown>, {
       onSuccess: (res: { id?: string; data?: { id?: string } }) => {
         const id = (res as { id?: string })?.id ?? (res as { data?: { id?: string } })?.data?.id;
-        if (id) router.push(path(`/supply-chain/purchase-orders/${id}`)); else router.push(path("/supply-chain/purchase-orders"));
+        if (id) router.push(buildPath(`/supply-chain/purchase-orders/${id}`)); else router.push(buildPath("/supply-chain/purchase-orders"));
       },
     });
   };
@@ -52,7 +52,7 @@ function NewPurchaseOrderForm() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="sm" asChild><Link href={path("/supply-chain/purchase-orders")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link></Button>
+        <Button variant="ghost" size="sm" asChild><Link href={buildPath("/supply-chain/purchase-orders")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link></Button>
         <div><h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Nouvelle commande d&apos;achat</h1><p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Créer un bon de commande</p></div>
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -75,7 +75,7 @@ function NewPurchaseOrderForm() {
             ))}
           </CardContent>
         </Card>
-        <div className="flex justify-end gap-2 mt-6"><Button variant="outline" type="button" asChild><Link href={path("/supply-chain/purchase-orders")}>Annuler</Link></Button><Button type="submit" loading={createPo.isPending}>Créer la commande</Button></div>
+        <div className="flex justify-end gap-2 mt-6"><Button variant="outline" type="button" asChild><Link href={buildPath("/supply-chain/purchase-orders")}>Annuler</Link></Button><Button type="submit" loading={createPo.isPending}>Créer la commande</Button></div>
       </form>
     </div>
   );

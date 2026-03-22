@@ -38,10 +38,12 @@ import {
   User,
   Pill,
   CheckCircle,
+  AlertTriangle,
   XCircle,
   RefreshCw,
   Printer,
 } from "lucide-react";
+import { Input } from "@/components/ui";
 import { formatDate } from "@/utils/formatters";
 import { useState } from "react";
 

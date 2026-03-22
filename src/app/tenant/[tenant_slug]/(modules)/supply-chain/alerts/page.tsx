@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
@@ -32,7 +32,7 @@ export default function SupplyChainAlertsPage() {
 }
 
 function AlertsContent() {
-  const path = useTenantPath();
+  const { buildPath } = useTenantPath();
   const { data: alertsData, isLoading, error, refetch } = useSupplyChainAlerts();
   const updateAlert = useUpdateSupplyChainAlert();
   const [severityFilter, setSeverityFilter] = useState("");
@@ -64,7 +64,7 @@ function AlertsContent() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="sm" asChild>
-            <Link href={path("/supply-chain")}>
+            <Link href={buildPath("/supply-chain")}>
               <ArrowLeft className="w-4 h-4 mr-1" /> Retour
             </Link>
           </Button>

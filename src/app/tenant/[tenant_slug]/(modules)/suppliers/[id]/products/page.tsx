@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { useParams } from "next/navigation";
@@ -22,7 +22,7 @@ export default function SupplierProductsPage() {
 
 function SupplierProducts() {
   const params = useParams();
-  const path = useTenantPath();
+  const { buildPath } = useTenantPath();
   const id = (params?.id as string) ?? "";
   const { data: supplier, isLoading: ls } = useSupplierById(id);
   const { data: products, isLoading: lp } = useSupplierProducts(id);
@@ -40,7 +40,7 @@ function SupplierProducts() {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" asChild>
-          <Link href={path(`/suppliers/${id}`)}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link>
+          <Link href={buildPath(`/suppliers/${id}`)}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link>
         </Button>
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Catalogue · {s?.name ?? ""}</h1>

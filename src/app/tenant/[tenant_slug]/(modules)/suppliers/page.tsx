@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
@@ -32,7 +32,7 @@ export default function SuppliersPage() {
 }
 
 function SuppliersList() {
-  const path = useTenantPath();
+  const { buildPath } = useTenantPath();
   const [search, setSearch] = useState("");
   const { data: suppliers, isLoading, error } = useSuppliers();
 
@@ -57,7 +57,7 @@ function SuppliersList() {
         const s = row as unknown as Supplier;
         return (
           <Link
-            href={path(`/suppliers/${s.id}`)}
+            href={buildPath(`/suppliers/${s.id}`)}
             className="font-medium text-emerald-600 hover:underline"
           >
             {s.name}
@@ -115,7 +115,7 @@ function SuppliersList() {
         </div>
         <ProtectedAction permission={Permission.SUPPLIERS_CREATE}>
           <Button asChild>
-            <Link href={path("/suppliers/new")}>
+            <Link href={buildPath("/suppliers/new")}>
               <Plus className="w-4 h-4 mr-2" />
               Nouveau fournisseur
             </Link>
@@ -146,11 +146,11 @@ function SuppliersList() {
       </Card>
 
       <div className="flex flex-wrap gap-2 text-sm text-slate-500">
-        <Link href={path("/supply-chain")} className="text-emerald-600 hover:underline">
+        <Link href={buildPath("/supply-chain")} className="text-emerald-600 hover:underline">
           Dashboard Supply Chain
         </Link>
         <span>·</span>
-        <Link href={path("/supply-chain/purchase-orders")} className="text-emerald-600 hover:underline">
+        <Link href={buildPath("/supply-chain/purchase-orders")} className="text-emerald-600 hover:underline">
           Commandes d&apos;achat
         </Link>
       </div>

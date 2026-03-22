@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
@@ -25,7 +25,7 @@ export default function BillingReportsPage() {
 }
 
 function BillingReports() {
-  const path = useTenantPath();
+  const { buildPath } = useTenantPath();
   const [reportType, setReportType] = useState<"daily" | "monthly" | "outstanding" | "products" | "statistics">("daily");
   const [date, setDate] = useState(() => new Date().toISOString().split("T")[0]);
   const [year, setYear] = useState(new Date().getFullYear());
@@ -61,7 +61,7 @@ function BillingReports() {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" asChild>
-          <Link href={path("/billing")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link>
+          <Link href={buildPath("/billing")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link>
         </Button>
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Rapports de facturation</h1>

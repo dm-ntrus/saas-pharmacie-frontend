@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { useTenantPath } from "@/hooks/useTenantPath";
-import { useEmployeeStats, useLeaves, useDailyAttendance, useShiftsSchedule } from "@/hooks/api/useHR";
+import { useEmployeeStats, usePendingLeaves, useDailyAttendance, useShiftSchedule } from "@/hooks/api/useHR";
 import {
   Card,
   CardContent,
@@ -28,9 +28,10 @@ import {
 export function HRDashboard() {
   const { buildPath } = useTenantPath();
   const { data: statsData, isLoading: loadingStats } = useEmployeeStats();
-  const { data: leavesData, isLoading: loadingLeaves } = useLeaves({ status: "pending" });
+  const { data: leavesData, isLoading: loadingLeaves } = usePendingLeaves();
   const { data: attendanceData, isLoading: loadingAttendance } = useDailyAttendance();
-  const { data: shiftsData, isLoading: loadingShifts } = useShiftsSchedule();
+  const today = new Date().toISOString().slice(0, 10);
+  const { data: shiftsData, isLoading: loadingShifts } = useShiftSchedule(today, today);
 
   const isLoading = loadingStats || loadingLeaves || loadingAttendance || loadingShifts;
 

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { useRouter } from "next/navigation";
@@ -44,7 +44,7 @@ export default function NewSupplierPage() {
 
 function NewSupplierForm() {
   const router = useRouter();
-  const path = useTenantPath();
+  const { buildPath } = useTenantPath();
   const createSupplier = useCreateSupplier();
 
   const form = useForm<FormValues>({
@@ -68,7 +68,7 @@ function NewSupplierForm() {
     createSupplier.mutate(data as Record<string, unknown>, {
       onSuccess: (res: { id?: string }) => {
         const id = res?.id?.includes(":") ? res.id.split(":")[1] : res?.id ?? "";
-        router.push(path(`/suppliers/${id || ""}`));
+        router.push(buildPath(`/suppliers/${id || ""}`));
       },
     });
   };
@@ -81,7 +81,7 @@ function NewSupplierForm() {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" asChild>
-          <Link href={path("/suppliers")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link>
+          <Link href={buildPath("/suppliers")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link>
         </Button>
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Nouveau fournisseur</h1>
@@ -174,7 +174,7 @@ function NewSupplierForm() {
         </Card>
 
         <div className="flex justify-end gap-3">
-          <Button type="button" variant="outline" asChild><Link href={path("/suppliers")}>Annuler</Link></Button>
+          <Button type="button" variant="outline" asChild><Link href={buildPath("/suppliers")}>Annuler</Link></Button>
           <Button type="submit" loading={createSupplier.isPending}>Créer le fournisseur</Button>
         </div>
       </form>

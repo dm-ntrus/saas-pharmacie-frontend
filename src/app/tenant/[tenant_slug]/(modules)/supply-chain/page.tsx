@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
@@ -140,7 +140,7 @@ export default function SupplyChainPage() {
 }
 
 function SupplyChainContent() {
-  const path = useTenantPath();
+  const { buildPath } = useTenantPath();
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -149,11 +149,11 @@ function SupplyChainContent() {
           <p className="text-sm text-slate-500 mt-1">Gestion de la chaîne d&apos;approvisionnement</p>
         </div>
         <div className="flex items-center gap-2">
-          <Link href={path("/supply-chain/purchase-orders")} className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600 hover:underline">
+          <Link href={buildPath("/supply-chain/purchase-orders")} className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600 hover:underline">
             <ShoppingCart className="w-4 h-4" /> Commandes
           </Link>
           <span className="text-slate-300 dark:text-slate-600">|</span>
-          <Link href={path("/supply-chain/performance")} className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600 hover:underline">
+          <Link href={buildPath("/supply-chain/performance")} className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600 hover:underline">
             <TrendingUp className="w-4 h-4" /> Performance
           </Link>
         </div>

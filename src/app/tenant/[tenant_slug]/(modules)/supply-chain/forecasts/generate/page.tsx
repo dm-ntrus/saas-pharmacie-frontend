@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -32,7 +32,7 @@ export default function GenerateForecastPage() {
 
 function GenerateForecastForm() {
   const router = useRouter();
-  const path = useTenantPath();
+  const { buildPath } = useTenantPath();
   const createForecast = useCreateDemandForecast();
   const { register, control, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -41,14 +41,14 @@ function GenerateForecastForm() {
   const onSubmit = (data: FormData) => {
     createForecast.mutate(
       { ...data, predicted_quantity: parseInt(data.predicted_quantity, 10) } as unknown as Record<string, unknown>,
-      { onSuccess: () => router.push(path("/supply-chain/forecasts")) },
+      { onSuccess: () => router.push(buildPath("/supply-chain/forecasts")) },
     );
   };
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" asChild>
-          <Link href={path("/supply-chain/forecasts")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link>
+          <Link href={buildPath("/supply-chain/forecasts")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link>
         </Button>
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Générer une prévision</h1>
@@ -67,7 +67,7 @@ function GenerateForecastForm() {
             <Input label="Quantité prévue" type="number" {...register("predicted_quantity")} error={errors.predicted_quantity?.message} />
             <Controller name="method" control={control} render={({ field }) => <Select label="Méthode" value={field.value ?? "moving_average"} onChange={field.onChange} options={[{ value: "moving_average", label: "Moyenne mobile" }, { value: "exponential_smoothing", label: "Lissage exponentiel" }, { value: "linear_regression", label: "Régression linéaire" }, { value: "seasonal", label: "Saisonnier" }, { value: "manual", label: "Manuel" }]} />} />
             <div className="flex justify-end gap-2 pt-4">
-              <Button variant="outline" type="button" asChild><Link href={path("/supply-chain/forecasts")}>Annuler</Link></Button>
+              <Button variant="outline" type="button" asChild><Link href={buildPath("/supply-chain/forecasts")}>Annuler</Link></Button>
               <Button type="submit" loading={createForecast.isPending}>Générer</Button>
             </div>
           </form>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -9,13 +9,13 @@ import { Card, Button, EmptyState } from "@/components/ui";
 import { ArrowLeft } from "lucide-react";
 
 export default function InsuranceClaimsPage() {
-  const path = useTenantPath();
+  const { buildPath } = useTenantPath();
   return (
     <ModuleGuard module="billing" requiredPermissions={[Permission.INVOICES_READ]}>
       <div className="space-y-6">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="sm" asChild>
-            <Link href={path("/billing/insurance")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link>
+            <Link href={buildPath("/billing/insurance")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link>
           </Button>
           <div>
             <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Réclamations assurance</h1>

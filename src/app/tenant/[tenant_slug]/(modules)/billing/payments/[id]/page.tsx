@@ -1,6 +1,5 @@
-"use client";
+﻿"use client";
 
-import React from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { ModuleGuard } from "@/components/guards/ModuleGuard";
@@ -32,7 +31,7 @@ export default function PaymentDetailPage() {
 
 function PaymentDetail() {
   const params = useParams();
-  const path = useTenantPath();
+  const { buildPath } = useTenantPath();
   const id = (params?.id as string) ?? "";
 
   const { data: payment, isLoading, error } = usePaymentById(id);
@@ -57,7 +56,7 @@ function PaymentDetail() {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" asChild>
-          <Link href={path("/billing/payments")}>
+          <Link href={buildPath("/billing/payments")}>
             <ArrowLeft className="w-4 h-4 mr-1" />
             Retour
           </Link>
@@ -98,16 +97,16 @@ function PaymentDetail() {
           <div className="flex justify-between text-sm">
             <span className="text-slate-500">Facture</span>
             <Link
-              href={path(`/billing/invoices/${p.invoice_id?.toString().replace("invoices:", "") ?? p.invoice_id}`)}
+              href={buildPath(`/billing/invoices/${p.invoice_id?.toString().replace("invoices:", "") ?? p.invoice_id}`)}
               className="text-emerald-600 hover:underline"
             >
               Voir la facture
             </Link>
           </div>
-          {p.notes && (
+          {p.notes != null && (
             <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
               <p className="text-xs text-slate-500 mb-1">Notes</p>
-              <p className="text-sm">{p.notes}</p>
+              <p className="text-sm">{String(p.notes)}</p>
             </div>
           )}
         </CardContent>

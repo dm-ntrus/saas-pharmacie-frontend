@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { useParams } from "next/navigation";
@@ -22,7 +22,7 @@ export default function SupplierDetailPage() {
 
 function SupplierProfile() {
   const params = useParams();
-  const path = useTenantPath();
+  const { buildPath } = useTenantPath();
   const id = (params?.id as string) ?? "";
 
   const { data: supplier, isLoading, error } = useSupplierById(id);
@@ -40,7 +40,7 @@ function SupplierProfile() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="sm" asChild>
-            <Link href={path("/suppliers")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link>
+            <Link href={buildPath("/suppliers")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link>
           </Button>
           <div>
             <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{s.name}</h1>
@@ -67,16 +67,16 @@ function SupplierProfile() {
           <CardHeader><CardTitle>Actions</CardTitle></CardHeader>
           <CardContent className="space-y-2">
             <Button variant="outline" className="w-full justify-start" asChild>
-              <Link href={path(`/suppliers/${id}/orders`)}><ShoppingCart className="w-4 h-4 mr-2" /> Commandes</Link>
+              <Link href={buildPath(`/suppliers/${id}/orders`)}><ShoppingCart className="w-4 h-4 mr-2" /> Commandes</Link>
             </Button>
             <Button variant="outline" className="w-full justify-start" asChild>
-              <Link href={path(`/suppliers/${id}/products`)}><Package className="w-4 h-4 mr-2" /> Catalogue</Link>
+              <Link href={buildPath(`/suppliers/${id}/products`)}><Package className="w-4 h-4 mr-2" /> Catalogue</Link>
             </Button>
             <Button variant="outline" className="w-full justify-start" asChild>
-              <Link href={path(`/suppliers/${id}/contracts`)}><FileSignature className="w-4 h-4 mr-2" /> Contrats</Link>
+              <Link href={buildPath(`/suppliers/${id}/contracts`)}><FileSignature className="w-4 h-4 mr-2" /> Contrats</Link>
             </Button>
             <Button variant="outline" className="w-full justify-start" asChild>
-              <Link href={path(`/suppliers/${id}/performance`)}><TrendingUp className="w-4 h-4 mr-2" /> Performance</Link>
+              <Link href={buildPath(`/suppliers/${id}/performance`)}><TrendingUp className="w-4 h-4 mr-2" /> Performance</Link>
             </Button>
           </CardContent>
         </Card>

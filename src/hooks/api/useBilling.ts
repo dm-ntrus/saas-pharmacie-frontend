@@ -160,3 +160,30 @@ export function usePayInvoiceUpload() {
     onError: () => toast.error("Erreur lors de l'envoi du fichier"),
   });
 }
+
+export function useBillingPaymentHistory(params?: Record<string, string | number | undefined>) {
+  const tenantId = useBillingTenantId();
+  const search = params
+    ? "?" + new URLSearchParams(Object.fromEntries(Object.entries(params).filter(([, v]) => v !== undefined).map(([k, v]) => [k, String(v)]))).toString()
+    : "";
+  const path = tenantId
+    ? `/tenants/${encodeURIComponent(tenantId)}/billing/payments${search}`
+    : "";
+  return useQuery({
+    queryKey: ["billing-payments", tenantId, params],
+    queryFn: () => apiService.get(path),
+    enabled: !!tenantId,
+    staleTime: 30_000,
+  });
+}
+
+export function usePaymentById(id: string) {
+  const tenantId = useBillingTenantId();
+  return useQuery({
+    queryKey: ["billing-payment", tenantId, id],
+    queryFn: () =>
+      apiService.get(`/tenants/${encodeURIComponent(tenantId)}/billing/payments/${encodeURIComponent(id)}`),
+    enabled: !!tenantId && !!id,
+    staleTime: 30_000,
+  });
+}

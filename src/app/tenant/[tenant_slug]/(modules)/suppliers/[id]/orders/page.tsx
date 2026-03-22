@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -23,7 +23,7 @@ export default function SupplierOrdersPage() {
 
 function SupplierOrders() {
   const params = useParams();
-  const path = useTenantPath();
+  const { buildPath } = useTenantPath();
   const id = (params?.id as string) ?? "";
   const { data: supplier, isLoading: ls } = useSupplierById(id);
   const { data: orders, isLoading: lo } = useSupplierPurchaseOrders(id);
@@ -40,7 +40,7 @@ function SupplierOrders() {
         const oid = typeof o.id === "string" && o.id.includes(":") ? o.id.split(":")[1] : o.id;
         const num = (o as { order_number?: string; po_number?: string }).order_number ?? (o as { po_number?: string }).po_number ?? String(o.id);
         return (
-          <Link href={path(`/supply-chain/purchase-orders/${oid}`)} className="font-medium text-emerald-600 hover:underline">
+          <Link href={buildPath(`/supply-chain/purchase-orders/${oid}`)} className="font-medium text-emerald-600 hover:underline">
             {num}
           </Link>
         );
@@ -57,7 +57,7 @@ function SupplierOrders() {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" asChild>
-          <Link href={path(`/suppliers/${id}`)}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link>
+          <Link href={buildPath(`/suppliers/${id}`)}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link>
         </Button>
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Commandes · {s?.name ?? ""}</h1>

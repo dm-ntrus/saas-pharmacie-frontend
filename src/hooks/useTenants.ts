@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation } from '@tanstack/react-query';
-import { apiClient } from '@/lib/apiClient';
+import { apiService } from "@/services/api.service";
 import type { CreateTenantDto } from '@/types/tenant.types';
 
 const REGISTER_ENDPOINT = '/auth/register';
@@ -34,7 +34,7 @@ export function useCreateTenant() {
   return useMutation({
     mutationFn: async (data: CreateTenantDto) => {
       const payload = toRegisterPayload(data);
-      return apiClient.post<{ user: unknown; access_token: string; refresh_token?: string; tenant?: { id: string } }>(
+      return apiService.post<{ user: unknown; access_token: string; refresh_token?: string; tenant?: { id: string } }>(
         REGISTER_ENDPOINT,
         payload
       );

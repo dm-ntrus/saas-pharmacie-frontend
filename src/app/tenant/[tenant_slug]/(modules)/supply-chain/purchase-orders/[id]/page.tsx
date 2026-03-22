@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
@@ -31,7 +31,7 @@ export default function PurchaseOrderDetailPage() {
 
 function PurchaseOrderDetail() {
   const params = useParams();
-  const path = useTenantPath();
+  const { buildPath } = useTenantPath();
   const id = (params?.id as string) ?? "";
   const [receiveOpen, setReceiveOpen] = useState(false);
   const { data: poData, isLoading, error, refetch } = useSupplyChainPurchaseOrderById(id);
@@ -45,7 +45,7 @@ function PurchaseOrderDetail() {
   };
   const canReceive = po?.status && !["received", "cancelled", "closed"].includes(po.status);
 
-  if (error) return (<div className="space-y-6"><Button variant="ghost" size="sm" asChild><Link href={path("/supply-chain/purchase-orders")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link></Button><ErrorBanner title="Erreur" message="Impossible de charger la commande" onRetry={() => refetch()} /></div>);
+  if (error) return (<div className="space-y-6"><Button variant="ghost" size="sm" asChild><Link href={buildPath("/supply-chain/purchase-orders")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link></Button><ErrorBanner title="Erreur" message="Impossible de charger la commande" onRetry={() => refetch()} /></div>);
   if (isLoading || !po) return <Skeleton className="h-64 w-full" />;
 
   const status = po.status ?? "—";
@@ -55,7 +55,7 @@ function PurchaseOrderDetail() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" asChild><Link href={path("/supply-chain/purchase-orders")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link></Button>
+          <Button variant="ghost" size="sm" asChild><Link href={buildPath("/supply-chain/purchase-orders")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link></Button>
           <div><h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{po.order_number ?? po.po_number ?? po.id}</h1><p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{supplierName} · <Badge variant="default" size="sm">{PO_STATUS_LABELS[status] ?? status}</Badge></p></div>
         </div>
         {canReceive && <ProtectedAction permission={Permission.PURCHASE_ORDERS_UPDATE}><Button variant="outline" leftIcon={<Package className="w-4 h-4" />} onClick={() => setReceiveOpen(true)}>Réceptionner</Button></ProtectedAction>}

@@ -185,3 +185,29 @@ export interface EntitlementUsage {
   featureKey: string;
   usage: number | Record<string, unknown>;
 }
+
+// —— Paiements (billing/payments) ——
+export interface BillingPayment {
+  id: string;
+  payment_number?: string;
+  payment_date?: string;
+  created_at?: string;
+  amount: number;
+  currency?: string;
+  payment_method: string;
+  status: string;
+  is_refund?: boolean;
+  invoice_id?: string;
+  tenant_id?: string;
+  [key: string]: unknown;
+}
+
+export const PAYMENT_METHOD_LABELS: Record<string, string> = {
+  stripe: "Stripe",
+  card: "Carte bancaire",
+  cash: "Espèces",
+  bank_transfer: "Virement bancaire",
+  mobile_money: "Mobile Money",
+  manual: "Manuel",
+  check: "Chèque",
+};

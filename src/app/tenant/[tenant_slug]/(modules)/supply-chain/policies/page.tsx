@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
@@ -26,7 +26,7 @@ export default function SupplyChainPoliciesPage() {
 }
 
 function PoliciesContent() {
-  const path = useTenantPath();
+  const { buildPath } = useTenantPath();
   const { data: policiesData, isLoading, error, refetch } = useInventoryPolicies();
   const createPolicy = useCreateInventoryPolicy();
   const [createOpen, setCreateOpen] = useState(false);
@@ -42,7 +42,7 @@ function PoliciesContent() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" asChild><Link href={path("/supply-chain")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link></Button>
+          <Button variant="ghost" size="sm" asChild><Link href={buildPath("/supply-chain")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link></Button>
           <div><h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Politiques d&apos;inventaire</h1><p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Points de réapprovisionnement et stock de sécurité</p></div>
         </div>
         <ProtectedAction permission={Permission.INVENTORY_POLICIES_CREATE}><Button leftIcon={<Plus className="w-4 h-4" />} onClick={() => setCreateOpen(true)}>Nouvelle politique</Button></ProtectedAction>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
@@ -32,7 +32,7 @@ export default function SupplyChainPerformancePage() {
 }
 
 function PerformanceContent() {
-  const path = useTenantPath();
+  const { buildPath } = useTenantPath();
   const { data, isLoading, error, refetch } = useSupplierPerformances();
 
   const raw = data?.data ?? data;
@@ -74,7 +74,7 @@ function PerformanceContent() {
     return (
       <div className="space-y-6">
         <Button variant="ghost" size="sm" asChild>
-          <Link href={path("/supply-chain")}>
+          <Link href={buildPath("/supply-chain")}>
             <ArrowLeft className="w-4 h-4 mr-1" /> Retour
           </Link>
         </Button>
@@ -87,7 +87,7 @@ function PerformanceContent() {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" asChild>
-          <Link href={path("/supply-chain")}>
+          <Link href={buildPath("/supply-chain")}>
             <ArrowLeft className="w-4 h-4 mr-1" /> Retour
           </Link>
         </Button>

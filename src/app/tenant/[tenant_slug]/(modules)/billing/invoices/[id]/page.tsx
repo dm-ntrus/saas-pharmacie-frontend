@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -44,7 +44,7 @@ export default function BillingInvoiceDetailPage() {
 function InvoiceDetail() {
   const params = useParams();
   const router = useRouter();
-  const path = useTenantPath();
+  const { buildPath } = useTenantPath();
   const invoiceId = (params?.id as string) ?? "";
 
   const { data: invoice, isLoading, error } = useBillingInvoice(invoiceId);
@@ -142,7 +142,7 @@ function InvoiceDetail() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="sm" asChild>
-            <Link href={path("/billing/invoices")}>
+            <Link href={buildPath("/billing/invoices")}>
               <ArrowLeft className="w-4 h-4 mr-1" />
               Retour
             </Link>

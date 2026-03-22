@@ -61,7 +61,7 @@ function UsersList() {
         const u = row as unknown as UserResponseDto;
         return (
           <Link href={path(`/settings/users/${u.id}`)} className="font-medium text-emerald-600 hover:underline">
-            {u.fullName ?? `${u.firstName ?? ""} ${u.lastName ?? ""}`.trim() || u.email}
+            {u.fullName ? u.fullName : (`${u.firstName ?? ""} ${u.lastName ?? ""}`.trim() || u.email)}
           </Link>
         );
       },

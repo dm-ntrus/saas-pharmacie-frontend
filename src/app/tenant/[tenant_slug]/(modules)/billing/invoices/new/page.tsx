@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -60,7 +60,7 @@ export default function NewBillingInvoicePage() {
 
 function NewInvoiceForm() {
   const router = useRouter();
-  const path = useTenantPath();
+  const { buildPath } = useTenantPath();
   const createInvoice = useCreateBillingInvoice();
 
   const form = useForm<FormValues>({
@@ -125,7 +125,7 @@ function NewInvoiceForm() {
     createInvoice.mutate(payload as Record<string, unknown>, {
       onSuccess: (res: { id?: string }) => {
         const id = res?.id?.includes(":") ? res.id.split(":")[1] : res?.id ?? "";
-        router.push(path(`/billing/invoices/${id}`));
+        router.push(buildPath(`/billing/invoices/${id}`));
       },
     });
   };
@@ -139,7 +139,7 @@ function NewInvoiceForm() {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" asChild>
-          <Link href={path("/billing/invoices")}>
+          <Link href={buildPath("/billing/invoices")}>
             <ArrowLeft className="w-4 h-4 mr-1" />
             Retour
           </Link>
@@ -351,7 +351,7 @@ function NewInvoiceForm() {
 
         <div className="flex justify-end gap-3">
           <Button type="button" variant="outline" asChild>
-            <Link href={path("/billing/invoices")}>Annuler</Link>
+            <Link href={buildPath("/billing/invoices")}>Annuler</Link>
           </Button>
           <Button type="submit" loading={createInvoice.isPending}>
             Créer la facture

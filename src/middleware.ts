@@ -212,11 +212,11 @@ export function middleware(req: NextRequest) {
   // Module-level RBAC for /tenant/:slug/:module/...
   if (pathname.startsWith("/tenant/")) {
     const pathParts = pathname.split("/");
-    // /tenant/:slug/:module/...  → module is pathParts[3]
-    const module = pathParts[3];
+    // /tenant/:slug/:module/...  → moduleName is pathParts[3]
+    const moduleName = pathParts[3];
 
-    if (module && module !== "auth" && MODULE_ROLE_REQUIREMENTS[module]) {
-      const allowedRoles = MODULE_ROLE_REQUIREMENTS[module];
+    if (moduleName && moduleName !== "auth" && MODULE_ROLE_REQUIREMENTS[moduleName]) {
+      const allowedRoles = MODULE_ROLE_REQUIREMENTS[moduleName];
       const hasAccess = userRoles.some((r) => allowedRoles.includes(r));
       if (!hasAccess) {
         url.pathname = `/tenant/${pathParts[2]}/dashboard`;

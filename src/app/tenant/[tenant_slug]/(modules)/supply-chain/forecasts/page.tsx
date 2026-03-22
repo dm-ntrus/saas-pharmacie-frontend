@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
@@ -26,7 +26,7 @@ export default function SupplyChainForecastsPage() {
 }
 
 function ForecastsContent() {
-  const path = useTenantPath();
+  const { buildPath } = useTenantPath();
   const { data: forecastsData, isLoading, error, refetch } = useDemandForecasts();
   const createForecast = useCreateDemandForecast();
   const [createOpen, setCreateOpen] = useState(false);
@@ -41,11 +41,11 @@ function ForecastsContent() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" asChild><Link href={path("/supply-chain")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link></Button>
+          <Button variant="ghost" size="sm" asChild><Link href={buildPath("/supply-chain")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link></Button>
           <div><h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Prévisions de demande</h1><p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{forecasts.length} prévision(s)</p></div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" asChild><Link href={path("/supply-chain/forecasts/generate")}>Générer</Link></Button>
+          <Button variant="outline" size="sm" asChild><Link href={buildPath("/supply-chain/forecasts/generate")}>Générer</Link></Button>
           <ProtectedAction permission={Permission.DEMAND_FORECASTS_CREATE}><Button leftIcon={<Plus className="w-4 h-4" />} onClick={() => setCreateOpen(true)}>Nouvelle prévision</Button></ProtectedAction>
         </div>
       </div>
