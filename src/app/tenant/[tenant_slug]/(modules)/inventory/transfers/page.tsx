@@ -106,10 +106,14 @@ function TransfersContent() {
   const [statusFilter, setStatusFilter] = useState<TransferStatus | "">("");
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  const { data, isLoading, error, refetch } = useStockTransfers({
+  const transfersQuery = useStockTransfers({
     status: statusFilter || undefined,
     limit: 50,
   });
+  const data = transfersQuery.data as any;
+  const isLoading = transfersQuery.isLoading;
+  const error = transfersQuery.error as any;
+  const refetch = transfersQuery.refetch;
 
   const approveMutation = useApproveTransfer();
   const shipMutation = useShipTransfer();

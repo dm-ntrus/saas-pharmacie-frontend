@@ -119,6 +119,9 @@ export interface InvoiceSummary {
   [key: string]: unknown;
 }
 
+// Legacy / UI typing support (pages may refine these later)
+export type BillingInvoice = Record<string, unknown>;
+
 // —— Historique (GET tenants/:tenantId/billing/history) ——
 export interface SubscriptionHistoryItem {
   id: string;
@@ -134,6 +137,20 @@ export interface SubscriptionHistoryItem {
 }
 
 export type SubscriptionHistory = SubscriptionHistoryItem[] | { result?: SubscriptionHistoryItem[] };
+
+// —— Invoices (minimal typing for UI) ——
+export type InvoiceItemType = "product" | "service" | "consultation" | "prescription";
+
+export interface CreateInvoiceItemDto {
+  item_type: InvoiceItemType;
+  item_code: string;
+  item_name: string;
+  description?: string;
+  quantity: number;
+  unit_price: number;
+  discount_percentage?: number;
+  tax_rate?: number;
+}
 
 // —— Checkout (POST tenants/:tenantId/billing/checkout) ——
 export interface CreateCheckoutDto {
@@ -211,3 +228,119 @@ export const PAYMENT_METHOD_LABELS: Record<string, string> = {
   manual: "Manuel",
   check: "Chèque",
 };
+
+export const INVOICE_STATUS_LABELS: Record<string, string> = {
+  draft: "Brouillon",
+  open: "Ouverte",
+  pending: "En attente",
+  paid: "Payée",
+  void: "Annulée",
+  uncollectible: "Irrécouvrable",
+  canceled: "Annulée",
+  refunded: "Remboursée",
+  failed: "Échec",
+};
+
+/** Avoirs facture abonnement SaaS (GET/POST …/billing/payments/…/credit-notes) */
+export interface SubscriptionCreditNote {
+  id?: string;
+  credit_note_number?: string;
+  status?: string;
+  credit_amount?: number | string;
+  reason?: string;
+  reason_code?: string;
+  created_at?: string;
+  applied_at?: string;
+  currency?: string;
+  [key: string]: unknown;
+}
+
+export const SUBSCRIPTION_CREDIT_NOTE_STATUS_LABELS: Record<string, string> = {
+  open: "Ouverte",
+  applied: "Appliquée",
+  void: "Annulée",
+};
+
+export function normalizeSubscriptionCreditNotesList(raw: unknown): SubscriptionCreditNote[] {
+  if (Array.isArray(raw)) return raw as SubscriptionCreditNote[];
+  if (raw && typeof raw === "object") {
+    const o = raw as Record<string, unknown>;
+    if (Array.isArray(o.creditNotes)) return o.creditNotes as SubscriptionCreditNote[];
+    if (Array.isArray(o.data)) return o.data as SubscriptionCreditNote[];
+    if (Array.isArray(o.result)) return o.result as SubscriptionCreditNote[];
+  }
+  return [];
+}
+
+export type SubscriptionCreditNoteReasonCode =
+  | "duplicate"
+  | "fraudulent"
+  | "requested_by_customer"
+  | "correction"
+  | "discount";
+
+/** Rapports GET tenants/:tenantId/billing/reports/* (facturation abonnement plateforme) */
+export type TenantBillingReportScope = "platform_subscription";
+
+export interface TenantBillingDailyReport {
+  scope: TenantBillingReportScope;
+  date: string;
+  total_invoices: number;
+  total_sales_amount: number;
+  total_payments_received: number;
+  payments: Array<{
+    id: string;
+    amount: number;
+    invoice_id: string | null;
+    processed_at?: string;
+    currency?: string;
+  }>;
+}
+
+export interface TenantBillingMonthlyReport {
+  scope: TenantBillingReportScope;
+  month: string;
+  revenue_from_payments: number;
+  invoice_total_amount_created: number;
+  invoices_created_count: number;
+  invoices_by_status: Record<string, number>;
+}
+
+export interface TenantBillingOutstandingReport {
+  scope: TenantBillingReportScope;
+  totalOutstanding: number;
+  invoices: Array<{
+    id: string;
+    invoice_number: string;
+    due_date?: string;
+    total_amount: number;
+    amount_paid: number;
+    balance_due: number;
+    currency?: string;
+  }>;
+}
+
+export interface TenantBillingSalesByProductReport {
+  scope: TenantBillingReportScope;
+  note?: string;
+  startDate?: string;
+  endDate?: string;
+  items: Array<{
+    rank: number;
+    product_key: string;
+    label: string;
+    quantity: number;
+    revenue: number;
+  }>;
+}
+
+export interface TenantBillingStatisticsReport {
+  scope: TenantBillingReportScope;
+  period: { startDate?: string; endDate?: string };
+  invoiceCount: number;
+  invoicesByStatus: Record<string, number>;
+  paidTotal: number;
+  paymentRecordsInPeriod: number;
+  openInvoicesCount: number;
+  estimatedOpenBalance: number;
+}

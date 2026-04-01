@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
@@ -42,7 +42,13 @@ function PerformanceContent() {
     {
       key: "supplier_name",
       title: "Fournisseur",
-      render: (_, row) => (row as Record<string, unknown>).supplier_name ?? (row as Record<string, unknown>).supplierId ?? (row as Record<string, unknown>).name ?? "—",
+      render: (_, row) =>
+        String(
+          (row as Record<string, unknown>).supplier_name ??
+            (row as Record<string, unknown>).supplierId ??
+            (row as Record<string, unknown>).name ??
+            "—",
+        ),
     },
     {
       key: "rating",

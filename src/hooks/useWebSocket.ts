@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { toast } from 'react-hot-toast';
 import { useAppStore } from '@/store/appStore';
-import { apiClient } from '@/lib/apiClient';
 
 interface WebSocketMessage {
   type: string;
@@ -27,71 +26,13 @@ export const useWebSocket = (endpoint: string, options: UseWebSocketOptions = {}
   const [messages, setMessages] = useState<WebSocketMessage[]>([]);
   
   const reconnectCount = useRef(0);
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { addNotification } = useAppStore();
 
-  const connect = useCallback(() => {
-    if (!enabled) return;
-
-    const token = apiClient.getToken();
-    if (!token) return;
-
-    try {
-      setConnectionStatus('connecting');
-      
-      const wsUrl = `${process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:5000'}/${endpoint}?token=${token}`;
-      const ws = new WebSocket(wsUrl);
-
-      ws.onopen = () => {
-        console.log(`WebSocket connected to ${endpoint}`);
-        setConnectionStatus('connected');
-        reconnectCount.current = 0;
-        setSocket(ws);
-      };
-
-      ws.onmessage = (event) => {
-        try {
-          const message: WebSocketMessage = JSON.parse(event.data);
-          setMessages(prev => [message, ...prev.slice(0, 99)]); // Garder seulement les 100 derniers messages
-
-          // Gestion des notifications en temps réel
-          handleRealtimeNotification(message);
-        } catch (error) {
-          console.error('Erreur parsing WebSocket message:', error);
-        }
-      };
-
-      ws.onclose = (event) => {
-        console.log(`WebSocket disconnected from ${endpoint}:`, event.code, event.reason);
-        setConnectionStatus('disconnected');
-        setSocket(null);
-
-        // Tentative de reconnexion automatique
-        if (event.code !== 1000 && reconnectCount.current < maxReconnectAttempts) {
-          reconnectCount.current++;
-          console.log(`Reconnection attempt ${reconnectCount.current}/${maxReconnectAttempts} in ${reconnectInterval}ms`);
-          
-          reconnectTimeoutRef.current = setTimeout(() => {
-            connect();
-          }, reconnectInterval);
-        }
-      };
-
-      ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        setConnectionStatus('error');
-      };
-
-    } catch (error) {
-      console.error('Failed to create WebSocket connection:', error);
-      setConnectionStatus('error');
-    }
-  }, [endpoint, enabled, reconnectInterval, maxReconnectAttempts]);
-
-  const handleRealtimeNotification = (message: WebSocketMessage) => {
+  const handleRealtimeNotification = useCallback((message: WebSocketMessage) => {
     switch (message.type) {
       case 'STOCK_ALERT':
-        toast.warning(`Stock faible: ${message.data.product?.name || 'Produit inconnu'}`, {
+        toast(`Stock faible: ${message.data.product?.name || 'Produit inconnu'}`, {
           duration: 6000,
         });
         addNotification({
@@ -105,7 +46,7 @@ export const useWebSocket = (endpoint: string, options: UseWebSocketOptions = {}
         break;
 
       case 'EXPIRY_ALERT':
-        toast.warning(`Produit bientôt périmé: ${message.data.product?.name}`, {
+        toast(`Produit bientôt périmé: ${message.data.product?.name}`, {
           duration: 6000,
         });
         addNotification({
@@ -119,7 +60,7 @@ export const useWebSocket = (endpoint: string, options: UseWebSocketOptions = {}
         break;
 
       case 'NEW_PRESCRIPTION':
-        toast.info('Nouvelle prescription reçue', {
+        toast('Nouvelle prescription reçue', {
           duration: 4000,
         });
         addNotification({
@@ -152,7 +93,7 @@ export const useWebSocket = (endpoint: string, options: UseWebSocketOptions = {}
         break;
 
       case 'SYSTEM_MAINTENANCE':
-        toast.info('Maintenance système planifiée', {
+        toast('Maintenance système planifiée', {
           duration: 8000,
         });
         addNotification({
@@ -179,7 +120,69 @@ export const useWebSocket = (endpoint: string, options: UseWebSocketOptions = {}
         }
         break;
     }
-  };
+  }, [addNotification]);
+
+  const connect = useCallback(() => {
+    if (!enabled) return;
+
+    try {
+      setConnectionStatus('connecting');
+
+      // Cookie-based auth (BFF) => no JS access to access_token.
+      // Prefer same-site cookie sessions; if backend requires token query param, update server to accept cookies.
+      const wsUrl = `${process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:5000'}/${endpoint}`;
+      const ws = new WebSocket(wsUrl);
+
+      ws.onopen = () => {
+        console.log(`WebSocket connected to ${endpoint}`);
+        setConnectionStatus('connected');
+        reconnectCount.current = 0;
+        setSocket(ws);
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const message: WebSocketMessage = JSON.parse(event.data);
+          setMessages((prev) => [message, ...prev.slice(0, 99)]); // Garder seulement les 100 derniers messages
+
+          // Gestion des notifications en temps réel
+          handleRealtimeNotification(message);
+        } catch (error) {
+          console.error('Erreur parsing WebSocket message:', error);
+        }
+      };
+
+      ws.onclose = (event) => {
+        console.log(`WebSocket disconnected from ${endpoint}:`, event.code, event.reason);
+        setConnectionStatus('disconnected');
+        setSocket(null);
+
+        // Tentative de reconnexion automatique
+        if (event.code !== 1000 && reconnectCount.current < maxReconnectAttempts) {
+          reconnectCount.current++;
+          console.log(`Reconnection attempt ${reconnectCount.current}/${maxReconnectAttempts} in ${reconnectInterval}ms`);
+
+          reconnectTimeoutRef.current = setTimeout(() => {
+            connect();
+          }, reconnectInterval);
+        }
+      };
+
+      ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+        setConnectionStatus('error');
+      };
+    } catch (error) {
+      console.error('Failed to create WebSocket connection:', error);
+      setConnectionStatus('error');
+    }
+  }, [
+    endpoint,
+    enabled,
+    reconnectInterval,
+    maxReconnectAttempts,
+    handleRealtimeNotification,
+  ]);
 
   const sendMessage = useCallback((data: any) => {
     if (socket && socket.readyState === WebSocket.OPEN) {
@@ -192,6 +195,7 @@ export const useWebSocket = (endpoint: string, options: UseWebSocketOptions = {}
   const disconnect = useCallback(() => {
     if (reconnectTimeoutRef.current) {
       clearTimeout(reconnectTimeoutRef.current);
+      reconnectTimeoutRef.current = null;
     }
     
     if (socket) {
@@ -215,6 +219,7 @@ export const useWebSocket = (endpoint: string, options: UseWebSocketOptions = {}
     return () => {
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = null;
       }
     };
   }, []);

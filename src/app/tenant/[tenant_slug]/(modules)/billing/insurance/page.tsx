@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -37,16 +37,16 @@ function InsuranceInvoicesList() {
         const inv = row as unknown as BillingInvoice;
         return (
           <Link href={buildPath(`/billing/invoices/${inv.id}`)} className="font-medium text-emerald-600 hover:underline">
-            {inv.invoice_number}
+            {String((inv as any).invoice_number ?? "—")}
           </Link>
         );
       },
     },
-    { key: "invoice_date", title: "Date", render: (_, row) => formatDate((row as unknown as BillingInvoice).invoice_date) },
-    { key: "patient_name", title: "Patient", render: (_, row) => (row as unknown as BillingInvoice).patient_name ?? "—" },
+    { key: "invoice_date", title: "Date", render: (_, row) => formatDate((row as any).invoice_date as any) },
+    { key: "patient_name", title: "Patient", render: (_, row) => String((row as any).patient_name ?? "—") },
     { key: "insurance_covered_amount", title: "Part assurance", align: "right", render: (_, row) => formatCurrency(Number((row as unknown as BillingInvoice).insurance_covered_amount ?? 0)) },
     { key: "patient_copay_amount", title: "Part patient", align: "right", render: (_, row) => formatCurrency(Number((row as unknown as BillingInvoice).patient_copay_amount ?? 0)) },
-    { key: "status", title: "Statut", render: (_, row) => <Badge variant="default" size="sm">{INVOICE_STATUS_LABELS[(row as unknown as BillingInvoice).status] ?? (row as unknown as BillingInvoice).status}</Badge> },
+    { key: "status", title: "Statut", render: (_, row) => <Badge variant="default" size="sm">{INVOICE_STATUS_LABELS[(row as any).status] ?? String((row as any).status ?? "—")}</Badge> },
   ];
 
   if (error) return <ErrorBanner title="Erreur" message="Impossible de charger les factures assurance" />;
@@ -71,7 +71,13 @@ function InsuranceInvoicesList() {
         {isLoading ? <Skeleton className="h-64 w-full" /> : list.length === 0 ? (
           <EmptyState title="Aucune facture assurance" description="Les factures avec assurance apparaîtront ici" />
         ) : (
-          <DataTable columns={columns} data={list as unknown as Record<string, unknown>[]} loading={false} emptyTitle="Aucune facture" rowKey={(row) => (row as unknown as BillingInvoice).id} />
+          <DataTable
+            columns={columns}
+            data={list as unknown as Record<string, unknown>[]}
+            loading={false}
+            emptyTitle="Aucune facture"
+            rowKey={(row) => String((row as any).id ?? "")}
+          />
         )}
       </Card>
     </div>

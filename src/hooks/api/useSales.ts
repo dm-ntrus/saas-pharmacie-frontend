@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiService } from "@/services/api.service";
-import { useOrganization } from "@/context/OrganizationContext";
+import { useTenantApiContext } from "@/hooks/useTenantApiContext";
 import type {
   Sale,
   CreateSaleDto,
@@ -14,8 +14,7 @@ import type {
 import { toast } from "react-hot-toast";
 
 function usePharmacyId() {
-  const { currentOrganization } = useOrganization();
-  return currentOrganization?.id ?? "";
+  return useTenantApiContext().pharmacyId;
 }
 
 function basePath(pharmacyId: string) {

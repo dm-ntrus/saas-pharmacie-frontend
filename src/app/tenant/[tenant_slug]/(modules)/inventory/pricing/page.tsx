@@ -106,7 +106,11 @@ function PricingContent() {
   const [showModal, setShowModal] = useState(false);
   const [editingPrice, setEditingPrice] = useState<ProductPrice | null>(null);
 
-  const { data: pricesData, isLoading, error, refetch } = useProductPrices();
+  const pricesQuery = useProductPrices();
+  const pricesData = pricesQuery.data as any;
+  const isLoading = pricesQuery.isLoading;
+  const error = pricesQuery.error as any;
+  const refetch = pricesQuery.refetch;
   const deleteMutation = useDeleteProductPrice();
 
   const prices: ProductPrice[] = useMemo(() => {

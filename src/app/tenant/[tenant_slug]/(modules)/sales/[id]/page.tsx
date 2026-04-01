@@ -67,7 +67,13 @@ function SaleDetailContent() {
     if (!sale) return;
     refundMutation.mutate(
       { id: sale.id, reason: refundReason },
-      { onSuccess: () => { setRefundModalOpen(false); setRefundReason(""); } },
+      {
+        onSuccess: () => {
+          setRefundModalOpen(false);
+          setRefundReason("");
+          void refetch();
+        },
+      },
     );
   };
 
@@ -357,6 +363,11 @@ function SaleDetailContent() {
                   <div>
                     <p className="text-sm font-medium text-slate-900 dark:text-slate-100">Remboursée</p>
                     <p className="text-xs text-slate-500">{formatDateTime(sale.refunded_at)}</p>
+                    {sale.sale_return_number && (
+                      <p className="text-xs font-mono text-slate-600 dark:text-slate-300 mt-0.5">
+                        Document retour : {sale.sale_return_number}
+                      </p>
+                    )}
                     {sale.refund_reason && (
                       <p className="text-xs text-slate-400 mt-0.5">
                         Raison : {sale.refund_reason}
@@ -379,6 +390,9 @@ function SaleDetailContent() {
         size="sm"
       >
         <div className="space-y-4">
+          <p className="text-xs text-slate-500">
+            Un numéro de document retour (RET-…) sera attribué et visible sur la fiche après confirmation.
+          </p>
           <Input
             label="Raison du remboursement"
             value={refundReason}

@@ -162,7 +162,7 @@ function DispensationContent() {
                     <p className="text-xs text-slate-400 mt-1">
                       Reçue le {formatDate(p.received_date)} •{" "}
                       {p.items?.length ?? 0} article(s) •{" "}
-                      {formatCurrency(p.total_amount)}
+                      {formatCurrency(p.total_amount ?? 0)}
                     </p>
                   </div>
                   <ChevronRight className="w-5 h-5 text-slate-400" />
@@ -273,7 +273,7 @@ function DispensationDetail({
             <div>
               <p className="text-xs text-slate-500">Montant</p>
               <p className="font-medium text-slate-900 dark:text-slate-100">
-                {formatCurrency(p.total_amount)}
+                {formatCurrency(p.total_amount ?? 0)}
               </p>
             </div>
           </div>

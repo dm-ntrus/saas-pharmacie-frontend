@@ -13,6 +13,8 @@ import {
   Shield,
   Sliders,
   ChevronRight,
+  Hash,
+  FileText,
 } from "lucide-react";
 
 const LINKS = [
@@ -21,6 +23,18 @@ const LINKS = [
     label: "Configuration pharmacie",
     description: "Paramètres par catégorie (inventaire, facturation, workflow, etc.)",
     icon: Sliders,
+  },
+  {
+    href: "/settings/document-sequences",
+    label: "Numérotation documentaire",
+    description: "Compteurs ventes, factures, frais, écritures (consultation)",
+    icon: Hash,
+  },
+  {
+    href: "/settings/document-templates",
+    label: "Modèles de documents",
+    description: "Factures, tickets, devis, bons — gabarits HTML par pharmacie",
+    icon: FileText,
   },
   {
     href: "/settings/users",

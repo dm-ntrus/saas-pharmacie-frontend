@@ -57,11 +57,12 @@ function SalesDashboardContent() {
   const [period, setPeriod] = useState<DashboardPeriod>("month");
 
   const { data: dashboard, isLoading, error, refetch } = useSalesDashboard(period);
+  const dash = dashboard as any;
 
-  const kpis = dashboard?.kpis;
-  const timeSeries = dashboard?.timeSeries;
-  const topProducts = dashboard?.topProducts;
-  const paymentMethods = dashboard?.paymentMethods;
+  const kpis = dash?.kpis as any;
+  const timeSeries = dash?.timeSeries as any;
+  const topProducts = dash?.topProducts as any;
+  const paymentMethods = dash?.paymentMethods as any;
 
   const hourlyData: Record<string, unknown>[] =
     timeSeries?.hourly?.map((h: any) => ({
@@ -188,7 +189,7 @@ function SalesDashboardContent() {
 
           {/* Charts row */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {hourlyData.length > 0 && (
+            {hourlyData.length > 0 ? (
               <Card>
                 <CardHeader>
                   <CardTitle>Ventes par heure</CardTitle>
@@ -202,9 +203,9 @@ function SalesDashboardContent() {
                   />
                 </CardContent>
               </Card>
-            )}
+            ) : null}
 
-            {trendData.length > 0 && (
+            {trendData.length > 0 ? (
               <Card>
                 <CardHeader>
                   <CardTitle>Tendance du chiffre d&apos;affaires</CardTitle>
@@ -218,7 +219,7 @@ function SalesDashboardContent() {
                   />
                 </CardContent>
               </Card>
-            )}
+            ) : null}
           </div>
 
           {/* Payment methods pie + top products */}
@@ -276,9 +277,9 @@ function SalesDashboardContent() {
           </div>
 
           {/* Last updated */}
-          {dashboard.lastUpdated && (
+          {dash?.lastUpdated && (
             <p className="text-xs text-slate-400 text-right">
-              Mis à jour : {formatDateTime(dashboard.lastUpdated)}
+              Mis à jour : {formatDateTime(dash.lastUpdated as any)}
             </p>
           )}
         </div>

@@ -198,7 +198,10 @@ function QualityDashboardContent() {
                     >
                       <span className="text-sm font-medium truncate">{e.title ?? e.id}</span>
                       <span className="text-xs text-slate-500 shrink-0">
-                        {QUALITY_EVENT_SEVERITY_LABELS[e.severity] ?? e.severity} · {e.reportedAt ? formatDate(e.reportedAt) : ""}
+                        {QUALITY_EVENT_SEVERITY_LABELS[
+                          e.severity as keyof typeof QUALITY_EVENT_SEVERITY_LABELS
+                        ] ?? e.severity}{" "}
+                        · {e.reportedAt ? formatDate(e.reportedAt) : ""}
                       </span>
                     </button>
                   </li>

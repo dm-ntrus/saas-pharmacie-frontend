@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
@@ -24,7 +24,7 @@ import {
   Plus, Search, Eye, Clock, Target,
   ArrowUpDown, BarChart3, Activity, Bell,
   CheckCircle, XCircle, RefreshCw, Shield,
-  Gauge, ShoppingCart, Calendar,
+  Gauge,   ShoppingCart, Calendar, ScrollText, ClipboardList,
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiService } from "@/services/api.service";
@@ -148,12 +148,20 @@ function SupplyChainContent() {
           <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Supply Chain</h1>
           <p className="text-sm text-slate-500 mt-1">Gestion de la chaîne d&apos;approvisionnement</p>
         </div>
-        <div className="flex items-center gap-2">
-          <Link href={buildPath("/supply-chain/purchase-orders")} className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600 hover:underline">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+          <Link href={buildPath("/supply-chain/purchase-orders")} className="inline-flex items-center gap-1.5 font-medium text-emerald-600 hover:underline">
             <ShoppingCart className="w-4 h-4" /> Commandes
           </Link>
           <span className="text-slate-300 dark:text-slate-600">|</span>
-          <Link href={buildPath("/supply-chain/performance")} className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600 hover:underline">
+          <Link href={buildPath("/supply-chain/purchase-requests")} className="inline-flex items-center gap-1.5 font-medium text-emerald-600 hover:underline">
+            <ClipboardList className="w-4 h-4" /> Réquisitions
+          </Link>
+          <span className="text-slate-300 dark:text-slate-600">|</span>
+          <Link href={buildPath("/supply-chain/supplier-quotes")} className="inline-flex items-center gap-1.5 font-medium text-emerald-600 hover:underline">
+            <ScrollText className="w-4 h-4" /> Devis
+          </Link>
+          <span className="text-slate-300 dark:text-slate-600">|</span>
+          <Link href={buildPath("/supply-chain/performance")} className="inline-flex items-center gap-1.5 font-medium text-emerald-600 hover:underline">
             <TrendingUp className="w-4 h-4" /> Performance
           </Link>
         </div>

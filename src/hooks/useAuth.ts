@@ -36,7 +36,8 @@ export const useAuth = (): AuthContextType => {
   const hasAnyRole = (roles: string[]): boolean =>
     roles.some((role) => hasRole(role));
 
-  const hasPermission = (_permission: string): boolean => {
+  const hasPermission = (permission: string): boolean => {
+    void permission;
     return false;
   };
 

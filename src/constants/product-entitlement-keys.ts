@@ -1,0 +1,41 @@
+/**
+ * Miroir de `src/plateform/billing/feature-flags/catalog/product-entitlement-keys.ts` (backend).
+ * À garder aligné manuellement avec le catalogue Surreal / seed.
+ */
+export const PRODUCT_ENTITLEMENT_KEYS = {
+  MODULE_DASHBOARD: "module.dashboard",
+  MODULE_SALES: "module.sales",
+  MODULE_INVENTORY: "module.inventory",
+  MODULE_PATIENTS: "module.patients",
+  MODULE_PRESCRIPTIONS: "module.prescriptions",
+  MODULE_VACCINATION: "module.vaccination",
+  MODULE_DELIVERY: "module.delivery",
+  MODULE_BILLING_OPERATIONS: "module.billing_operations",
+  MODULE_BILLING_SAAS: "module.billing_saas",
+  MODULE_ACCOUNTING: "module.accounting",
+  MODULE_SUPPLIERS: "module.suppliers",
+  MODULE_SUPPLY_CHAIN: "module.supply_chain",
+  MODULE_QUALITY: "module.quality",
+  MODULE_INSURANCE: "module.insurance",
+  MODULE_E_INVOICE: "module.e_invoice",
+  MODULE_HR: "module.hr",
+  MODULE_ANALYTICS: "module.analytics",
+  MODULE_REPORTS: "module.reports",
+  MODULE_NOTIFICATIONS: "module.notifications",
+  MODULE_LOYALTY: "module.loyalty",
+  MODULE_COMPLIANCE_AUDIT: "module.compliance_audit",
+  MODULE_SETTINGS: "module.settings",
+  MODULE_DOCUMENT_SEQUENCES: "module.document_sequences",
+  MODULE_DOCUMENT_TEMPLATES: "module.document_templates",
+  INTEGRATION_API_PUBLIC: "integration.api_public",
+  INTEGRATION_STRIPE: "integration.stripe",
+  SUPPORT_STANDARD: "support.standard",
+  SUPPORT_PRIORITY: "support.priority",
+  PLATFORM_DEDICATED_DB: "platform.dedicated_db",
+  QUOTA_SEATS: "quota.seats",
+  QUOTA_STORAGE_GB: "quota.storage_gb",
+  QUOTA_API_CALLS_MONTHLY: "quota.api_calls_monthly",
+} as const;
+
+export type ProductEntitlementKey =
+  (typeof PRODUCT_ENTITLEMENT_KEYS)[keyof typeof PRODUCT_ENTITLEMENT_KEYS];

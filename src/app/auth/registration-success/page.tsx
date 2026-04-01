@@ -1,104 +1,335 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import Image from 'next/image';
-import { motion } from 'motion/react';
-import { CheckCircle2, ArrowRight, LayoutDashboard, ShieldCheck, Sparkles, Star } from 'lucide-react';
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  CheckCircle2,
+  ArrowRight,
+  LayoutDashboard,
+  Star,
+  Loader2,
+  AlertCircle,
+} from "lucide-react";
+import {
+  createTenantProvisioningSocket,
+  type ProvisioningProgressEvent,
+  type ProvisioningSuccessEvent,
+  type ProvisioningErrorEvent,
+} from "@/lib/realtime/tenantProvisioningSocket";
+import {
+  useTenantProvisioningStatus,
+  tenantProvisioningStatusQueryKey,
+} from "@/hooks/useTenantProvisioningStatus";
+import { isValidProvisioningId } from "@/services/tenant-registration.service";
+import { buildTenantLoginPath } from "@/lib/tenant/tenant-urls";
+import type { TenantProvisioningPublicStatus } from "@/types/tenant-registration.types";
+import AuthShell from "@/components/auth/AuthShell";
 
 export default function RegistrationSuccessPage() {
   return (
-    <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center p-8 relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/40 to-slate-900/95 z-10"></div>
-        <Image
-          src="/images/tenant.jpg"
-          alt="Pharmacy"
-          fill
-          className="absolute inset-0 w-full h-full object-cover opacity-40 grayscale"
-          referrerPolicy="no-referrer"
-        />
+    <Suspense fallback={<Fallback />}>
+      <RegistrationSuccessInner />
+    </Suspense>
+  );
+}
 
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="max-w-3xl w-full text-center relative z-10"
+function Fallback() {
+  return (
+    <AuthShell>
+      <div className="flex items-center justify-center py-32">
+        <Loader2 className="w-8 h-8 text-emerald-600 animate-spin" />
+      </div>
+    </AuthShell>
+  );
+}
+
+function RegistrationSuccessInner() {
+  const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
+  const provisioningId =
+    searchParams?.get("provisioningId")?.trim() ?? "";
+  const subdomainHint =
+    searchParams?.get("subdomain")?.trim().toLowerCase() ?? "";
+
+  const statusQuery = useTenantProvisioningStatus(
+    provisioningId && isValidProvisioningId(provisioningId)
+      ? provisioningId
+      : undefined,
+  );
+
+  const [wsConnected, setWsConnected] = useState(false);
+  const [progressMeta, setProgressMeta] = useState<{
+    step?: string;
+    stepIndex?: number;
+    totalSteps?: number;
+    progress?: number;
+  } | null>(null);
+
+  const apiStatus = statusQuery.data;
+  const pollError =
+    statusQuery.error instanceof Error
+      ? statusQuery.error.message
+      : null;
+
+  const effectiveSubdomain = useMemo(() => {
+    return (
+      apiStatus?.subdomain?.trim().toLowerCase() ||
+      subdomainHint ||
+      extractSubdomainFromUnknown(apiStatus?.metadata) ||
+      ""
+    );
+  }, [apiStatus?.subdomain, apiStatus?.metadata, subdomainHint]);
+
+  const loginHref = buildTenantLoginPath(effectiveSubdomain);
+
+  useEffect(() => {
+    if (!provisioningId || !isValidProvisioningId(provisioningId)) return;
+
+    const socket = createTenantProvisioningSocket();
+
+    const onConnect = () => {
+      setWsConnected(true);
+      socket.emit("subscribe_provisioning", { provisioningId });
+    };
+    const onDisconnect = () => setWsConnected(false);
+
+    const onProgress = (evt: ProvisioningProgressEvent) => {
+      if (evt?.provisioningId !== provisioningId) return;
+      setProgressMeta({
+        step: evt.step,
+        stepIndex: evt.stepIndex,
+        totalSteps: evt.totalSteps,
+        progress: evt.progress,
+      });
+    };
+
+    const onSuccess = (evt: ProvisioningSuccessEvent) => {
+      if (evt?.provisioningId !== provisioningId) return;
+      setProgressMeta((prev) => prev ?? { progress: 100 });
+      void queryClient.invalidateQueries({
+        queryKey: tenantProvisioningStatusQueryKey(provisioningId),
+      });
+      try {
+        socket.emit("unsubscribe_provisioning", { provisioningId });
+      } catch {
+        /* ignore */
+      }
+      socket.disconnect();
+    };
+
+    const onError = (evt: ProvisioningErrorEvent) => {
+      if (evt?.provisioningId && evt.provisioningId !== provisioningId)
+        return;
+      void queryClient.invalidateQueries({
+        queryKey: tenantProvisioningStatusQueryKey(provisioningId),
+      });
+    };
+
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+    socket.on("provisioning_progress", onProgress);
+    socket.on("provisioning_success", onSuccess);
+    socket.on("provisioning_error", onError);
+
+    return () => {
+      try {
+        socket.emit("unsubscribe_provisioning", { provisioningId });
+      } catch {
+        /* ignore */
+      }
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+      socket.off("provisioning_progress", onProgress);
+      socket.off("provisioning_success", onSuccess);
+      socket.off("provisioning_error", onError);
+      socket.disconnect();
+    };
+  }, [provisioningId, queryClient]);
+
+  const display = resolveDisplayState(apiStatus, pollError);
+  const progress =
+    progressMeta?.progress ??
+    (display.kind === "completed" ? 100 : undefined);
+
+  return (
+    <AuthShell
+      testimonial={{
+        quote:
+          "L'installation a pris 10 minutes. Nous étions opérationnels le jour même.",
+        name: "Dr. Amisi",
+        title: "Pharmacie de la Paix",
+      }}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="space-y-6"
       >
-        <motion.div 
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="w-28 h-28 bg-emerald-500 text-white rounded-[2.5rem] flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-emerald-500/20"
+        {/* Success icon */}
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", stiffness: 200, delay: 0.15 }}
+          className={`w-20 h-20 rounded-2xl flex items-center justify-center ${
+            display.kind === "failed"
+              ? "bg-red-50"
+              : display.kind === "completed"
+                ? "bg-emerald-50"
+                : "bg-emerald-50"
+          }`}
         >
-          <CheckCircle2 className="w-14 h-14" />
+          {display.kind === "failed" ? (
+            <AlertCircle className="w-10 h-10 text-red-500" />
+          ) : display.kind === "completed" ? (
+            <CheckCircle2 className="w-10 h-10 text-emerald-600" />
+          ) : (
+            <Loader2 className="w-10 h-10 text-emerald-600 animate-spin" />
+          )}
         </motion.div>
-        
-        <motion.h1 
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="text-5xl md:text-7xl font-bold font-display mb-4 leading-tight"
-        >
-          Bienvenue dans le futur de la <span className="text-emerald-400 italic">santé</span>.
-        </motion.h1>
-        
-        <motion.p 
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="text-xl text-slate-400 mb-8 leading-relaxed max-w-2xl mx-auto"
-        >
-          Votre compte SyntixPharma est prêt. Vous rejoignez une communauté de +500 pharmaciens qui transforment leur quotidien.
-        </motion.p>
 
-        <div className="grid md:grid-cols-2 gap-8 mb-16">
-          <motion.div 
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="p-10 bg-white/5 backdrop-blur-xl rounded-[3rem] border border-white/10 text-left group hover:bg-white/10 transition-all"
-          >
-            <div className="w-14 h-14 bg-emerald-600 text-white rounded-2xl flex items-center justify-center mb-6 shadow-xl group-hover:scale-110 transition-transform">
-              <LayoutDashboard className="w-7 h-7" />
-            </div>
-            <h3 className="text-2xl font-bold text-white mb-3 font-display">Tableau de bord</h3>
-            <p className="text-slate-400 leading-relaxed">Gérez vos ventes, vos stocks et vos patients avec une interface intuitive et puissante.</p>
-          </motion.div>
-
-          <motion.div 
-            initial={{ x: 20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            className="p-10 bg-white/5 backdrop-blur-xl rounded-[3rem] border border-white/10 text-left group hover:bg-white/10 transition-all"
-          >
-            <div className="w-14 h-14 bg-blue-600 text-white rounded-2xl flex items-center justify-center mb-6 shadow-xl group-hover:scale-110 transition-transform">
-              <Star className="w-7 h-7" />
-            </div>
-            <h3 className="text-2xl font-bold text-white mb-3 font-display">IA Prédictive</h3>
-            <p className="text-slate-400 leading-relaxed">Anticipez vos ruptures de stock et optimisez vos commandes grâce à nos algorithmes.</p>
-          </motion.div>
+        {/* Title */}
+        <div>
+          <h1 className="text-3xl sm:text-4xl font-display font-bold text-slate-900 mb-2 tracking-tight">
+            {display.kind === "completed"
+              ? "Votre espace est prêt !"
+              : display.kind === "failed"
+                ? "Un problème est survenu"
+                : "Préparation en cours…"}
+          </h1>
+          <p className="text-sm text-slate-500 leading-relaxed">
+            {provisioningId
+              ? display.message
+              : "Merci pour votre inscription ! Vérifiez votre email (y compris indésirables) pour vos identifiants."}
+          </p>
         </div>
 
-        <motion.div 
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.7 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-6"
-        >
-          <Link 
-            href="/auth/login" 
-            className="w-full sm:w-auto px-12 py-6 bg-emerald-600 text-white rounded-[2rem] font-bold text-xl hover:bg-emerald-700 transition-all flex items-center justify-center gap-4 shadow-2xl shadow-emerald-500/20 group"
+        {/* Progress bar */}
+        {provisioningId && display.kind === "pending" && (
+          <div className="space-y-2">
+            <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+              <motion.div
+                className="h-full bg-emerald-500 rounded-full"
+                initial={{ width: "5%" }}
+                animate={{
+                  width: progress ? `${progress}%` : "30%",
+                }}
+                transition={{ duration: 0.8 }}
+              />
+            </div>
+            {progressMeta?.stepIndex != null &&
+              progressMeta?.totalSteps != null && (
+                <p className="text-xs text-slate-400">
+                  Étape {progressMeta.stepIndex}/{progressMeta.totalSteps}
+                  {progressMeta.step ? ` — ${progressMeta.step}` : ""}
+                  {wsConnected && (
+                    <span className="ml-2 text-emerald-500">● temps réel</span>
+                  )}
+                </p>
+              )}
+          </div>
+        )}
+
+        {/* Subdomain info */}
+        {effectiveSubdomain && (
+          <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center gap-3">
+            <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center shrink-0">
+              <LayoutDashboard className="w-5 h-5 text-emerald-600" />
+            </div>
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
+                Votre espace
+              </p>
+              <p className="text-base font-bold text-emerald-600 font-mono">
+                {effectiveSubdomain}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Feature cards */}
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            {
+              icon: LayoutDashboard,
+              title: "Tableau de bord",
+              desc: "Ventes, stocks, patients",
+            },
+            {
+              icon: Star,
+              title: "IA Prédictive",
+              desc: "Anticipez vos ruptures",
+            },
+          ].map((card) => (
+            <div
+              key={card.title}
+              className="p-4 bg-slate-50 rounded-2xl border border-slate-100 group hover:bg-white hover:shadow-lg transition-all"
+            >
+              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mb-3 shadow-sm group-hover:bg-emerald-50 transition-colors">
+                <card.icon className="w-5 h-5 text-emerald-600" />
+              </div>
+              <h3 className="text-sm font-bold text-slate-900">{card.title}</h3>
+              <p className="text-xs text-slate-400 mt-0.5">{card.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* CTAs */}
+        <div className="flex flex-col gap-3">
+          <Link
+            href={loginHref}
+            className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-base hover:bg-emerald-600 transition-all flex items-center justify-center gap-3 shadow-xl shadow-slate-900/15 group"
           >
-            Accéder à mon espace
-            <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+            {effectiveSubdomain
+              ? "Connexion à mon espace"
+              : "Accéder à la connexion"}
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Link>
-          <Link 
-            href="/support" 
-            className="w-full sm:w-auto px-12 py-6 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-[2rem] font-bold text-xl hover:bg-white/20 transition-all flex items-center justify-center gap-4"
+          <Link
+            href="/support"
+            className="w-full py-3.5 bg-slate-50 text-slate-600 border border-slate-100 rounded-2xl font-bold text-sm hover:bg-slate-100 transition-all text-center"
           >
             Besoin d&apos;aide ?
           </Link>
-        </motion.div>
+        </div>
       </motion.div>
-    </div>
+    </AuthShell>
   );
+}
+
+function extractSubdomainFromUnknown(meta: unknown): string {
+  if (!meta || typeof meta !== "object") return "";
+  const o = meta as Record<string, unknown>;
+  const s = o.subdomain ?? o.tenantSubdomain;
+  return typeof s === "string" ? s.trim().toLowerCase() : "";
+}
+
+function resolveDisplayState(
+  api: TenantProvisioningPublicStatus | undefined,
+  pollErr: string | null,
+): { kind: "pending" | "completed" | "failed"; message: string } {
+  if (pollErr && !api) return { kind: "failed", message: pollErr };
+  if (!api)
+    return {
+      kind: "pending",
+      message: pollErr ?? "Récupération du statut…",
+    };
+  if (api.status === "completed")
+    return {
+      kind: "completed",
+      message: api.message ?? "Provisioning terminé.",
+    };
+  if (api.status === "failed")
+    return {
+      kind: "failed",
+      message:
+        api.message ??
+        "Le provisioning a échoué. Contactez le support avec votre référence.",
+    };
+  return {
+    kind: "pending",
+    message: api.message ?? "Provisioning en cours…",
+  };
 }

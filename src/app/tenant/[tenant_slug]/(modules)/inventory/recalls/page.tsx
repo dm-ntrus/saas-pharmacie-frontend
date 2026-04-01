@@ -106,15 +106,19 @@ function RecallsContent() {
   const [statusFilter, setStatusFilter] = useState<RecallStatus | "">("");
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  const { data, isLoading, error, refetch } = useBatchRecalls({
+  const recallsQuery = useBatchRecalls({
     status: statusFilter || undefined,
     limit: 50,
   });
+  const data = recallsQuery.data as any;
+  const isLoading = recallsQuery.isLoading;
+  const error = recallsQuery.error as any;
+  const refetch = recallsQuery.refetch;
 
   const activateMutation = useActivateRecall();
   const completeMutation = useCompleteRecall();
 
-  const recalls: BatchRecall[] = data?.data ?? [];
+  const recalls: BatchRecall[] = (data?.data ?? []) as BatchRecall[];
 
   const filtered = recalls.filter((r) => {
     if (!search) return true;

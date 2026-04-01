@@ -77,6 +77,41 @@ export interface Product {
   reference_price?: string;
   status: ProductStatus;
   metadata?: Record<string, unknown>;
+  /** URL média (CDN, stockage objet) */
+  primary_image_url?: string;
+  /** Code ATC OMS (ex. N02BE01) */
+  atc_code?: string;
+  /** Libellé classe thérapeutique */
+  therapeutic_class?: string;
+}
+
+export type ProductPriceKind =
+  | "reference"
+  | "sale"
+  | "purchase"
+  | "promotional"
+  | "wholesale"
+  | "insurance"
+  | "member";
+
+export type ProductPriceSource = "product" | "organization_price";
+
+export interface ProductPriceHistoryItem {
+  id: string;
+  price_kind: ProductPriceKind | string;
+  old_value: string | null;
+  new_value: string;
+  source: ProductPriceSource | string;
+  created_at: string;
+  changed_by?: string;
+}
+
+export interface ReorderSuggestionItem {
+  product_id: string;
+  quantity: number;
+  product_name?: string;
+  sku?: string;
+  barcode?: string;
 }
 
 export interface ProductQueryParams {
@@ -115,6 +150,9 @@ export interface CreateProductPayload {
   storageConditions?: string;
   referencePrice?: number;
   metadata?: Record<string, unknown>;
+  primaryImageUrl?: string;
+  atcCode?: string;
+  therapeuticClass?: string;
 }
 
 export type UpdateProductPayload = Partial<CreateProductPayload> & {

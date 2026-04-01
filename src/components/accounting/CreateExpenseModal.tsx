@@ -28,7 +28,7 @@ export const CreateExpenseModal: React.FC<CreateExpenseModalProps> = ({
   const queryClient = useQueryClient();
 
   const createExpenseMutation = useMutation({
-    mutationFn: async (data: CreateExpenseDto) => apiClient.createExpense(data),
+    mutationFn: async (data: any) => apiClient.createExpense(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
       toast.success("Dépense créée avec succès");
@@ -63,7 +63,7 @@ export const CreateExpenseModal: React.FC<CreateExpenseModalProps> = ({
         formData.append("attachments", file);
       });
 
-      createExpenseMutation.mutate(formData);
+      createExpenseMutation.mutate(formData as any);
       onClose();
       setAttachments([]);
       formik.resetForm();
@@ -146,7 +146,7 @@ export const CreateExpenseModal: React.FC<CreateExpenseModalProps> = ({
             className="w-full rounded-md border border-gray-300 bg-white px-3 h-10 text-sm focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
           >
             <option value="">Sélectionner un compte</option>
-            {accounts.map((account) => (
+            {accounts.map((account: any) => (
               <option key={account.id} value={account.id}>
                 {account.accountCode} - {account.accountName}
               </option>

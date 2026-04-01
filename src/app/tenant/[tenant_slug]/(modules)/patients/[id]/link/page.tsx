@@ -56,7 +56,7 @@ export default function PatientLinkPage() {
 
 function PatientLinkContent() {
   const params = useParams();
-  const patientId = params.id as string;
+  const patientId = (params as any)?.id as string;
   const pharmacyId = usePharmacyId();
   const qc = useQueryClient();
   const [userSearch, setUserSearch] = useState("");

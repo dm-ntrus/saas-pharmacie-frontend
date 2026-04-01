@@ -35,7 +35,7 @@ function NewEmployeeContent() {
 
   const onSubmit = (data: CreateEmployeeFormData) => {
     const payload = { ...data, contract_start_date: data.contract_start_date ? new Date(data.contract_start_date).toISOString() : undefined };
-    createEmployee.mutate(payload, {
+    createEmployee.mutate(payload as any, {
       onSuccess: (res) => {
         const id = res?.id ? safeId(String(res.id)) : "";
         router.push(buildPath("/hr/employees/" + id));

@@ -12,6 +12,8 @@ import { updatePatientSchema, type UpdatePatientFormData } from "@/schemas/patie
 import { Button, Card, CardContent, CardHeader, CardTitle, Input, Select } from "@/components/ui";
 import { ArrowLeft } from "lucide-react";
 import { ErrorBanner, Skeleton } from "@/components/ui";
+import { Gender } from "@/types/patients";
+import { PatientStatus } from "@/types/patients";
 
 export default function EditPatientPage() {
   return (
@@ -79,6 +81,8 @@ function EditPatientContent() {
     const payload = {
       ...data,
       email: data.email || undefined,
+      gender: data.gender as unknown as Gender | undefined,
+      status: data.status as unknown as PatientStatus | undefined,
     };
     updatePatient.mutate(
       { id, data: payload },

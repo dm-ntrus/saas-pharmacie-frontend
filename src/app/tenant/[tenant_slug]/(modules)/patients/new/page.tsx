@@ -11,6 +11,7 @@ import { useCreatePatient } from "@/hooks/api/usePatients";
 import { createPatientSchema, type CreatePatientFormData } from "@/schemas/patients.schema";
 import { Button, Card, CardContent, CardHeader, CardTitle, Input, Select } from "@/components/ui";
 import { ArrowLeft } from "lucide-react";
+import { Gender } from "@/types/patients";
 
 export default function NewPatientPage() {
   return (
@@ -52,6 +53,7 @@ function NewPatientContent() {
     const payload = {
       ...data,
       email: data.email || undefined,
+      gender: data.gender as unknown as Gender,
     };
     createPatient.mutate(payload, {
       onSuccess: (result: any) => {

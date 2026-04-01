@@ -90,11 +90,11 @@ function AuditContent() {
   });
 
   const entries: AuditEntry[] = useMemo(() => {
-    const raw = auditData?.data ?? (Array.isArray(auditData) ? auditData : []);
-    return raw as AuditEntry[];
+    const raw = (auditData as any)?.data ?? auditData ?? [];
+    return (Array.isArray(raw) ? raw : []) as AuditEntry[];
   }, [auditData]);
 
-  const total = auditData?.total ?? entries.length;
+  const total = (auditData as any)?.total ?? entries.length;
   const totalPages = Math.max(1, Math.ceil(total / limit));
 
   const filtered = useMemo(() => {

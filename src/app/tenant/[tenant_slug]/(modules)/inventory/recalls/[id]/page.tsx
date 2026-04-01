@@ -43,7 +43,11 @@ function RecallDetailContent() {
   const id = params?.id as string;
   const { buildPath } = useTenantPath();
 
-  const { data: recall, isLoading, error, refetch } = useRecallById(id);
+  const recallQuery = useRecallById(id);
+  const recall = recallQuery.data as any;
+  const isLoading = recallQuery.isLoading;
+  const error = recallQuery.error as any;
+  const refetch = recallQuery.refetch;
   const activateMutation = useActivateRecall();
   const completeMutation = useCompleteRecall();
   const cancelMutation = useCancelRecall();

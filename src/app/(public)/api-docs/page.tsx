@@ -1,801 +1,184 @@
 "use client";
 
-import React, { useState } from "react";
-import Head from "next/head";
+import { motion } from "framer-motion";
+import { Code, Braces, Key, FileText, ArrowRight, Terminal, Webhook } from "lucide-react";
 import Link from "next/link";
-import {
-  CodeBracketIcon,
-  DocumentTextIcon,
-  KeyIcon,
-  CubeIcon,
-  ServerIcon,
-  ShieldCheckIcon,
-  PlayIcon,
-  ClipboardDocumentIcon,
-  CheckIcon,
-  ExclamationTriangleIcon,
-  InformationCircleIcon,
-  ChevronRightIcon,
-  ChevronDownIcon,
-} from "@heroicons/react/24/outline";
 
-const ApiDocsPage = () => {
-  const [activeSection, setActiveSection] = useState("overview");
-  const [expandedEndpoint, setExpandedEndpoint] = useState<string | null>(null);
+const endpoints = [
+  { method: "GET", path: "/api/v1/products", desc: "Liste des produits de l'inventaire" },
+  { method: "POST", path: "/api/v1/sales", desc: "Créer une nouvelle vente" },
+  { method: "GET", path: "/api/v1/patients", desc: "Liste des patients enregistrés" },
+  { method: "GET", path: "/api/v1/inventory/alerts", desc: "Alertes de stock et péremption" },
+  { method: "POST", path: "/api/v1/prescriptions", desc: "Enregistrer une ordonnance" },
+  { method: "GET", path: "/api/v1/analytics/dashboard", desc: "Données du tableau de bord" },
+];
 
-  const sections = [
-    { id: "overview", name: "Vue d'ensemble", icon: InformationCircleIcon },
-    { id: "authentication", name: "Authentification", icon: ShieldCheckIcon },
-    { id: "pos", name: "Point de Vente", icon: CubeIcon },
-    { id: "inventory", name: "Inventaire", icon: ServerIcon },
-    { id: "prescriptions", name: "Prescriptions", icon: DocumentTextIcon },
-    { id: "customers", name: "Clients", icon: DocumentTextIcon },
-    { id: "analytics", name: "Analytics", icon: DocumentTextIcon },
-    { id: "webhooks", name: "Webhooks", icon: CodeBracketIcon },
-    { id: "errors", name: "Codes d'erreur", icon: ExclamationTriangleIcon },
-  ];
+const sdks = [
+  { lang: "JavaScript / TypeScript", icon: Braces },
+  { lang: "Python", icon: Terminal },
+  { lang: "cURL / REST", icon: Code },
+];
 
-  const endpoints = {
-    pos: [
-      {
-        method: "POST",
-        path: "/api/pos/transactions",
-        description: "Créer une nouvelle transaction de vente",
-        auth: true,
-        parameters: [
-          {
-            name: "items",
-            type: "array",
-            required: true,
-            description: "Liste des produits vendus",
-          },
-          {
-            name: "customerId",
-            type: "string",
-            required: false,
-            description: "ID du client",
-          },
-          {
-            name: "paymentMethod",
-            type: "enum",
-            required: true,
-            description: "cash|card|mobile_money",
-          },
-          {
-            name: "discount",
-            type: "number",
-            required: false,
-            description: "Pourcentage de remise",
-          },
-        ],
-        response: {
-          transactionId: "string",
-          total: "number",
-          tax: "number",
-          change: "number",
-          receipt: "string",
-        },
-      },
-      {
-        method: "GET",
-        path: "/api/pos/transactions",
-        description: "Lister les transactions",
-        auth: true,
-        parameters: [
-          {
-            name: "page",
-            type: "number",
-            required: false,
-            description: "Numéro de page",
-          },
-          {
-            name: "limit",
-            type: "number",
-            required: false,
-            description: "Éléments par page (max 100)",
-          },
-          {
-            name: "startDate",
-            type: "string",
-            required: false,
-            description: "Date de début (ISO 8601)",
-          },
-          {
-            name: "endDate",
-            type: "string",
-            required: false,
-            description: "Date de fin (ISO 8601)",
-          },
-        ],
-      },
-      {
-        method: "GET",
-        path: "/api/pos/transactions/{id}",
-        description: "Obtenir une transaction spécifique",
-        auth: true,
-        parameters: [
-          {
-            name: "id",
-            type: "string",
-            required: true,
-            description: "ID de la transaction",
-          },
-        ],
-      },
-    ],
-    inventory: [
-      {
-        method: "GET",
-        path: "/api/inventory/products",
-        description: "Lister tous les produits en stock",
-        auth: true,
-        parameters: [
-          {
-            name: "category",
-            type: "string",
-            required: false,
-            description: "Filtrer par catégorie",
-          },
-          {
-            name: "lowStock",
-            type: "boolean",
-            required: false,
-            description: "Produits en rupture uniquement",
-          },
-          {
-            name: "search",
-            type: "string",
-            required: false,
-            description: "Recherche par nom ou DCI",
-          },
-        ],
-      },
-      {
-        method: "POST",
-        path: "/api/inventory/products",
-        description: "Ajouter un nouveau produit",
-        auth: true,
-        parameters: [
-          {
-            name: "name",
-            type: "string",
-            required: true,
-            description: "Nom du produit",
-          },
-          {
-            name: "dci",
-            type: "string",
-            required: true,
-            description: "Dénomination Commune Internationale",
-          },
-          {
-            name: "category",
-            type: "string",
-            required: true,
-            description: "Catégorie thérapeutique",
-          },
-          {
-            name: "price",
-            type: "number",
-            required: true,
-            description: "Prix unitaire",
-          },
-          {
-            name: "quantity",
-            type: "number",
-            required: true,
-            description: "Quantité en stock",
-          },
-        ],
-      },
-      {
-        method: "PUT",
-        path: "/api/inventory/products/{id}/stock",
-        description: "Mettre à jour le stock d'un produit",
-        auth: true,
-        parameters: [
-          {
-            name: "id",
-            type: "string",
-            required: true,
-            description: "ID du produit",
-          },
-          {
-            name: "quantity",
-            type: "number",
-            required: true,
-            description: "Nouvelle quantité",
-          },
-          {
-            name: "reason",
-            type: "string",
-            required: true,
-            description: "Motif de l'ajustement",
-          },
-        ],
-      },
-    ],
-    prescriptions: [
-      {
-        method: "POST",
-        path: "/api/prescriptions/validate",
-        description: "Valider une prescription médicale",
-        auth: true,
-        parameters: [
-          {
-            name: "prescriptionId",
-            type: "string",
-            required: true,
-            description: "ID de l'ordonnance",
-          },
-          {
-            name: "patientId",
-            type: "string",
-            required: true,
-            description: "ID du patient",
-          },
-          {
-            name: "medications",
-            type: "array",
-            required: true,
-            description: "Liste des médicaments prescrits",
-          },
-        ],
-      },
-      {
-        method: "GET",
-        path: "/api/prescriptions/interactions",
-        description: "Vérifier les interactions médicamenteuses",
-        auth: true,
-        parameters: [
-          {
-            name: "medications",
-            type: "string",
-            required: true,
-            description: "IDs des médicaments séparés par virgule",
-          },
-        ],
-      },
-    ],
-  };
-
-  const codeExamples = {
-    curl: `curl -X POST https://api.pharmassaas.com/api/pos/transactions \\
-  -H "Authorization: Bearer YOUR_API_KEY" \\
-  -H "Content-Type: application/json" \\
-  -d '{
-    "items": [
-      {
-        "productId": "prod_123",
-        "quantity": 2,
-        "price": 15.50
-      }
-    ],
-    "paymentMethod": "mobile_money",
-    "customerId": "cust_456"
-  }'`,
-    javascript: `const response = await fetch('https://api.pharmassaas.com/api/pos/transactions', {
-  method: 'POST',
-  headers: {
-    'Authorization': 'Bearer YOUR_API_KEY',
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    items: [{
-      productId: 'prod_123',
-      quantity: 2,
-      price: 15.50
-    }],
-    paymentMethod: 'mobile_money',
-    customerId: 'cust_456'
-  })
-});
-
-const transaction = await response.json();`,
-    python: `import requests
-
-headers = {
-    'Authorization': 'Bearer YOUR_API_KEY',
-    'Content-Type': 'application/json'
-}
-
-data = {
-    'items': [{
-        'productId': 'prod_123',
-        'quantity': 2,
-        'price': 15.50
-    }],
-    'paymentMethod': 'mobile_money',
-    'customerId': 'cust_456'
-}
-
-response = requests.post(
-    'https://api.pharmassaas.com/api/pos/transactions',
-    headers=headers,
-    json=data
-)`,
-  };
-
-  const [activeLanguage, setActiveLanguage] =
-    useState<keyof typeof codeExamples>("curl");
-
+function MethodBadge({ method }: { method: string }) {
+  const colors =
+    method === "GET"
+      ? "bg-emerald-100 text-emerald-700"
+      : method === "POST"
+        ? "bg-blue-100 text-blue-700"
+        : method === "PUT"
+          ? "bg-amber-100 text-amber-700"
+          : "bg-red-100 text-red-700";
   return (
-    <>
-      <Head>
-        <title>Documentation API - NakiCode PharmaSaaS</title>
-        <meta
-          name="description"
-          content="Documentation complète de l'API NakiCode PharmaSaaS pour intégrer notre plateforme dans vos systèmes."
-        />
-        <meta
-          name="keywords"
-          content="API, documentation, intégration, développeur, pharmacie"
-        />
-      </Head>
+    <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider ${colors}`}>
+      {method}
+    </span>
+  );
+}
 
-      <div className="min-h-screen bg-gray-50">
-        {/* Navigation */}
-        <nav className="bg-white border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center py-4">
-              <Link href="/" className="text-xl font-bold text-sky-600">
-                NakiCode PharmaSaaS
-              </Link>
-              <div className="flex items-center space-x-6">
-                <Link href="/" className="text-gray-600 hover:text-gray-900">
-                  Accueil
-                </Link>
-                <Link
-                  href="/features"
-                  className="text-gray-600 hover:text-gray-900"
-                >
-                  Fonctionnalités
-                </Link>
-                <Link
-                  href="/pricing"
-                  className="text-gray-600 hover:text-gray-900"
-                >
-                  Tarifs
-                </Link>
-                <Link href="/api-docs" className="text-sky-600 font-medium">
-                  API
-                </Link>
+export default function ApiDocsPage() {
+  return (
+    <div className="min-h-screen pt-28 sm:pt-32 pb-16 sm:pb-24 bg-white">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 mb-3">
+              Développeurs
+            </p>
+            <h1 className="text-3xl sm:text-5xl font-display font-bold text-slate-900 mb-4 tracking-tight">
+              API <span className="text-emerald-600">RESTful</span>
+            </h1>
+            <p className="text-base text-slate-500 font-medium leading-relaxed max-w-lg mx-auto">
+              Intégrez SyntixPharma à vos systèmes existants grâce à notre API
+              sécurisée et bien documentée.
+            </p>
+          </motion.div>
+        </div>
+
+        {/* Highlights */}
+        <div className="grid sm:grid-cols-3 gap-5 mb-12 sm:mb-16">
+          {[
+            { icon: Key, title: "Auth JWT / OAuth2", desc: "Authentification sécurisée via tokens." },
+            { icon: Webhook, title: "Webhooks temps réel", desc: "Notifications push pour chaque événement." },
+            { icon: FileText, title: "OpenAPI 3.0", desc: "Spécification complète avec Swagger UI." },
+          ].map((h) => (
+            <div
+              key={h.title}
+              className="p-6 bg-slate-50 rounded-2xl border border-slate-100"
+            >
+              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mb-3 shadow-sm">
+                <h.icon className="w-5 h-5 text-emerald-600" />
               </div>
+              <h3 className="font-bold text-sm text-slate-900 mb-1">
+                {h.title}
+              </h3>
+              <p className="text-sm text-slate-500">{h.desc}</p>
             </div>
+          ))}
+        </div>
+
+        {/* Endpoints */}
+        <div className="mb-12 sm:mb-16">
+          <h2 className="text-xl font-display font-bold text-slate-900 mb-6">
+            Points d&apos;accès populaires
+          </h2>
+          <div className="space-y-2">
+            {endpoints.map((ep) => (
+              <div
+                key={ep.path}
+                className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100 hover:border-emerald-200 transition-all"
+              >
+                <MethodBadge method={ep.method} />
+                <code className="text-sm font-mono font-bold text-slate-700 flex-1">
+                  {ep.path}
+                </code>
+                <span className="text-sm text-slate-400 hidden sm:block">
+                  {ep.desc}
+                </span>
+              </div>
+            ))}
           </div>
-        </nav>
+        </div>
 
-        <div className="flex">
-          {/* Sidebar */}
-          <aside className="w-64 bg-white h-screen sticky top-0 overflow-y-auto border-r border-gray-200">
-            <div className="p-6">
-              <div className="flex items-center mb-6">
-                <CodeBracketIcon className="h-8 w-8 text-sky-600 mr-3" />
-                <h2 className="text-xl font-bold text-gray-900">API Docs</h2>
-              </div>
+        {/* Code sample */}
+        <div className="bg-slate-900 rounded-2xl p-6 sm:p-8 mb-12 sm:mb-16 overflow-x-auto">
+          <div className="flex items-center gap-2 mb-4">
+            <Terminal className="w-4 h-4 text-emerald-400" />
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+              Exemple rapide
+            </span>
+          </div>
+          <pre className="text-sm text-slate-300 font-mono leading-relaxed">
+            <code>{`curl -X GET https://api.syntixpharma.com/v1/products \\
+  -H "Authorization: Bearer YOUR_TOKEN" \\
+  -H "Content-Type: application/json"
 
-              <nav className="space-y-1">
-                {sections.map((section) => (
-                  <button
-                    key={section.id}
-                    onClick={() => setActiveSection(section.id)}
-                    className={`w-full text-left px-3 py-2 rounded-lg flex items-center text-sm font-medium transition-colors ${
-                      activeSection === section.id
-                        ? "bg-sky-100 text-sky-700"
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                    }`}
-                  >
-                    <section.icon className="h-4 w-4 mr-3" />
-                    {section.name}
-                  </button>
-                ))}
-              </nav>
-            </div>
-          </aside>
+# Réponse (200)
+{
+  "data": [
+    { "id": "prod_001", "name": "Paracetamol 500mg", "stock": 1200 },
+    { "id": "prod_002", "name": "Amoxicilline 250mg", "stock": 340 }
+  ],
+  "total": 2847,
+  "page": 1
+}`}</code>
+          </pre>
+        </div>
 
-          {/* Main Content */}
-          <main className="flex-1 p-8">
-            {activeSection === "overview" && (
-              <div className="max-w-4xl">
-                <h1 className="text-3xl font-bold text-gray-900 mb-6">
-                  API NakiCode PharmaSaaS
-                </h1>
-                <p className="text-xl text-gray-600 mb-8">
-                  Intégrez facilement notre plateforme de gestion pharmaceutique
-                  dans vos systèmes existants.
-                </p>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                  <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <ServerIcon className="h-12 w-12 text-sky-600 mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      API REST
-                    </h3>
-                    <p className="text-gray-600">
-                      Architecture REST standard avec réponses JSON
-                    </p>
-                  </div>
-                  <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <ShieldCheckIcon className="h-12 w-12 text-green-600 mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Sécurisée
-                    </h3>
-                    <p className="text-gray-600">
-                      Authentification OAuth 2.0 et chiffrement HTTPS
-                    </p>
-                  </div>
-                  <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <CodeBracketIcon className="h-12 w-12 text-cyan-600 mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      SDKs Disponibles
-                    </h3>
-                    <p className="text-gray-600">
-                      JavaScript, Python, PHP et plus à venir
-                    </p>
-                  </div>
+        {/* SDKs */}
+        <div className="mb-12 sm:mb-16">
+          <h2 className="text-xl font-display font-bold text-slate-900 mb-6">
+            SDKs & Bibliothèques
+          </h2>
+          <div className="grid sm:grid-cols-3 gap-4">
+            {sdks.map((sdk) => (
+              <div
+                key={sdk.lang}
+                className="flex items-center gap-4 p-5 bg-slate-50 rounded-2xl border border-slate-100 hover:shadow-lg transition-all group"
+              >
+                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm group-hover:bg-emerald-50 transition-colors">
+                  <sdk.icon className="w-6 h-6 text-emerald-600" />
                 </div>
-
-                <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200 mb-8">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                    URL de Base
-                  </h2>
-                  <div className="bg-gray-50 p-4 rounded-lg font-mono text-sm">
-                    https://api.pharmassaas.com
-                  </div>
-                  <p className="text-gray-600 mt-2">
-                    Tous les endpoints sont préfixés par cette URL de base.
-                  </p>
-                </div>
-
-                <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                    Démarrage Rapide
-                  </h2>
-                  <ol className="list-decimal list-inside space-y-3 text-gray-600">
-                    <li>Obtenez votre clé API depuis votre tableau de bord</li>
-                    <li>
-                      Incluez la clé dans l'en-tête{" "}
-                      <code className="bg-gray-100 px-2 py-1 rounded">
-                        Authorization
-                      </code>
-                    </li>
-                    <li>Effectuez vos premiers appels vers les endpoints</li>
-                    <li>
-                      Implémentez les webhooks pour les notifications temps réel
-                    </li>
-                  </ol>
+                <div>
+                  <h4 className="font-bold text-sm text-slate-900">
+                    {sdk.lang}
+                  </h4>
+                  <p className="text-xs text-slate-400">Disponible</p>
                 </div>
               </div>
-            )}
+            ))}
+          </div>
+        </div>
 
-            {activeSection === "authentication" && (
-              <div className="max-w-4xl">
-                <h1 className="text-3xl font-bold text-gray-900 mb-6">
-                  Authentification
-                </h1>
-
-                <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8">
-                  <div className="flex">
-                    <ExclamationTriangleIcon className="h-5 w-5 text-yellow-400 mr-2" />
-                    <p className="text-yellow-700">
-                      <strong>Sécurité:</strong> Ne partagez jamais votre clé
-                      API. Utilisez des variables d'environnement en production.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-8">
-                  <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                      Obtenir une Clé API
-                    </h2>
-                    <p className="text-gray-600 mb-4">
-                      Connectez-vous à votre tableau de bord et naviguez vers
-                      Paramètres → API pour générer votre clé.
-                    </p>
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <code className="text-sm">
-                        pk_live_1234567890abcdef...
-                      </code>
-                    </div>
-                  </div>
-
-                  <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                      Utilisation de la Clé
-                    </h2>
-                    <p className="text-gray-600 mb-4">
-                      Incluez votre clé API dans l'en-tête Authorization de
-                      chaque requête:
-                    </p>
-                    <div className="bg-gray-900 p-4 rounded-lg overflow-x-auto">
-                      <pre className="text-green-400 text-sm">
-                        {`Authorization: Bearer YOUR_API_KEY
-Content-Type: application/json`}
-                      </pre>
-                    </div>
-                  </div>
-
-                  <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                      Environnements
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="border border-gray-200 rounded-lg p-4">
-                        <h3 className="font-semibold text-gray-900 mb-2">
-                          Test
-                        </h3>
-                        <p className="text-sm text-gray-600 mb-2">
-                          Clés commençant par <code>pk_test_</code>
-                        </p>
-                        <div className="bg-gray-50 p-2 rounded text-xs font-mono">
-                          https://api.pharmassaas.com/test
-                        </div>
-                      </div>
-                      <div className="border border-gray-200 rounded-lg p-4">
-                        <h3 className="font-semibold text-gray-900 mb-2">
-                          Production
-                        </h3>
-                        <p className="text-sm text-gray-600 mb-2">
-                          Clés commençant par <code>pk_live_</code>
-                        </p>
-                        <div className="bg-gray-50 p-2 rounded text-xs font-mono">
-                          https://api.pharmassaas.com
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {(activeSection === "pos" ||
-              activeSection === "inventory" ||
-              activeSection === "prescriptions") &&
-              endpoints[activeSection as keyof typeof endpoints] && (
-                <div className="max-w-6xl">
-                  <h1 className="text-3xl font-bold text-gray-900 mb-6">
-                    {activeSection === "pos" && "Point de Vente"}
-                    {activeSection === "inventory" && "Gestion d'Inventaire"}
-                    {activeSection === "prescriptions" && "Prescriptions"}
-                  </h1>
-
-                  <div className="space-y-6">
-                    {endpoints[activeSection as keyof typeof endpoints].map(
-                      (endpoint, index) => (
-                        <div
-                          key={index}
-                          className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
-                        >
-                          <div
-                            className="p-6 cursor-pointer hover:bg-gray-50"
-                            onClick={() =>
-                              setExpandedEndpoint(
-                                expandedEndpoint === `${activeSection}-${index}`
-                                  ? null
-                                  : `${activeSection}-${index}`
-                              )
-                            }
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center space-x-4">
-                                <span
-                                  className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                                    endpoint.method === "GET"
-                                      ? "bg-green-100 text-green-800"
-                                      : endpoint.method === "POST"
-                                      ? "bg-blue-100 text-blue-800"
-                                      : endpoint.method === "PUT"
-                                      ? "bg-yellow-100 text-yellow-800"
-                                      : "bg-red-100 text-red-800"
-                                  }`}
-                                >
-                                  {endpoint.method}
-                                </span>
-                                <code className="text-lg font-mono text-gray-900">
-                                  {endpoint.path}
-                                </code>
-                                {endpoint.auth && (
-                                  <span className="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full">
-                                    Auth Required
-                                  </span>
-                                )}
-                              </div>
-                              {expandedEndpoint ===
-                              `${activeSection}-${index}` ? (
-                                <ChevronDownIcon className="h-5 w-5 text-gray-400" />
-                              ) : (
-                                <ChevronRightIcon className="h-5 w-5 text-gray-400" />
-                              )}
-                            </div>
-                            <p className="text-gray-600 mt-2">
-                              {endpoint.description}
-                            </p>
-                          </div>
-
-                          {expandedEndpoint === `${activeSection}-${index}` && (
-                            <div className="px-6 pb-6 border-t border-gray-200">
-                              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-6">
-                                {/* Paramètres */}
-                                <div>
-                                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                                    Paramètres
-                                  </h3>
-                                  <div className="space-y-3">
-                                    {endpoint.parameters?.map(
-                                      (param, paramIndex) => (
-                                        <div
-                                          key={paramIndex}
-                                          className="border border-gray-200 rounded-lg p-4"
-                                        >
-                                          <div className="flex items-center justify-between mb-2">
-                                            <code className="text-sm font-mono text-sky-600">
-                                              {param.name}
-                                            </code>
-                                            <div className="flex space-x-2">
-                                              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
-                                                {param.type}
-                                              </span>
-                                              {param.required ? (
-                                                <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">
-                                                  Requis
-                                                </span>
-                                              ) : (
-                                                <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
-                                                  Optionnel
-                                                </span>
-                                              )}
-                                            </div>
-                                          </div>
-                                          <p className="text-sm text-gray-600">
-                                            {param.description}
-                                          </p>
-                                        </div>
-                                      )
-                                    )}
-                                  </div>
-                                </div>
-
-                                {/* Exemple de code */}
-                                <div>
-                                  <div className="flex items-center justify-between mb-4">
-                                    <h3 className="text-lg font-semibold text-gray-900">
-                                      Exemple
-                                    </h3>
-                                    <div className="flex space-x-2">
-                                      {Object.keys(codeExamples).map((lang) => (
-                                        <button
-                                          key={lang}
-                                          onClick={() =>
-                                            setActiveLanguage(
-                                              lang as keyof typeof codeExamples
-                                            )
-                                          }
-                                          className={`text-xs px-3 py-1 rounded ${
-                                            activeLanguage === lang
-                                              ? "bg-sky-600 text-white"
-                                              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                                          }`}
-                                        >
-                                          {lang.toUpperCase()}
-                                        </button>
-                                      ))}
-                                    </div>
-                                  </div>
-                                  <div className="bg-gray-900 rounded-lg overflow-hidden">
-                                    <div className="p-4 overflow-x-auto">
-                                      <pre className="text-green-400 text-sm">
-                                        {codeExamples[activeLanguage]}
-                                      </pre>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )
-                    )}
-                  </div>
-                </div>
-              )}
-
-            {activeSection === "errors" && (
-              <div className="max-w-4xl">
-                <h1 className="text-3xl font-bold text-gray-900 mb-6">
-                  Codes d'Erreur
-                </h1>
-
-                <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200 mb-8">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                    Format des Erreurs
-                  </h2>
-                  <p className="text-gray-600 mb-4">
-                    Toutes les erreurs retournent un format JSON standardisé:
-                  </p>
-                  <div className="bg-gray-900 p-4 rounded-lg overflow-x-auto">
-                    <pre className="text-green-400 text-sm">
-                      {`{
-  "error": {
-    "code": "INVALID_PARAMETER",
-    "message": "Le paramètre 'quantity' est requis",
-    "details": {
-      "parameter": "quantity",
-      "expected": "number",
-      "received": "null"
-    }
-  }
-}`}
-                    </pre>
-                  </div>
-                </div>
-
-                <div className="space-y-6">
-                  {[
-                    {
-                      code: "400",
-                      name: "Bad Request",
-                      description: "Paramètres manquants ou invalides",
-                      color: "bg-red-100 text-red-800",
-                    },
-                    {
-                      code: "401",
-                      name: "Unauthorized",
-                      description: "Clé API manquante ou invalide",
-                      color: "bg-red-100 text-red-800",
-                    },
-                    {
-                      code: "403",
-                      name: "Forbidden",
-                      description: "Accès interdit pour cette ressource",
-                      color: "bg-orange-100 text-orange-800",
-                    },
-                    {
-                      code: "404",
-                      name: "Not Found",
-                      description: "Ressource non trouvée",
-                      color: "bg-gray-100 text-gray-800",
-                    },
-                    {
-                      code: "429",
-                      name: "Rate Limited",
-                      description: "Trop de requêtes, ralentissez",
-                      color: "bg-yellow-100 text-yellow-800",
-                    },
-                    {
-                      code: "500",
-                      name: "Internal Error",
-                      description: "Erreur serveur, contactez le support",
-                      color: "bg-red-100 text-red-800",
-                    },
-                  ].map((error, index) => (
-                    <div
-                      key={index}
-                      className="bg-white p-6 rounded-lg shadow-sm border border-gray-200"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                          <span
-                            className={`px-3 py-1 text-sm font-semibold rounded-full ${error.color}`}
-                          >
-                            {error.code}
-                          </span>
-                          <h3 className="text-lg font-semibold text-gray-900">
-                            {error.name}
-                          </h3>
-                        </div>
-                      </div>
-                      <p className="text-gray-600 mt-2">{error.description}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </main>
+        {/* CTA */}
+        <div className="bg-emerald-50 rounded-3xl border border-emerald-100 p-8 sm:p-12 text-center">
+          <h2 className="text-2xl font-display font-bold text-slate-900 mb-3">
+            Prêt à intégrer ?
+          </h2>
+          <p className="text-sm text-slate-500 mb-6 max-w-md mx-auto">
+            Créez votre compte développeur et obtenez vos clés API en quelques
+            minutes.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              href="/auth/register"
+              className="px-8 py-3.5 bg-slate-900 text-white rounded-xl font-bold hover:bg-emerald-600 transition-all flex items-center justify-center gap-2"
+            >
+              Obtenir mes clés API
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              href="/contact"
+              className="px-8 py-3.5 bg-white text-slate-900 border border-slate-200 rounded-xl font-bold hover:border-emerald-300 transition-all"
+            >
+              Parler à l&apos;équipe
+            </Link>
+          </div>
         </div>
       </div>
-    </>
+    </div>
   );
-};
-
-export default ApiDocsPage;
+}

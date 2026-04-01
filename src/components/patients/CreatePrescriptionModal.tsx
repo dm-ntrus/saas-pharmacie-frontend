@@ -10,7 +10,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { Button, Input, Modal } from "@/design-system";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/lib/api";
+import apiClient from "@/lib/api";
 import { toast } from "react-hot-toast";
 import { CreatePrescriptionDto } from "@/types";
 
@@ -59,11 +59,12 @@ export const CreatePrescriptionModal: React.FC<
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { data: products } = useQuery({
+  const { data: productsData } = useQuery({
     queryKey: ["products-search", searchTerm],
     queryFn: () => apiClient.getProducts({ search: searchTerm, limit: 10 }),
     enabled: searchTerm.length > 2,
   });
+  const products = (productsData as any)?.data ?? productsData ?? [];
 
   const createMutation = useMutation({
     mutationFn: (data: CreatePrescriptionDto) =>
@@ -258,7 +259,7 @@ export const CreatePrescriptionModal: React.FC<
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="w-full h-10 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-600"
                     />
-                    {products && products.length > 0 && (
+                    {Array.isArray(products) && products.length > 0 && (
                       <div className="mt-1 max-h-40 overflow-y-auto border border-gray-200 rounded-md">
                         {products.map((product: any) => (
                           <button

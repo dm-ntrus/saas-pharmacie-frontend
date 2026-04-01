@@ -11,9 +11,9 @@ export const LanguageSelector: React.FC = () => {
       onChange={(e) => setLanguage(e.target.value)}
       className="language-selector"
     >
-      {I18N_CONFIG.supportedLanguages.map(lang => (
+      {I18N_CONFIG.supportedLanguages.map((lang) => (
         <option key={lang} value={lang}>
-          {I18N_CONFIG.languageSettings[lang].name}
+          {I18N_CONFIG.languageSettings[lang as keyof typeof I18N_CONFIG.languageSettings].name}
         </option>
       ))}
     </select>

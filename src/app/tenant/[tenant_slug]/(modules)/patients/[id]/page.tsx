@@ -29,7 +29,7 @@ import {
   FileText,
 } from "lucide-react";
 import { formatDate } from "@/utils/formatters";
-import { PRESCRIPTION_STATUS_LABELS } from "@/types/prescriptions";
+import { PRESCRIPTION_STATUS_LABELS, PrescriptionStatus } from "@/types/prescriptions";
 
 export default function PatientDetailPage() {
   return (
@@ -237,7 +237,9 @@ function PatientDetailContent() {
                           {rx.prescription_number ?? rx.id}
                         </span>
                         <Badge variant="default" size="sm">
-                          {PRESCRIPTION_STATUS_LABELS[rx.status] ?? rx.status}
+                          {PRESCRIPTION_STATUS_LABELS[
+                            rx.status as keyof typeof PRESCRIPTION_STATUS_LABELS
+                          ] ?? rx.status}
                         </Badge>
                       </button>
                       <p className="text-xs text-slate-500 mt-0.5">

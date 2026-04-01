@@ -12,7 +12,7 @@ import { BarChart3, FileText, TrendingUp, DollarSign, Package, Users, Download, 
 
 export default function ReportsPage() {
   return (
-    <ModuleGuard module="analytics" requiredPermissions={[Permission.DASHBOARDS_READ]}>
+    <ModuleGuard module="analytics" requiredPermissions={[Permission.BI_READ]}>
       <ReportsContent />
     </ModuleGuard>
   );

@@ -66,6 +66,11 @@ export interface Prescription {
   pharmacy_notes?: string;
   verified_by?: string;
   dispensed_by?: string;
+
+  // UI convenience fields (some endpoints embed relations / flags)
+  patient?: any;
+  items?: PrescriptionItem[];
+  is_emergency?: boolean;
 }
 
 export interface PrescriptionItem {
@@ -83,6 +88,13 @@ export interface PrescriptionItem {
   status: PrescriptionItemStatus;
   unit_price?: string;
   total_price?: string;
+
+  // UI legacy aliases
+  product_name?: string;
+  quantity?: string | number;
+  dosage?: string;
+  frequency?: string;
+  instructions?: string;
 }
 
 export interface CreatePrescriptionDto {

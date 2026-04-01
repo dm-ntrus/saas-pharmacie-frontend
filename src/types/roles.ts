@@ -109,6 +109,8 @@ export const ROLE_PERMISSION_MAP: Record<Role, Permission[]> = {
     ...PermissionGroups.BI,
     ...PermissionGroups.FISCAL,
     ...PermissionGroups.NOTIFICATIONS,
+    ...PermissionGroups.COMPLIANCE_AUDIT,
+    ...PermissionGroups.CRM_LOYALTY,
   ],
 
   [Role.TENANT_MANAGER]: [
@@ -124,6 +126,7 @@ export const ROLE_PERMISSION_MAP: Record<Role, Permission[]> = {
     ...PermissionGroups.VACCINATION,
     Permission.QUALITY_EVENTS_READ, Permission.QUALITY_METRICS_READ,
     ...PermissionGroups.NOTIFICATIONS,
+    Permission.LOYALTY_READ,
   ],
 
   [Role.PHARMACY_OWNER]: [
@@ -144,6 +147,8 @@ export const ROLE_PERMISSION_MAP: Record<Role, Permission[]> = {
     ...PermissionGroups.BI,
     ...PermissionGroups.FISCAL,
     ...PermissionGroups.NOTIFICATIONS,
+    ...PermissionGroups.COMPLIANCE_AUDIT,
+    ...PermissionGroups.CRM_LOYALTY,
   ],
 
   [Role.PHARMACY_MANAGER]: [
@@ -158,8 +163,10 @@ export const ROLE_PERMISSION_MAP: Record<Role, Permission[]> = {
     Permission.PURCHASE_ORDERS_CREATE, Permission.PURCHASE_ORDERS_READ,
     Permission.PURCHASE_ORDERS_UPDATE,
     ...PermissionGroups.VACCINATION,
-    Permission.QUALITY_EVENTS_CREATE, Permission.QUALITY_EVENTS_READ,
+    Permission.QUALITY_EVENTS_CREATE,     Permission.QUALITY_EVENTS_READ,
     ...PermissionGroups.NOTIFICATIONS,
+    ...PermissionGroups.COMPLIANCE_AUDIT,
+    ...PermissionGroups.CRM_LOYALTY,
   ],
 
   [Role.PHARMACIST]: [
@@ -257,6 +264,7 @@ export const ROLE_PERMISSION_MAP: Record<Role, Permission[]> = {
     Permission.ORGANIZATION_PRODUCT_PRICES_READ,
     Permission.ORGANIZATION_PRODUCT_PRICES_UPDATE,
     Permission.NOTIFICATIONS_READ, Permission.NOTIFICATIONS_WRITE,
+    ...PermissionGroups.CRM_LOYALTY,
   ],
 
   [Role.QUALITY_MANAGER]: [
@@ -270,6 +278,7 @@ export const ROLE_PERMISSION_MAP: Record<Role, Permission[]> = {
     Permission.SUPPLIER_PERFORMANCE_CREATE, Permission.SUPPLIER_PERFORMANCE_READ,
     Permission.SUPPLIER_PERFORMANCE_UPDATE,
     Permission.NOTIFICATIONS_READ, Permission.NOTIFICATIONS_WRITE,
+    ...PermissionGroups.COMPLIANCE_AUDIT,
   ],
 
   [Role.SUPPLY_CHAIN_MANAGER]: [

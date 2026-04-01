@@ -39,7 +39,7 @@ export function PatientDashboard() {
     );
   }
 
-  const summary = summaryData?.data ?? summaryData ?? {};
+  const summary = (summaryData as any)?.data ?? summaryData ?? {};
 
   const activePrescriptions = summary.activePrescriptions ?? summary.active_prescriptions ?? 0;
   const upcomingAppointments = summary.upcomingAppointments ?? summary.upcoming_appointments ?? 0;

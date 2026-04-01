@@ -6,8 +6,12 @@ import { cn } from "@/utils/cn";
 import { X } from "lucide-react";
 
 interface ModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  /** Preferred API (Radix): controlled open state. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** Back-compat API. */
+  isOpen?: boolean;
+  onClose?: () => void;
   title?: string;
   description?: string;
   children: React.ReactNode;
@@ -26,14 +30,22 @@ const sizeClasses: Record<string, string> = {
 export function Modal({
   open,
   onOpenChange,
+  isOpen,
+  onClose,
   title,
   description,
   children,
   size = "md",
   className,
 }: ModalProps) {
+  const resolvedOpen = open ?? isOpen ?? false;
+  const resolvedOnOpenChange =
+    onOpenChange ??
+    ((next: boolean) => {
+      if (!next) onClose?.();
+    });
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
+    <Dialog.Root open={resolvedOpen} onOpenChange={resolvedOnOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black/50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
         <Dialog.Content

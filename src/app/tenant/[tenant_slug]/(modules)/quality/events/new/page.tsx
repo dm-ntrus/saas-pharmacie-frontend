@@ -10,6 +10,7 @@ import { Permission } from "@/types/permissions";
 import { useCreateQualityEvent } from "@/hooks/api/useQuality";
 import { createQualityEventSchema, type CreateQualityEventFormData } from "@/schemas/quality.schema";
 import { QUALITY_EVENT_TYPE_LABELS, QUALITY_EVENT_SEVERITY_LABELS } from "@/types/quality";
+import { QualityEventSeverity, QualityEventType } from "@/types/quality";
 import { Button, Card, CardContent, CardHeader, CardTitle, Input, Select } from "@/components/ui";
 import { ArrowLeft } from "lucide-react";
 
@@ -32,8 +33,8 @@ function NewQualityEventContent() {
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<CreateQualityEventFormData>({
     resolver: zodResolver(createQualityEventSchema),
     defaultValues: {
-      type: "deviation",
-      severity: "medium",
+      type: QualityEventType.DEVIATION,
+      severity: QualityEventSeverity.MEDIUM,
       title: "",
       description: "",
       reportedBy: "",

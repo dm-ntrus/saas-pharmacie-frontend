@@ -22,14 +22,33 @@ const PUBLIC_ROUTES = [
   "/auth/login",
   "/auth/forgot-password",
   "/auth/register",
+  "/auth/registration-success",
+  "/auth/callback",
   "/unauthorized",
   "/favicon.ico",
   "/",
 ];
 
+function rootHostSet(): Set<string> {
+  const main = (process.env.NEXT_PUBLIC_MAIN_DOMAIN || "yourapp.com").toLowerCase();
+  const extras = (process.env.NEXT_PUBLIC_ROOT_HOSTS || "")
+    .split(",")
+    .map((h) => h.trim().toLowerCase())
+    .filter(Boolean);
+  const list = [
+    "localhost:3000",
+    "127.0.0.1:3000",
+    main,
+    `www.${main}`,
+    ...extras,
+  ];
+  return new Set(list);
+}
+
 const PUBLIC_ROUTE_PATTERNS = [
   /^\/tenant\/[^/]+\/auth\/login$/,
   /^\/tenant\/[^/]+\/auth\/forgot-password$/,
+  /^\/tenant\/[^/]+\/auth\/callback$/,
 ];
 
 /**
@@ -141,26 +160,112 @@ function isPublicRoute(pathname: string): boolean {
   return PUBLIC_ROUTE_PATTERNS.some((p) => p.test(pathname));
 }
 
+const SYSTEM_HOST_PREFIXES = ["api", "admin", "mail", "cdn"];
+
+/** Évite de traiter une IPv4 (ex. 192.168.x.x) comme un hôte multi-label → faux tenant `192`. */
+function isIpv4Literal(hostname: string): boolean {
+  const parts = hostname.split(".");
+  if (parts.length !== 4) return false;
+  return parts.every((part) => {
+    if (!/^\d{1,3}$/.test(part)) return false;
+    const n = Number(part);
+    return n >= 0 && n <= 255;
+  });
+}
+
+/** Domaine racine marketing ou accès par IP LAN (évite rewrite / faux tenant). */
+function isMarketingRootHost(hostHeader: string, hostLc: string): boolean {
+  const roots = rootHostSet();
+  if (roots.has(hostLc)) return true;
+  const hostNoPort = hostHeader.toLowerCase().split(":")[0];
+  return isIpv4Literal(hostNoPort);
+}
+
+/**
+ * En dev : pas de redirection `/` → `/tenant/<slug>/auth/login` d’après le Host (onglets `/tenant/192/...`, LAN, etc.).
+ * Pour tester un sous-domaine tenant en local : NEXT_PUBLIC_TENANT_HOST_REDIRECT_IN_DEV=true
+ */
+function tenantHostRedirectEnabled(): boolean {
+  if (process.env.NODE_ENV !== "development") return true;
+  return process.env.NEXT_PUBLIC_TENANT_HOST_REDIRECT_IN_DEV === "true";
+}
+
+/**
+ * Sous-domaine tenant depuis l’hôte : `pharma.syntixpharma.com` → `pharma`.
+ * Retourne `null` sur le domaine racine (marketing), www, sous-domaines système, ou une IP.
+ */
+function tenantSlugFromHost(hostHeader: string): string | null {
+  const hostNoPort = hostHeader.toLowerCase().split(":")[0];
+  if (!hostNoPort || isIpv4Literal(hostNoPort)) return null;
+  if (!hostNoPort.includes(".")) return null;
+  if (hostNoPort.startsWith("www.")) return null;
+  const roots = rootHostSet();
+  if (roots.has(hostNoPort)) return null;
+  if (hostNoPort.includes("replit.app") || hostNoPort.includes("replit.dev")) {
+    return null;
+  }
+  const sub = hostNoPort.split(".")[0];
+  if (!sub || SYSTEM_HOST_PREFIXES.includes(sub)) return null;
+  return sub;
+}
+
 export function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
   const host = req.headers.get("host") || "";
   const pathname = url.pathname;
 
+  const hostNoPortForIp = host.toLowerCase().split(":")[0];
+  // Corrige l’URL résiduelle /tenant/<1er octet>/auth/... quand le Host est une IPv4 (ex. 192.168.x.x → faux tenant "192").
+  if (isIpv4Literal(hostNoPortForIp)) {
+    const firstOctet = hostNoPortForIp.split(".")[0];
+    const tenantSeg = pathname.match(/^\/tenant\/([^/]+)/)?.[1];
+    if (
+      tenantSeg === firstOctet &&
+      pathname.includes("/auth/")
+    ) {
+      url.pathname = pathname.replace(/^\/tenant\/[^/]+/, "");
+      return NextResponse.redirect(url);
+    }
+  }
+
+  const hostLc = host.toLowerCase();
+  const isMainHost = isMarketingRootHost(host, hostLc);
+  const isReplit = host.includes("replit.app") || host.includes("replit.dev");
+  const tenantSlugHost = tenantSlugFromHost(host);
+
+  // —— Hôte tenant (ex. pharma.syntixpharma.com) : portail d’entrée ——
+  // Sans ça, `/` passait comme route publique globale et ne réécrivait jamais vers /tenant/...
+  // En dev, désactivé par défaut (voir tenantHostRedirectEnabled).
+  if (
+    tenantHostRedirectEnabled() &&
+    tenantSlugHost &&
+    (pathname === "/" || pathname === "")
+  ) {
+    const authHeader = req.headers.get("authorization") || "";
+    const cookieToken = req.cookies.get("access_token")?.value;
+    const token = authHeader.replace("Bearer ", "") || cookieToken;
+    const payload = token ? safeDecodeJwt(token) : null;
+    if (payload) {
+      url.pathname = `/tenant/${tenantSlugHost}/dashboard`;
+      return NextResponse.redirect(url);
+    }
+    url.pathname = `/tenant/${tenantSlugHost}/auth/login`;
+    return NextResponse.redirect(url);
+  }
+
   if (isPublicRoute(pathname)) return NextResponse.next();
 
-  // Subdomain rewrite: sub.domain.com → /tenant/sub/...
-  const mainDomains = [
-    "localhost:3000", "127.0.0.1:3000",
-    process.env.NEXT_PUBLIC_MAIN_DOMAIN || "yourapp.com",
-    `www.${process.env.NEXT_PUBLIC_MAIN_DOMAIN || "yourapp.com"}`,
-  ];
-  const isMain = mainDomains.includes(host);
-  const isReplit = host.includes("replit.app") || host.includes("replit.dev");
-
-  if (!isMain && !isReplit && host.includes(".") && !host.startsWith("www.")) {
-    const sub = host.split(".")[0];
-    const systemSubdomains = ["api", "admin", "mail", "cdn"];
-    if (!systemSubdomains.includes(sub) && !pathname.startsWith(`/tenant/${sub}`)) {
+  // Subdomain rewrite: sub.domain.com/path → /tenant/sub/path (pas pour les IP LAN)
+  const hostNoPortLc = host.toLowerCase().split(":")[0];
+  if (
+    !isMainHost &&
+    !isReplit &&
+    host.includes(".") &&
+    !host.toLowerCase().startsWith("www.") &&
+    !isIpv4Literal(hostNoPortLc)
+  ) {
+    const sub = hostNoPortLc.split(".")[0];
+    if (!SYSTEM_HOST_PREFIXES.includes(sub) && !pathname.startsWith(`/tenant/${sub}`)) {
       url.pathname = `/tenant/${sub}${pathname}`;
       return NextResponse.rewrite(url);
     }
@@ -178,7 +283,7 @@ export function middleware(req: NextRequest) {
   if (!token) {
     if (pathname.startsWith("/tenant")) {
       const pathParts = pathname.split("/");
-      const tenantSlug = pathParts[2] || "default";
+      const tenantSlug = pathParts[2] || tenantSlugHost || "default";
       url.pathname = `/tenant/${tenantSlug}/auth/login`;
     } else {
       url.pathname = "/auth/login";
@@ -189,7 +294,11 @@ export function middleware(req: NextRequest) {
 
   const payload = safeDecodeJwt(token);
   if (!payload) {
-    url.pathname = "/auth/login";
+    if (tenantSlugHost) {
+      url.pathname = `/tenant/${tenantSlugHost}/auth/login`;
+    } else {
+      url.pathname = "/auth/login";
+    }
     return NextResponse.redirect(url);
   }
 

@@ -62,7 +62,15 @@ function CAPADetailContent() {
           <p><span className="font-medium text-slate-600 dark:text-slate-400">Responsable</span> {capa.assignedTo ?? "—"}</p>
           <p><span className="font-medium text-slate-600 dark:text-slate-400">Échéance</span> {capa.dueDate ? formatDate(capa.dueDate) : "—"}</p>
           {capa.completedAt && <p><span className="font-medium text-slate-600 dark:text-slate-400">Clôturée le</span> {formatDate(capa.completedAt)}</p>}
-          {capa.effectivenessNotes && <p><span className="font-medium text-slate-600 dark:text-slate-400">Efficacité</span><br />{capa.effectivenessNotes}</p>}
+          {(capa as any).effectivenessNotes && (
+            <p>
+              <span className="font-medium text-slate-600 dark:text-slate-400">
+                Efficacité
+              </span>
+              <br />
+              {(capa as any).effectivenessNotes}
+            </p>
+          )}
         </CardContent>
       </Card>
     </div>

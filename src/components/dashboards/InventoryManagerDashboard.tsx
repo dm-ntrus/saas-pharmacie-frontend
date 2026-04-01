@@ -58,10 +58,10 @@ export function InventoryManagerDashboard() {
     );
   }
 
-  const kpis = kpisData?.data ?? kpisData ?? {};
-  const alerts = alertsData?.data ?? alertsData ?? [];
-  const expiration = expirationData?.data ?? expirationData ?? {};
-  const transfers = transfersData?.data ?? transfersData ?? [];
+  const kpis = (kpisData as any)?.data ?? kpisData ?? {};
+  const alerts = (alertsData as any)?.data ?? alertsData ?? [];
+  const expiration = (expirationData as any)?.data ?? expirationData ?? {};
+  const transfers = (transfersData as any)?.data ?? transfersData ?? [];
   const totalProducts = productsData?.total ?? (Array.isArray(productsData?.data) ? productsData.data.length : 0);
 
   const alertsList = Array.isArray(alerts) ? alerts : [];

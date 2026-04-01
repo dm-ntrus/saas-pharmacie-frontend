@@ -1,86 +1,111 @@
-'use client';
+"use client";
 
-import { motion } from 'motion/react';
-import Link from 'next/link';
+import { motion } from "framer-motion";
+import { ShieldCheck } from "lucide-react";
+
+const sections = [
+  {
+    title: "1. Données collectées",
+    content:
+      "Nous collectons les données nécessaires à la fourniture de nos services : informations de compte (nom, email, téléphone), données d'utilisation (logs, préférences), et données métier (inventaire, ventes, patients) saisies par vos soins.",
+  },
+  {
+    title: "2. Utilisation des données",
+    content:
+      "Vos données sont utilisées exclusivement pour fournir, améliorer et sécuriser nos services. Nous n'utilisons jamais les données de santé de vos patients à des fins publicitaires ou de marketing.",
+  },
+  {
+    title: "3. Stockage et sécurité",
+    content:
+      "Les données sont hébergées sur des serveurs sécurisés avec chiffrement AES-256 au repos et TLS 1.3 en transit. Des sauvegardes automatiques sont réalisées toutes les heures. L'accès aux données est strictement contrôlé par rôle.",
+  },
+  {
+    title: "4. Partage des données",
+    content:
+      "Nous ne vendons jamais vos données. Le partage est limité aux prestataires techniques nécessaires au fonctionnement du service (hébergement, paiement) et aux obligations légales.",
+  },
+  {
+    title: "5. Vos droits",
+    content:
+      "Vous disposez d'un droit d'accès, de rectification, de portabilité et de suppression de vos données personnelles. Pour exercer ces droits, contactez-nous à privacy@syntixpharma.com.",
+  },
+  {
+    title: "6. Cookies",
+    content:
+      "Nous utilisons des cookies strictement nécessaires au fonctionnement du service (session, préférences). Aucun cookie de tracking publicitaire n'est utilisé.",
+  },
+  {
+    title: "7. Conservation",
+    content:
+      "Les données de compte sont conservées pendant la durée de l'abonnement plus 30 jours. Les données d'utilisation anonymisées peuvent être conservées à des fins statistiques.",
+  },
+  {
+    title: "8. Contact",
+    content:
+      "Pour toute question relative à la protection de vos données, contactez notre Délégué à la Protection des Données : privacy@syntixpharma.com",
+  },
+];
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen pt-32 pb-24 px-6 bg-white">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen pt-28 sm:pt-32 pb-16 sm:pb-24 bg-white">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          className="mb-10"
         >
-          <div className="inline-flex items-center gap-3 px-5 py-2 bg-emerald-50 text-emerald-700 rounded-full text-xs font-black mb-8 border border-emerald-100 uppercase tracking-[0.2em]">
-            Légal
-          </div>
-          <h1 className="text-5xl lg:text-7xl font-display font-bold text-slate-900 mb-8 tracking-[-0.04em] leading-[0.9]">
-            Politique de <br />
-            <span className="text-emerald-600">Confidentialité</span>
-          </h1>
-          
-          <div className="prose prose-slate max-w-none">
-            <p className="text-xl text-slate-500 mb-10 font-medium leading-relaxed">
-              Chez SyntixPharma, la protection de vos données de santé est notre priorité absolue. Nous nous engageons à une transparence totale sur la manière dont nous traitons vos informations.
-            </p>
-
-            <div className="space-y-10">
-              <section className="grid lg:grid-cols-12 gap-10 border-t border-slate-100 pt-16">
-                <div className="lg:col-span-4">
-                  <h2 className="text-sm font-black text-slate-900 uppercase tracking-[0.2em]">01. Collecte</h2>
-                </div>
-                <div className="lg:col-span-8">
-                  <h3 className="text-3xl font-display font-bold text-slate-900 mb-6">Quelles données collectons-nous ?</h3>
-                  <p className="text-lg text-slate-600 leading-relaxed">
-                    Nous collectons les informations nécessaires à la fourniture de nos services, notamment les informations sur votre pharmacie, vos employés et les données transactionnelles. Toutes les données de santé sont traitées avec le plus haut niveau de confidentialité.
-                  </p>
-                </div>
-              </section>
-
-              <section className="grid lg:grid-cols-12 gap-10 border-t border-slate-100 pt-16">
-                <div className="lg:col-span-4">
-                  <h2 className="text-sm font-black text-slate-900 uppercase tracking-[0.2em]">02. Utilisation</h2>
-                </div>
-                <div className="lg:col-span-8">
-                  <h3 className="text-3xl font-display font-bold text-slate-900 mb-6">Comment utilisons-nous vos données ?</h3>
-                  <p className="text-lg text-slate-600 leading-relaxed">
-                    Vos données sont utilisées exclusivement pour assurer le bon fonctionnement de la plateforme, améliorer nos services et vous fournir un support technique de qualité. Nous ne vendons jamais vos données à des tiers.
-                  </p>
-                </div>
-              </section>
-
-              <section className="grid lg:grid-cols-12 gap-10 border-t border-slate-100 pt-16">
-                <div className="lg:col-span-4">
-                  <h2 className="text-sm font-black text-slate-900 uppercase tracking-[0.2em]">03. Sécurité</h2>
-                </div>
-                <div className="lg:col-span-8">
-                  <h3 className="text-3xl font-display font-bold text-slate-900 mb-6">Sécurité de niveau bancaire</h3>
-                  <p className="text-lg text-slate-600 leading-relaxed">
-                    Nous mettons en œuvre des mesures de sécurité techniques et organisationnelles avancées, incluant le chiffrement AES-256, pour protéger vos données contre tout accès non autorisé, perte ou altération.
-                  </p>
-                </div>
-              </section>
-
-              <section className="grid lg:grid-cols-12 gap-10 border-t border-slate-100 pt-16">
-                <div className="lg:col-span-4">
-                  <h2 className="text-sm font-black text-slate-900 uppercase tracking-[0.2em]">04. Vos Droits</h2>
-                </div>
-                <div className="lg:col-span-8">
-                  <h3 className="text-3xl font-display font-bold text-slate-900 mb-6">Contrôle total</h3>
-                  <p className="text-lg text-slate-600 leading-relaxed">
-                    Vous disposez d&apos;un droit d&apos;accès, de rectification et de suppression de vos données personnelles. Vous pouvez exercer ces droits à tout moment en nous contactant à privacy@medpharma.cd.
-                  </p>
-                </div>
-              </section>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center">
+              <ShieldCheck className="w-6 h-6 text-emerald-600" />
             </div>
-
-            <div className="mt-32 pt-16 border-t border-slate-200 flex items-center justify-between">
-              <p className="text-sm text-slate-400 font-bold uppercase tracking-widest">Dernière mise à jour : 21 Février 2026</p>
-              {/* <Link href="/" className="text-emerald-600 font-black uppercase tracking-widest text-sm hover:text-emerald-700 transition-colors">Retour à l&apos;accueil</Link> */}
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">
+                Légal
+              </p>
+              <h1 className="text-2xl sm:text-3xl font-display font-bold text-slate-900 tracking-tight">
+                Politique de confidentialité
+              </h1>
             </div>
           </div>
+          <p className="text-sm text-slate-400">
+            Dernière mise à jour : 1er avril 2026
+          </p>
         </motion.div>
+
+        <div className="bg-emerald-50 rounded-2xl border border-emerald-100 p-6 mb-10">
+          <p className="text-sm text-emerald-800 font-medium leading-relaxed">
+            Chez SyntixPharma, la protection de vos données et de celles de vos
+            patients est notre priorité absolue. Nous nous engageons à une
+            transparence totale sur la collecte, l&apos;utilisation et la
+            protection de vos informations.
+          </p>
+        </div>
+
+        <div className="space-y-8">
+          {sections.map((s) => (
+            <div key={s.title}>
+              <h2 className="text-lg font-display font-bold text-slate-900 mb-2">
+                {s.title}
+              </h2>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                {s.content}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-12 p-6 bg-slate-50 rounded-2xl border border-slate-100 text-center">
+          <p className="text-sm text-slate-500">
+            Questions sur vos données ?{" "}
+            <a
+              href="mailto:privacy@syntixpharma.com"
+              className="text-emerald-600 font-bold hover:underline"
+            >
+              privacy@syntixpharma.com
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );

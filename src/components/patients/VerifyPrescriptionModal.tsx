@@ -2,7 +2,7 @@ import React from "react";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
 import { Button, Modal } from "@/design-system";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/lib/api";
+import apiClient from "@/lib/api";
 import { toast } from "react-hot-toast";
 
 interface VerifyPrescriptionModalProps {
@@ -22,7 +22,7 @@ export const VerifyPrescriptionModal: React.FC<
 
   const verifyMutation = useMutation({
     mutationFn: () =>
-      apiClient.verifyPrescription(prescription.id, user?.id || ""),
+      apiClient.verifyPrescription(prescription.id, { verifierId: (user as any)?.id || "" }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patient-prescriptions"] });
       toast.success("Ordonnance vérifiée avec succès");

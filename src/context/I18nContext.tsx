@@ -88,9 +88,12 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Applique la direction (ltr/rtl) et l'attribut lang sur <html>
   const applyDirection = (lang: string) => {
-    const dir = I18N_CONFIG.languageSettings[lang]?.direction || "ltr";
+    const safeLang = (lang in I18N_CONFIG.languageSettings
+      ? (lang as keyof typeof I18N_CONFIG.languageSettings)
+      : (I18N_CONFIG.defaultLanguage as keyof typeof I18N_CONFIG.languageSettings));
+    const dir = I18N_CONFIG.languageSettings[safeLang]?.direction || "ltr";
     document.documentElement.dir = dir;
-    document.documentElement.lang = lang;
+    document.documentElement.lang = String(safeLang);
   };
 
   // Change la langue + persistance (cookie + localStorage)
@@ -124,8 +127,12 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   // Récupère le locale (ex: "fr-FR") selon la langue actuelle
-  const getLocale = () =>
-    I18N_CONFIG.languageSettings[language]?.numberFormat || "fr-FR";
+  const getLocale = () => {
+    const safeLang = (language in I18N_CONFIG.languageSettings
+      ? (language as keyof typeof I18N_CONFIG.languageSettings)
+      : (I18N_CONFIG.defaultLanguage as keyof typeof I18N_CONFIG.languageSettings));
+    return I18N_CONFIG.languageSettings[safeLang]?.numberFormat || "fr-FR";
+  };
 
   const formatDate = (date: Date | string | number): string => {
     const d = new Date(date);
@@ -163,14 +170,25 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const formatCurrency = (amount: number | string): string => {
-    const settings = I18N_CONFIG.languageSettings[language];
+    const settings =
+      I18N_CONFIG.languageSettings[
+        (language in I18N_CONFIG.languageSettings
+          ? (language as keyof typeof I18N_CONFIG.languageSettings)
+          : (I18N_CONFIG.defaultLanguage as keyof typeof I18N_CONFIG.languageSettings))
+      ];
     return new Intl.NumberFormat(getLocale(), {
       style: "currency",
       currency: settings.currency,
     }).format(Number(amount));
   };
 
-  const direction = I18N_CONFIG.languageSettings[language]?.direction || "ltr";
+  const direction = (
+    I18N_CONFIG.languageSettings[
+      (language in I18N_CONFIG.languageSettings
+        ? (language as keyof typeof I18N_CONFIG.languageSettings)
+        : (I18N_CONFIG.defaultLanguage as keyof typeof I18N_CONFIG.languageSettings))
+    ]?.direction || "ltr"
+  ) as "ltr" | "rtl";
 
   // Évite de rendre avant que la langue soit chargée (évite flash)
   if (!isLoaded) {

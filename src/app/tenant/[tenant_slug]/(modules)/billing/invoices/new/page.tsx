@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -123,7 +123,7 @@ function NewInvoiceForm() {
       terms_and_conditions: data.terms_and_conditions,
     };
     createInvoice.mutate(payload as Record<string, unknown>, {
-      onSuccess: (res: { id?: string }) => {
+      onSuccess: (res: any) => {
         const id = res?.id?.includes(":") ? res.id.split(":")[1] : res?.id ?? "";
         router.push(buildPath(`/billing/invoices/${id}`));
       },

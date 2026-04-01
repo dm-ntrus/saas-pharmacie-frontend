@@ -10,6 +10,7 @@ import { Permission } from "@/types/permissions";
 import { useCreateQualityDocument } from "@/hooks/api/useQuality";
 import { createQualityDocumentSchema, type CreateQualityDocumentFormData } from "@/schemas/quality.schema";
 import { DOCUMENT_TYPE_LABELS } from "@/types/quality";
+import { DocumentType } from "@/types/quality";
 import { Button, Card, CardContent, CardHeader, CardTitle, Input, Select } from "@/components/ui";
 import { ArrowLeft } from "lucide-react";
 
@@ -27,7 +28,7 @@ function NewQualityDocumentContent() {
   const createDoc = useCreateQualityDocument();
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<CreateQualityDocumentFormData>({
     resolver: zodResolver(createQualityDocumentSchema),
-    defaultValues: { type: "procedure", title: "", description: "", effectiveDate: new Date().toISOString().slice(0, 10), reviewDate: "", content: "", trainingRequired: false },
+    defaultValues: { type: DocumentType.PROCEDURE, title: "", description: "", effectiveDate: new Date().toISOString().slice(0, 10), reviewDate: "", content: "", trainingRequired: false },
   });
 
   const onSubmit = (data: CreateQualityDocumentFormData) => {

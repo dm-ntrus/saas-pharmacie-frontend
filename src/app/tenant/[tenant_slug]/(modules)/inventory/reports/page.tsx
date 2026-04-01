@@ -27,29 +27,31 @@ function ReportsContent() {
   const pharmacyId = currentOrganization?.id ?? "";
   const [activeReport, setActiveReport] = useState<"kpi" | "expiring" | "turnover" | "valuation">("kpi");
 
-  const { data: kpis, isLoading: loadingKpis } = useQuery({
+  const kpisQuery = useQuery({
     queryKey: ["inventory-kpis", pharmacyId],
     queryFn: () => apiService.get(`/pharmacies/${pharmacyId}/inventory/kpis`),
     enabled: !!pharmacyId && activeReport === "kpi",
   });
+  const kpis = kpisQuery.data as any;
+  const loadingKpis = kpisQuery.isLoading;
 
-  const { data: expiring } = useQuery({
+  const expiring = (useQuery({
     queryKey: ["inventory-expiring", pharmacyId],
     queryFn: () => apiService.get(`/pharmacies/${pharmacyId}/inventory/kpis/expiration-risk`),
     enabled: !!pharmacyId && activeReport === "expiring",
-  });
+  }).data as any);
 
-  const { data: turnover } = useQuery({
+  const turnover = (useQuery({
     queryKey: ["inventory-turnover", pharmacyId],
     queryFn: () => apiService.get(`/pharmacies/${pharmacyId}/inventory/kpis/turnover`),
     enabled: !!pharmacyId && activeReport === "turnover",
-  });
+  }).data as any);
 
-  const { data: valuation } = useQuery({
+  const valuation = (useQuery({
     queryKey: ["inventory-valuation", pharmacyId],
     queryFn: () => apiService.get(`/pharmacies/${pharmacyId}/inventory/kpis/stock-valuation`),
     enabled: !!pharmacyId && activeReport === "valuation",
-  });
+  }).data as any);
 
   const tabs = [
     { key: "kpi" as const, label: "KPIs", icon: BarChart3 },

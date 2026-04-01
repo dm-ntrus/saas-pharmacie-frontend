@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useOrganization } from "@/context/OrganizationContext";
+import { useTenantApiContext } from "@/hooks/useTenantApiContext";
 import { apiService } from "@/services/api.service";
 import type {
   Product,
@@ -14,12 +14,13 @@ import type {
   InventoryLocation,
   CreateInventoryLocationPayload,
   UpdateInventoryLocationPayload,
+  ProductPriceHistoryItem,
+  ReorderSuggestionItem,
 } from "@/types/inventory";
 import { toast } from "react-hot-toast";
 
 function usePharmacyId() {
-  const { currentOrganization } = useOrganization();
-  return currentOrganization?.id ?? "";
+  return useTenantApiContext().pharmacyId;
 }
 
 // ─── Products ────────────────────────────────────────────────
@@ -51,6 +52,34 @@ export function useProductById(id: string) {
   });
 }
 
+export function useProductPriceHistory(productId: string, limit = 100) {
+  const pharmacyId = usePharmacyId();
+  return useQuery({
+    queryKey: ["product-price-history", pharmacyId, productId, limit],
+    queryFn: () =>
+      apiService.get<{ items: ProductPriceHistoryItem[]; count: number }>(
+        `/pharmacies/${pharmacyId}/inventory/products/${productId}/price-history`,
+        { params: { limit } },
+      ),
+    enabled: !!pharmacyId && !!productId,
+    staleTime: 60 * 1000,
+  });
+}
+
+export function useReorderSuggestions(threshold: number, limit = 200) {
+  const pharmacyId = usePharmacyId();
+  return useQuery({
+    queryKey: ["reorder-suggestions", pharmacyId, threshold, limit],
+    queryFn: () =>
+      apiService.get<{ threshold: number; items: ReorderSuggestionItem[] }>(
+        `/pharmacies/${pharmacyId}/inventory/reorder-suggestions`,
+        { params: { threshold, limit } },
+      ),
+    enabled: !!pharmacyId,
+    staleTime: 60 * 1000,
+  });
+}
+
 export function useCreateProduct() {
   const pharmacyId = usePharmacyId();
   const qc = useQueryClient();
@@ -76,6 +105,7 @@ export function useUpdateProduct() {
     onSuccess: (_data, vars) => {
       qc.invalidateQueries({ queryKey: ["products", pharmacyId] });
       qc.invalidateQueries({ queryKey: ["product", pharmacyId, vars.id] });
+      qc.invalidateQueries({ queryKey: ["product-price-history", pharmacyId, vars.id] });
       toast.success("Produit mis à jour");
     },
     onError: (err: any) => {
@@ -230,6 +260,7 @@ export function useAdjustBatchQuantity() {
 export function useInventoryAlerts(params?: {
   severity?: string;
   status?: string;
+  type?: string;
   page?: number;
   limit?: number;
 }) {

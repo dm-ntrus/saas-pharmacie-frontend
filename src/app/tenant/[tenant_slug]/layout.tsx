@@ -25,7 +25,7 @@ export default function Layout({ children, params }: LayoutProps) {
         <meta name="description" content={description} />
       </Head>
       <AccessibilityPanel />
-      <OrganizationProvider>
+      <OrganizationProvider tenantRouteSlug={tenant_slug}>
         <FeatureFlagProvider>{children}</FeatureFlagProvider>
       </OrganizationProvider>
     </>

@@ -51,9 +51,9 @@ export function AccountantDashboard() {
     );
   }
 
-  const accounts = accountsData?.data ?? accountsData ?? [];
-  const transactions = transactionsData?.data ?? transactionsData ?? [];
-  const trialBalance = trialBalanceData?.data ?? trialBalanceData;
+  const accounts = (accountsData as any)?.data ?? accountsData ?? [];
+  const transactions = (transactionsData as any)?.data ?? transactionsData ?? [];
+  const trialBalance = (trialBalanceData as any)?.data ?? trialBalanceData;
 
   const totalRevenue = trialBalance?.totalCredit ?? 0;
   const totalExpenses = trialBalance?.totalDebit ?? 0;

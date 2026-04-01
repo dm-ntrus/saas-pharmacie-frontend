@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
@@ -52,8 +52,8 @@ function InvoicesList() {
     const q = search.toLowerCase();
     return list.filter(
       (inv) =>
-        inv.invoice_number?.toLowerCase().includes(q) ||
-        (inv.patient_name ?? inv.customer_name ?? "").toLowerCase().includes(q),
+        String((inv as any).invoice_number ?? "").toLowerCase().includes(q) ||
+        String((inv as any).patient_name ?? (inv as any).customer_name ?? "").toLowerCase().includes(q),
     );
   }, [list, search]);
 
@@ -70,7 +70,7 @@ function InvoicesList() {
             href={buildPath(`/billing/invoices/${inv.id}`)}
             className="font-medium text-emerald-600 hover:underline"
           >
-            {inv.invoice_number}
+            {String((inv as any).invoice_number ?? "—")}
           </Link>
         );
       },
@@ -79,21 +79,19 @@ function InvoicesList() {
       key: "invoice_date",
       title: "Date",
       sortable: true,
-      render: (_, row) => formatDate((row as unknown as BillingInvoice).invoice_date),
+      render: (_, row) => formatDate((row as any).invoice_date as any),
     },
     {
       key: "patient_name",
       title: "Client / Patient",
       render: (_, row) =>
-        (row as unknown as BillingInvoice).patient_name ??
-        (row as unknown as BillingInvoice).customer_name ??
-        "—",
+        String((row as any).patient_name ?? (row as any).customer_name ?? "—"),
     },
     {
       key: "status",
       title: "Statut",
       render: (_, row) => {
-        const s = (row as unknown as BillingInvoice).status;
+        const s = String((row as any).status ?? "");
         const variant =
           s === "paid"
             ? "success"
@@ -104,7 +102,7 @@ function InvoicesList() {
                 : "default";
         return (
           <Badge variant={variant} size="sm">
-            {INVOICE_STATUS_LABELS[s] ?? s}
+            {(INVOICE_STATUS_LABELS[s] ?? s) || "—"}
           </Badge>
         );
       },
@@ -207,7 +205,7 @@ function InvoicesList() {
           loading={isLoading}
           emptyTitle="Aucune facture"
           emptyDescription="Créez une facture ou importez des données"
-          rowKey={(row) => (row as unknown as BillingInvoice).id}
+          rowKey={(row) => String((row as any).id ?? "")}
         />
       </Card>
     </div>

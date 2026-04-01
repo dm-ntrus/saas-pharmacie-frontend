@@ -22,7 +22,7 @@ import { formatCurrency, formatDate, formatDateTime, formatNumber } from "@/util
 import {
   FileText, Settings, BarChart3, Send, Download, CheckCircle,
   XCircle, AlertTriangle, RefreshCw, Shield, Globe, Eye,
-  RotateCcw, Plus,
+  RotateCcw, Plus, Receipt,
 } from "lucide-react";
 
 // ═══════════════════════════════════════════════════════════════

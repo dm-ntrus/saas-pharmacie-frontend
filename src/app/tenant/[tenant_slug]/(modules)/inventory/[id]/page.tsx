@@ -107,7 +107,7 @@ function ProductDetailContent() {
           <Badge variant={STATUS_BADGE[product.status] ?? "default"}>
             {PRODUCT_STATUS_LABELS[product.status]}
           </Badge>
-          <ProtectedAction permission={Permission.INVENTORY_ITEMS_UPDATE}>
+          <ProtectedAction permission={Permission.PRODUCTS_UPDATE}>
             <Button
               variant="outline"
               size="sm"

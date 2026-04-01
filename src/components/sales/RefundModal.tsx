@@ -92,7 +92,7 @@ export const RefundModal: React.FC<RefundModalProps> = ({
           <ul className="space-y-1">
             {sale.items?.slice(0, 3).map((item, index) => (
               <li key={index} className="text-sm text-gray-600">
-                • {item.product?.name} - Qté: {item.quantity} -{" "}
+                • {(item as any).product?.name} - Qté: {item.quantity} -{" "}
                 {formatCurrency(item.quantity * item.unitPrice)}
               </li>
             ))}

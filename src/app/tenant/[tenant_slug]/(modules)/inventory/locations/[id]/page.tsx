@@ -395,9 +395,21 @@ function FindMyMedMap({ coords, name }: { coords: Coordinates3D; name: string })
         <span className="font-mono">X: {x} · Y: {y} · Z: {z}</span>
         {zLabel && (
           <span className="flex items-center gap-1">
-            {z != null && z >= 2.5 && <ArrowUp className="w-4 h-4 text-amber-500" title="Hauteur : escabeau" />}
-            {z != null && z >= 1.5 && z < 2.5 && <Minus className="w-4 h-4" title="Hauteur : milieu" />}
-            {z != null && z < 1.5 && <ArrowDown className="w-4 h-4 text-emerald-500" title="Hauteur : bas" />}
+            {z != null && z >= 2.5 && (
+              <span title="Hauteur : escabeau">
+                <ArrowUp className="w-4 h-4 text-amber-500" />
+              </span>
+            )}
+            {z != null && z >= 1.5 && z < 2.5 && (
+              <span title="Hauteur : milieu">
+                <Minus className="w-4 h-4" />
+              </span>
+            )}
+            {z != null && z < 1.5 && (
+              <span title="Hauteur : bas">
+                <ArrowDown className="w-4 h-4 text-emerald-500" />
+              </span>
+            )}
             {zLabel}
           </span>
         )}

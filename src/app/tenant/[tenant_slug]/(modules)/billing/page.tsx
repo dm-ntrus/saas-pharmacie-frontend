@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ModuleGuard } from "@/components/guards/ModuleGuard";
 import { useTenantPath } from "@/hooks/useTenantPath";
@@ -8,7 +9,8 @@ import { Permission } from "@/types/permissions";
 import {
   useSubscriptionContext,
   usePortalSession,
-  useCheckoutSession,
+  appendBillingReturnSyncMarker,
+  useBillingReturnSync,
 } from "@/hooks/api/useBilling";
 import {
   Button,
@@ -26,10 +28,16 @@ import {
   Receipt,
   Zap,
   Calendar,
+  BarChart3,
 } from "lucide-react";
 import type { Plan } from "@/types/billing";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+
+function BillingReturnSync(): null {
+  useBillingReturnSync();
+  return null;
+}
 
 export default function BillingPage() {
   return (
@@ -37,6 +45,9 @@ export default function BillingPage() {
       module="billing"
       requiredPermissions={[Permission.INVOICES_READ]}
     >
+      <Suspense fallback={null}>
+        <BillingReturnSync />
+      </Suspense>
       <BillingContent />
     </ModuleGuard>
   );
@@ -47,12 +58,14 @@ function BillingContent() {
   const { buildPath } = useTenantPath();
   const { data: context, isLoading, error, refetch } = useSubscriptionContext();
   const portalSession = usePortalSession();
-  const checkoutSession = useCheckoutSession();
 
   const handlePortal = () => {
     const returnUrl =
       typeof window !== "undefined"
-        ? window.location.origin + buildPath("/billing")
+        ? appendBillingReturnSyncMarker(
+            window.location.origin + buildPath("/billing"),
+            "portal",
+          )
         : "";
     portalSession.mutate(
       { returnUrl },
@@ -94,14 +107,8 @@ function BillingContent() {
         <EmptyState
           title="Aucun abonnement actif"
           description="Souscrivez à un plan pour débloquer toutes les fonctionnalités."
-          action={
-            <Button
-              leftIcon={<ArrowRight className="w-4 h-4" />}
-              onClick={() => router.push(buildPath("/billing/upgrade"))}
-            >
-              Voir les offres
-            </Button>
-          }
+          actionLabel="Voir les offres"
+          onAction={() => router.push(buildPath("/billing/upgrade"))}
         />
       ) : (
         <>
@@ -127,7 +134,7 @@ function BillingContent() {
                     variant={
                       status === "active" || status === "trial"
                         ? "success"
-                        : "secondary"
+                        : "default"
                     }
                   >
                     {status || "—"}
@@ -157,7 +164,7 @@ function BillingContent() {
                 <p className="text-sm text-slate-500">Actions</p>
                 <div className="flex flex-wrap gap-2">
                   <Button
-                    variant="default"
+                    variant="primary"
                     size="sm"
                     leftIcon={<CreditCard className="w-4 h-4" />}
                     onClick={handlePortal}
@@ -180,6 +187,22 @@ function BillingContent() {
                   >
                     Historique
                   </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    leftIcon={<Receipt className="w-4 h-4" />}
+                    onClick={() => router.push(buildPath("/billing/invoices"))}
+                  >
+                    Toutes les factures
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    leftIcon={<BarChart3 className="w-4 h-4" />}
+                    onClick={() => router.push(buildPath("/billing/reports"))}
+                  >
+                    Rapports
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -196,7 +219,7 @@ function BillingContent() {
                   {(context.entitlements as { key?: string; name?: string }[]).map(
                     (e, i) => (
                       <li key={i}>
-                        <Badge variant="secondary">
+                        <Badge variant="default">
                           {e.name ?? e.key ?? "—"}
                         </Badge>
                       </li>
@@ -224,13 +247,27 @@ function BillingContent() {
                       </tr>
                     </thead>
                     <tbody>
-                      {recentInvoices.slice(0, 5).map((inv) => (
+                      {recentInvoices.slice(0, 5).map((inv) => {
+                        const rawId = String(inv.id ?? "");
+                        const invUuid = rawId.includes(":")
+                          ? rawId.split(":").pop() ?? rawId
+                          : rawId;
+                        return (
                         <tr
-                          key={inv.id}
+                          key={rawId || String((inv as { invoice_number?: string }).invoice_number ?? "")}
                           className="border-b border-slate-100 dark:border-slate-800"
                         >
                           <td className="p-2">
-                            {inv.invoice_number ?? inv.id}
+                            <Link
+                              href={buildPath(`/billing/invoices/${invUuid}`)}
+                              className="font-medium text-emerald-600 hover:underline"
+                            >
+                              {String(
+                                (inv as { invoice_number?: string; number?: string }).invoice_number ??
+                                  (inv as { number?: string }).number ??
+                                  invUuid,
+                              )}
+                            </Link>
                             {inv.created_at && (
                               <span className="text-slate-500 block text-xs">
                                 {format(new Date(inv.created_at), "d MMM y", {
@@ -245,12 +282,13 @@ function BillingContent() {
                               : "—"}
                           </td>
                           <td className="p-2">
-                            <Badge variant="secondary">
+                            <Badge variant="default">
                               {String(inv.status ?? "—")}
                             </Badge>
                           </td>
                         </tr>
-                      ))}
+                      );
+                      })}
                     </tbody>
                   </table>
                 </div>

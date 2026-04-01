@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAdmin } from "@/context/AdminContext";
@@ -74,10 +74,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     return true;
   };
 
+  const safePathname = pathname ?? "";
   const isCurrentPath = (href: string) =>
     href === "/dashboard"
-      ? pathname.startsWith("/dashboard")
-      : pathname.startsWith(href);
+      ? safePathname.startsWith("/dashboard")
+      : safePathname.startsWith(href);
 
   return (
     <div className="flex flex-col h-full bg-gray-900 text-white">

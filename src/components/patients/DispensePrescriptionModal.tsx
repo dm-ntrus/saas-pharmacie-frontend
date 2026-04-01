@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
 import { Button, Input, Modal } from "@/design-system";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/lib/api";
+import apiClient from "@/lib/api";
 import { toast } from "react-hot-toast";
 import { DispensePrescriptionDto } from "@/types";
 
@@ -33,10 +33,11 @@ export const DispensePrescriptionModal: React.FC<
   DispensePrescriptionModalProps
 > = ({ isOpen, onClose, prescription }) => {
   const queryClient = useQueryClient();
-  const { data: user } = useQuery({
+  const { data: userData } = useQuery({
     queryKey: ["current-user"],
     queryFn: () => apiClient.getCurrentUser(),
   });
+  const user = (userData as any)?.user ?? userData ?? null;
 
   const dispenseMutation = useMutation({
     mutationFn: (data: DispensePrescriptionDto) =>
@@ -96,7 +97,7 @@ export const DispensePrescriptionModal: React.FC<
           <h3 className="text-sm font-medium text-gray-900">
             Médicaments à dispenser
           </h3>
-          {formik.values.items.map((item, index) => {
+          {formik.values.items.map((item: any, index: number) => {
             const prescriptionItem = prescription.items[index];
             return (
               <div

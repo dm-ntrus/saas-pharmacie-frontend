@@ -35,6 +35,7 @@ import {
   DollarSign,
   Filter,
   ChevronRight,
+  Truck,
 } from "lucide-react";
 import { formatCurrency } from "@/utils/formatters";
 
@@ -87,6 +88,13 @@ function InventoryContent() {
           </p>
         </div>
         <div className="flex gap-2">
+          <Button
+            variant="outline"
+            leftIcon={<Truck className="w-4 h-4" />}
+            onClick={() => router.push(buildPath("/inventory/reorder-suggestions"))}
+          >
+            Réappro
+          </Button>
           <Button
             variant="outline"
             leftIcon={<AlertTriangle className="w-4 h-4" />}

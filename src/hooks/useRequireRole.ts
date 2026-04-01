@@ -1,20 +1,20 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { useOrganization } from '../context/OrganizationContext';
 
 export function useRequireRole(requiredRoles: string[]) {
   const { currentOrganization, hasRole } = useOrganization();
-  const navigate = useNavigate();
+  const router = useRouter();
   
   useEffect(() => {
     if (!currentOrganization) {
-      navigate('/auth/select-organization');
+      router.replace('/auth/select-organization');
       return;
     }
     
     const hasRequiredRole = requiredRoles.some(role => hasRole(role));
     if (!hasRequiredRole) {
-      navigate('/unauthorized');
+      router.replace('/unauthorized');
     }
-  }, [currentOrganization, requiredRoles, hasRole, navigate]);
+  }, [currentOrganization, requiredRoles, hasRole, router]);
 }

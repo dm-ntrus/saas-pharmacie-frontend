@@ -63,16 +63,30 @@ const orderItemSchema = z.object({
 });
 
 export const createOrderSchema = z.object({
-  orderNumber: z.string().min(1, "Le numéro de commande est requis"),
+  orderNumber: z.string().optional(),
   customerName: z.string().min(1, "Le nom du client est requis"),
   customerPhone: z.string().min(1, "Le numéro de téléphone est requis"),
-  customerEmail: z.string().email("Adresse e-mail invalide").optional().or(z.literal("")),
+  customerEmail: z
+    .string()
+    .optional()
+    .refine((v) => !v || v === "" || z.string().email().safeParse(v).success, {
+      message: "Adresse e-mail invalide",
+    }),
   deliveryAddress: z.string().min(1, "L'adresse de livraison est requise"),
   city: z.string().min(1, "La ville est requise"),
   postalCode: z.string().min(1, "Le code postal est requis"),
-  latitude: z.number().optional(),
-  longitude: z.number().optional(),
-  deliveryZoneId: z.number().int().min(1, "La zone de livraison est requise"),
+  latitude: z.preprocess((v) => {
+    if (v === "" || v === undefined || v === null) return undefined;
+    const n = typeof v === "number" ? v : Number(v);
+    return Number.isFinite(n) ? n : undefined;
+  }, z.number().optional()),
+  longitude: z.preprocess((v) => {
+    if (v === "" || v === undefined || v === null) return undefined;
+    const n = typeof v === "number" ? v : Number(v);
+    return Number.isFinite(n) ? n : undefined;
+  }, z.number().optional()),
+  /** ID zone Surreal (`uuid` ou `delivery_zones:uuid`) — optionnel si résolution auto CP/ville */
+  deliveryZoneId: z.string().optional(),
   priority: deliveryPriorityEnum.optional(),
   deliveryFee: z.number().min(0, "Les frais de livraison doivent être positifs"),
   totalAmount: z.number().min(0, "Le montant total doit être positif"),

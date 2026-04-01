@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -37,16 +37,16 @@ function ProformaList() {
         const inv = row as unknown as BillingInvoice;
         return (
           <Link href={buildPath(`/billing/invoices/${inv.id}`)} className="font-medium text-emerald-600 hover:underline">
-            {inv.invoice_number}
+            {String((inv as any).invoice_number ?? "—")}
           </Link>
         );
       },
     },
-    { key: "invoice_date", title: "Date", render: (_, row) => formatDate((row as unknown as BillingInvoice).invoice_date) },
+    { key: "invoice_date", title: "Date", render: (_, row) => formatDate((row as any).invoice_date as any) },
     {
       key: "patient_name",
       title: "Client / Patient",
-      render: (_, row) => (row as unknown as BillingInvoice).patient_name ?? (row as unknown as BillingInvoice).customer_name ?? "—",
+      render: (_, row) => String((row as any).patient_name ?? (row as any).customer_name ?? "—"),
     },
     {
       key: "total_amount",
@@ -60,9 +60,10 @@ function ProformaList() {
       align: "right",
       render: (_, row) => {
         const inv = row as unknown as BillingInvoice;
-        const id = inv.id?.includes(":") ? inv.id.split(":")[1] : inv.id;
+        const invId = String((inv as any).id ?? "");
+        const id = invId.includes(":") ? invId.split(":")[1] : invId;
         return (
-          <Button size="sm" variant="outline" onClick={() => convertProforma.mutate(id ?? inv.id)} disabled={convertProforma.isPending}>
+          <Button size="sm" variant="outline" onClick={() => convertProforma.mutate(id)} disabled={convertProforma.isPending}>
             Convertir en facture
           </Button>
         );
@@ -94,7 +95,13 @@ function ProformaList() {
         ) : list.length === 0 ? (
           <EmptyState title="Aucune proforma" description="Les proformas créées apparaîtront ici." />
         ) : (
-          <DataTable columns={columns} data={list as unknown as Record<string, unknown>[]} loading={false} emptyTitle="Aucune proforma" rowKey={(row) => (row as unknown as BillingInvoice).id} />
+          <DataTable
+            columns={columns}
+            data={list as unknown as Record<string, unknown>[]}
+            loading={false}
+            emptyTitle="Aucune proforma"
+            rowKey={(row) => String((row as any).id ?? "")}
+          />
         )}
       </Card>
     </div>

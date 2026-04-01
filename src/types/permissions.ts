@@ -209,6 +209,13 @@ export enum Permission {
   FISCAL_REPORTS_READ = 'fiscal:reports:read',
   FISCAL_AUDIT_READ = 'fiscal:audit:read',
 
+  /** Journal métier / compliance (tenant) */
+  TENANT_AUDIT_READ = 'tenant_audit:read',
+
+  /** CRM / fidélité (tenant pharmacie) */
+  LOYALTY_READ = 'loyalty:read',
+  LOYALTY_WRITE = 'loyalty:write',
+
   // Roles
   ROLES_CREATE = 'roles:create',
   ROLES_READ = 'roles:read',
@@ -344,6 +351,8 @@ export const PermissionGroups = {
     Permission.ROLES_UPDATE, Permission.ROLES_DELETE,
     Permission.ROLES_ASSIGN,
   ],
+  COMPLIANCE_AUDIT: [Permission.TENANT_AUDIT_READ],
+  CRM_LOYALTY: [Permission.LOYALTY_READ, Permission.LOYALTY_WRITE],
   NOTIFICATIONS: [Permission.NOTIFICATIONS_READ, Permission.NOTIFICATIONS_WRITE],
 } as const;
 
@@ -372,5 +381,7 @@ export const MODULE_PERMISSIONS: Record<string, Permission[]> = {
   insurance: [Permission.INSURANCE_PROVIDERS_READ],
   'e-invoice': [Permission.FISCAL_INVOICES_READ],
   settings: [Permission.ROLES_READ],
+  'audit-events': [Permission.TENANT_AUDIT_READ],
+  loyalty: [Permission.LOYALTY_READ],
   profile: [],
 };

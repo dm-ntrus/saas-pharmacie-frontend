@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { Star, Quote } from 'lucide-react';
 
 export default function Testimonials() {

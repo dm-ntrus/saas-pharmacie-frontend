@@ -80,6 +80,9 @@ function NewProductContent() {
     isColdChain: false,
     storageConditions: "",
     referencePrice: undefined,
+    primaryImageUrl: "",
+    atcCode: "",
+    therapeuticClass: "",
   });
 
   const update = (key: keyof CreateProductPayload, value: unknown) => {
@@ -100,13 +103,16 @@ function NewProductContent() {
     internalCode: form.internalCode || undefined,
     description: form.description || undefined,
     brand: form.brand || undefined,
-    packagingSize: form.packagingSize != null && form.packagingSize !== "" ? Number(form.packagingSize) : undefined,
+    packagingSize: form.packagingSize != null ? Number(form.packagingSize) : undefined,
     isNarcotic: form.isNarcotic ?? false,
     isColdChain: form.isColdChain ?? false,
     requiresPrescription: form.requiresPrescription ?? false,
     deaSchedule: form.deaSchedule || undefined,
     storageConditions: form.storageConditions || undefined,
-    referencePrice: form.referencePrice != null && form.referencePrice !== "" ? Number(form.referencePrice) : undefined,
+    referencePrice: form.referencePrice != null ? Number(form.referencePrice) : undefined,
+    primaryImageUrl: form.primaryImageUrl?.trim() || undefined,
+    atcCode: form.atcCode?.trim() || undefined,
+    therapeuticClass: form.therapeuticClass?.trim() || undefined,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -158,6 +164,13 @@ function NewProductContent() {
                 className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm"
               />
             </div>
+            <Input
+              label="URL image produit"
+              type="url"
+              placeholder="https://cdn…/produit.jpg"
+              value={form.primaryImageUrl ?? ""}
+              onChange={(e) => update("primaryImageUrl", e.target.value)}
+            />
           </CardContent>
         </Card>
 
@@ -194,6 +207,8 @@ function NewProductContent() {
               </select>
             </div>
             <Input label="Nombre d'unités par conditionnement" type="number" min={0} value={form.packagingSize ?? ""} onChange={(e) => update("packagingSize", e.target.value === "" ? undefined : e.target.value)} />
+            <Input label="Code ATC (OMS)" placeholder="ex. N02BE01" value={form.atcCode ?? ""} onChange={(e) => update("atcCode", e.target.value)} />
+            <Input label="Classe thérapeutique" placeholder="Libellé ou hiérarchie" value={form.therapeuticClass ?? ""} onChange={(e) => update("therapeuticClass", e.target.value)} />
             {form.isNarcotic && (
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Classification DEA</label>

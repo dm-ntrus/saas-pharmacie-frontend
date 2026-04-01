@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import apiService from "@/services/api.service";
-import { useAuth } from "@/context/AuthContext";
 import { toast } from "react-hot-toast";
 
 // Users

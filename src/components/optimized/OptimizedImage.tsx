@@ -2,61 +2,83 @@ import React from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
-interface OptimizedImageProps {
-  src: string;
-  alt: string;
-  width?: number;
-  height?: number;
-  className?: string;
-  priority?: boolean;
-  quality?: number;
-  placeholder?: 'blur' | 'empty';
-  blurDataURL?: string;
-  sizes?: string;
-  fill?: boolean;
-  objectFit?: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
-}
+type OptimizedImageProps =
+  | {
+      src: string;
+      alt: string;
+      width: number;
+      height: number;
+      className?: string;
+      priority?: boolean;
+      quality?: number;
+      placeholder?: 'blur' | 'empty';
+      blurDataURL?: string;
+      sizes?: string;
+      fill?: false;
+      objectFit?: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
+    }
+  | {
+      src: string;
+      alt: string;
+      className?: string;
+      priority?: boolean;
+      quality?: number;
+      placeholder?: 'blur' | 'empty';
+      blurDataURL?: string;
+      sizes?: string;
+      fill: true;
+      objectFit?: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
+    };
 
-const OptimizedImage = React.memo<OptimizedImageProps>(({
-  src,
-  alt,
-  width,
-  height,
-  className,
-  priority = false,
-  quality = 75,
-  placeholder = 'empty',
-  blurDataURL,
-  sizes = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
-  fill = false,
-  objectFit = 'cover',
-}) => {
-  // Validation des props
-  if (!fill && (!width || !height)) {
-    console.warn('OptimizedImage: width and height are required when fill is false');
-  }
-
-  const imageProps = {
+const OptimizedImage = React.memo<OptimizedImageProps>((props) => {
+  const {
     src,
     alt,
-    className: cn('transition-opacity duration-300', className),
-    priority,
-    quality,
-    placeholder,
+    className,
+    priority = false,
+    quality = 75,
+    placeholder = 'empty',
     blurDataURL,
-    sizes,
-    fill,
-    style: fill ? { objectFit } : undefined,
-  };
+    sizes = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
+    objectFit = 'cover',
+  } = props as any;
 
-  if (!fill) {
-    imageProps.width = width;
-    imageProps.height = height;
+  const wrapperClass = cn('relative overflow-hidden', className);
+  const imgClass = cn('transition-opacity duration-300', className);
+
+  if ('fill' in props && props.fill) {
+    return (
+      <div className={wrapperClass}>
+        <Image
+          src={src}
+          alt={alt}
+          className={imgClass}
+          priority={priority}
+          quality={quality}
+          placeholder={placeholder}
+          blurDataURL={blurDataURL}
+          sizes={sizes}
+          fill
+          style={{ objectFit }}
+        />
+      </div>
+    );
   }
 
   return (
-    <div className={cn('relative overflow-hidden', className)}>
-      <Image {...imageProps} />
+    <div className={wrapperClass}>
+      <Image
+        src={src}
+        alt={alt}
+        className={imgClass}
+        priority={priority}
+        quality={quality}
+        placeholder={placeholder}
+        blurDataURL={blurDataURL}
+        sizes={sizes}
+        width={(props as any).width}
+        height={(props as any).height}
+      />
     </div>
   );
 });

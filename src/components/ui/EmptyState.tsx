@@ -9,6 +9,8 @@ interface EmptyStateProps {
   icon?: React.ReactNode;
   title: string;
   description?: string;
+  /** Back-compat: pass a full action node (button/link). Prefer actionLabel/onAction. */
+  action?: React.ReactNode;
   actionLabel?: string;
   onAction?: () => void;
   className?: string;
@@ -18,6 +20,7 @@ export function EmptyState({
   icon,
   title,
   description,
+  action,
   actionLabel,
   onAction,
   className,
@@ -42,11 +45,13 @@ export function EmptyState({
           {description}
         </p>
       )}
-      {actionLabel && onAction && (
+      {action ? (
+        action
+      ) : actionLabel && onAction ? (
         <Button variant="primary" size="sm" onClick={onAction}>
           {actionLabel}
         </Button>
-      )}
+      ) : null}
     </div>
   );
 }

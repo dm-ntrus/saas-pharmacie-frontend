@@ -5,7 +5,7 @@ import { ModuleGuard } from "@/components/guards/ModuleGuard";
 import { Permission } from "@/types/permissions";
 import { useOrganization } from "@/context/OrganizationContext";
 import { usePrescriptionById } from "@/hooks/api/usePrescriptions";
-import { PRESCRIPTION_STATUS_LABELS } from "@/types/prescriptions";
+import { PRESCRIPTION_STATUS_LABELS, PrescriptionStatus } from "@/types/prescriptions";
 import type { Prescription } from "@/types/prescriptions";
 import { formatDate, formatCurrency } from "@/utils/formatters";
 import { useTenantPath } from "@/hooks/useTenantPath";
@@ -45,7 +45,7 @@ export default function ScannerPage() {
 }
 
 function ScannerContent() {
-  const tenantPath = useTenantPath();
+  const { basePath } = useTenantPath();
   const [mode, setMode] = useState<"scan" | "manual">("scan");
   const [scanInput, setScanInput] = useState("");
   const [scannedId, setScannedId] = useState("");
@@ -155,7 +155,7 @@ function ScannerContent() {
       {scannedId ? (
         <ScannedPrescription
           prescriptionId={scannedId}
-          tenantPath={tenantPath}
+          tenantPath={basePath}
         />
       ) : (
         <Card>
@@ -277,7 +277,7 @@ function ScannedPrescription({
                 <div>
                   <p className="text-xs text-slate-500">Montant</p>
                   <p className="font-medium text-slate-900 dark:text-slate-100">
-                    {formatCurrency(p.total_amount)}
+                    {formatCurrency(p.total_amount ?? 0)}
                   </p>
                 </div>
               </div>

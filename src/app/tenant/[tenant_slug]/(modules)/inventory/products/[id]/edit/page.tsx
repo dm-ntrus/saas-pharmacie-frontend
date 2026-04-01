@@ -79,6 +79,9 @@ function toPayload(p: any): Partial<CreateProductPayload> & { status?: ProductSt
     storageConditions: p.storage_conditions ?? p.storageConditions ?? "",
     referencePrice: p.reference_price ?? p.referencePrice,
     status: p.status as ProductStatus,
+    primaryImageUrl: p.primary_image_url ?? p.primaryImageUrl ?? "",
+    atcCode: p.atc_code ?? p.atcCode ?? "",
+    therapeuticClass: p.therapeutic_class ?? p.therapeuticClass ?? "",
   };
 }
 
@@ -171,6 +174,8 @@ function EditProductContent() {
                 {UNITS.map((o) => (<option key={o.value} value={o.value}>{o.label}</option>))}
               </select>
             </div>
+            <Input label="Code ATC (OMS)" placeholder="ex. N02BE01" value={form.atcCode ?? ""} onChange={(e) => update("atcCode", e.target.value)} />
+            <Input label="Classe thérapeutique" placeholder="Libellé ou hiérarchie" value={form.therapeuticClass ?? ""} onChange={(e) => update("therapeuticClass", e.target.value)} />
             <Input label="Conditionnement (nb unités)" type="number" min={0} value={form.packagingSize ?? ""} onChange={(e) => update("packagingSize", e.target.value === "" ? undefined : e.target.value)} />
             {form.isNarcotic && (
               <div>

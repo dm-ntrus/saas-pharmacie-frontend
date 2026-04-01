@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
@@ -128,8 +128,12 @@ function AlertsContent() {
                       </p>
                       <div className="flex items-center gap-3 mt-2 text-xs text-slate-400">
                         <span>{formatDateTime(alert.created_at as string)}</span>
-                        {alert.product_name && <span>Produit: {String(alert.product_name)}</span>}
-                        {alert.supplier_name && <span>Fournisseur: {String(alert.supplier_name)}</span>}
+                        {Boolean(alert.product_name) && (
+                          <span>Produit: {String(alert.product_name)}</span>
+                        )}
+                        {Boolean(alert.supplier_name) && (
+                          <span>Fournisseur: {String(alert.supplier_name)}</span>
+                        )}
                       </div>
                     </div>
                     {!resolved && (

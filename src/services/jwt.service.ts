@@ -17,7 +17,7 @@ class JWTService {
   decode(token: string): JWTPayload {
     try {
       return jwtDecode<JWTPayload>(token);
-    } catch (error) {
+    } catch {
       throw new Error("Invalid JWT token");
     }
   }

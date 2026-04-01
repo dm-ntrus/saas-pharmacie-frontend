@@ -169,3 +169,95 @@ export const PO_STATUS_LABELS: Record<string, string> = {
   cancelled: "Annulée",
   closed: "Clôturée",
 };
+
+/** Réquisition interne */
+export type PurchaseRequestStatus =
+  | "draft"
+  | "submitted"
+  | "approved"
+  | "rejected"
+  | "converted"
+  | "cancelled";
+
+export interface PurchaseRequestLine {
+  id?: string;
+  product_id?: string;
+  product_name?: string;
+  product_sku?: string;
+  quantity?: number;
+  estimated_unit_cost?: string | number;
+}
+
+export interface PurchaseRequest {
+  id: string;
+  request_number?: string;
+  status: PurchaseRequestStatus | string;
+  title?: string;
+  notes?: string;
+  requested_by?: string;
+  submitted_at?: string;
+  approved_by?: string;
+  approved_at?: string;
+  rejected_reason?: string;
+  preferred_supplier_id?: string;
+  converted_purchase_order_id?: string;
+  created_at?: string;
+  lines?: PurchaseRequestLine[];
+}
+
+export const PR_STATUS_LABELS: Record<string, string> = {
+  draft: "Brouillon",
+  submitted: "Soumise",
+  approved: "Approuvée",
+  rejected: "Refusée",
+  converted: "Transformée en BC",
+  cancelled: "Annulée",
+};
+
+/** Bon de réception (GRN) */
+export interface GoodsReceiptLine {
+  id?: string;
+  goods_receipt_id?: string;
+  purchase_order_item_id?: string;
+  product_id?: string;
+  quantity_received?: number;
+  quantity_accepted?: number;
+  quantity_rejected?: number;
+  qc_status?: string;
+  batch_number?: string;
+  expiry_date?: string;
+  line_notes?: string;
+}
+
+export interface GoodsReceipt {
+  id: string;
+  grn_number?: string;
+  purchase_order_id?: string;
+  received_by?: string;
+  notes?: string;
+  qc_summary?: string;
+  created_at?: string;
+  lines?: GoodsReceiptLine[];
+}
+
+export const QC_STATUS_LABELS: Record<string, string> = {
+  accepted: "Accepté",
+  rejected: "Refusé",
+  quarantine: "Quarantaine",
+};
+
+/** Devis fournisseur (comparaison) */
+export interface SupplierProductQuote {
+  id: string;
+  supplier_id?: string;
+  supplierName?: string;
+  product_id?: string;
+  unit_price?: string | number;
+  currency?: string;
+  min_order_qty?: number;
+  lead_time_days?: number;
+  quote_reference?: string;
+  valid_until?: string;
+  notes?: string;
+  created_at?: string;
+}

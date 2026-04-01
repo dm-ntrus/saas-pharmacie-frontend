@@ -1,7 +1,6 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from "axios";
-import { tokenService } from "@/services/token.service";
-import { KEYCLOAK_CONFIG } from "@/utils/constants";
 import { getCookie } from "@/utils/cookies";
+import { dispatchAccessTokenUpdated } from "@/utils/access-token-events";
 
 /** Base URL de l'API backend : inclut /api/v1 (aligné avec main.ts setGlobalPrefix + enableVersioning). */
 export function getApiBaseUrl(): string {
@@ -12,20 +11,15 @@ export function getApiBaseUrl(): string {
   return `${base}/api/v1`;
 }
 
-interface LoginResponse {
-  access_token: string;
-  refresh_token: string;
-  expires_in: number;
-}
-
 class AuthInterceptor {
   private axiosInstance: AxiosInstance;
   private isRefreshing = false;
-  private refreshSubscribers: Array<(token: string) => void> = [];
+  private refreshSubscribers: Array<() => void> = [];
 
   constructor() {
     this.axiosInstance = axios.create({
       baseURL: getApiBaseUrl(),
+      withCredentials: true,
       headers: {
         "Content-Type": "application/json",
       },
@@ -47,39 +41,9 @@ class AuthInterceptor {
   private async handleRequest(
     config: InternalAxiosRequestConfig
   ): Promise<InternalAxiosRequestConfig> {
-    let token = tokenService.getAccessToken();
-
-    if (token && tokenService.isTokenExpired()) {
-      if (!this.isRefreshing) {
-        this.isRefreshing = true;
-        try {
-          const newToken = await this.refreshAccessToken();
-          this.isRefreshing = false;
-
-          this.refreshSubscribers.forEach((cb) => cb(newToken));
-          this.refreshSubscribers = [];
-
-          token = newToken;
-        } catch (error) {
-          this.isRefreshing = false;
-          this.refreshSubscribers = [];
-          tokenService.clearTokens();
-          const orgSlug = getCookie("slug_organization");
-          if (orgSlug) {
-            window.location.href = `/tenant/${orgSlug}/auth/login`;
-          } else {
-            window.location.href = "/auth/login";
-          }
-          return Promise.reject(error);
-        }
-      } else {
-        token = await new Promise<string>((resolve) =>
-          this.refreshSubscribers.push(resolve)
-        );
-      }
-    }
-
-    if (token) config.headers.Authorization = `Bearer ${token}`;
+    // CSRF protection for cookie-auth (double-submit token)
+    const csrf = getCookie("csrf_token");
+    if (csrf) config.headers["X-CSRF-Token"] = csrf;
 
     // Read org, language, currency from cookies
     const orgId = getCookie("current_organization");
@@ -112,26 +76,21 @@ class AuthInterceptor {
       if (!this.isRefreshing) {
         this.isRefreshing = true;
         try {
-          const newToken = await this.refreshAccessToken();
+          await this.refreshSession();
           this.isRefreshing = false;
 
-          this.refreshSubscribers.forEach((cb) => cb(newToken));
+          this.refreshSubscribers.forEach((cb) => cb());
           this.refreshSubscribers = [];
 
-          originalRequest.headers.Authorization = `Bearer ${newToken}`;
           return this.axiosInstance(originalRequest);
         } catch (refreshError) {
           this.isRefreshing = false;
           this.refreshSubscribers = [];
-          tokenService.clearTokens();
           window.location.href = "/auth/login";
           return Promise.reject(refreshError);
         }
       } else {
-        const newToken = await new Promise<string>((resolve) =>
-          this.refreshSubscribers.push(resolve)
-        );
-        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        await new Promise<void>((resolve) => this.refreshSubscribers.push(resolve));
         return this.axiosInstance(originalRequest);
       }
     }
@@ -139,33 +98,13 @@ class AuthInterceptor {
     return Promise.reject(error);
   }
 
-  private async refreshAccessToken(): Promise<string> {
-    const refreshToken = tokenService.getRefreshToken();
-    if (!refreshToken) throw new Error("No refresh token available");
-
-    const formData = new URLSearchParams({
-      grant_type: "refresh_token",
-      client_id: KEYCLOAK_CONFIG.clientId,
-      refresh_token: refreshToken,
-    });
-
-    const response = await axios.post<LoginResponse>(
-      `${KEYCLOAK_CONFIG.url}${KEYCLOAK_CONFIG.endpoints.token}`,
-      formData.toString(),
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      }
+  private async refreshSession(): Promise<void> {
+    await axios.post(
+      `${getApiBaseUrl()}/bff/auth/refresh`,
+      {},
+      { withCredentials: true }
     );
-
-    tokenService.setTokens(
-      response.data.access_token,
-      response.data.refresh_token,
-      response.data.expires_in
-    );
-
-    return response.data.access_token;
+    dispatchAccessTokenUpdated();
   }
 
   public getAxiosInstance(): AxiosInstance {

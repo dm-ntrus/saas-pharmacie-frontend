@@ -6,7 +6,10 @@ import { ModuleGuard } from "@/components/guards/ModuleGuard";
 import { useTenantPath } from "@/hooks/useTenantPath";
 import { Permission } from "@/types/permissions";
 import { usePlansList } from "@/hooks/api/usePlans";
-import { useCheckoutSession } from "@/hooks/api/useBilling";
+import {
+  useCheckoutSession,
+  appendBillingReturnSyncMarker,
+} from "@/hooks/api/useBilling";
 import {
   Button,
   Card,
@@ -46,7 +49,9 @@ function BillingUpgradeContent() {
     setSelectedPlanId(planId);
     const baseUrl =
       typeof window !== "undefined" ? window.location.origin : "";
-    const successUrl = baseUrl + buildPath("/billing");
+    const successUrl = baseUrl
+      ? appendBillingReturnSyncMarker(baseUrl + buildPath("/billing"), "checkout")
+      : "";
     const cancelUrl = baseUrl + buildPath("/billing/upgrade");
     checkoutSession.mutate(
       {
@@ -110,11 +115,8 @@ function BillingUpgradeContent() {
         <EmptyState
           title="Aucune offre disponible"
           description="Aucun plan actif pour le moment."
-          action={
-            <Button variant="outline" onClick={() => router.push(buildPath("/billing"))}>
-              Retour à la facturation
-            </Button>
-          }
+          actionLabel="Retour à la facturation"
+          onAction={() => router.push(buildPath("/billing"))}
         />
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -125,7 +127,7 @@ function BillingUpgradeContent() {
                   <h3 className="font-semibold text-slate-900 dark:text-slate-100">
                     {plan.name}
                   </h3>
-                  <Badge variant="secondary">{plan.plan_tier ?? plan.type}</Badge>
+                  <Badge variant="default">{plan.plan_tier ?? plan.type}</Badge>
                 </div>
                 {plan.description && (
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-3 line-clamp-2">

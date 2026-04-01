@@ -1,23 +1,10 @@
 import { z } from "zod";
+import { CAPAType, DocumentType, QualityEventSeverity, QualityEventType } from "@/types/quality";
 
-const qualityEventTypeEnum = z.enum([
-  "deviation",
-  "non_conformity",
-  "complaint",
-  "incident",
-  "adverse_event",
-  "incoming_inspection",
-]);
-const qualityEventSeverityEnum = z.enum(["low", "medium", "high", "critical"]);
-const capaTypeEnum = z.enum(["corrective", "preventive"]);
-const documentTypeEnum = z.enum([
-  "procedure",
-  "work_instruction",
-  "form",
-  "record",
-  "policy",
-  "template",
-]);
+const qualityEventTypeEnum = z.nativeEnum(QualityEventType);
+const qualityEventSeverityEnum = z.nativeEnum(QualityEventSeverity);
+const capaTypeEnum = z.nativeEnum(CAPAType);
+const documentTypeEnum = z.nativeEnum(DocumentType);
 
 export const createQualityEventSchema = z.object({
   type: qualityEventTypeEnum,

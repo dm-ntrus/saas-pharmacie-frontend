@@ -19,16 +19,24 @@ export const PERMISSIONS = {
 };
 
 export const KEYCLOAK_CONFIG = {
-  url: 'https://keycloak.yourdomain.com',
-  realm: 'pharma-saas',
-  clientId: 'frontend-app', // Client public pour le frontend
-  
+  /**
+   * Legacy config (dépréciée).
+   * Le flux enterprise-grade utilise désormais la découverte OIDC via `keycloakOidc` (voir `src/services/keycloak-oidc.service.ts`)
+   * et des variables d'env:
+   * - NEXT_PUBLIC_KEYCLOAK_URL
+   * - NEXT_PUBLIC_KEYCLOAK_REALM
+   * - NEXT_PUBLIC_KEYCLOAK_CLIENT_ID
+   */
+  url: process.env.NEXT_PUBLIC_KEYCLOAK_URL || 'https://backend.kipmoni.com:8443',
+  realm: process.env.NEXT_PUBLIC_KEYCLOAK_REALM || 'med-pharmacy',
+  clientId: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || 'spa-frontend',
+
   endpoints: {
-    token: '/realms/pharma-saas/protocol/openid-connect/token',
-    userInfo: '/realms/pharma-saas/protocol/openid-connect/userinfo',
-    logout: '/realms/pharma-saas/protocol/openid-connect/logout',
-    register: '/realms/pharma-saas/protocol/openid-connect/registrations',
-  }
+    token: `/realms/${process.env.NEXT_PUBLIC_KEYCLOAK_REALM || 'med-pharmacy'}/protocol/openid-connect/token`,
+    userInfo: `/realms/${process.env.NEXT_PUBLIC_KEYCLOAK_REALM || 'med-pharmacy'}/protocol/openid-connect/userinfo`,
+    logout: `/realms/${process.env.NEXT_PUBLIC_KEYCLOAK_REALM || 'med-pharmacy'}/protocol/openid-connect/logout`,
+    register: `/realms/${process.env.NEXT_PUBLIC_KEYCLOAK_REALM || 'med-pharmacy'}/protocol/openid-connect/registrations`,
+  },
 };
 
 

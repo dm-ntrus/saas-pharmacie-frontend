@@ -13,15 +13,19 @@ import { Permission } from "@/types/permissions";
 import {
   useDeliveryOrders,
   useCreateDeliveryOrder,
-  useUpdateDeliveryStatus,
   useAssignDriver,
   useAvailableDrivers,
+  useAllDrivers,
   useCreateDriver,
   useDeliveryZones,
   useCreateDeliveryZone,
   useDeliveryMetrics,
+  useDeliveryQuote,
+  usePlanDeliveryRoute,
+  formatDriverName,
 } from "@/hooks/api/useDelivery";
 import { createOrderSchema, type CreateOrderFormData } from "@/schemas/delivery.schema";
+import { toast } from "react-hot-toast";
 import {
   Button,
   Card,
@@ -54,15 +58,30 @@ import {
   UserPlus,
   TrendingUp,
   Package,
+  Route,
 } from "lucide-react";
 
-type TabKey = "orders" | "drivers" | "zones" | "metrics";
+type TabKey = "orders" | "routes" | "drivers" | "zones" | "metrics";
+
+function zoneIdToParam(z: { id?: unknown }): string {
+  const raw = z.id;
+  if (raw == null) return "";
+  const s = typeof raw === "string" ? raw : String(raw);
+  return s.includes(":") ? s.split(":")[1] ?? s : s;
+}
+
+function orderIdToPath(id: unknown): string {
+  if (typeof id !== "string") return String(id ?? "");
+  return id.includes(":") ? id.split(":")[1] ?? id : id;
+}
 
 const ORDER_STATUS_BADGE: Record<string, "success" | "danger" | "warning" | "info" | "default"> = {
   pending: "default",
   assigned: "info",
+  picked_up: "info",
   in_transit: "warning",
   delivered: "success",
+  failed: "danger",
   cancelled: "danger",
   returned: "danger",
 };
@@ -70,8 +89,10 @@ const ORDER_STATUS_BADGE: Record<string, "success" | "danger" | "warning" | "inf
 const ORDER_STATUS_LABELS: Record<string, string> = {
   pending: "En attente",
   assigned: "Assignée",
+  picked_up: "Récupérée",
   in_transit: "En transit",
   delivered: "Livrée",
+  failed: "Échouée",
   cancelled: "Annulée",
   returned: "Retournée",
 };
@@ -79,14 +100,22 @@ const ORDER_STATUS_LABELS: Record<string, string> = {
 const createDriverSchema = z.object({
   name: z.string().min(1, "Champ requis"),
   phone: z.string().min(1, "Champ requis"),
-  vehicle_type: z.string(),
+  vehicle_type: z.enum(["bike", "motorcycle", "car", "van"]),
 });
 type CreateDriverData = z.infer<typeof createDriverSchema>;
 
 const createZoneSchema = z.object({
   name: z.string().min(1, "Champ requis"),
-  description: z.string(),
-  radius_km: z.string(),
+  description: z.string().optional(),
+  postal_prefixes: z.string().min(1, "Indiquez des préfixes CP (ex: 75, 92)"),
+  cities: z.string().optional(),
+  depot_lat: z.string().optional(),
+  depot_lng: z.string().optional(),
+  radius_km: z.string().optional(),
+  delivery_fee: z.string().min(1, "Frais requis"),
+  estimated_minutes: z.string().optional(),
+  min_order: z.string().optional(),
+  mark_default: z.boolean().optional(),
 });
 type CreateZoneData = z.infer<typeof createZoneSchema>;
 
@@ -103,6 +132,7 @@ function DeliveryContent() {
 
   const TABS: { key: TabKey; label: string; icon: React.ElementType }[] = [
     { key: "orders", label: "Commandes", icon: Package },
+    { key: "routes", label: "Tournée", icon: Route },
     { key: "drivers", label: "Livreurs", icon: Users },
     { key: "zones", label: "Zones", icon: Map },
     { key: "metrics", label: "Métriques", icon: BarChart3 },
@@ -134,6 +164,7 @@ function DeliveryContent() {
       </div>
 
       {tab === "orders" && <OrdersTab />}
+      {tab === "routes" && <RoutesTab />}
       {tab === "drivers" && <DriversTab />}
       {tab === "zones" && <ZonesTab />}
       {tab === "metrics" && <MetricsTab />}
@@ -149,12 +180,14 @@ function OrdersTab() {
   const [search, setSearch] = useState("");
   const [assignModal, setAssignModal] = useState<string | null>(null);
   const [showCreateOrder, setShowCreateOrder] = useState(false);
+  const [quotePreview, setQuotePreview] = useState<Record<string, unknown> | null>(null);
 
   const { data: orders, isLoading, error, refetch } = useDeliveryOrders();
   const { data: drivers } = useAvailableDrivers();
   const { data: zones = [] } = useDeliveryZones();
   const assignDriver = useAssignDriver();
   const createOrder = useCreateDeliveryOrder();
+  const quoteDelivery = useDeliveryQuote();
 
   const orderForm = useForm<CreateOrderFormData>({
     resolver: zodResolver(createOrderSchema),
@@ -166,7 +199,7 @@ function OrdersTab() {
       deliveryAddress: "",
       city: "",
       postalCode: "",
-      deliveryZoneId: 1,
+      deliveryZoneId: "",
       deliveryFee: 0,
       totalAmount: 0,
       deliveryInstructions: "",
@@ -174,8 +207,39 @@ function OrdersTab() {
     },
   });
 
+  const runQuote = () => {
+    const city = orderForm.getValues("city")?.trim();
+    const postal = orderForm.getValues("postalCode")?.trim();
+    const sub = Number(orderForm.getValues("totalAmount")) || 0;
+    const lat = orderForm.getValues("latitude");
+    const lng = orderForm.getValues("longitude");
+    if (!city || !postal) {
+      return;
+    }
+    quoteDelivery.mutate(
+      {
+        postal_code: postal,
+        city,
+        subtotal: sub,
+        ...(typeof lat === "number" && typeof lng === "number" && Number.isFinite(lat) && Number.isFinite(lng)
+          ? { latitude: lat, longitude: lng }
+          : {}),
+      },
+      {
+        onSuccess: (res: unknown) => {
+          setQuotePreview(res as Record<string, unknown>);
+          const r = res as { delivery_fee?: number; meets_minimum?: boolean };
+          if (r?.delivery_fee != null) {
+            orderForm.setValue("deliveryFee", Number(r.delivery_fee));
+          }
+        },
+      },
+    );
+  };
+
   const onOrderSubmit = (data: CreateOrderFormData) => {
-    const payload = {
+    const zid = data.deliveryZoneId?.trim();
+    const payload: Record<string, unknown> = {
       orderNumber: data.orderNumber || `CMD-${Date.now()}`,
       customerName: data.customerName,
       customerPhone: data.customerPhone,
@@ -183,14 +247,23 @@ function OrdersTab() {
       deliveryAddress: data.deliveryAddress,
       city: data.city,
       postalCode: data.postalCode,
-      deliveryZoneId: Number(data.deliveryZoneId) || (Array.isArray(zones) && zones[0] ? parseInt(String((zones[0] as any).id).split(":")[1] || "1", 10) : 1),
       deliveryFee: Number(data.deliveryFee),
       totalAmount: Number(data.totalAmount),
       deliveryInstructions: data.deliveryInstructions || undefined,
       notes: data.notes || undefined,
     };
+    if (zid) payload.deliveryZoneId = zid;
+    if (data.latitude != null && data.longitude != null) {
+      payload.latitude = data.latitude;
+      payload.longitude = data.longitude;
+    }
+    if (data.priority) payload.priority = data.priority;
     createOrder.mutate(payload, {
-      onSuccess: () => { setShowCreateOrder(false); orderForm.reset(); },
+      onSuccess: () => {
+        setShowCreateOrder(false);
+        setQuotePreview(null);
+        orderForm.reset();
+      },
     });
   };
 
@@ -262,7 +335,7 @@ function OrdersTab() {
                       <td className="px-4 py-3">
                         <button
                           className="text-left"
-                          onClick={() => router.push(buildPath(`/delivery/${typeof order.id === "string" && order.id.includes(":") ? order.id.split(":")[1] : order.id}`))}
+                          onClick={() => router.push(buildPath(`/delivery/${orderIdToPath(order.id)}`))}
                         >
                           <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
                             {order.order_number ?? `LIV-${order.id?.slice(0, 6)}`}
@@ -299,7 +372,7 @@ function OrdersTab() {
                               </Button>
                             </ProtectedAction>
                           )}
-                          <button onClick={() => router.push(buildPath(`/delivery/${typeof order.id === "string" && order.id.includes(":") ? order.id.split(":")[1] : order.id}`))}>
+                          <button onClick={() => router.push(buildPath(`/delivery/${orderIdToPath(order.id)}`))}>
                             <ChevronRight className="w-4 h-4 text-slate-400" />
                           </button>
                         </div>
@@ -316,7 +389,7 @@ function OrdersTab() {
                   <div className="flex items-center justify-between">
                     <button
                       className="text-left flex-1 min-w-0"
-                      onClick={() => router.push(buildPath(`/delivery/${typeof order.id === "string" && order.id.includes(":") ? order.id.split(":")[1] : order.id}`))}
+                      onClick={() => router.push(buildPath(`/delivery/${orderIdToPath(order.id)}`))}
                     >
                       <p className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
                         {order.order_number ?? `LIV-${order.id?.slice(0, 6)}`}
@@ -371,7 +444,7 @@ function OrdersTab() {
                     <Users className="w-4 h-4 text-emerald-600" />
                   </div>
                   <div className="text-left">
-                    <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{driver.name}</p>
+                    <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{formatDriverName(driver)}</p>
                     <p className="text-xs text-slate-500">{driver.phone} • {driver.vehicle_type ?? "Véhicule"}</p>
                   </div>
                 </div>
@@ -433,15 +506,45 @@ function OrdersTab() {
               placeholder="75001"
             />
           </div>
+          <div className="flex flex-wrap items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 p-3 bg-slate-50 dark:bg-slate-800/50">
+            <Button type="button" variant="outline" size="sm" onClick={runQuote} disabled={quoteDelivery.isPending}>
+              {quoteDelivery.isPending ? "Calcul..." : "Calculer frais & zone"}
+            </Button>
+            {quotePreview && (
+              <span className="text-xs text-slate-600 dark:text-slate-400">
+                Zone: {(quotePreview.zone_name as string) ?? "—"} · Frais: {formatCurrency(Number(quotePreview.delivery_fee ?? 0))}
+                {quotePreview.meets_minimum === false && (
+                  <span className="text-amber-600 ml-1">(montant minimum non atteint)</span>
+                )}
+              </span>
+            )}
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <Input
+              label="Latitude (optionnel)"
+              type="number"
+              step="any"
+              {...orderForm.register("latitude", { valueAsNumber: true })}
+            />
+            <Input
+              label="Longitude (optionnel)"
+              type="number"
+              step="any"
+              {...orderForm.register("longitude", { valueAsNumber: true })}
+            />
+          </div>
           {Array.isArray(zones) && zones.length > 0 && (
             <Select
-              label="Zone de livraison"
-              value={String(orderForm.watch("deliveryZoneId"))}
-              onChange={(v) => orderForm.setValue("deliveryZoneId", parseInt(v, 10) || 1)}
-              options={zones.map((z: any, i: number) => {
-                const numId = typeof z.id === "number" ? z.id : (typeof z.id === "string" && z.id.includes(":") ? parseInt(z.id.split(":")[1], 10) : i + 1);
-                return { value: String(numId || i + 1), label: z.name ?? "Zone" };
-              })}
+              label="Zone de livraison (optionnel)"
+              value={String(orderForm.watch("deliveryZoneId") ?? "")}
+              onChange={(v) => orderForm.setValue("deliveryZoneId", v)}
+              options={[
+                { value: "", label: "— Auto (CP / ville / GPS) —" },
+                ...zones.map((z: { id?: unknown; name?: string }) => ({
+                  value: zoneIdToParam(z),
+                  label: z.name ?? "Zone",
+                })),
+              ]}
               placeholder="Choisir une zone"
             />
           )}
@@ -454,7 +557,7 @@ function OrdersTab() {
               error={orderForm.formState.errors.deliveryFee?.message}
             />
             <Input
-              label="Total (€)"
+              label="Total panier (€)"
               type="number"
               step="0.01"
               {...orderForm.register("totalAmount", { valueAsNumber: true })}
@@ -481,27 +584,189 @@ function OrdersTab() {
   );
 }
 
+/* ─── Tournée (optimisation d’arrêts) ─── */
+
+function RoutesTab() {
+  const { data: orders, isLoading, error, refetch } = useDeliveryOrders();
+  const planRoute = usePlanDeliveryRoute();
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [depotLat, setDepotLat] = useState("");
+  const [depotLng, setDepotLng] = useState("");
+  const [result, setResult] = useState<{
+    ordered_order_ids: string[];
+    estimated_distance_km: number;
+    stops: Array<{ order_id: string; sequence: number }>;
+  } | null>(null);
+
+  const list: any[] = Array.isArray(orders) ? orders : [];
+  const eligible = list.filter(
+    (o) =>
+      o.latitude != null &&
+      o.longitude != null &&
+      String(o.latitude) !== "" &&
+      String(o.longitude) !== "",
+  );
+
+  const toggle = (id: string) => {
+    setSelected((prev) => {
+      const n = new Set(prev);
+      if (n.has(id)) n.delete(id);
+      else n.add(id);
+      return n;
+    });
+  };
+
+  const runPlan = () => {
+    const lat = parseFloat(depotLat);
+    const lng = parseFloat(depotLng);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+      toast.error("Coordonnées dépôt invalides");
+      return;
+    }
+    const ids = [...selected];
+    if (ids.length < 1) {
+      toast.error("Sélectionnez au moins une commande avec coordonnées GPS");
+      return;
+    }
+    planRoute.mutate(
+      { order_ids: ids, depot_latitude: lat, depot_longitude: lng },
+      {
+        onSuccess: (data: unknown) => {
+          setResult(data as typeof result);
+        },
+      },
+    );
+  };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Skeleton key={i} className="h-14 w-full rounded-lg" />
+        ))}
+      </div>
+    );
+  }
+  if (error) {
+    return <ErrorBanner message="Erreur de chargement" onRetry={() => refetch()} />;
+  }
+
+  return (
+    <div className="space-y-6">
+      <p className="text-sm text-slate-600 dark:text-slate-400">
+        Sélectionnez des commandes géolocalisées, indiquez le point de départ (pharmacie), puis calculez l&apos;ordre de passage optimal (heuristique plus proche voisin).
+      </p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <Input
+          label="Dépôt — latitude"
+          type="number"
+          step="any"
+          value={depotLat}
+          onChange={(e) => setDepotLat(e.target.value)}
+          placeholder="ex: 48.8566"
+        />
+        <Input
+          label="Dépôt — longitude"
+          type="number"
+          step="any"
+          value={depotLng}
+          onChange={(e) => setDepotLng(e.target.value)}
+          placeholder="ex: 2.3522"
+        />
+        <div className="flex items-end">
+          <Button
+            className="w-full"
+            leftIcon={<Route className="w-4 h-4" />}
+            onClick={runPlan}
+            disabled={planRoute.isPending}
+          >
+            {planRoute.isPending ? "Calcul..." : "Planifier la tournée"}
+          </Button>
+        </div>
+      </div>
+
+      {eligible.length === 0 ? (
+        <EmptyState
+          title="Aucune commande géolocalisée"
+          description="Créez des livraisons avec latitude et longitude pour utiliser l’optimisation de tournée."
+        />
+      ) : (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Commandes éligibles</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 max-h-72 overflow-y-auto">
+            {eligible.map((o: any) => {
+              const oid = orderIdToPath(o.id);
+              return (
+                <label
+                  key={oid}
+                  className="flex items-center gap-3 p-2 rounded-lg border border-slate-100 dark:border-slate-800 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                >
+                  <input
+                    type="checkbox"
+                    checked={selected.has(oid)}
+                    onChange={() => toggle(oid)}
+                    className="rounded border-slate-300"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{o.order_number ?? oid}</p>
+                    <p className="text-xs text-slate-500 truncate">{o.delivery_address}</p>
+                  </div>
+                </label>
+              );
+            })}
+          </CardContent>
+        </Card>
+      )}
+
+      {result && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Résultat</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm">
+            <p>
+              Distance estimée: <strong>{result.estimated_distance_km.toFixed(2)} km</strong>
+            </p>
+            <ol className="list-decimal list-inside space-y-1">
+              {result.stops.map((s) => (
+                <li key={`${s.sequence}-${s.order_id}`}>
+                  #{s.sequence} — commande {s.order_id}
+                </li>
+              ))}
+            </ol>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}
+
 /* ─── Drivers Tab ─── */
 
 function DriversTab() {
   const [showCreate, setShowCreate] = useState(false);
   const { register, handleSubmit, formState: { errors }, reset } = useForm<CreateDriverData>({
     resolver: zodResolver(createDriverSchema),
-    defaultValues: { name: "", phone: "", vehicle_type: "" },
+    defaultValues: { name: "", phone: "", vehicle_type: "car" },
   });
 
-  const { data: drivers, isLoading, error, refetch } = useAvailableDrivers();
+  const { data: drivers, isLoading, error, refetch } = useAllDrivers();
   const createDriver = useCreateDriver();
 
   const allDrivers: any[] = Array.isArray(drivers) ? drivers : [];
 
   const onValid = (data: CreateDriverData) => {
-    createDriver.mutate(data, {
-      onSuccess: () => {
-        setShowCreate(false);
-        reset();
+    createDriver.mutate(
+      { name: data.name, phone: data.phone, vehicle_type: data.vehicle_type },
+      {
+        onSuccess: () => {
+          setShowCreate(false);
+          reset();
+        },
       },
-    });
+    );
   };
 
   return (
@@ -538,7 +803,7 @@ function DriversTab() {
                       <Users className="w-5 h-5 text-emerald-600" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{driver.name}</p>
+                      <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{formatDriverName(driver)}</p>
                       <p className="text-xs text-slate-500 flex items-center gap-1">
                         <Phone className="w-3 h-3" /> {driver.phone}
                       </p>
@@ -596,11 +861,10 @@ function DriversTab() {
               {...register("vehicle_type")}
               className="w-full h-10 px-3 border border-slate-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
             >
-              <option value="">Sélectionner...</option>
-              <option value="moto">Moto</option>
-              <option value="voiture">Voiture</option>
-              <option value="velo">Vélo</option>
-              <option value="tricycle">Tricycle</option>
+              <option value="bike">Vélo</option>
+              <option value="motorcycle">Moto</option>
+              <option value="car">Voiture</option>
+              <option value="van">Camionnette</option>
             </select>
           </div>
           <div className="flex justify-end gap-2 pt-2">
@@ -621,7 +885,19 @@ function ZonesTab() {
   const [showCreate, setShowCreate] = useState(false);
   const { register, handleSubmit, formState: { errors }, reset } = useForm<CreateZoneData>({
     resolver: zodResolver(createZoneSchema),
-    defaultValues: { name: "", description: "", radius_km: "" },
+    defaultValues: {
+      name: "",
+      description: "",
+      postal_prefixes: "",
+      cities: "",
+      depot_lat: "",
+      depot_lng: "",
+      radius_km: "",
+      delivery_fee: "0",
+      estimated_minutes: "60",
+      min_order: "",
+      mark_default: false,
+    },
   });
 
   const { data: zones, isLoading, error, refetch } = useDeliveryZones();
@@ -630,8 +906,36 @@ function ZonesTab() {
   const allZones: any[] = Array.isArray(zones) ? zones : [];
 
   const onValid = (data: CreateZoneData) => {
+    const prefixes = data.postal_prefixes
+      .split(/[,\s;]+/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const cities = data.cities
+      ? data.cities.split(",").map((s) => s.trim()).filter(Boolean)
+      : [];
+    const lat = data.depot_lat ? parseFloat(data.depot_lat) : NaN;
+    const lng = data.depot_lng ? parseFloat(data.depot_lng) : NaN;
+    const rKm = data.radius_km ? parseFloat(data.radius_km) : NaN;
+    const boundaries: Record<string, unknown> = {
+      postal_prefixes: prefixes,
+      cities,
+      default: !!data.mark_default,
+    };
+    if (Number.isFinite(lat) && Number.isFinite(lng) && Number.isFinite(rKm) && rKm > 0) {
+      boundaries.circle = { lat, lng, radiusKm: rKm };
+    }
     createZone.mutate(
-      { ...data, radius_km: data.radius_km ? parseFloat(data.radius_km) : undefined },
+      {
+        name: data.name,
+        description: data.description || undefined,
+        boundaries,
+        delivery_fee: parseFloat(data.delivery_fee) || 0,
+        estimated_delivery_time_minutes: data.estimated_minutes
+          ? parseInt(data.estimated_minutes, 10)
+          : 60,
+        minimum_order_amount: data.min_order ? parseFloat(data.min_order) : undefined,
+        max_daily_orders: 100,
+      },
       {
         onSuccess: () => {
           setShowCreate(false);
@@ -679,8 +983,13 @@ function ZonesTab() {
                   </div>
                 </div>
                 <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
-                  <span className="flex items-center gap-1">
-                    <Map className="w-3 h-3" /> {zone.radius_km ? `${zone.radius_km} km` : "—"}
+                  <span className="flex items-center gap-1 truncate max-w-[50%]" title={JSON.stringify(zone.boundaries ?? {})}>
+                    <Map className="w-3 h-3 shrink-0" />
+                    {Array.isArray(zone.boundaries?.postal_prefixes) && zone.boundaries.postal_prefixes.length
+                      ? `CP ${zone.boundaries.postal_prefixes.join(", ")}`
+                      : zone.boundaries?.circle?.radiusKm != null
+                        ? `Rayon ${zone.boundaries.circle.radiusKm} km`
+                        : "—"}
                   </span>
                   {zone.delivery_fee != null && (
                     <span className="font-medium text-slate-700 dark:text-slate-300">
@@ -706,7 +1015,7 @@ function ZonesTab() {
         title="Nouvelle zone de livraison"
         description="Définir une nouvelle zone de couverture"
       >
-        <form onSubmit={handleSubmit(onValid)} className="space-y-4">
+        <form onSubmit={handleSubmit(onValid)} className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nom *</label>
             <Input placeholder="Ex: Centre-ville" {...register("name")} />
@@ -717,9 +1026,43 @@ function ZonesTab() {
             <Input placeholder="Description de la zone" {...register("description")} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Rayon (km)</label>
-            <Input type="number" placeholder="Ex: 5" leftIcon={<Map className="w-4 h-4" />} {...register("radius_km")} />
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              Préfixes code postal * (séparés par virgule)
+            </label>
+            <Input placeholder="75, 92, 93" {...register("postal_prefixes")} />
+            {errors.postal_prefixes && (
+              <p className="text-xs text-red-500 mt-1">{errors.postal_prefixes.message}</p>
+            )}
           </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              Villes (optionnel, séparées par virgule)
+            </label>
+            <Input placeholder="Paris, Levallois" {...register("cities")} />
+          </div>
+          <p className="text-xs text-slate-500">Cercle optionnel (GPS + rayon km) pour couverture autour du dépôt :</p>
+          <div className="grid grid-cols-3 gap-2">
+            <Input label="Lat dépôt" type="number" step="any" {...register("depot_lat")} />
+            <Input label="Lng dépôt" type="number" step="any" {...register("depot_lng")} />
+            <Input label="Rayon km" type="number" step="any" {...register("radius_km")} />
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <Input
+              label="Frais livraison (€) *"
+              type="number"
+              step="0.01"
+              {...register("delivery_fee")}
+            />
+            {"delivery_fee" in errors && errors.delivery_fee && (
+              <p className="text-xs text-red-500 col-span-2">{errors.delivery_fee.message}</p>
+            )}
+            <Input label="Délai estimé (min)" type="number" {...register("estimated_minutes")} />
+            <Input label="Montant minimum commande (€)" type="number" step="0.01" {...register("min_order")} />
+          </div>
+          <label className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
+            <input type="checkbox" {...register("mark_default")} className="rounded border-slate-300" />
+            Zone par défaut si aucune autre ne correspond
+          </label>
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => setShowCreate(false)}>Annuler</Button>
             <Button type="submit" disabled={createZone.isPending}>
@@ -751,7 +1094,7 @@ function MetricsTab() {
     return <ErrorBanner message="Erreur de chargement des métriques" onRetry={() => refetch()} />;
   }
 
-  const m = metrics ?? {};
+  const m = (metrics as any) ?? {};
 
   return (
     <div className="space-y-6">

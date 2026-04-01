@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
@@ -54,7 +54,15 @@ function PoliciesContent() {
             <Card key={String(policy.id)} className="hover:shadow-md transition-shadow"><CardContent className="p-4">
               <div className="flex items-center justify-between mb-3"><div className="flex items-center gap-2"><div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center"><Package className="w-4 h-4 text-blue-600" /></div><p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{String(policy.product_name ?? "Produit")}</p></div><Badge variant={policy.is_active !== false ? "success" : "default"} size="sm">{policy.is_active !== false ? "Actif" : "Inactif"}</Badge></div>
               <div className="grid grid-cols-3 gap-3 text-xs"><div className="p-2 rounded-lg bg-slate-50 dark:bg-slate-800"><p className="text-slate-400">Point réappro</p><p className="font-semibold text-slate-900 dark:text-slate-100 mt-0.5">{formatNumber(Number(policy.reorder_point ?? 0))}</p></div><div className="p-2 rounded-lg bg-slate-50 dark:bg-slate-800"><p className="text-slate-400">Stock sécurité</p><p className="font-semibold text-slate-900 dark:text-slate-100 mt-0.5">{formatNumber(Number(policy.safety_stock ?? 0))}</p></div><div className="p-2 rounded-lg bg-slate-50 dark:bg-slate-800"><p className="text-slate-400">QEO</p><p className="font-semibold text-slate-900 dark:text-slate-100 mt-0.5">{policy.eoq != null ? formatNumber(Number(policy.eoq)) : "—"}</p></div></div>
-              {(policy.lead_time_days != null || policy.review_period) && <p className="text-xs text-slate-500 mt-2">Délai: {policy.lead_time_days != null ? `${policy.lead_time_days} j` : "—"} • Révision: {String(policy.review_period ?? "—")}</p>}
+              {(policy.lead_time_days != null || Boolean(policy.review_period)) && (
+                <p className="text-xs text-slate-500 mt-2">
+                  Délai:{" "}
+                  {policy.lead_time_days != null
+                    ? `${String(policy.lead_time_days)} j`
+                    : "—"}{" "}
+                  • Révision: {String(policy.review_period ?? "—")}
+                </p>
+              )}
             </CardContent></Card>
           ))}
         </div>

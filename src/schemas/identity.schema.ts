@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 const organizationTypeEnum = z.enum(["pharmacy", "clinic", "hospital", "laboratory", "other"]);
-const roleStatusEnum = z.enum(["active", "inactive", "archived"]);
 
 export const createUserSchema = z.object({
   email: z.string().email("Adresse e-mail invalide"),

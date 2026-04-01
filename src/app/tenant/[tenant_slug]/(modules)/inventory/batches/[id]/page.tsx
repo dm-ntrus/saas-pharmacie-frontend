@@ -225,7 +225,7 @@ function BatchDetailContent() {
         </Card>
       </div>
 
-      <Modal open={adjustModalOpen} onClose={() => setAdjustModalOpen(false)} title="Ajuster la quantité">
+      <Modal open={adjustModalOpen} onOpenChange={setAdjustModalOpen} title="Ajuster la quantité">
         <div className="space-y-4">
           <p className="text-sm text-slate-600 dark:text-slate-400">
             Quantité positive = ajout, négative = retrait. Raison obligatoire (min. 3 caractères).

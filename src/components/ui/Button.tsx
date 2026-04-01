@@ -10,6 +10,8 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
+        default:
+          "bg-emerald-600 text-white hover:bg-emerald-700 focus-visible:ring-emerald-500",
         primary:
           "bg-emerald-600 text-white hover:bg-emerald-700 focus-visible:ring-emerald-500",
         secondary:

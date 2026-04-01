@@ -9,6 +9,7 @@ import { useFeatureFlags } from "@/context/FeatureFlagContext";
 import { usePermissions } from "@/hooks/usePermissions";
 import { useTenantPath } from "@/hooks/useTenantPath";
 import { Permission } from "@/types/permissions";
+import { PRODUCT_ENTITLEMENT_KEYS } from "@/constants/product-entitlement-keys";
 import {
   LayoutDashboard,
   ShoppingCart,
@@ -34,6 +35,9 @@ import {
   Stethoscope,
   X,
   TrendingUp,
+  ScrollText,
+  Star,
+  ClipboardList,
 } from "lucide-react";
 
 interface NavItem {
@@ -87,13 +91,19 @@ function NavLinkWithTooltip({
 }
 
 const NAVIGATION: NavItem[] = [
-  { name: "Tableau de bord", href: "/dashboard", icon: LayoutDashboard },
+  {
+    name: "Tableau de bord",
+    href: "/dashboard",
+    icon: LayoutDashboard,
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_DASHBOARD,
+  },
   {
     name: "Point de Vente",
     href: "/sales",
     icon: ShoppingCart,
     moduleKey: "sales",
     requiredPermissions: [Permission.SALES_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_SALES,
   },
   {
     name: "Inventaire",
@@ -101,6 +111,7 @@ const NAVIGATION: NavItem[] = [
     icon: Package,
     moduleKey: "inventory",
     requiredPermissions: [Permission.INVENTORY_ITEMS_READ, Permission.PRODUCTS_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_INVENTORY,
   },
   {
     name: "Patients",
@@ -108,6 +119,7 @@ const NAVIGATION: NavItem[] = [
     icon: Users,
     moduleKey: "patients",
     requiredPermissions: [Permission.PATIENTS_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_PATIENTS,
   },
   {
     name: "Prescriptions",
@@ -115,6 +127,7 @@ const NAVIGATION: NavItem[] = [
     icon: FileText,
     moduleKey: "prescriptions",
     requiredPermissions: [Permission.PRESCRIPTIONS_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_PRESCRIPTIONS,
   },
   {
     name: "Vaccination",
@@ -122,6 +135,7 @@ const NAVIGATION: NavItem[] = [
     icon: Syringe,
     moduleKey: "vaccination",
     requiredPermissions: [Permission.VACCINATION_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_VACCINATION,
   },
   {
     name: "Livraisons",
@@ -129,6 +143,7 @@ const NAVIGATION: NavItem[] = [
     icon: TruckIcon,
     moduleKey: "delivery",
     requiredPermissions: [Permission.DELIVERY_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_DELIVERY,
   },
   {
     name: "Facturation",
@@ -136,6 +151,7 @@ const NAVIGATION: NavItem[] = [
     icon: Receipt,
     moduleKey: "billing",
     requiredPermissions: [Permission.INVOICES_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_BILLING_OPERATIONS,
   },
   {
     name: "Paiements",
@@ -143,6 +159,7 @@ const NAVIGATION: NavItem[] = [
     icon: CreditCard,
     moduleKey: "billing",
     requiredPermissions: [Permission.PAYMENTS_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_BILLING_OPERATIONS,
   },
   {
     name: "Comptabilité",
@@ -150,6 +167,7 @@ const NAVIGATION: NavItem[] = [
     icon: PieChart,
     moduleKey: "accounting",
     requiredPermissions: [Permission.ACCOUNTING_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_ACCOUNTING,
   },
   {
     name: "Fournisseurs",
@@ -157,6 +175,7 @@ const NAVIGATION: NavItem[] = [
     icon: Factory,
     moduleKey: "suppliers",
     requiredPermissions: [Permission.SUPPLIERS_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_SUPPLIERS,
   },
   {
     name: "Supply Chain",
@@ -164,6 +183,7 @@ const NAVIGATION: NavItem[] = [
     icon: Package,
     moduleKey: "supply-chain",
     requiredPermissions: [Permission.SUPPLY_CHAIN_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_SUPPLY_CHAIN,
   },
   {
     name: "Commandes d'achat",
@@ -171,6 +191,23 @@ const NAVIGATION: NavItem[] = [
     icon: ShoppingCart,
     moduleKey: "supply-chain",
     requiredPermissions: [Permission.SUPPLY_CHAIN_READ, Permission.PURCHASE_ORDERS_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_SUPPLY_CHAIN,
+  },
+  {
+    name: "Demandes d'achat",
+    href: "/supply-chain/purchase-requests",
+    icon: ClipboardList,
+    moduleKey: "supply-chain",
+    requiredPermissions: [Permission.SUPPLY_CHAIN_READ, Permission.PURCHASE_ORDERS_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_SUPPLY_CHAIN,
+  },
+  {
+    name: "Devis fournisseurs",
+    href: "/supply-chain/supplier-quotes",
+    icon: ScrollText,
+    moduleKey: "supply-chain",
+    requiredPermissions: [Permission.SUPPLY_CHAIN_READ, Permission.PURCHASE_ORDERS_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_SUPPLY_CHAIN,
   },
   {
     name: "Prévisions",
@@ -178,6 +215,7 @@ const NAVIGATION: NavItem[] = [
     icon: BarChart3,
     moduleKey: "supply-chain",
     requiredPermissions: [Permission.SUPPLY_CHAIN_READ, Permission.DEMAND_FORECASTS_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_SUPPLY_CHAIN,
   },
   {
     name: "Politiques stock",
@@ -185,6 +223,7 @@ const NAVIGATION: NavItem[] = [
     icon: Shield,
     moduleKey: "supply-chain",
     requiredPermissions: [Permission.SUPPLY_CHAIN_READ, Permission.INVENTORY_POLICIES_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_SUPPLY_CHAIN,
   },
   {
     name: "Performance fournisseurs",
@@ -192,6 +231,7 @@ const NAVIGATION: NavItem[] = [
     icon: TrendingUp,
     moduleKey: "supply-chain",
     requiredPermissions: [Permission.SUPPLY_CHAIN_READ, Permission.SUPPLIER_PERFORMANCE_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_SUPPLY_CHAIN,
   },
   {
     name: "Alertes Supply Chain",
@@ -199,6 +239,7 @@ const NAVIGATION: NavItem[] = [
     icon: Bell,
     moduleKey: "supply-chain",
     requiredPermissions: [Permission.SUPPLY_CHAIN_READ, Permission.SUPPLY_CHAIN_ALERTS_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_SUPPLY_CHAIN,
   },
   {
     name: "Qualité",
@@ -206,6 +247,7 @@ const NAVIGATION: NavItem[] = [
     icon: ClipboardCheck,
     moduleKey: "quality",
     requiredPermissions: [Permission.QUALITY_EVENTS_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_QUALITY,
   },
   {
     name: "Assurance",
@@ -213,6 +255,7 @@ const NAVIGATION: NavItem[] = [
     icon: Shield,
     moduleKey: "insurance",
     requiredPermissions: [Permission.INSURANCE_PROVIDERS_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_INSURANCE,
   },
   {
     name: "E-Facture",
@@ -220,6 +263,7 @@ const NAVIGATION: NavItem[] = [
     icon: FileText,
     moduleKey: "e-invoice",
     requiredPermissions: [Permission.FISCAL_INVOICES_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_E_INVOICE,
   },
   {
     name: "Ressources Humaines",
@@ -227,6 +271,7 @@ const NAVIGATION: NavItem[] = [
     icon: UserCog,
     moduleKey: "hr",
     requiredPermissions: [Permission.EMPLOYEES_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_HR,
   },
   {
     name: "Analytics",
@@ -234,6 +279,7 @@ const NAVIGATION: NavItem[] = [
     icon: BarChart3,
     moduleKey: "analytics",
     requiredPermissions: [Permission.BI_READ, Permission.ANALYTICS_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_ANALYTICS,
   },
   {
     name: "Notifications",
@@ -241,6 +287,7 @@ const NAVIGATION: NavItem[] = [
     icon: Bell,
     moduleKey: "notifications",
     requiredPermissions: [Permission.NOTIFICATIONS_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_NOTIFICATIONS,
   },
   {
     name: "Rapports",
@@ -248,6 +295,23 @@ const NAVIGATION: NavItem[] = [
     icon: Stethoscope,
     moduleKey: "analytics",
     requiredPermissions: [Permission.BI_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_REPORTS,
+  },
+  {
+    name: "Fidélité",
+    href: "/loyalty",
+    icon: Star,
+    moduleKey: "loyalty",
+    requiredPermissions: [Permission.LOYALTY_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_LOYALTY,
+  },
+  {
+    name: "Journal métier",
+    href: "/compliance/business-audit",
+    icon: ScrollText,
+    moduleKey: "audit-events",
+    requiredPermissions: [Permission.TENANT_AUDIT_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_COMPLIANCE_AUDIT,
   },
   {
     name: "Paramètres",
@@ -255,6 +319,7 @@ const NAVIGATION: NavItem[] = [
     icon: Settings,
     moduleKey: "settings",
     requiredPermissions: [Permission.ROLES_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_SETTINGS,
   },
 ];
 
@@ -343,7 +408,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               style={isCollapsed ? { minWidth: "12rem" } : undefined}
             >
               <p className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 dark:border-slate-700 mb-1">
-                Vos Branches
+                Vos pharmacies
               </p>
               {organizations.map((org) => (
                 <button
@@ -376,10 +441,11 @@ const Sidebar: React.FC<SidebarProps> = ({
       {/* Navigation */}
       <nav className="flex-1 px-2 py-2 space-y-0.5 overflow-y-auto min-h-0">
         {NAVIGATION.filter(isItemVisible).map((item) => {
+          const safePathname = pathname ?? "";
           const href = `${basePath}${item.href}`;
           const isActive =
-            pathname === href ||
-            (item.href !== "/dashboard" && pathname.startsWith(href));
+            safePathname === href ||
+            (item.href !== "/dashboard" && safePathname.startsWith(href));
           return (
             <NavLinkWithTooltip
               key={item.href}

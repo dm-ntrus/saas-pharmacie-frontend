@@ -42,7 +42,17 @@ function UserDetail() {
           <Button variant="ghost" size="sm" asChild><Link href={path("/settings/users")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link></Button>
           <div>
             <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{u.fullName ?? u.email}</h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-2">{u.email} <Badge variant={isActive ? "success" : "default"} size="sm">{STATUS_LABELS[u.status ?? ""] ?? u.status}</Badge> {u.mfaEnabled && <Lock className="w-4 h-4 text-emerald-600" title="2FA activé" />}</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-2">
+              {u.email}{" "}
+              <Badge variant={isActive ? "success" : "default"} size="sm">
+                {STATUS_LABELS[u.status ?? ""] ?? u.status}
+              </Badge>{" "}
+              {u.mfaEnabled && (
+                <span title="2FA activé">
+                  <Lock className="w-4 h-4 text-emerald-600" />
+                </span>
+              )}
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -55,7 +65,7 @@ function UserDetail() {
         <Card><CardHeader><CardTitle>Rôles</CardTitle></CardHeader><CardContent><div className="flex flex-wrap gap-2">{(u.roles ?? []).map((r) => <Badge key={r} variant="default" size="sm">{r}</Badge>)} {(u.roles ?? []).length === 0 && <p className="text-sm text-slate-500">Aucun rôle</p>}</div></CardContent></Card>
       </div>
       {(u.organizations ?? []).length > 0 && (
-        <Card><CardHeader><CardTitle>Organisations</CardTitle></CardHeader><CardContent><ul className="space-y-2">{(u.organizations ?? []).map((org) => (<li key={org.id} className="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-800 last:border-0"><span className="font-medium">{org.name}</span><div className="flex gap-1">{(org.roles ?? []).map((r) => <Badge key={r} variant="outline" size="sm">{r}</Badge>)}</div></li>))}</ul></CardContent></Card>
+        <Card><CardHeader><CardTitle>Organisations</CardTitle></CardHeader><CardContent><ul className="space-y-2">{(u.organizations ?? []).map((org) => (<li key={org.id} className="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-800 last:border-0"><span className="font-medium">{org.name}</span><div className="flex gap-1">{(org.roles ?? []).map((r) => <Badge key={r} variant="default" size="sm">{r}</Badge>)}</div></li>))}</ul></CardContent></Card>
       )}
     </div>
   );

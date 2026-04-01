@@ -8,8 +8,7 @@ export enum TenantType {
 
 export enum BillingCycle {
   MONTHLY = 'monthly',
-  QUARTERLY = 'quarterly',
-  ANNUAL = 'annual',
+  YEARLY = 'yearly',
 }
 
 export enum PaymentMethod {
@@ -60,7 +59,6 @@ export interface OwnerDataDto {
   firstName: string;
   lastName: string;
   phone?: string;
-  password: string;
   enable2FA?: boolean;
   acceptTerms: boolean;
   acceptPrivacyPolicy: boolean;
@@ -78,10 +76,35 @@ export interface PlanSelectionDto {
 export interface PaymentInfoDto {
   paymentMethod: PaymentMethod;
   paymentProviderCode?: string;
+  customerId?: string;
+  paymentMethodId?: string;
 }
 
 export interface OrganisationDataDto {
   type: OrganizationType;
+}
+
+// Backend-aligned: pharmacyData is required for tenant provisioning
+export interface PharmacyDataDto {
+  licenseNumber: string;
+  name: string;
+  address: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  phone: string;
+  email?: string;
+  website?: string;
+  pharmacistInCharge: string;
+  pharmacistLicenseNumber: string;
+  latitude?: number;
+  longitude?: number;
+  operatingHours?: Record<string, { open: string; close: string; closed?: boolean }>;
+  services?: string[];
+  status?: 'active' | 'inactive' | 'suspended';
+  licenseExpiryDate?: string;
+  certifications?: string[];
 }
 
 export interface CreateTenantDto {
@@ -90,4 +113,26 @@ export interface CreateTenantDto {
   planSelection: PlanSelectionDto;
   paymentInfo: PaymentInfoDto;
   organisationData: OrganisationDataDto;
+  pharmacyData: PharmacyDataDto;
 }
+
+export type TenantRegistrationResponse =
+  | {
+      success: true;
+      status: 'queued' | 'processing';
+      provisioningId: string;
+      ownerEmail: string;
+      message: string;
+      statusUrl: string;
+    }
+  | {
+      success: true;
+      tenantId: string;
+      subdomain?: string;
+      keycloakOrganizationId?: string;
+      adminUserId?: string;
+      subscriptionId?: string;
+      message: string;
+      nextSteps: string[];
+      metadata?: Record<string, unknown>;
+    };

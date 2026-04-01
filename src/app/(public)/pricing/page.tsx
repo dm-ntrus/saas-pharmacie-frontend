@@ -1,189 +1,354 @@
-'use client';
+"use client";
 
-import { motion } from 'motion/react';
-import { Check, ArrowRight, Zap, ShieldCheck, HelpCircle, CheckCircle2, X, Plus, Star } from 'lucide-react';
-import Link from 'next/link';
+import { useState, useMemo } from "react";
+import { motion } from "framer-motion";
+import {
+  Check,
+  Minus,
+  ArrowRight,
+  HelpCircle,
+  Shield,
+  Zap,
+  Phone,
+  AlertCircle,
+  Loader2,
+} from "lucide-react";
+import Link from "next/link";
+import { usePublicPlans } from "@/hooks/api/usePublicPlans";
+import PlanCard, {
+  PlanCardSkeleton,
+  FALLBACK_PLANS,
+} from "@/components/public/PlanCard";
+import type { Plan } from "@/types/billing";
 
-const pricingPlans = [
-  {
-    name: 'Simple',
-    price: '29',
-    desc: 'Pour les petites pharmacies de quartier.',
-    features: ['1 Pharmacien', 'Inventaire de base', 'Ventes POS', 'Support Email', '14 jours d&apos;essai'],
-    color: 'slate',
-    cta: 'Démarrer'
-  },
-  {
-    name: 'Standard',
-    price: '99',
-    desc: 'La solution complète pour pharmacies établies.',
-    features: ['Illimité', 'IA Prédictive', 'Comptabilité', 'Multi-devises', 'Support 24/7', 'Mobile Money'],
-    color: 'emerald',
-    popular: true,
-    cta: 'Choisir Standard'
-  },
-  {
-    name: 'Grossiste',
-    price: '199',
-    desc: 'Pour les distributeurs et chaînes.',
-    features: ['Multi-sites', 'Gestion Entrepôt', 'API Accès', 'Manager Dédié', 'Formation sur site', 'SLA Garanti'],
-    color: 'slate',
-    cta: 'Contacter Ventes'
+const COMPARISON_FEATURES = [
+  { key: "max_users", label: "Utilisateurs" },
+  { key: "max_pharmacies", label: "Multi-sites" },
+  { key: "max_storage_gb", label: "Stockage" },
+  { key: "module.sales", label: "Point de vente POS" },
+  { key: "module.inventory", label: "Inventaire" },
+  { key: "module.prescriptions", label: "Prescriptions" },
+  { key: "module.supply_chain", label: "Supply chain" },
+  { key: "module.accounting", label: "Comptabilité" },
+  { key: "module.analytics", label: "Analytics & BI" },
+  { key: "module.crm", label: "Fidélité & CRM" },
+  { key: "module.delivery", label: "Livraisons" },
+  { key: "is_trial_available", label: "Essai gratuit" },
+];
+
+function getComparisonValue(
+  plan: Plan,
+  key: string,
+): boolean | string | number {
+  if (key === "max_users") {
+    if (!plan.max_users) return "1";
+    return plan.max_users === -1 ? "Illimité" : String(plan.max_users);
   }
+  if (key === "max_pharmacies") {
+    if (!plan.max_pharmacies) return "1";
+    return plan.max_pharmacies === -1
+      ? "Illimité"
+      : String(plan.max_pharmacies);
+  }
+  if (key === "max_storage_gb") {
+    if (!plan.max_storage_gb) return "2 GB";
+    return plan.max_storage_gb === -1
+      ? "Illimité"
+      : `${plan.max_storage_gb} GB`;
+  }
+  if (key === "is_trial_available") return !!plan.is_trial_available;
+
+  if (key.startsWith("module.")) {
+    const featureKey = key;
+    if (plan.features && typeof plan.features === "object") {
+      const entry = (plan.features as Record<string, unknown>)[featureKey];
+      if (
+        typeof entry === "object" &&
+        entry !== null &&
+        "enabled" in entry
+      )
+        return (entry as { enabled: boolean }).enabled;
+    }
+    if (plan.feature_flags?.length) {
+      const ff = plan.feature_flags.find(
+        (f) =>
+          f.feature_key === featureKey ||
+          f.key === featureKey,
+      );
+      if (ff) return ff.is_included;
+    }
+    const tier = plan.plan_tier || "";
+    if (tier === "enterprise" || tier === "custom") return true;
+    if (tier === "professional")
+      return !["module.crm", "module.delivery"].includes(key) || true;
+    return false;
+  }
+
+  return false;
+}
+
+function CellValue({ val }: { val: boolean | string | number }) {
+  if (typeof val === "string" || typeof val === "number")
+    return (
+      <span className="text-sm font-bold text-slate-700">{String(val)}</span>
+    );
+  return val ? (
+    <Check className="w-5 h-5 text-emerald-600 mx-auto" />
+  ) : (
+    <Minus className="w-4 h-4 text-slate-300 mx-auto" />
+  );
+}
+
+const FAQS = [
+  {
+    q: "Puis-je changer de plan ?",
+    a: "Oui, montée ou descente en gamme à tout moment depuis votre tableau de bord.",
+  },
+  {
+    q: "Comment fonctionne l'essai gratuit ?",
+    a: "30 jours complets avec toutes les fonctionnalités du plan choisi. Aucune carte bancaire requise.",
+  },
+  {
+    q: "Y a-t-il des frais d'installation ?",
+    a: "Non. L'inscription et la configuration sont 100 % gratuites.",
+  },
+  {
+    q: "Quels moyens de paiement acceptez-vous ?",
+    a: "Carte bancaire, virement, Mobile Money (M-Pesa, Airtel Money, Orange Money).",
+  },
 ];
 
 export default function PricingPage() {
-  return (
-    <div className="min-h-screen pt-32 pb-24 bg-white">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center max-w-4xl mx-auto mb-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <div className="inline-flex items-center gap-3 px-5 py-2 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-black mb-4 border border-emerald-100 uppercase tracking-[0.2em]">
-              Tarification
-            </div>
-            <h1 className="text-5xl lg:text-7xl font-display font-bold text-slate-900 mb-4 tracking-[-0.04em] leading-[0.9]">
-              Investissez dans <br />
-              votre <span className="text-emerald-600">Succès.</span>
-            </h1>
-            <p className="text-xl text-slate-500 leading-relaxed font-medium max-w-2xl mx-auto">
-              Des forfaits transparents conçus pour accompagner chaque étape de la vie de votre officine.
-            </p>
-          </motion.div>
-        </div>
+  const [annual, setAnnual] = useState(false);
+  const { data: apiPlans, isLoading, isError } = usePublicPlans({ active: true });
 
-        <div className="grid lg:grid-cols-3 gap-10 mb-16">
-          {pricingPlans.map((plan, i) => (
-            <motion.div
-              key={plan.name}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className={`relative p-12 rounded-[3rem] border ${
-                plan.popular 
-                  ? 'bg-slate-900 text-white border-slate-800 shadow-2xl shadow-emerald-600/20' 
-                  : 'bg-slate-50 border-slate-100 text-slate-900'
+  const plans: Plan[] = useMemo(() => {
+    if (apiPlans && apiPlans.length > 0) return apiPlans;
+    return FALLBACK_PLANS;
+  }, [apiPlans]);
+
+  const isBackendConnected = !isError && apiPlans && apiPlans.length > 0;
+
+  return (
+    <div className="min-h-screen pt-28 sm:pt-32 pb-0 bg-white">
+      {/* Header */}
+      <section className="text-center px-4 sm:px-6 lg:px-8 mb-10 sm:mb-14">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-3xl mx-auto"
+        >
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 mb-3">
+            Tarifs
+          </p>
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-display font-bold text-slate-900 mb-4 tracking-tight">
+            Des prix{" "}
+            <span className="text-emerald-600">transparents</span>.
+          </h1>
+          <p className="text-base text-slate-500 max-w-xl mx-auto mb-6 font-medium leading-relaxed">
+            Aucun frais caché. Essai gratuit de 30 jours sur tous les plans.
+          </p>
+
+          {/* Toggle */}
+          <div className="inline-flex items-center gap-3 p-1.5 bg-slate-100 rounded-full text-sm">
+            <button
+              onClick={() => setAnnual(false)}
+              className={`px-5 py-2 rounded-full font-bold transition-all ${
+                !annual
+                  ? "bg-white shadow-sm text-slate-900"
+                  : "text-slate-500 hover:text-slate-700"
               }`}
             >
-              {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-emerald-600 text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl">
-                  Recommandé
-                </div>
+              Mensuel
+            </button>
+            <button
+              onClick={() => setAnnual(true)}
+              className={`px-5 py-2 rounded-full font-bold transition-all ${
+                annual
+                  ? "bg-white shadow-sm text-slate-900"
+                  : "text-slate-500 hover:text-slate-700"
+              }`}
+            >
+              Annuel{" "}
+              <span className="text-emerald-600 text-xs font-black">
+                -20%
+              </span>
+            </button>
+          </div>
+
+          {/* Data source indicator */}
+          {!isLoading && (
+            <div className="mt-4 flex items-center justify-center gap-2 text-xs">
+              {isBackendConnected ? (
+                <span className="inline-flex items-center gap-1.5 text-emerald-600">
+                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                  Plans synchronisés avec le serveur
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 text-amber-600">
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  Plans indicatifs — contactez-nous pour les tarifs exacts
+                </span>
               )}
-              <div className="mb-10">
-                <h3 className="text-2xl font-display font-bold mb-4">{plan.name}</h3>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-6xl font-display font-bold">${plan.price}</span>
-                  <span className={`text-sm font-bold uppercase tracking-widest ${plan.popular ? 'text-slate-400' : 'text-slate-500'}`}>/ mois</span>
-                </div>
-                <p className={`mt-6 text-lg leading-relaxed ${plan.popular ? 'text-slate-400' : 'text-slate-500'}`}>{plan.desc}</p>
-              </div>
+            </div>
+          )}
+        </motion.div>
+      </section>
 
-              <ul className="space-y-3 mb-10">
-                {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-center gap-4">
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${plan.popular ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-600'}`}>
-                      <Check className="w-4 h-4" />
-                    </div>
-                    <span className="font-medium">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <Link 
-                href="/auth/register"
-                className={`w-full py-5 rounded-2xl font-bold text-lg transition-all flex items-center justify-center gap-3 ${
-                  plan.popular 
-                    ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-xl shadow-emerald-600/20' 
-                    : 'bg-slate-900 text-white hover:bg-emerald-600'
-                }`}
-              >
-                {plan.cta}
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Comparison Table */}
-        <section className="mb-24">
-          <div className="text-center mb-10">
-            <h2 className="text-4xl lg:text-6xl font-display font-bold text-slate-900 mb-4 tracking-tight">Comparatif Détaillé</h2>
-            <p className="text-xl text-slate-500 font-medium">Comparez les fonctionnalités pour trouver le plan idéal.</p>
+      {/* Plans */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 sm:mb-24">
+        {isLoading ? (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {[1, 2, 3].map((i) => (
+              <PlanCardSkeleton key={i} />
+            ))}
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-slate-100">
-                  <th className="py-6 px-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Fonctionnalité</th>
-                  <th className="py-6 px-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] text-center">Simple</th>
-                  <th className="py-6 px-6 text-[10px] font-black text-emerald-600 uppercase tracking-[0.3em] text-center">Standard</th>
-                  <th className="py-6 px-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] text-center">Grossiste</th>
-                </tr>
-              </thead>
-              <tbody className="text-slate-900 font-medium">
-                {[
-                 { name: 'Gestion de Stock', simple: true, standard: true, grossiste: true },
-                 { name: 'Ventes & POS', simple: true, standard: true, grossiste: true },
-                 { name: 'Rapports de base', simple: true, standard: true, grossiste: true },
-                 { name: 'Alertes péremption', simple: false, standard: true, grossiste: true },
-                 { name: 'Gestion Patients', simple: false, standard: true, grossiste: true },
-                 { name: 'Multi-utilisateurs', simple: '1', standard: 'Jusqu\'à 5', grossiste: 'Illimité' },
-                 { name: 'Analyses IA', simple: false, standard: false, grossiste: true },
-                 { name: 'Support Prioritaire', simple: false, standard: false, grossiste: true },
-                ].map((row, i) => (
-                  <tr key={i} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                    <td className="py-6 px-6 text-lg">{row.name}</td>
-                    <td className="py-6 px-6 text-center">
-                      {typeof row.simple === 'boolean' ? (row.simple ? <CheckCircle2 className="w-6 h-6 text-emerald-500 mx-auto" /> : <X className="w-6 h-6 text-slate-200 mx-auto" />) : row.simple}
-                    </td>
-                    <td className="py-6 px-6 text-center text-emerald-600 font-bold">
-                      {typeof row.standard === 'boolean' ? (row.standard ? <CheckCircle2 className="w-6 h-6 text-emerald-500 mx-auto" /> : <X className="w-6 h-6 text-slate-200 mx-auto" />) : row.standard}
-                    </td>
-                    <td className="py-6 px-6 text-center">
-                      {typeof row.grossiste === 'boolean' ? (row.grossiste ? <CheckCircle2 className="w-6 h-6 text-emerald-500 mx-auto" /> : <X className="w-6 h-6 text-slate-200 mx-auto" />) : row.grossiste}
-                    </td>
+        ) : (
+          <div
+            className={`grid gap-6 sm:gap-8 ${
+              plans.length <= 3
+                ? "sm:grid-cols-2 lg:grid-cols-3"
+                : "sm:grid-cols-2 lg:grid-cols-4"
+            }`}
+          >
+            {plans.map((plan, i) => (
+              <PlanCard
+                key={plan.id}
+                plan={plan}
+                index={i}
+                showAnnual={annual}
+              />
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Comparison table */}
+      {plans.length > 1 && (
+        <section className="py-12 sm:py-16 bg-slate-50 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-5xl mx-auto">
+            <h2 className="text-2xl sm:text-4xl font-display font-bold text-slate-900 mb-8 text-center">
+              Comparatif détaillé
+            </h2>
+            <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
+              <table className="w-full text-left min-w-[600px]">
+                <thead>
+                  <tr className="border-b border-slate-100">
+                    <th className="px-6 py-4 text-sm font-bold text-slate-400 uppercase tracking-wider">
+                      Fonctionnalité
+                    </th>
+                    {plans.map((p) => (
+                      <th
+                        key={p.id}
+                        className={`px-6 py-4 text-sm font-bold uppercase tracking-wider text-center ${
+                          p.plan_tier === "professional"
+                            ? "text-emerald-600 bg-emerald-50/50"
+                            : "text-slate-400"
+                        }`}
+                      >
+                        {p.name}
+                      </th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {COMPARISON_FEATURES.map((row, i) => (
+                    <tr
+                      key={row.key}
+                      className={i % 2 === 0 ? "bg-white" : "bg-slate-50/50"}
+                    >
+                      <td className="px-6 py-3.5 text-sm font-medium text-slate-700">
+                        {row.label}
+                      </td>
+                      {plans.map((p) => (
+                        <td
+                          key={p.id}
+                          className={`px-6 py-3.5 text-center ${
+                            p.plan_tier === "professional"
+                              ? "bg-emerald-50/30"
+                              : ""
+                          }`}
+                        >
+                          <CellValue val={getComparisonValue(p, row.key)} />
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </section>
+      )}
 
-        {/* FAQ Section */}
-        <section className="py-24 bg-slate-50 rounded-[4rem] px-12 lg:px-24">
-          <div className="grid lg:grid-cols-2 gap-20">
-            <div>
-              <h2 className="text-4xl lg:text-6xl font-display font-bold text-slate-900 mb-8 tracking-tight leading-tight">Questions <br />Fréquentes.</h2>
-              <p className="text-xl text-slate-500 leading-relaxed font-medium mb-12">
-                Tout ce que vous devez savoir pour démarrer sereinement avec SyntixPharma.
-              </p>
-              <Link href="/contact" className="inline-flex items-center gap-3 text-emerald-600 font-black uppercase tracking-widest text-xs group">
-                Encore des questions ? Contactez-nous
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
-              </Link>
-            </div>
-            <div className="space-y-8">
-              {[
-                { q: 'Puis-je changer de plan à tout moment ?', a: 'Oui, vous pouvez upgrader ou downgrader votre forfait directement depuis votre interface administrateur. Le changement est immédiat.' },
-                { q: 'Y a-t-il des frais d&apos;installation ?', a: 'Non, SyntixPharma est une solution Cloud. L&apos;activation est instantanée et gratuite. Nous proposons toutefois des services d&apos;accompagnement sur mesure.' },
-                { q: 'Mes données sont-elles exportables ?', a: 'Absolument. Vos données vous appartiennent. Vous pouvez exporter vos stocks, ventes et dossiers patients en format Excel ou CSV à tout moment.' },
-                { q: 'Proposez-vous des tarifs annuels ?', a: 'Oui, nous offrons une réduction de 20% pour tout engagement annuel. Contactez notre équipe commerciale pour en bénéficier.' },
-              ].map((faq, i) => (
-                <div key={i} className="group">
-                  <h4 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-4">
-                    <Plus className="w-5 h-5 text-emerald-500 group-hover:rotate-90 transition-transform" />
-                    {faq.q}
-                  </h4>
-                  <p className="text-slate-500 leading-relaxed pl-9">{faq.a}</p>
+      {/* FAQ */}
+      <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl sm:text-4xl font-display font-bold text-slate-900 mb-8 text-center">
+            Questions fréquentes
+          </h2>
+          <div className="space-y-4">
+            {FAQS.map((faq) => (
+              <div
+                key={faq.q}
+                className="p-6 bg-slate-50 rounded-2xl border border-slate-100"
+              >
+                <div className="flex items-start gap-3">
+                  <HelpCircle className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-sm font-bold text-slate-900 mb-1">
+                      {faq.q}
+                    </h4>
+                    <p className="text-sm text-slate-500 leading-relaxed">
+                      {faq.a}
+                    </p>
+                  </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
+
+      {/* Guarantees */}
+      <section className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid sm:grid-cols-3 gap-4">
+            {[
+              {
+                icon: Shield,
+                title: "Garantie 30 jours",
+                desc: "Satisfait ou remboursé, sans condition.",
+              },
+              {
+                icon: Zap,
+                title: "Mise en service express",
+                desc: "Opérationnel en moins de 24 h.",
+              },
+              {
+                icon: Phone,
+                title: "Support humain",
+                desc: "Une vraie équipe, pas un chatbot.",
+              },
+            ].map((g) => (
+              <div
+                key={g.title}
+                className="flex items-start gap-4 p-6 bg-slate-50 rounded-2xl border border-slate-100"
+              >
+                <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center shrink-0">
+                  <g.icon className="w-6 h-6 text-emerald-600" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-sm text-slate-900">
+                    {g.title}
+                  </h4>
+                  <p className="text-sm text-slate-500">{g.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

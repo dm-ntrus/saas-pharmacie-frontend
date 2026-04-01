@@ -52,10 +52,10 @@ export function HRDashboard() {
     );
   }
 
-  const stats = statsData?.data ?? statsData ?? {};
-  const pendingLeaves = leavesData?.data ?? leavesData ?? [];
-  const attendance = attendanceData?.data ?? attendanceData ?? [];
-  const shifts = shiftsData?.data ?? shiftsData ?? [];
+  const stats = (statsData as any)?.data ?? statsData ?? {};
+  const pendingLeaves = (leavesData as any)?.data ?? leavesData ?? [];
+  const attendance = (attendanceData as any)?.data ?? attendanceData ?? [];
+  const shifts = (shiftsData as any)?.data ?? shiftsData ?? [];
 
   const totalEmployees = stats.total ?? 0;
   const presentToday = Array.isArray(attendance) ? attendance.length : (stats.active ?? 0);

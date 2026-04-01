@@ -21,7 +21,6 @@ export default function Header() {
   const navigations = [
     { path: "/", name: "Accueil" },
     { path: "/features", name: "Solutions" },
-    { path: "/demo", name: "Démo" },
     { path: "/pricing", name: "Tarifs" },
     { path: "/support", name: "Support" },
     { path: "/about", name: "À Propos" },

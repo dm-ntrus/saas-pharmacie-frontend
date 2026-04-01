@@ -40,8 +40,9 @@ export interface JWTPayload {
     };
   }>;
   
-  // Tenant ID (pour compatibilité)
+  // Tenant racine plateforme (toutes les orgs du JWT = pharmacies de ce tenant)
   tenant_id?: string;
+  tenantId?: string;
 }
 
 enum FeatureType {

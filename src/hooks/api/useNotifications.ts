@@ -1,18 +1,16 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useOrganization } from "@/context/OrganizationContext";
+import { useTenantApiContext } from "@/hooks/useTenantApiContext";
 import { apiService } from "@/services/api.service";
 import type {
   NotificationTemplate,
   NotificationQueueStatus,
   NotificationPayload,
   InAppNotification,
-  NotificationListResponse,
 } from "@/types/notifications";
 import { toast } from "react-hot-toast";
 
 function usePharmacyId() {
-  const { currentOrganization } = useOrganization();
-  return currentOrganization?.id ?? "";
+  return useTenantApiContext().pharmacyId;
 }
 
 /** GET /pharmacies/:id/notifications/templates */

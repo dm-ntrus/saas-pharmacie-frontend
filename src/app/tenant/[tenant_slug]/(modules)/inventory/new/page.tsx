@@ -27,7 +27,7 @@ import { ArrowLeft, Save } from "lucide-react";
 
 export default function NewProductPage() {
   return (
-    <ModuleGuard module="inventory" requiredPermissions={[Permission.INVENTORY_ITEMS_CREATE]}>
+    <ModuleGuard module="inventory" requiredPermissions={[Permission.PRODUCTS_CREATE]}>
       <NewProductContent />
     </ModuleGuard>
   );

@@ -41,7 +41,7 @@ function EditEmployeeContent() {
 
   useEffect(() => {
     if (!employee) return;
-    const e = employee as Record<string, unknown>;
+    const e = employee as unknown as Record<string, unknown>;
     reset({
       employee_number: (e.employee_number as string) ?? "",
       first_name: (e.first_name as string) ?? "",

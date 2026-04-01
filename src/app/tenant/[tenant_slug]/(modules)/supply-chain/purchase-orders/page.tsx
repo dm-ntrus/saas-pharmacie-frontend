@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
@@ -27,10 +27,24 @@ function PurchaseOrdersList() {
   const [search, setSearch] = useState("");
   const { data: orders, isLoading, error, refetch } = useSupplyChainPurchaseOrders();
   const { data: suppliers } = useSuppliers();
-  const list = (orders?.data ?? orders ?? []) as PurchaseOrder[];
+  const rawOrders = orders as
+    | { purchaseOrders?: PurchaseOrder[]; data?: PurchaseOrder[] }
+    | PurchaseOrder[]
+    | undefined;
+  const list = Array.isArray(rawOrders)
+    ? rawOrders
+    : (rawOrders?.purchaseOrders ?? rawOrders?.data ?? []) as PurchaseOrder[];
   const suppliersMap = useMemo(() => {
     const s = (suppliers ?? []) as { id: string; name?: string }[];
-    return Object.fromEntries(s.map((x) => [x.id, x.name ?? x.id]));
+    const m: Record<string, string> = {};
+    for (const x of s) {
+      const name = x.name ?? x.id;
+      m[x.id] = name;
+      const short = x.id.includes(":") ? x.id.split(":").pop() ?? x.id : x.id;
+      m[short] = name;
+      m[`suppliers:${short}`] = name;
+    }
+    return m;
   }, [suppliers]);
   const filtered = useMemo(() => {
     if (!search.trim()) return list;
@@ -71,7 +85,19 @@ function PurchaseOrdersList() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="sm" asChild><Link href={buildPath("/supply-chain")}><ArrowLeft className="w-4 h-4 mr-1" /> Retour</Link></Button>
-          <div><h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Commandes d&apos;achat</h1><p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Liste des bons de commande</p></div>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Commandes d&apos;achat</h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Liste des bons de commande</p>
+            <p className="text-xs text-slate-400 mt-2 flex flex-wrap gap-x-2 gap-y-1">
+              <Link href={buildPath("/supply-chain/purchase-requests")} className="text-emerald-600 hover:underline">
+                Réquisitions
+              </Link>
+              <span>·</span>
+              <Link href={buildPath("/supply-chain/supplier-quotes")} className="text-emerald-600 hover:underline">
+                Devis fournisseurs
+              </Link>
+            </p>
+          </div>
         </div>
         <ProtectedAction permission={Permission.PURCHASE_ORDERS_CREATE}><Button asChild><Link href={buildPath("/supply-chain/purchase-orders/new")}><Plus className="w-4 h-4 mr-2" /> Nouvelle commande</Link></Button></ProtectedAction>
       </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useOrganization } from "@/context/OrganizationContext";
+import { useTenantApiContext } from "@/hooks/useTenantApiContext";
 import { apiService } from "@/services/api.service";
 import { toast } from "react-hot-toast";
 import type { CreateUserDto, UpdateUserDto, PaginatedUsersDto, UserResponseDto } from "@/types/identity";
@@ -9,8 +9,7 @@ import type { CreateUserDto, UpdateUserDto, PaginatedUsersDto, UserResponseDto }
 const identityPath = "/identity/users";
 
 function useTenantId() {
-  const { currentOrganization } = useOrganization();
-  return currentOrganization?.tenantId ?? "";
+  return useTenantApiContext().billingTenantId;
 }
 
 export function useIdentityUsers(params?: { tenantId?: string; limit?: number; offset?: number; search?: string; status?: string }) {

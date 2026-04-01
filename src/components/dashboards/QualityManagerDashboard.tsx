@@ -57,10 +57,10 @@ export function QualityManagerDashboard() {
     );
   }
 
-  const events = eventsData?.data ?? eventsData ?? [];
-  const capas = capasData?.data ?? capasData ?? [];
-  const training = trainingData?.data ?? trainingData ?? [];
-  const dashboard = dashboardData?.data ?? dashboardData ?? {};
+  const events = (eventsData as any)?.data ?? eventsData ?? [];
+  const capas = (capasData as any)?.data ?? capasData ?? [];
+  const training = (trainingData as any)?.data ?? trainingData ?? [];
+  const dashboard = (dashboardData as any)?.data ?? dashboardData ?? {};
 
   const eventsList = Array.isArray(events) ? events : [];
   const capasList = Array.isArray(capas) ? capas : [];

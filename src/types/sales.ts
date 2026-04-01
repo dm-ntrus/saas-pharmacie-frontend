@@ -119,6 +119,8 @@ export interface Sale {
   completed_at?: string;
   cancelled_at?: string;
   refunded_at?: string;
+  /** Document retour (séquence RET-YYYYMMDD-####) après remboursement */
+  sale_return_number?: string;
   notes?: string;
   internal_notes?: string;
   cancellation_reason?: string;

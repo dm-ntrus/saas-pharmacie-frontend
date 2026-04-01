@@ -10,6 +10,7 @@ import { Permission } from "@/types/permissions";
 import { useQualityEvents, useCreateCAPA } from "@/hooks/api/useQuality";
 import { createCAPASchema, type CreateCAPAFormData } from "@/schemas/quality.schema";
 import { CAPA_TYPE_LABELS } from "@/types/quality";
+import { CAPAType } from "@/types/quality";
 import { Button, Card, CardContent, CardHeader, CardTitle, Input, Select } from "@/components/ui";
 import { ArrowLeft } from "lucide-react";
 
@@ -35,7 +36,7 @@ function NewCAPAContent() {
     resolver: zodResolver(createCAPASchema),
     defaultValues: {
       qualityEventId: "",
-      type: "corrective",
+      type: CAPAType.CORRECTIVE,
       title: "",
       description: "",
       assignedTo: "",

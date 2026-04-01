@@ -11,6 +11,8 @@ import {
   useUpdateDeliveryStatus,
   useAssignDriver,
   useAvailableDrivers,
+  useOrderTracking,
+  useProofOfDelivery,
 } from "@/hooks/api/useDelivery";
 import { DELIVERY_STATUS_LABELS, DELIVERY_PRIORITY_LABELS } from "@/types/delivery";
 import {
@@ -24,6 +26,7 @@ import {
   Skeleton,
   Modal,
   Select,
+  Input,
 } from "@/components/ui";
 import {
   ArrowLeft,
@@ -35,6 +38,8 @@ import {
   Clock,
   CheckCircle,
   UserPlus,
+  History,
+  ClipboardCheck,
 } from "lucide-react";
 import { formatCurrency, formatDate } from "@/utils/formatters";
 
@@ -54,13 +59,25 @@ function DeliveryOrderDetailContent() {
   const id = (params?.id as string) ?? "";
   const { buildPath } = useTenantPath();
   const { data: order, isLoading, error, refetch } = useDeliveryOrderById(id);
+  const { data: trackingPayload, refetch: refetchTracking } = useOrderTracking(id);
   const updateStatus = useUpdateDeliveryStatus();
+  const proofOfDelivery = useProofOfDelivery();
   const assignDriver = useAssignDriver();
-  const { data: availableDrivers = [] } = useAvailableDrivers();
+  const { data: availableDriversData } = useAvailableDrivers();
+  const availableDrivers = Array.isArray((availableDriversData as any)?.data)
+    ? (availableDriversData as any).data
+    : Array.isArray(availableDriversData)
+      ? availableDriversData
+      : [];
   const [assignModalOpen, setAssignModalOpen] = useState(false);
   const [selectedDriverId, setSelectedDriverId] = useState("");
   const [statusModalOpen, setStatusModalOpen] = useState(false);
   const [newStatus, setNewStatus] = useState("");
+  const [failureReason, setFailureReason] = useState("");
+  const [podOpen, setPodOpen] = useState(false);
+  const [podRating, setPodRating] = useState("5");
+  const [podNotes, setPodNotes] = useState("");
+  const [recipientName, setRecipientName] = useState("");
 
   if (isLoading) return <Skeleton className="h-64 w-full" />;
   if (error || !order) {
@@ -94,16 +111,47 @@ function DeliveryOrderDetailContent() {
   const handleStatusUpdate = () => {
     if (!newStatus) return;
     updateStatus.mutate(
-      { id, status: newStatus },
+      {
+        id,
+        status: newStatus,
+        failure_reason: newStatus === "failed" ? failureReason : undefined,
+      },
       {
         onSuccess: () => {
           setStatusModalOpen(false);
           setNewStatus("");
+          setFailureReason("");
           refetch();
+          refetchTracking();
         },
       }
     );
   };
+
+  const handlePod = () => {
+    const r = parseInt(podRating, 10);
+    proofOfDelivery.mutate(
+      {
+        orderId: id,
+        body: {
+          recipient_name: recipientName || undefined,
+          proof_notes: podNotes || undefined,
+          customer_rating: Number.isFinite(r) ? r : undefined,
+        },
+      },
+      {
+        onSuccess: () => {
+          setPodOpen(false);
+          refetch();
+          refetchTracking();
+        },
+      }
+    );
+  };
+
+  const trackingEvents: any[] = Array.isArray((trackingPayload as any)?.events)
+    ? (trackingPayload as any).events
+    : [];
 
   return (
     <div className="space-y-6">
@@ -148,6 +196,18 @@ function DeliveryOrderDetailContent() {
               </Button>
             </ProtectedAction>
           )}
+          {["assigned", "picked_up", "in_transit"].includes(o.status) && (
+            <ProtectedAction permission={Permission.DELIVERY_UPDATE}>
+              <Button
+                variant="outline"
+                size="sm"
+                leftIcon={<ClipboardCheck className="h-4 w-4" />}
+                onClick={() => setPodOpen(true)}
+              >
+                Preuve de livraison
+              </Button>
+            </ProtectedAction>
+          )}
         </div>
       </div>
 
@@ -185,6 +245,37 @@ function DeliveryOrderDetailContent() {
               );
             })}
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <History className="w-4 h-4 text-slate-600" />
+            Suivi & événements
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {trackingEvents.length === 0 ? (
+            <p className="text-sm text-slate-500">Aucun événement enregistré.</p>
+          ) : (
+            <ul className="space-y-3 border-l-2 border-emerald-200 dark:border-emerald-800 pl-4 ml-1">
+              {trackingEvents.map((ev: any) => (
+                <li key={ev.id ?? `${ev.created_at}-${ev.status}`} className="relative">
+                  <span className="absolute -left-[21px] top-1.5 w-2 h-2 rounded-full bg-emerald-500" />
+                  <p className="text-xs text-slate-500">
+                    {ev.created_at ? formatDate(ev.created_at) : ""}
+                  </p>
+                  <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                    {ev.message ?? ev.status}
+                  </p>
+                  {ev.driver_name && (
+                    <p className="text-xs text-slate-500">Livreur: {ev.driver_name}</p>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
         </CardContent>
       </Card>
 
@@ -241,6 +332,11 @@ function DeliveryOrderDetailContent() {
               <span className="text-slate-500">Total</span>
               <span className="font-medium">{formatCurrency(Number(o.total_amount ?? 0))}</span>
             </div>
+            {o.zone_name && (
+              <p className="text-xs text-slate-500">
+                Zone: {o.zone_name}
+              </p>
+            )}
             {o.scheduled_delivery_time && (
               <div className="flex items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-700">
                 <Clock className="w-4 h-4 text-slate-400" />
@@ -296,13 +392,69 @@ function DeliveryOrderDetailContent() {
             label="Nouveau statut"
             value={newStatus}
             onChange={setNewStatus}
-            options={ORDER_STATUS_STEPS.filter((s) => s !== o.status).map((s) => ({ value: s, label: DELIVERY_STATUS_LABELS[s] ?? s }))}
+            options={(
+              ["pending", "assigned", "picked_up", "in_transit", "delivered", "failed", "cancelled"] as const
+            )
+              .filter((s) => s !== o.status)
+              .map((s) => ({ value: s, label: DELIVERY_STATUS_LABELS[s] ?? s }))}
             placeholder="Sélectionner..."
           />
+          {newStatus === "failed" && (
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                Motif
+              </label>
+              <textarea
+                className="w-full min-h-[80px] rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm"
+                value={failureReason}
+                onChange={(e) => setFailureReason(e.target.value)}
+                placeholder="Raison de l&apos;échec..."
+              />
+            </div>
+          )}
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => setStatusModalOpen(false)}>Annuler</Button>
             <Button onClick={handleStatusUpdate} disabled={!newStatus || updateStatus.isPending}>
               {updateStatus.isPending ? "Mise à jour..." : "Enregistrer"}
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        open={podOpen}
+        onOpenChange={setPodOpen}
+        title="Preuve de livraison"
+        description="Confirme la livraison (notation client, destinataire, notes). Les URLs d’image peuvent être saisies si vous les hébergez ailleurs."
+      >
+        <div className="space-y-4">
+          <Input
+            label="Nom du destinataire (optionnel)"
+            value={recipientName}
+            onChange={(e) => setRecipientName(e.target.value)}
+          />
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              Notes (optionnel)
+            </label>
+            <textarea
+              className="w-full min-h-[72px] rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm"
+              value={podNotes}
+              onChange={(e) => setPodNotes(e.target.value)}
+            />
+          </div>
+          <Input
+            label="Note client (1–5)"
+            type="number"
+            min={1}
+            max={5}
+            value={podRating}
+            onChange={(e) => setPodRating(e.target.value)}
+          />
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setPodOpen(false)}>Annuler</Button>
+            <Button onClick={handlePod} disabled={proofOfDelivery.isPending}>
+              {proofOfDelivery.isPending ? "Enregistrement..." : "Valider la livraison"}
             </Button>
           </div>
         </div>

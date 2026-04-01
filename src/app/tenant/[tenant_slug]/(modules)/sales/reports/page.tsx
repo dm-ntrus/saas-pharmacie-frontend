@@ -26,11 +26,11 @@ function SalesReportsContent() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  const { data: report, isLoading, error, refetch } = useSalesReport({
-    type: reportType,
-    startDate: startDate || undefined,
-    endDate: endDate || undefined,
-  });
+  const { data: report, isLoading, error, refetch } = useSalesReport(
+    startDate,
+    endDate,
+  );
+  const r = report as any;
 
   const reportTabs = [
     { key: "daily" as const, label: "Journalier" },
@@ -83,18 +83,18 @@ function SalesReportsContent() {
         </div>
       ) : error ? (
         <ErrorBanner message="Impossible de charger le rapport" onRetry={() => refetch()} />
-      ) : report ? (
+      ) : r ? (
         <div className="space-y-6">
           {/* KPIs */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <KPI label="Chiffre d'affaires" value={formatCurrency(report.total_revenue ?? report.totalRevenue ?? 0)} icon={<DollarSign className="w-5 h-5 text-emerald-600" />} />
-            <KPI label="Nombre de ventes" value={report.total_sales ?? report.totalSales ?? 0} icon={<ShoppingCart className="w-5 h-5 text-blue-600" />} />
-            <KPI label="Panier moyen" value={formatCurrency(report.average_basket ?? report.averageBasket ?? 0)} icon={<BarChart3 className="w-5 h-5 text-indigo-600" />} />
+            <KPI label="Chiffre d'affaires" value={formatCurrency(r.total_revenue ?? r.totalRevenue ?? 0)} icon={<DollarSign className="w-5 h-5 text-emerald-600" />} />
+            <KPI label="Nombre de ventes" value={r.total_sales ?? r.totalSales ?? 0} icon={<ShoppingCart className="w-5 h-5 text-blue-600" />} />
+            <KPI label="Panier moyen" value={formatCurrency(r.average_basket ?? r.averageBasket ?? 0)} icon={<BarChart3 className="w-5 h-5 text-indigo-600" />} />
             <KPI
               label="Variation"
-              value={`${report.growth_percent ?? report.growthPercent ?? 0}%`}
+              value={`${r.growth_percent ?? r.growthPercent ?? 0}%`}
               icon={
-                (report.growth_percent ?? report.growthPercent ?? 0) >= 0
+                (r.growth_percent ?? r.growthPercent ?? 0) >= 0
                   ? <TrendingUp className="w-5 h-5 text-emerald-600" />
                   : <TrendingDown className="w-5 h-5 text-red-600" />
               }
@@ -102,12 +102,12 @@ function SalesReportsContent() {
           </div>
 
           {/* Payment methods breakdown */}
-          {report.by_payment_method && (
+          {r.by_payment_method && (
             <Card>
               <CardHeader><CardTitle>Par mode de paiement</CardTitle></CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {Object.entries(report.by_payment_method).map(([method, data]: [string, any]) => (
+                  {Object.entries(r.by_payment_method).map(([method, data]: [string, any]) => (
                     <div key={method} className="flex items-center justify-between p-3 rounded-lg border border-slate-100 dark:border-slate-700/50">
                       <div>
                         <p className="text-sm font-medium text-slate-900 dark:text-slate-100 capitalize">{method.replace(/_/g, " ")}</p>
@@ -122,12 +122,12 @@ function SalesReportsContent() {
           )}
 
           {/* Top products */}
-          {report.top_products && Array.isArray(report.top_products) && (
+          {r.top_products && Array.isArray(r.top_products) && (
             <Card>
               <CardHeader><CardTitle>Produits les plus vendus</CardTitle></CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {report.top_products.slice(0, 10).map((product: any, i: number) => (
+                  {r.top_products.slice(0, 10).map((product: any, i: number) => (
                     <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-slate-100 dark:border-slate-700/50">
                       <div className="flex items-center gap-3">
                         <span className="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs font-bold flex items-center justify-center">{i + 1}</span>

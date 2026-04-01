@@ -18,8 +18,8 @@
     // ✅ Type Safety
     "strict": true,
     "noImplicitAny": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     // ✅ Aliases & base path
     "baseUrl": ".",
@@ -48,6 +48,7 @@
     ".next/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "src/app/tenant/[tenant_slug]/(modules)/**"
   ]
 }

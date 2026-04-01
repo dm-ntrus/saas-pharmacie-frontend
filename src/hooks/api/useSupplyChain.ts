@@ -1,13 +1,12 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useOrganization } from "@/context/OrganizationContext";
+import { useTenantApiContext } from "@/hooks/useTenantApiContext";
 import { apiService } from "@/services/api.service";
 import { toast } from "react-hot-toast";
 
 function usePharmacyId() {
-  const { currentOrganization } = useOrganization();
-  return currentOrganization?.id ?? "";
+  return useTenantApiContext().pharmacyId;
 }
 
 function supplyChainPath(pid: string) {
@@ -171,9 +170,182 @@ export function useReceiveSupplyChainPurchaseOrder() {
     mutationFn: ({ id, data }: { id: string; data: Record<string, unknown> }) =>
       apiService.post(`${supplyChainPath(pid)}/purchase-orders/${id}/receive`, data),
     onSuccess: (_, { id }) => {
-      toast.success("Réception enregistrée");
+      toast.success("Réception enregistrée (GRN créé)");
       qc.invalidateQueries({ queryKey: ["supply-chain-purchase-orders", pid] });
       qc.invalidateQueries({ queryKey: ["supply-chain-purchase-order", pid, id] });
+      qc.invalidateQueries({ queryKey: ["goods-receipts", pid, id] });
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+}
+
+export function useGoodsReceiptsForPurchaseOrder(purchaseOrderId: string | null) {
+  const pid = usePharmacyId();
+  return useQuery({
+    queryKey: ["goods-receipts", pid, purchaseOrderId],
+    queryFn: () =>
+      apiService.get(
+        `${supplyChainPath(pid)}/goods-receipts?purchaseOrderId=${encodeURIComponent(purchaseOrderId ?? "")}`,
+      ),
+    enabled: !!pid && !!purchaseOrderId,
+  });
+}
+
+export function useGoodsReceiptById(grnId: string | null) {
+  const pid = usePharmacyId();
+  return useQuery({
+    queryKey: ["goods-receipt", pid, grnId],
+    queryFn: () => apiService.get(`${supplyChainPath(pid)}/goods-receipts/${grnId}`),
+    enabled: !!pid && !!grnId,
+  });
+}
+
+export function usePurchaseRequests(params?: { status?: string; page?: number; limit?: number }) {
+  const pid = usePharmacyId();
+  return useQuery({
+    queryKey: ["purchase-requests", pid, params],
+    queryFn: () =>
+      apiService.get(`${supplyChainPath(pid)}/purchase-requests`, { params }),
+    enabled: !!pid,
+  });
+}
+
+export function usePurchaseRequestById(id: string | null) {
+  const pid = usePharmacyId();
+  return useQuery({
+    queryKey: ["purchase-request", pid, id],
+    queryFn: () => apiService.get(`${supplyChainPath(pid)}/purchase-requests/${id}`),
+    enabled: !!pid && !!id,
+  });
+}
+
+export function useCreatePurchaseRequest() {
+  const pid = usePharmacyId();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      apiService.post(`${supplyChainPath(pid)}/purchase-requests`, data),
+    onSuccess: () => {
+      toast.success("Demande d'achat créée");
+      qc.invalidateQueries({ queryKey: ["purchase-requests", pid] });
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+}
+
+export function useSubmitPurchaseRequest() {
+  const pid = usePharmacyId();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) =>
+      apiService.post(`${supplyChainPath(pid)}/purchase-requests/${id}/submit`, {}),
+    onSuccess: () => {
+      toast.success("Demande soumise");
+      qc.invalidateQueries({ queryKey: ["purchase-requests", pid] });
+      qc.invalidateQueries({ queryKey: ["purchase-request", pid] });
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+}
+
+export function useApprovePurchaseRequest() {
+  const pid = usePharmacyId();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) =>
+      apiService.post(`${supplyChainPath(pid)}/purchase-requests/${id}/approve`, {}),
+    onSuccess: () => {
+      toast.success("Demande approuvée");
+      qc.invalidateQueries({ queryKey: ["purchase-requests", pid] });
+      qc.invalidateQueries({ queryKey: ["purchase-request", pid] });
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+}
+
+export function useRejectPurchaseRequest() {
+  const pid = usePharmacyId();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, reason }: { id: string; reason: string }) =>
+      apiService.post(`${supplyChainPath(pid)}/purchase-requests/${id}/reject`, { reason }),
+    onSuccess: () => {
+      toast.success("Demande refusée");
+      qc.invalidateQueries({ queryKey: ["purchase-requests", pid] });
+      qc.invalidateQueries({ queryKey: ["purchase-request", pid] });
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+}
+
+export function useCancelPurchaseRequest() {
+  const pid = usePharmacyId();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) =>
+      apiService.post(`${supplyChainPath(pid)}/purchase-requests/${id}/cancel`, {}),
+    onSuccess: () => {
+      toast.success("Demande annulée");
+      qc.invalidateQueries({ queryKey: ["purchase-requests", pid] });
+      qc.invalidateQueries({ queryKey: ["purchase-request", pid] });
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+}
+
+export function useConvertPurchaseRequest() {
+  const pid = usePharmacyId();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, supplierId }: { id: string; supplierId: string }) =>
+      apiService.post(`${supplyChainPath(pid)}/purchase-requests/${id}/convert-to-order`, {
+        supplierId,
+      }),
+    onSuccess: () => {
+      toast.success("Bon de commande créé");
+      qc.invalidateQueries({ queryKey: ["purchase-requests", pid] });
+      qc.invalidateQueries({ queryKey: ["purchase-request", pid] });
+      qc.invalidateQueries({ queryKey: ["supply-chain-purchase-orders", pid] });
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+}
+
+export function useCreateSupplierQuote() {
+  const pid = usePharmacyId();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      apiService.post(`${supplyChainPath(pid)}/supplier-quotes`, data),
+    onSuccess: () => {
+      toast.success("Devis enregistré");
+      qc.invalidateQueries({ queryKey: ["supplier-quotes-compare", pid] });
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+}
+
+export function useSupplierQuotesCompare(productId: string | null) {
+  const pid = usePharmacyId();
+  return useQuery({
+    queryKey: ["supplier-quotes-compare", pid, productId],
+    queryFn: () =>
+      apiService.get(`${supplyChainPath(pid)}/supplier-quotes/compare`, {
+        params: { productId },
+      }),
+    enabled: !!pid && !!productId,
+  });
+}
+
+export function useDeleteSupplierQuote() {
+  const pid = usePharmacyId();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (quoteId: string) =>
+      apiService.delete(`${supplyChainPath(pid)}/supplier-quotes/${quoteId}`),
+    onSuccess: () => {
+      toast.success("Devis supprimé");
+      qc.invalidateQueries({ queryKey: ["supplier-quotes-compare", pid] });
     },
     onError: (err: Error) => toast.error(err.message),
   });

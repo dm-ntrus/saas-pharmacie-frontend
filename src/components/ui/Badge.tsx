@@ -11,6 +11,8 @@ const badgeVariants = cva(
       variant: {
         default:
           "bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300",
+        secondary:
+          "bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300",
         success:
           "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
         warning:

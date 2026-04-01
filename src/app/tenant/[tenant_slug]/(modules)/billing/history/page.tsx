@@ -75,14 +75,8 @@ function BillingHistoryContent() {
         <EmptyState
           title="Aucun historique"
           description="Aucune souscription enregistrée."
-          action={
-            <Button
-              variant="outline"
-              onClick={() => router.push(buildPath("/billing"))}
-            >
-              Retour à la facturation
-            </Button>
-          }
+          actionLabel="Retour à la facturation"
+          onAction={() => router.push(buildPath("/billing"))}
         />
       ) : (
         <Card>
@@ -109,7 +103,7 @@ function BillingHistoryContent() {
                       <td className="p-3">
                         <Badge
                           variant={
-                            row.status === "active" ? "success" : "secondary"
+                            row.status === "active" ? "success" : "default"
                           }
                         >
                           {row.status ?? "—"}

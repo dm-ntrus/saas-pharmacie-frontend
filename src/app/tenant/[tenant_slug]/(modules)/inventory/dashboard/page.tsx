@@ -65,11 +65,14 @@ function InventoryDashboardContent() {
     error: kpisError,
     refetch: refetchKpis,
   } = useInventoryKPIs(chartDays);
-  const { data: expirationRisk } = useExpirationRisk();
-  const { data: stockValuation } = useStockValuation();
+  // Query results are loosely typed in apiService => cast locally for safe property access.
+  const expirationRisk = useExpirationRisk().data as any;
+  const stockValuation = useStockValuation().data as any;
   const { data: alerts } = useInventoryAlerts({ limit: 5, status: "active" });
-  const { data: charts } = useDashboardChartsAll(chartDays);
-  const { data: timeline } = useDashboardTimeline(10);
+  // `apiService.get()` is loosely typed, so the query result may infer `{}`.
+  // We keep runtime identical but cast for safe property access below.
+  const charts = useDashboardChartsAll(chartDays).data as any;
+  const timeline = useDashboardTimeline(10).data as any;
   const { data: capacityDashboard } = useCapacityDashboard();
   const exportSummaryMutation = useDashboardExportSummary();
 
@@ -102,7 +105,7 @@ function InventoryDashboardContent() {
     expirationRisk?.count ??
     0;
   const lowStockCount =
-    kpis?.lowStockCount ?? kpis?.low_stock_count ?? 0;
+    kpis?.low_stock_count ?? 0;
 
   const dayOptions = [
     { value: 7, label: "7j" },
@@ -199,7 +202,7 @@ function InventoryDashboardContent() {
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
             <KPICard
               label="Total produits"
-              value={formatNumber(kpis?.totalProducts ?? kpis?.total_products ?? 0)}
+              value={formatNumber(kpis?.total_products ?? 0)}
               icon={<Package className="w-5 h-5 text-blue-600" />}
             />
             <KPICard
@@ -207,7 +210,6 @@ function InventoryDashboardContent() {
               value={formatCurrency(
                 stockValuation?.totalValue ??
                   stockValuation?.total_value ??
-                  kpis?.totalStockValue ??
                   kpis?.total_stock_value ??
                   0,
               )}
@@ -227,7 +229,7 @@ function InventoryDashboardContent() {
             />
             <KPICard
               label="Taux de rotation"
-              value={(kpis?.stockTurnoverRate ?? kpis?.stock_turnover_rate) != null ? formatNumber((kpis?.stockTurnoverRate ?? kpis?.stock_turnover_rate) as number) : "—"}
+              value={kpis?.turnover_rate != null ? formatNumber(kpis.turnover_rate as number) : "—"}
               icon={<TrendingUp className="w-5 h-5 text-slate-600" />}
             />
             <KPICard

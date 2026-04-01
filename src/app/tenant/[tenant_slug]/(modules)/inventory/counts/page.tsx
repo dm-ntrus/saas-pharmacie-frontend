@@ -112,7 +112,11 @@ function CountsContent() {
   const completeMutation = useCompleteCount();
   const adjustMutation = useApplyCountAdjustments();
 
-  const counts: InventoryCount[] = data?.data ?? [];
+  const counts: InventoryCount[] = Array.isArray((data as any)?.data)
+    ? (data as any).data
+    : Array.isArray(data)
+      ? (data as any)
+      : [];
 
   const filtered = counts.filter((c) => {
     if (!search) return true;

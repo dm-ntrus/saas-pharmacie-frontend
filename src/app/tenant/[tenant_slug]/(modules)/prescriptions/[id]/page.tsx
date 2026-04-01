@@ -20,6 +20,7 @@ import {
 import {
   PRESCRIPTION_STATUS_LABELS,
   PrescriptionStatus,
+  PrescriptionItemStatus,
 } from "@/types/prescriptions";
 import {
   Button,

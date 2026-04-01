@@ -90,9 +90,9 @@ function NewLocationContent() {
       is_refrigerated: form.is_refrigerated ?? false,
       is_promotional: form.is_promotional ?? false,
       compliance_required: form.compliance_required ?? false,
-      max_capacity: form.max_capacity != null && form.max_capacity !== "" ? Number(form.max_capacity) : undefined,
-      temperature_min: form.temperature_min != null && form.temperature_min !== "" ? Number(form.temperature_min) : undefined,
-      temperature_max: form.temperature_max != null && form.temperature_max !== "" ? Number(form.temperature_max) : undefined,
+      max_capacity: form.max_capacity != null ? Number(form.max_capacity) : undefined,
+      temperature_min: form.temperature_min != null ? Number(form.temperature_min) : undefined,
+      temperature_max: form.temperature_max != null ? Number(form.temperature_max) : undefined,
       display_category: form.display_category as DisplayCategory | undefined,
       active: form.active ?? true,
     };

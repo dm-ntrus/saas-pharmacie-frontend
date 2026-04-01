@@ -432,7 +432,7 @@ function PrepareForm({
           label="Jour"
           options={DAYS_OF_WEEK.map((d) => ({ value: d.key, label: d.label }))}
           value={day}
-          onChange={(e) => setDay(e.target.value)}
+          onChange={(v) => setDay(v)}
         />
         <Input
           label="Heure"

@@ -137,13 +137,15 @@ function AlertsContent() {
 
   const alerts: InventoryAlert[] = data?.data ?? [];
 
-  const severityCounts = React.useMemo(() => {
-    const c = { [AlertSeverity.CRITICAL]: 0, [AlertSeverity.HIGH]: 0, [AlertSeverity.MEDIUM]: 0, [AlertSeverity.LOW]: 0 };
-    alerts.forEach((a) => {
-      if (a.severity && c[a.severity] !== undefined) c[a.severity]++;
-    });
-    return c;
-  }, [alerts]);
+  const severityCounts: Record<AlertSeverity, number> = {
+    [AlertSeverity.CRITICAL]: 0,
+    [AlertSeverity.HIGH]: 0,
+    [AlertSeverity.MEDIUM]: 0,
+    [AlertSeverity.LOW]: 0,
+  };
+  for (const a of alerts) {
+    severityCounts[a.severity] += 1;
+  }
 
   const userAction = {
     userId: user?.id ?? "",
@@ -211,19 +213,18 @@ function AlertsContent() {
         </div>
       </div>
 
-      {/* AlertsStatsBar — Compteurs par sévérité (§6.2) */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <StatCard label="Critique" value={severityCounts[AlertSeverity.CRITICAL] ?? 0} color="text-red-600" />
         <StatCard label="Haute" value={severityCounts[AlertSeverity.HIGH] ?? 0} color="text-orange-500" />
         <StatCard label="Moyenne" value={severityCounts[AlertSeverity.MEDIUM] ?? 0} color="text-amber-400" />
         <StatCard label="Basse" value={severityCounts[AlertSeverity.LOW] ?? 0} color="text-blue-400" />
       </div>
-      {stats && (
+      {!!stats && (
         <div className="flex flex-wrap gap-4 text-sm text-slate-500">
-          <span>Actives: <strong className="text-slate-700 dark:text-slate-300">{stats.active ?? 0}</strong></span>
-          <span>Accusées: <strong className="text-slate-700 dark:text-slate-300">{stats.acknowledged ?? 0}</strong></span>
-          <span>Résolues: <strong className="text-slate-700 dark:text-slate-300">{stats.resolved ?? 0}</strong></span>
-          <span>Reportées: <strong className="text-slate-700 dark:text-slate-300">{stats.snoozed ?? 0}</strong></span>
+          <span>Actives: <strong className="text-slate-700 dark:text-slate-300">{(stats as any).active ?? 0}</strong></span>
+          <span>Accusées: <strong className="text-slate-700 dark:text-slate-300">{(stats as any).acknowledged ?? 0}</strong></span>
+          <span>Résolues: <strong className="text-slate-700 dark:text-slate-300">{(stats as any).resolved ?? 0}</strong></span>
+          <span>Reportées: <strong className="text-slate-700 dark:text-slate-300">{(stats as any).snoozed ?? 0}</strong></span>
         </div>
       )}
 

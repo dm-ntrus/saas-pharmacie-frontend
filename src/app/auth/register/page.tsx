@@ -2,21 +2,19 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import {
   Check,
   ChevronRight,
   User,
-  Building2,
   CreditCard,
   Loader2,
   ChevronLeft,
-  Eye,
-  EyeOff,
   MapPin,
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useMemo } from 'react';
+import AuthShell from '@/components/auth/AuthShell';
 import { useCreateTenant } from '@/hooks/useTenants';
 import {
   TenantType,
@@ -25,33 +23,59 @@ import {
   OrganizationType,
   type CreateTenantDto,
 } from '@/types/tenant.types';
+import { toast } from 'react-hot-toast';
+import {
+  normalizeTenantSubdomain,
+  validateTenantSubdomainFormat,
+} from '@/lib/tenant/subdomain-rules';
+import { usePublicPlans } from '@/hooks/api/usePublicPlans';
+import type { Plan } from '@/types/billing';
 
-const AVAILABLE_PLANS = [
+const STATIC_FALLBACK_PLANS = [
   {
     id: 'starter',
+    plan_key: 'starter',
     name: 'Starter',
     priceMonthly: 29,
     priceAnnual: 290,
-    users: 10,
-    features: ['Base', 'Support email'],
+    users: 3,
+    features: ['POS basique', 'Inventaire', 'Support email'],
   },
   {
-    id: 'growth',
-    name: 'Growth',
+    id: 'professional',
+    plan_key: 'professional',
+    name: 'Standard',
     priceMonthly: 99,
     priceAnnual: 990,
-    users: 50,
-    features: ['Avancé', 'Support prioritaire', 'API'],
+    users: -1,
+    features: ['Supply chain', 'Analytics', 'Support 24/7', 'Mobile Money'],
   },
   {
     id: 'enterprise',
-    name: 'Enterprise',
-    priceMonthly: 299,
-    priceAnnual: 2990,
+    plan_key: 'enterprise',
+    name: 'Entreprise',
+    priceMonthly: 199,
+    priceAnnual: 1990,
     users: -1,
-    features: ['Illimité', 'Support dédié', 'SLA', 'On-premise'],
+    features: ['Multi-sites', 'API & ERP', 'Manager dédié', 'SLA garanti'],
   },
 ];
+
+function extractPlanFeatures(plan: Plan): string[] {
+  const items: string[] = [];
+  if (plan.max_users === -1) items.push('Utilisateurs illimités');
+  else if (plan.max_users) items.push(`${plan.max_users} utilisateurs`);
+  if (plan.max_pharmacies && plan.max_pharmacies > 1)
+    items.push(plan.max_pharmacies === -1 ? 'Multi-sites' : `${plan.max_pharmacies} sites`);
+  if (plan.is_trial_available) items.push('Essai gratuit');
+  if (plan.feature_flags?.length) {
+    for (const ff of plan.feature_flags.slice(0, 4)) {
+      if (ff.is_included && ff.feature_name) items.push(ff.feature_name);
+    }
+  }
+  if (items.length < 2) items.push('Support inclus');
+  return items.slice(0, 6);
+}
 
 const initialFormData: CreateTenantDto = {
   tenantData: {
@@ -81,7 +105,6 @@ const initialFormData: CreateTenantDto = {
     firstName: '',
     lastName: '',
     phone: '',
-    password: '',
     enable2FA: false,
     acceptTerms: false,
     acceptPrivacyPolicy: false,
@@ -91,7 +114,6 @@ const initialFormData: CreateTenantDto = {
   planSelection: {
     planId: 'starter',
     billingInterval: BillingCycle.MONTHLY,
-    trialDays: 14,
   },
   paymentInfo: {
     paymentMethod: PaymentMethod.CREDIT_CARD,
@@ -100,27 +122,97 @@ const initialFormData: CreateTenantDto = {
   organisationData: {
     type: OrganizationType.PHARMACY,
   },
+  pharmacyData: {
+    licenseNumber: '',
+    name: '',
+    address: '',
+    city: '',
+    state: '',
+    postalCode: '',
+    country: 'FR',
+    phone: '',
+    email: '',
+    website: '',
+    pharmacistInCharge: '',
+    pharmacistLicenseNumber: '',
+    licenseExpiryDate: '',
+  },
 };
 
 export default function RegisterPage() {
+  return (
+    <Suspense>
+      <RegisterInner />
+    </Suspense>
+  );
+}
+
+function RegisterInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const createTenant = useCreateTenant();
+  const { data: apiPlans } = usePublicPlans({ active: true });
+
+  const displayPlans = useMemo(() => {
+    if (apiPlans && apiPlans.length > 0) {
+      return apiPlans.map((p: Plan) => ({
+        id: p.plan_key || p.id,
+        plan_key: p.plan_key,
+        name: p.name,
+        priceMonthly: p.price,
+        priceAnnual: Math.round(p.price * 10),
+        users: p.max_users ?? 1,
+        features: extractPlanFeatures(p),
+      }));
+    }
+    return STATIC_FALLBACK_PLANS;
+  }, [apiPlans]);
 
   const [step, setStep] = useState(1);
-  const [showPassword, setShowPassword] = useState(false);
-  const [passwordStrength, setPasswordStrength] = useState(0);
   const [formData, setFormData] = useState<CreateTenantDto>(initialFormData);
 
   useEffect(() => {
-    const plan = searchParams.get('plan');
-    if (plan && AVAILABLE_PLANS.some((p) => p.id === plan)) {
-      setFormData((prev) => ({
-        ...prev,
-        planSelection: { ...prev.planSelection, planId: plan },
-      }));
+    const planParam = searchParams?.get('plan');
+    if (planParam) {
+      const match = displayPlans.find(
+        (p) => p.plan_key === planParam || p.id === planParam,
+      );
+      if (match) {
+        setFormData((prev) => ({
+          ...prev,
+          planSelection: { ...prev.planSelection, planId: match.id },
+        }));
+      }
     }
-  }, [searchParams]);
+  }, [searchParams, displayPlans]);
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      pharmacyData: {
+        ...prev.pharmacyData,
+        name: prev.tenantData.name,
+        licenseNumber: prev.tenantData.licenseNumber,
+        website: prev.tenantData.website ?? prev.pharmacyData.website,
+        address: prev.tenantData.address?.street ?? prev.pharmacyData.address,
+        city: prev.tenantData.address?.city ?? prev.pharmacyData.city,
+        postalCode: prev.tenantData.address?.postalCode ?? prev.pharmacyData.postalCode,
+        country: prev.tenantData.address?.country ?? prev.pharmacyData.country,
+        phone: prev.tenantData.contact.phone || prev.pharmacyData.phone,
+        email: prev.tenantData.contact.email || prev.pharmacyData.email,
+      },
+    }));
+  }, [
+    formData.tenantData.name,
+    formData.tenantData.licenseNumber,
+    formData.tenantData.website,
+    formData.tenantData.address?.street,
+    formData.tenantData.address?.city,
+    formData.tenantData.address?.postalCode,
+    formData.tenantData.address?.country,
+    formData.tenantData.contact.phone,
+    formData.tenantData.contact.email,
+  ]);
 
   const totalSteps = 4;
   const nextStep = () => setStep((s) => Math.min(s + 1, totalSteps));
@@ -163,6 +255,16 @@ export default function RegisterPage() {
     }));
   };
 
+  const updatePharmacyData = <K extends keyof CreateTenantDto['pharmacyData']>(
+    field: K,
+    value: CreateTenantDto['pharmacyData'][K]
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      pharmacyData: { ...prev.pharmacyData, [field]: value },
+    }));
+  };
+
   const validateStep = (s: number): boolean => {
     switch (s) {
       case 1:
@@ -170,22 +272,24 @@ export default function RegisterPage() {
           formData.tenantData.name &&
           formData.tenantData.subdomain &&
           formData.tenantData.contact.email &&
-          formData.tenantData.licenseNumber
+          formData.tenantData.licenseNumber &&
+          formData.pharmacyData.pharmacistInCharge &&
+          formData.pharmacyData.pharmacistLicenseNumber
         );
       case 2:
         return !!(
           formData.tenantData.address?.street &&
           formData.tenantData.address?.city &&
           formData.tenantData.address?.postalCode &&
-          formData.tenantData.address?.country
+          formData.tenantData.address?.country &&
+          formData.pharmacyData.state &&
+          formData.pharmacyData.licenseExpiryDate
         );
       case 3:
         return !!(
           formData.ownerData.firstName &&
           formData.ownerData.lastName &&
           formData.ownerData.email &&
-          formData.ownerData.password &&
-          formData.ownerData.password.length >= 8 &&
           formData.ownerData.acceptTerms &&
           formData.ownerData.acceptPrivacyPolicy &&
           formData.ownerData.acceptDataProcessing
@@ -198,9 +302,9 @@ export default function RegisterPage() {
   };
 
   const calculatePrice = () => {
-    const plan = AVAILABLE_PLANS.find((p) => p.id === formData.planSelection.planId);
+    const plan = displayPlans.find((p) => p.id === formData.planSelection.planId);
     if (!plan) return 0;
-    return formData.planSelection.billingInterval === BillingCycle.ANNUAL
+    return formData.planSelection.billingInterval === BillingCycle.YEARLY
       ? plan.priceAnnual / 12
       : plan.priceMonthly;
   };
@@ -208,15 +312,67 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (step < totalSteps) {
+      if (step === 1) {
+        const normalized = normalizeTenantSubdomain(formData.tenantData.subdomain);
+        const subErr = validateTenantSubdomainFormat(normalized);
+        if (subErr) {
+          toast.error(subErr);
+          return;
+        }
+        const step1Ok =
+          !!formData.tenantData.name &&
+          !!normalized &&
+          !!formData.tenantData.contact.email &&
+          !!formData.tenantData.licenseNumber &&
+          !!formData.pharmacyData.pharmacistInCharge &&
+          !!formData.pharmacyData.pharmacistLicenseNumber;
+        if (!step1Ok) {
+          toast.error("Merci de remplir tous les champs obligatoires de cette étape.");
+          return;
+        }
+        updateTenantData("subdomain", normalized);
+        nextStep();
+        return;
+      }
+      if (!validateStep(step)) {
+        toast.error("Merci de remplir tous les champs obligatoires de cette étape.");
+        return;
+      }
       nextStep();
       return;
     }
     if (!validateStep(4)) return;
+    const normalizedSub = normalizeTenantSubdomain(formData.tenantData.subdomain);
+    const finalSubErr = validateTenantSubdomainFormat(normalizedSub);
+    if (finalSubErr) {
+      toast.error(finalSubErr);
+      return;
+    }
+    const payload: CreateTenantDto = {
+      ...formData,
+      tenantData: { ...formData.tenantData, subdomain: normalizedSub },
+    };
     try {
-      await createTenant.mutateAsync(formData);
-      router.push('/auth/registration-success');
+      const res = await createTenant.mutateAsync(payload);
+      const subQ = encodeURIComponent(normalizedSub);
+      if ('provisioningId' in res && res.provisioningId) {
+        router.push(
+          `/auth/registration-success?provisioningId=${encodeURIComponent(res.provisioningId)}&subdomain=${subQ}`,
+        );
+        return;
+      }
+      if ('tenantId' in res && res.tenantId) {
+        const syncSub =
+          'subdomain' in res && typeof (res as { subdomain?: string }).subdomain === 'string'
+            ? encodeURIComponent((res as { subdomain?: string }).subdomain!.trim().toLowerCase())
+            : subQ;
+        router.push(`/auth/registration-success?subdomain=${syncSub}`);
+        return;
+      }
+      router.push(`/auth/registration-success?subdomain=${subQ}`);
     } catch (err) {
-      console.error('Registration failed:', err);
+      const msg = err instanceof Error ? err.message : "Inscription impossible pour le moment.";
+      toast.error(msg);
     }
   };
 
@@ -225,72 +381,44 @@ export default function RegisterPage() {
   const labelClass = 'text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]';
 
   return (
-    <div className="min-h-screen bg-white flex overflow-hidden">
-      {/* Left Panel */}
-      <div className="hidden lg:flex w-[450px] bg-slate-900 p-20 flex-col text-white relative overflow-hidden shrink-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/30 to-slate-900/90 z-10" />
-        <Image
-          src="/images/tenant.jpg"
-          alt="Pharmacy"
-          fill
-          className="absolute inset-0 w-full h-full object-cover opacity-40 grayscale"
-          referrerPolicy="no-referrer"
-        />
-        <Link href="/" className="flex items-center gap-4 relative z-20 group mb-24">
-          <span className="font-display font-bold text-2xl text-emerald-600 tracking-tight">
-            Syntix<span className="text-slate-900">Pharma</span>
-          </span>
-        </Link>
-        <div className="relative z-20 mt-auto">
-          <h2 className="text-2xl font-display font-bold leading-[1.1] mb-12 italic">
-            &quot;La technologie au service de la santé. SyntixPharma redéfinit l&apos;excellence opérationnelle en
-            officine.&quot;
-          </h2>
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500 flex items-center justify-center font-bold text-2xl shadow-2xl shadow-emerald-500/20 overflow-hidden relative border-2 border-white/20">
-            </div>
-            <div>
-              <p className="text-lg font-bold">Dr. David Luvuezo</p>
-              <p className="text-emerald-400 font-black uppercase tracking-[0.2em] text-[8px]">Pharmacie de l&apos;Espoir</p>
+    <AuthShell
+      testimonial={{
+        quote: "La technologie au service de la santé. SyntixPharma redéfinit l'excellence opérationnelle en officine.",
+        name: "Dr. David Luvuezo",
+        title: "Pharmacie de l'Espoir",
+      }}
+    >
+      <div className="space-y-4">
+        {/* Step progress */}
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+              <motion.div
+                className="h-full bg-emerald-500 rounded-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${(step / totalSteps) * 100}%` }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              />
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Form */}
-      <div className="flex-1 flex flex-col overflow-y-auto bg-white relative">
-        <div className="sticky top-0 z-30 bg-white/90 backdrop-blur-xl px-12 pt-4">
-          <div className="max-w-4xl mx-auto flex items-center justify-between gap-12">
-            <div className="flex-1">
-              <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-emerald-500"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${(step / totalSteps) * 100}%` }}
-                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                />
+          <div className="hidden sm:flex items-center gap-2">
+            {[1, 2, 3, 4].map((s) => (
+              <div
+                key={s}
+                className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-black transition-all border-2 ${
+                  step === s
+                    ? 'bg-emerald-600 border-emerald-600 text-white'
+                    : step > s
+                      ? 'bg-white border-emerald-500 text-emerald-600'
+                      : 'bg-white border-slate-100 text-slate-300'
+                }`}
+              >
+                {step > s ? <Check className="w-4 h-4" /> : s}
               </div>
-            </div>
-            <div className="hidden sm:flex items-center gap-4">
-              {[1, 2, 3, 4].map((s) => (
-                <div
-                  key={s}
-                  className={`w-8 h-8 rounded-2xl flex items-center justify-center text-xs font-black transition-all border-2 ${
-                    step === s
-                      ? 'bg-emerald-600 border-emerald-600 text-white shadow-2xl shadow-emerald-600/30'
-                      : step > s
-                        ? 'bg-white border-emerald-500 text-emerald-600'
-                        : 'bg-white border-slate-100 text-slate-300'
-                  }`}
-                >
-                  {step > s ? <Check className="w-5 h-5" /> : `0${s}`}
-                </div>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
 
-        <div className="max-w-4xl w-full mx-auto px-8 py-2">
           <form onSubmit={handleSubmit}>
             <motion.div
               key={step}
@@ -301,14 +429,14 @@ export default function RegisterPage() {
               {/* Step 1: Informations Pharmacie */}
               {step === 1 && (
                 <div className="space-y-4">
-                  <div className="max-w-2xl">
-                    <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-black mb-2 border border-emerald-100 uppercase tracking-[0.2em]">
-                      Établissement
+                  <div>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-black mb-3 border border-emerald-100 uppercase tracking-[0.2em]">
+                      Étape 1 · Établissement
                     </div>
-                    <h1 className="text-4xl lg:text-5xl font-display font-bold text-slate-900 mb-1 tracking-tight">
+                    <h1 className="text-2xl sm:text-3xl font-display font-bold text-slate-900 mb-1 tracking-tight">
                       Informations <span className="text-emerald-600">Pharmacie</span>
                     </h1>
-                    <p className="text-slate-500 leading-relaxed font-medium">
+                    <p className="text-sm text-slate-500 leading-relaxed">
                       Nom, sous-domaine, contact et licence de votre officine.
                     </p>
                   </div>
@@ -415,6 +543,31 @@ export default function RegisterPage() {
                     </div>
                   </div>
 
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className={labelClass}>Pharmacien responsable *</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Dr. Sophie Martin"
+                        className={inputClass}
+                        value={formData.pharmacyData.pharmacistInCharge}
+                        onChange={(e) => updatePharmacyData('pharmacistInCharge', e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className={labelClass}>N° licence du pharmacien *</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="PHARM-123456"
+                        className={inputClass}
+                        value={formData.pharmacyData.pharmacistLicenseNumber}
+                        onChange={(e) => updatePharmacyData('pharmacistLicenseNumber', e.target.value)}
+                      />
+                    </div>
+                  </div>
+
                   <div className="space-y-2">
                     <label className={labelClass}>Site web (optionnel)</label>
                     <input
@@ -444,15 +597,15 @@ export default function RegisterPage() {
               {/* Step 2: Adresse & Localisation */}
               {step === 2 && (
                 <div className="space-y-4">
-                  <div className="max-w-2xl">
-                    <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-black mb-2 border border-emerald-100 uppercase tracking-[0.2em]">
+                  <div>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-black mb-3 border border-emerald-100 uppercase tracking-[0.2em]">
                       <MapPin className="w-3 h-3" />
-                      Adresse
+                      Étape 2 · Adresse
                     </div>
-                    <h1 className="text-4xl lg:text-5xl font-display font-bold text-slate-900 mb-1 tracking-tight">
+                    <h1 className="text-2xl sm:text-3xl font-display font-bold text-slate-900 mb-1 tracking-tight">
                       Adresse & <span className="text-emerald-600">Localisation</span>
                     </h1>
-                    <p className="text-slate-500 leading-relaxed font-medium">
+                    <p className="text-sm text-slate-500 leading-relaxed">
                       Adresse postale et paramètres régionaux.
                     </p>
                   </div>
@@ -545,6 +698,31 @@ export default function RegisterPage() {
                         <option value="CA">Canada</option>
                         <option value="US">États-Unis</option>
                       </select>
+                    </div>
+                  </div>
+
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className={labelClass}>Région / État *</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Île-de-France"
+                        className={inputClass}
+                        value={formData.pharmacyData.state}
+                        onChange={(e) => updatePharmacyData('state', e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className={labelClass}>Expiration licence pharmacie *</label>
+                      <input
+                        type="date"
+                        required
+                        className={inputClass}
+                        value={String(formData.pharmacyData.licenseExpiryDate ?? '').slice(0, 10)}
+                        onChange={(e) => updatePharmacyData('licenseExpiryDate', e.target.value)}
+                      />
+                      <p className="text-xs text-slate-400">Format ISO attendu par le backend (YYYY-MM-DD)</p>
                     </div>
                   </div>
 
@@ -652,15 +830,15 @@ export default function RegisterPage() {
               {/* Step 3: Propriétaire / Admin */}
               {step === 3 && (
                 <div className="space-y-4">
-                  <div className="max-w-2xl">
-                    <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-black mb-2 border border-emerald-100 uppercase tracking-[0.2em]">
+                  <div>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-black mb-3 border border-emerald-100 uppercase tracking-[0.2em]">
                       <User className="w-3 h-3" />
-                      Administrateur
+                      Étape 3 · Administrateur
                     </div>
-                    <h1 className="text-4xl lg:text-5xl font-display font-bold text-slate-900 mb-1 tracking-tight">
+                    <h1 className="text-2xl sm:text-3xl font-display font-bold text-slate-900 mb-1 tracking-tight">
                       Propriétaire / <span className="text-emerald-600">Admin</span>
                     </h1>
-                    <p className="text-slate-500 leading-relaxed font-medium">
+                    <p className="text-sm text-slate-500 leading-relaxed">
                       Compte administrateur principal de l&apos;officine.
                     </p>
                   </div>
@@ -715,52 +893,14 @@ export default function RegisterPage() {
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <label className={labelClass}>Mot de passe *</label>
-                    <div className="relative">
-                      <input
-                        type={showPassword ? 'text' : 'password'}
-                        required
-                        placeholder="••••••••••••••••"
-                        className={`${inputClass} pr-12`}
-                        value={formData.ownerData.password}
-                        onChange={(e) => {
-                          const pwd = e.target.value;
-                          updateOwnerData('password', pwd);
-                          let strength = 0;
-                          if (pwd.length >= 8) strength++;
-                          if (/[A-Z]/.test(pwd)) strength++;
-                          if (/[a-z]/.test(pwd)) strength++;
-                          if (/[0-9]/.test(pwd)) strength++;
-                          if (/[^A-Za-z0-9]/.test(pwd)) strength++;
-                          setPasswordStrength(strength);
-                        }}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword((v) => !v)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                      >
-                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </button>
-                    </div>
-                    <div className="flex gap-1 mt-2">
-                      {[1, 2, 3, 4, 5].map((level) => (
-                        <div
-                          key={level}
-                          className={`h-2 w-8 rounded ${
-                            level <= passwordStrength
-                              ? passwordStrength <= 2
-                                ? 'bg-red-500'
-                                : passwordStrength <= 3
-                                  ? 'bg-yellow-500'
-                                  : 'bg-green-500'
-                              : 'bg-slate-200'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                    <p className="text-xs text-slate-400">Min 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre</p>
+                  <div className="rounded-2xl border border-slate-100 bg-slate-50/50 p-4">
+                    <p className="text-sm font-bold text-slate-800">
+                      Sécurité du compte administrateur
+                    </p>
+                    <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                      Le mot de passe provisoire est généré côté serveur et envoyé par e-mail (Keycloak).
+                      Vous devrez le changer à la première connexion.
+                    </p>
                   </div>
 
                   <div className="flex items-center gap-2">
@@ -825,21 +965,21 @@ export default function RegisterPage() {
               {/* Step 4: Plan & Paiement */}
               {step === 4 && (
                 <div className="space-y-4">
-                  <div className="max-w-2xl">
-                    <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-black mb-2 border border-emerald-100 uppercase tracking-[0.2em]">
+                  <div>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-black mb-3 border border-emerald-100 uppercase tracking-[0.2em]">
                       <CreditCard className="w-3 h-3" />
-                      Plan & Paiement
+                      Étape 4 · Plan & Paiement
                     </div>
-                    <h1 className="text-4xl lg:text-5xl font-display font-bold text-slate-900 mb-1 tracking-tight">
+                    <h1 className="text-2xl sm:text-3xl font-display font-bold text-slate-900 mb-1 tracking-tight">
                       Plan & <span className="text-emerald-600">Paiement</span>
                     </h1>
-                    <p className="text-slate-500 leading-relaxed font-medium">
+                    <p className="text-sm text-slate-500 leading-relaxed">
                       Choisissez votre plan et mode de paiement.
                     </p>
                   </div>
 
                   <div className="grid md:grid-cols-3 gap-4">
-                    {AVAILABLE_PLANS.map((plan) => (
+                    {displayPlans.map((plan) => (
                       <motion.div
                         key={plan.id}
                         whileHover={{ y: -4 }}
@@ -854,12 +994,12 @@ export default function RegisterPage() {
                         <div className="mb-4">
                           <span className="text-2xl font-display font-bold text-slate-900">
                             €
-                            {formData.planSelection.billingInterval === BillingCycle.ANNUAL
+                            {formData.planSelection.billingInterval === BillingCycle.YEARLY
                               ? (plan.priceAnnual / 12).toFixed(0)
                               : plan.priceMonthly}
                           </span>
                           <span className="text-slate-400 text-sm">/mois</span>
-                          {formData.planSelection.billingInterval === BillingCycle.ANNUAL && (
+                          {formData.planSelection.billingInterval === BillingCycle.YEARLY && (
                             <p className="text-xs text-emerald-600 mt-1">Économisez 20% avec l&apos;annuel</p>
                           )}
                         </div>
@@ -890,21 +1030,7 @@ export default function RegisterPage() {
                         onChange={(e) => updatePlanSelection('billingInterval', e.target.value as BillingCycle)}
                       >
                         <option value={BillingCycle.MONTHLY}>Mensuel</option>
-                        <option value={BillingCycle.QUARTERLY}>Trimestriel (-10%)</option>
-                        <option value={BillingCycle.ANNUAL}>Annuel (-20%)</option>
-                      </select>
-                    </div>
-                    <div className="space-y-2">
-                      <label className={labelClass}>Période d&apos;essai</label>
-                      <select
-                        className={`${inputClass} appearance-none cursor-pointer`}
-                        value={String(formData.planSelection.trialDays ?? 14)}
-                        onChange={(e) => updatePlanSelection('trialDays', parseInt(e.target.value, 10))}
-                      >
-                        <option value="0">Aucun essai</option>
-                        <option value="7">7 jours</option>
-                        <option value="14">14 jours</option>
-                        <option value="30">30 jours</option>
+                        <option value={BillingCycle.YEARLY}>Annuel</option>
                       </select>
                     </div>
                     <div className="space-y-2">
@@ -939,14 +1065,12 @@ export default function RegisterPage() {
                         Résumé
                       </p>
                       <p className="text-2xl font-display font-bold">
-                        {AVAILABLE_PLANS.find((p) => p.id === formData.planSelection.planId)?.name} • €
+                        {displayPlans.find((p) => p.id === formData.planSelection.planId)?.name} • €
                         {calculatePrice().toFixed(2)}/mois
                       </p>
-                      {formData.planSelection.trialDays && formData.planSelection.trialDays > 0 && (
-                        <p className="text-sm text-emerald-200 mt-1">
-                          {formData.planSelection.trialDays} jours d&apos;essai gratuits
-                        </p>
-                      )}
+                      <p className="text-sm text-emerald-200 mt-1">
+                        La période d&apos;essai est appliquée automatiquement selon le plan sélectionné.
+                      </p>
                     </div>
                     <div className="text-right">
                       <p className="text-3xl font-display font-bold">€0.00</p>
@@ -957,24 +1081,24 @@ export default function RegisterPage() {
               )}
 
               {/* Navigation */}
-              <div className="flex items-center justify-between pt-4 border-t border-slate-200">
+              <div className="flex items-center justify-between pt-4 border-t border-slate-100 gap-3">
                 {step > 1 ? (
                   <button
                     type="button"
                     onClick={prevStep}
-                    className="flex items-center gap-3 text-slate-600 font-bold hover:text-slate-900 transition-colors group"
+                    className="px-5 py-3.5 bg-white border border-slate-200 text-slate-600 rounded-2xl font-bold text-sm hover:bg-slate-50 transition-all flex items-center gap-2 group"
                   >
-                    <ChevronLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
+                    <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                     Retour
                   </button>
                 ) : (
-                  <p className="text-slate-500 font-medium">
+                  <p className="text-sm text-slate-500">
                     Déjà un compte ?{' '}
                     <Link
                       href="/auth/login"
-                      className="font-black text-emerald-600 hover:text-emerald-700 uppercase tracking-widest text-[10px] ml-2"
+                      className="font-bold text-emerald-600 hover:text-emerald-700 transition-colors"
                     >
-                      Se connecter
+                      Connexion
                     </Link>
                   </p>
                 )}
@@ -985,17 +1109,17 @@ export default function RegisterPage() {
                     (step < totalSteps && !validateStep(step)) ||
                     (step === totalSteps && (!validateStep(4) || createTenant.isPending))
                   }
-                  className="px-12 py-4 bg-emerald-600 text-white rounded-[2rem] font-bold text-lg hover:bg-emerald-700 transition-all flex items-center gap-3 disabled:opacity-70 shadow-xl shadow-emerald-600/20 group"
+                  className="px-6 py-3.5 bg-slate-900 text-white rounded-2xl font-bold text-sm hover:bg-emerald-600 transition-all flex items-center gap-2 disabled:opacity-50 shadow-xl shadow-slate-900/15 group"
                 >
                   {createTenant.isPending ? (
                     <>
-                      <Loader2 className="w-6 h-6 animate-spin" />
-                      Création en cours...
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Création…
                     </>
                   ) : (
                     <>
                       {step === totalSteps ? 'Créer mon compte' : 'Continuer'}
-                      <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                      <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </>
                   )}
                 </button>
@@ -1003,7 +1127,6 @@ export default function RegisterPage() {
             </motion.div>
           </form>
         </div>
-      </div>
-    </div>
+    </AuthShell>
   );
 }

@@ -149,17 +149,24 @@ function QualityEventsContent() {
                           {e.title ?? e.event_number ?? e.id}
                         </p>
                         <p className="text-sm text-slate-500">
-                          {QUALITY_EVENT_TYPE_LABELS[e.type] ?? e.type} · {e.reportedBy ?? "—"} ·{" "}
+                          {QUALITY_EVENT_TYPE_LABELS[
+                            e.type as keyof typeof QUALITY_EVENT_TYPE_LABELS
+                          ] ?? e.type}{" "}
+                          · {e.reportedBy ?? "—"} ·{" "}
                           {e.occurredAt ? formatDate(e.occurredAt) : ""}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       <Badge variant={SEVERITY_VARIANT[e.severity] ?? "default"} size="sm">
-                        {QUALITY_EVENT_SEVERITY_LABELS[e.severity] ?? e.severity}
+                        {QUALITY_EVENT_SEVERITY_LABELS[
+                          e.severity as keyof typeof QUALITY_EVENT_SEVERITY_LABELS
+                        ] ?? e.severity}
                       </Badge>
                       <Badge variant="default" size="sm">
-                        {QUALITY_EVENT_STATUS_LABELS[e.status] ?? e.status}
+                        {QUALITY_EVENT_STATUS_LABELS[
+                          e.status as keyof typeof QUALITY_EVENT_STATUS_LABELS
+                        ] ?? e.status}
                       </Badge>
                       <ChevronRight className="w-4 h-4 text-slate-400" />
                     </div>

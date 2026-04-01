@@ -31,9 +31,9 @@ function POContent() {
   const [search, setSearch] = useState("");
   const { data: orders, isLoading, error, refetch } = usePurchaseOrders();
 
-  const filtered = (orders ?? []).filter((o) => {
+  const filtered = (orders ?? []).filter((o: PurchaseOrder) => {
     if (!search) return true;
-    return o.order_number.toLowerCase().includes(search.toLowerCase());
+    return (o.order_number ?? "").toLowerCase().includes(search.toLowerCase());
   });
 
   return (
@@ -53,7 +53,12 @@ function POContent() {
         </ProtectedAction>
       </div>
 
-      <Input placeholder="Rechercher par numéro..." value={search} onChange={(e) => setSearch(e.target.value)} leftIcon={<Search className="w-4 h-4" />} />
+      <Input
+        placeholder="Rechercher par numéro..."
+        value={search}
+        onChange={(e) => setSearch((e.target as HTMLInputElement).value)}
+        leftIcon={<Search className="w-4 h-4" />}
+      />
 
       {isLoading ? (
         <div className="space-y-3">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-16 w-full rounded-lg" />)}</div>
@@ -64,12 +69,15 @@ function POContent() {
       ) : (
         <Card>
           <CardContent className="p-0 divide-y divide-slate-100 dark:divide-slate-800">
-            {filtered.map((po) => (
+            {filtered.map((po: PurchaseOrder) => (
               <button key={po.id} className="w-full flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors text-left"
                 onClick={() => router.push(buildPath(`/purchase-orders/${po.id}`))}>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-slate-900 dark:text-slate-100">#{po.order_number}</p>
-                  <p className="text-xs text-slate-500">{formatDate(po.order_date)} {po.supplier_name && `• ${po.supplier_name}`}</p>
+                  <p className="text-xs text-slate-500">
+                    {formatDate(po.order_date)}{" "}
+                    {(po as any).supplier_name && `• ${(po as any).supplier_name}`}
+                  </p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <span className="text-sm font-medium text-slate-900 dark:text-slate-100 hidden sm:block">{formatCurrency(po.total_amount)}</span>

@@ -392,7 +392,7 @@ function DashboardTab({ onNavigate }: { onNavigate?: (tab: string) => void }) {
                     {PERIOD_STATUS_LABELS[currentPeriod.status] ?? currentPeriod.status}
                   </Badge>
                 </div>
-                {trialBalance && (
+                {!!trialBalance && (
                   <div className="pt-3 border-t border-slate-100 dark:border-slate-700">
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-slate-500">Balance</span>
@@ -1664,32 +1664,32 @@ function ReportsTab() {
 
       {loading && <Skeleton className="h-96 w-full rounded-xl" />}
 
-      {!loading && reportType === "trial-balance" && trialBalance && (
+      {!loading && reportType === "trial-balance" && !!trialBalance && (
         <TrialBalanceReport data={trialBalance as any} />
       )}
 
-      {!loading && reportType === "balance-sheet" && balanceSheet && (
+      {!loading && reportType === "balance-sheet" && !!balanceSheet && (
         <BalanceSheetReport data={balanceSheet as any} />
       )}
 
-      {!loading && reportType === "income" && incomeStmt && (
+      {!loading && reportType === "income" && !!incomeStmt && (
         <IncomeStatementReport data={incomeStmt as any} />
       )}
 
-      {!loading && reportType === "cash-flow" && cashFlow && (
+      {!loading && reportType === "cash-flow" && !!cashFlow && (
         <CashFlowReport data={cashFlow as any} />
       )}
 
-      {!loading && reportType === "budget-variance" && budgetVariance && (
+      {!loading && reportType === "budget-variance" && !!budgetVariance && (
         <GenericReport title="Variance budgétaire" data={budgetVariance as Record<string, unknown>} />
       )}
-      {!loading && reportType === "receivable-aging" && receivableAging && (
+      {!loading && reportType === "receivable-aging" && !!receivableAging && (
         <AgingReport title="Ancienneté créances clients" data={receivableAging as Record<string, unknown>} />
       )}
-      {!loading && reportType === "payable-aging" && payableAging && (
+      {!loading && reportType === "payable-aging" && !!payableAging && (
         <AgingReport title="Ancienneté dettes fournisseurs" data={payableAging as Record<string, unknown>} />
       )}
-      {!loading && reportType === "department" && departmentReport && (
+      {!loading && reportType === "department" && !!departmentReport && (
         <GenericReport title="Rapport par département" data={departmentReport as Record<string, unknown>} />
       )}
     </div>
@@ -1760,7 +1760,7 @@ function AgingReport({ title, data }: { title: string; data: Record<string, unkn
               <tbody>
                 {list.map((row, i) => (
                   <tr key={i} className="border-b border-slate-100 dark:border-slate-800">
-                    <td className="p-3">{String(row.range ?? row.period ?? "—")}</td>
+                    <td className="p-3">{String(row.range ?? (row as any).period ?? "—")}</td>
                     <td className="p-3 text-right font-medium">{formatCurrency(Number(row.total ?? 0))}</td>
                     <td className="p-3 text-right">{row.count ?? "—"}</td>
                   </tr>

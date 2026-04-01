@@ -79,13 +79,13 @@ export const PrintReceiptModal: React.FC<PrintReceiptModalProps> = ({
           <tbody>
             {sale.items?.map((item, index) => (
               <tr key={index} className="border-b border-gray-100">
-                <td className="py-2">{item?.product?.name}</td>
+                <td className="py-2">{(item as any)?.product?.name}</td>
                 <td className="text-center py-2">{item?.quantity}</td>
                 <td className="text-right py-2">
                   {formatCurrency(item?.unitPrice)}
                 </td>
                 <td className="text-right py-2 font-medium">
-                  {formatCurrency(item?.totalPrice)}
+                  {formatCurrency((item as any)?.totalPrice ?? ((item as any)?.quantity ?? 0) * ((item as any)?.unitPrice ?? 0))}
                 </td>
               </tr>
             ))}

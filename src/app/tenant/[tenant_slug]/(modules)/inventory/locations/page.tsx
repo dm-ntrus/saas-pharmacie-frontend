@@ -383,7 +383,9 @@ function LocationsContent() {
       {badgeModalLoc && (
         <Modal
           open={!!badgeModalLoc}
-          onClose={() => setBadgeModalLoc(null)}
+          onOpenChange={(open) => {
+            if (!open) setBadgeModalLoc(null);
+          }}
           title="Accès sécurisé"
         >
           <div className="space-y-4">
@@ -411,7 +413,9 @@ function LocationsContent() {
       {selectedLocForDetail && (
         <Modal
           open={!!selectedLocForDetail}
-          onClose={() => setSelectedLocForDetail(null)}
+          onOpenChange={(open) => {
+            if (!open) setSelectedLocForDetail(null);
+          }}
           title={selectedLocForDetail.name || selectedLocForDetail.code}
         >
           <LocationDetailModal
