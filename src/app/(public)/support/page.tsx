@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { PLATFORM } from "@/config/platform";
 import {
   Book,
   MessageCircle,
@@ -143,10 +144,10 @@ export default function SupportPage() {
                 Réponse sous 4h en jours ouvrés.
               </p>
               <a
-                href="mailto:support@syntixpharma.com"
+                href={`mailto:${PLATFORM.email.support}`}
                 className="text-emerald-600 text-sm font-bold hover:underline"
               >
-                support@syntixpharma.com
+                {PLATFORM.email.support}
               </a>
             </div>
           </div>

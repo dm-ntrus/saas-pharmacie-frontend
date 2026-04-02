@@ -2,17 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/design-system";
-import {
-  HeartIcon,
-  ShieldCheckIcon,
-  CurrencyDollarIcon,
-  ChartBarIcon,
-  UserGroupIcon,
-  BuildingStorefrontIcon,
-  ClipboardDocumentListIcon,
-  TruckIcon,
-  CheckCircleIcon,
-} from "@heroicons/react/24/outline";
+import { Heart } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 export default function Header() {
@@ -32,12 +22,12 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           <Link href="/" className="flex items-center">
-            <div className="h-10 w-10 bg-gradient-to-br from-sky-600 to-sky-700 rounded-xl flex items-center justify-center mr-3 shadow-lg">
-              <HeartIcon className="h-6 w-6 text-white" />
+            <div className="h-10 w-10 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-xl flex items-center justify-center mr-3 shadow-lg">
+              <Heart className="h-6 w-6 text-white" />
             </div>
             <div>
               <span className="text-xl font-bold text-gray-900">NakiCode</span>
-              <span className="text-sm text-sky-600 block leading-none">
+              <span className="text-sm text-emerald-600 block leading-none">
                 PharmacySaaS
               </span>
             </div>
@@ -48,8 +38,8 @@ export default function Header() {
               <Link
                 key={index}
                 href={item.path}
-                className={`text-gray-600 hover:text-sky-600 transition-colors font-medium text-sm ${
-                  pathname === item.path || pathname?.startsWith(item.path + "/") ? "text-sky-600" : ""
+                className={`text-gray-600 hover:text-emerald-600 transition-colors font-medium text-sm ${
+                  pathname === item.path || pathname?.startsWith(item.path + "/") ? "text-emerald-600" : ""
                 }`}
               >
                 {item.name}
@@ -59,12 +49,12 @@ export default function Header() {
 
           <div className="flex items-center space-x-3">
             <Link href="/login">
-              <Button variant="ghost" size="default" className="font-medium">
+              <Button variant="ghost" size="md" className="font-medium">
                 Se connecter
               </Button>
             </Link>
             <Link href="/register">
-              <Button size="default" className="font-medium shadow-lg">
+              <Button size="md" className="font-medium shadow-lg">
                 Démo Gratuite
               </Button>
             </Link>

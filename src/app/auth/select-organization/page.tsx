@@ -12,6 +12,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import AuthShell from "@/components/auth/AuthShell";
+import { getApiBaseUrl } from "@/helpers/auth-interceptor";
 import Link from "next/link";
 
 interface Organization {
@@ -29,11 +30,10 @@ export default function SelectOrganizationPage() {
   const [selectedOrg, setSelectedOrg] = useState<string | null>(null);
 
   useEffect(() => {
-    const api = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-    const base = api.replace(/\/+$/, "");
+    const base = getApiBaseUrl();
 
     axios
-      .get(`${base}/api/v1/bff/auth/me`, { withCredentials: true })
+      .get(`${base}/bff/auth/me`, { withCredentials: true })
       .then((r) => {
         const u = r.data?.user;
         const orgs: Organization[] = (u?.keycloakOrganizations || []).map(

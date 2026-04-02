@@ -1,17 +1,21 @@
-import React from "react";
-import { useFormik } from "formik";
-import { Button, Input, Modal } from "@/design-system";
-import * as Yup from "yup";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import apiClient from "@/lib/api";
-import toast from "react-hot-toast";
+"use client";
 
-const invoicePaymentSchema = Yup.object({
-  paidAmount: Yup.number()
-    .min(0, "Le montant doit être positif")
-    .required("Le montant est requis"),
-  paidDate: Yup.date().required("La date de paiement est requise"),
+import React from "react";
+import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Button, Modal, FormInput } from "@/components/ui";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiService } from "@/services/api.service";
+import toast from "react-hot-toast";
+import { formatCurrency } from "@/utils/formatters";
+
+const paymentSchema = z.object({
+  paidAmount: z.number().min(0, "Le montant doit être positif"),
+  paidDate: z.string().min(1, "La date de paiement est requise"),
 });
+
+type PaymentFormData = z.infer<typeof paymentSchema>;
 
 interface RecordInvoicePaymentModalProps {
   isOpen: boolean;
@@ -19,48 +23,47 @@ interface RecordInvoicePaymentModalProps {
   invoiceId: string;
   invoiceNumber: string;
   totalAmount: number;
+  pharmacyId: string;
 }
 
-export const RecordInvoicePaymentModal: React.FC<
-  RecordInvoicePaymentModalProps
-> = ({ isOpen, onClose, invoiceId, invoiceNumber, totalAmount }) => {
+export const RecordInvoicePaymentModal: React.FC<RecordInvoicePaymentModalProps> = ({
+  isOpen,
+  onClose,
+  invoiceId,
+  invoiceNumber,
+  totalAmount,
+  pharmacyId,
+}) => {
   const queryClient = useQueryClient();
 
-  const recordInvoicePaymentMutation = useMutation({
-    mutationFn: async ({
-      id,
-      paymentData,
-    }: {
-      id: string;
-      paymentData: { paidAmount: number; paidDate: Date };
-    }) => apiClient.recordInvoicePayment(id, paymentData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["invoices"] });
-      toast.success("Paiement de facture enregistré avec succès");
-    },
-    onError: () => {
-      toast.error("Erreur lors de l'enregistrement de paiement de facture");
-    },
-  });
-
-  const formik = useFormik({
-    initialValues: {
+  const methods = useForm<PaymentFormData>({
+    resolver: zodResolver(paymentSchema),
+    defaultValues: {
       paidAmount: totalAmount,
       paidDate: new Date().toISOString().split("T")[0],
     },
-    validationSchema: invoicePaymentSchema,
-    onSubmit: (values) => {
-      recordInvoicePaymentMutation.mutate({
-        id: invoiceId,
-        paymentData: {
-          paidAmount: Number(values.paidAmount),
-          paidDate: new Date(values.paidDate),
-        },
-      });
+  });
+
+  const recordPaymentMutation = useMutation({
+    mutationFn: (data: PaymentFormData) =>
+      apiService.post(`/pharmacies/${pharmacyId}/accounting/invoices/${invoiceId}/payments`, {
+        paidAmount: data.paidAmount,
+        paidDate: new Date(data.paidDate),
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["invoices"] });
+      toast.success("Paiement enregistré avec succès");
+      methods.reset();
       onClose();
-      formik.resetForm();
+    },
+    onError: () => {
+      toast.error("Erreur lors de l'enregistrement du paiement");
     },
   });
+
+  const onSubmit = (data: PaymentFormData) => {
+    recordPaymentMutation.mutate(data);
+  };
 
   return (
     <Modal
@@ -69,68 +72,36 @@ export const RecordInvoicePaymentModal: React.FC<
       title={`Enregistrer le paiement - Facture ${invoiceNumber}`}
       size="md"
     >
-      <form onSubmit={formik.handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Montant à payer (FC)
-          </label>
-          <input
-            type="number"
-            step="0.01"
-            min="0"
-            max={totalAmount}
+      <FormProvider {...methods}>
+        <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
+          <FormInput<PaymentFormData>
             name="paidAmount"
-            value={formik.values.paidAmount}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
+            label="Montant à payer (FC)"
+            type="number"
+            required
+            step="0.01"
+            min={0}
+            max={totalAmount}
+            helperText={`Montant total de la facture: ${formatCurrency(totalAmount)}`}
+          />
+
+          <FormInput<PaymentFormData>
+            name="paidDate"
+            label="Date de paiement"
+            type="date"
             required
           />
-          <p className="text-xs text-gray-500 mt-1">
-            Montant total de la facture: {totalAmount.toLocaleString()} FC
-          </p>
-          {formik.touched.paidAmount && formik.errors.paidAmount && (
-            <p className="mt-1 text-xs text-red-600">
-              {formik.errors.paidAmount}
-            </p>
-          )}
-        </div>
 
-        <Input
-          label="Date de paiement"
-          name="paidDate"
-          type="date"
-          value={formik.values.paidDate}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          error={
-            formik.touched.paidDate && formik.errors.paidDate
-              ? formik.errors.paidDate
-              : undefined
-          }
-          required
-        />
-
-        <div className="flex justify-end space-x-3 pt-4">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onClose}
-            className="flex-1"
-            disabled={recordInvoicePaymentMutation.isPending}
-          >
-            Annuler
-          </Button>
-          <Button
-            type="submit"
-            className="flex-1"
-            loading={recordInvoicePaymentMutation.isPending}
-            disabled={recordInvoicePaymentMutation.isPending}
-          >
-            Enregistrer le paiement
-          </Button>
-        </div>
-      </form>
+          <div className="flex justify-end gap-3 pt-4">
+            <Button type="button" variant="outline" onClick={onClose} disabled={recordPaymentMutation.isPending}>
+              Annuler
+            </Button>
+            <Button type="submit" loading={recordPaymentMutation.isPending}>
+              Enregistrer le paiement
+            </Button>
+          </div>
+        </form>
+      </FormProvider>
     </Modal>
   );
 };

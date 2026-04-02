@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
+interface NormalizedOrg {
+  id: string;
+  name: string;
+  roles: string[];
+  attributes?: { tenant_id?: string[]; subdomain?: string[] };
+}
+
 interface JWTPayload {
   sub: string;
   email: string;
@@ -8,14 +15,23 @@ interface JWTPayload {
   family_name: string;
   realm_access?: { roles: string[] };
   roles?: string[];
-  organizations?: Array<{
-    id: string;
-    name: string;
-    roles: string[];
-    attributes?: { tenant_id?: string[]; subdomain?: string[] };
-  }>;
+  /** Array (enrichToken) or map (KC26 scope `organization`): { slug: { id, roles } } */
+  organizations?: NormalizedOrg[] | Record<string, { id?: string; roles?: string[] }>;
   tenant_id?: string;
   exp?: number;
+}
+
+/**
+ * Normalise les organizations du JWT (array legacy ou map KC26) en tableau uniforme.
+ */
+function normalizeOrganizations(raw: JWTPayload["organizations"]): NormalizedOrg[] {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw;
+  return Object.entries(raw).map(([slug, val]) => ({
+    id: val?.id ?? slug,
+    name: slug,
+    roles: val?.roles ?? [],
+  }));
 }
 
 const PUBLIC_ROUTES = [
@@ -30,14 +46,18 @@ const PUBLIC_ROUTES = [
 ];
 
 function rootHostSet(): Set<string> {
-  const main = (process.env.NEXT_PUBLIC_MAIN_DOMAIN || "yourapp.com").toLowerCase();
+  const main = (process.env.NEXT_PUBLIC_MAIN_DOMAIN || "syntixpharma.com").toLowerCase();
   const extras = (process.env.NEXT_PUBLIC_ROOT_HOSTS || "")
     .split(",")
     .map((h) => h.trim().toLowerCase())
     .filter(Boolean);
   const list = [
+    "localhost",
     "localhost:3000",
+    "localhost:3001",
+    "127.0.0.1",
     "127.0.0.1:3000",
+    "127.0.0.1:3001",
     main,
     `www.${main}`,
     ...extras,
@@ -53,7 +73,7 @@ const PUBLIC_ROUTE_PATTERNS = [
 
 /**
  * Mapping module → rôles backend autorisés.
- * Le middleware fait un check léger ; le vrai check granulaire se fait côté composant.
+ * Le proxy fait un check léger ; le vrai check granulaire se fait côté composant.
  */
 const MODULE_ROLE_REQUIREMENTS: Record<string, string[]> = {
   sales: [
@@ -132,6 +152,45 @@ const MODULE_ROLE_REQUIREMENTS: Record<string, string[]> = {
     "super_admin", "platform_admin", "tenant_owner", "tenant_admin",
     "pharmacy_owner",
   ],
+  loyalty: [
+    "super_admin", "platform_admin", "tenant_owner", "tenant_admin",
+    "pharmacy_owner", "pharmacy_manager", "pharmacist",
+  ],
+  notifications: [
+    "super_admin", "platform_admin", "tenant_owner", "tenant_admin",
+    "pharmacy_owner", "pharmacy_manager",
+  ],
+};
+
+/**
+ * Maps URL module segments to PRODUCT_ENTITLEMENT_KEYS values.
+ * Used as a first-pass entitlement check at the Edge layer.
+ * The cookie `entitled_modules` (set by the frontend after fetching
+ * plan-entitlements) is a comma-separated list of enabled feature keys.
+ * When the cookie is absent, the middleware allows the request
+ * (the backend PlanEntitlementGuard is the authoritative gate).
+ */
+const MODULE_ENTITLEMENT_MAP: Record<string, string> = {
+  sales: "module.sales",
+  inventory: "module.inventory",
+  patients: "module.patients",
+  prescriptions: "module.prescriptions",
+  vaccination: "module.vaccination",
+  delivery: "module.delivery",
+  billing: "module.billing_operations",
+  accounting: "module.accounting",
+  suppliers: "module.suppliers",
+  "supply-chain": "module.supply_chain",
+  quality: "module.quality",
+  insurance: "module.insurance",
+  "e-invoice": "module.e_invoice",
+  hr: "module.hr",
+  analytics: "module.analytics",
+  reports: "module.reports",
+  notifications: "module.notifications",
+  loyalty: "module.loyalty",
+  "audit-events": "module.compliance_audit",
+  compliance: "module.compliance_audit",
 };
 
 function safeDecodeJwt(token?: string): JWTPayload | null {
@@ -147,11 +206,29 @@ function safeDecodeJwt(token?: string): JWTPayload | null {
   }
 }
 
-function extractUserRoles(payload: JWTPayload): string[] {
+/**
+ * Extract user roles, merging realm roles with the roles from the **active** organization.
+ * If `activeSlug` is provided, picks the org whose subdomain matches; otherwise falls back to first org.
+ */
+function extractUserRoles(payload: JWTPayload, activeSlug?: string): string[] {
+  const orgs = normalizeOrganizations(payload.organizations);
+
+  let activeOrg: NormalizedOrg | undefined;
+  if (activeSlug) {
+    activeOrg = orgs.find(
+      (o) =>
+        o.name?.toLowerCase() === activeSlug.toLowerCase() ||
+        o.attributes?.subdomain?.[0]?.toLowerCase() === activeSlug.toLowerCase(),
+    );
+  }
+  if (!activeOrg && orgs.length > 0) {
+    activeOrg = orgs[0];
+  }
+
   return [
     ...(payload.realm_access?.roles ?? []),
     ...(payload.roles ?? []),
-    ...(payload.organizations?.[0]?.roles ?? []),
+    ...(activeOrg?.roles ?? []),
   ].map((r) => r.toLowerCase());
 }
 
@@ -160,7 +237,11 @@ function isPublicRoute(pathname: string): boolean {
   return PUBLIC_ROUTE_PATTERNS.some((p) => p.test(pathname));
 }
 
-const SYSTEM_HOST_PREFIXES = ["api", "admin", "mail", "cdn"];
+const SYSTEM_HOST_PREFIXES = [
+  "api", "admin", "mail", "cdn", "app", "www",
+  "support", "help", "docs", "status", "blog", "shop",
+  "staging", "dev", "test", "demo",
+];
 
 /** Évite de traiter une IPv4 (ex. 192.168.x.x) comme un hôte multi-label → faux tenant `192`. */
 function isIpv4Literal(hostname: string): boolean {
@@ -209,7 +290,7 @@ function tenantSlugFromHost(hostHeader: string): string | null {
   return sub;
 }
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const url = req.nextUrl.clone();
   const host = req.headers.get("host") || "";
   const pathname = url.pathname;
@@ -242,7 +323,8 @@ export function middleware(req: NextRequest) {
     (pathname === "/" || pathname === "")
   ) {
     const authHeader = req.headers.get("authorization") || "";
-    const cookieToken = req.cookies.get("access_token")?.value;
+    // BFF sets kc_at (HttpOnly), client OIDC sets access_token — check both
+    const cookieToken = req.cookies.get("kc_at")?.value || req.cookies.get("access_token")?.value;
     const token = authHeader.replace("Bearer ", "") || cookieToken;
     const payload = token ? safeDecodeJwt(token) : null;
     if (payload) {
@@ -277,7 +359,7 @@ export function middleware(req: NextRequest) {
   if (!isProtected) return NextResponse.next();
 
   const authHeader = req.headers.get("authorization") || "";
-  const cookieToken = req.cookies.get("access_token")?.value;
+  const cookieToken = req.cookies.get("kc_at")?.value || req.cookies.get("access_token")?.value;
   const token = authHeader.replace("Bearer ", "") || cookieToken;
 
   if (!token) {
@@ -302,13 +384,23 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  const userRoles = extractUserRoles(payload);
+  const orgs = normalizeOrganizations(payload.organizations);
+
+  // Detect the URL-level tenant slug for org-scoped role resolution
+  const urlTenantSlug = pathname.startsWith("/tenant/")
+    ? pathname.split("/")[2]?.toLowerCase()
+    : tenantSlugHost?.toLowerCase();
+
+  const userRoles = extractUserRoles(payload, urlTenantSlug);
   const isAdmin = userRoles.includes("system_admin") || userRoles.includes("super_admin");
 
+  const userOrgSlugs = orgs
+    .map((o) => (o.name || o.attributes?.subdomain?.[0] || ""))
+    .filter(Boolean)
+    .map((s) => s.toLowerCase());
+
   const tenantSlug =
-    payload.organizations?.[0]?.attributes?.subdomain?.[0] ||
-    payload.tenant_id ||
-    "";
+    orgs[0]?.attributes?.subdomain?.[0] || orgs[0]?.name || payload.tenant_id || "";
 
   // Admin → /admin only, tenant users → /tenant only
   if (pathname.startsWith("/tenant") && isAdmin) {
@@ -318,18 +410,45 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL(`/tenant/${tenantSlug}`, req.url));
   }
 
-  // Module-level RBAC for /tenant/:slug/:module/...
+  // Cross-tenant isolation: verify user belongs to the tenant in the URL
+  if (pathname.startsWith("/tenant/") && !isAdmin) {
+    const urlSlug = pathname.split("/")[2]?.toLowerCase();
+    if (urlSlug && userOrgSlugs.length > 0 && !userOrgSlugs.includes(urlSlug)) {
+      const actualSlug = userOrgSlugs[0];
+      url.pathname = `/tenant/${actualSlug}/dashboard`;
+      url.searchParams.set("cross_tenant_blocked", urlSlug);
+      return NextResponse.redirect(url);
+    }
+  }
+
+  // Module-level RBAC + entitlement check for /tenant/:slug/:module/...
   if (pathname.startsWith("/tenant/")) {
     const pathParts = pathname.split("/");
-    // /tenant/:slug/:module/...  → moduleName is pathParts[3]
     const moduleName = pathParts[3];
 
-    if (moduleName && moduleName !== "auth" && MODULE_ROLE_REQUIREMENTS[moduleName]) {
-      const allowedRoles = MODULE_ROLE_REQUIREMENTS[moduleName];
-      const hasAccess = userRoles.some((r) => allowedRoles.includes(r));
-      if (!hasAccess) {
-        url.pathname = `/tenant/${pathParts[2]}/dashboard`;
-        return NextResponse.redirect(url);
+    if (moduleName && moduleName !== "auth" && moduleName !== "dashboard") {
+      // RBAC check
+      if (MODULE_ROLE_REQUIREMENTS[moduleName]) {
+        const allowedRoles = MODULE_ROLE_REQUIREMENTS[moduleName];
+        const hasAccess = userRoles.some((r) => allowedRoles.includes(r));
+        if (!hasAccess) {
+          url.pathname = `/tenant/${pathParts[2]}/dashboard`;
+          return NextResponse.redirect(url);
+        }
+      }
+
+      // Entitlement check (best-effort at the Edge via cookie)
+      const entitlementKey = MODULE_ENTITLEMENT_MAP[moduleName];
+      if (entitlementKey) {
+        const entitledRaw = req.cookies.get("entitled_modules")?.value;
+        if (entitledRaw) {
+          const entitled = entitledRaw.split(",").map((s) => s.trim());
+          if (!entitled.includes(entitlementKey)) {
+            url.pathname = `/tenant/${pathParts[2]}/dashboard`;
+            url.searchParams.set("plan_blocked", moduleName);
+            return NextResponse.redirect(url);
+          }
+        }
       }
     }
   }

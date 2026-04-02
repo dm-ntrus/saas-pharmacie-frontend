@@ -3,13 +3,14 @@
 import { motion } from "framer-motion";
 import { Mail, MapPin, Phone, Clock, Send, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
+import { PLATFORM } from "@/config/platform";
 
 const contacts = [
   {
     icon: Mail,
     title: "Email",
-    value: "contact@syntixpharma.com",
-    href: "mailto:contact@syntixpharma.com",
+    value: PLATFORM.email.contact,
+    href: `mailto:${PLATFORM.email.contact}`,
   },
   {
     icon: Phone,

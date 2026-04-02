@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { 
-  CubeIcon,
-  TruckIcon,
-  ExclamationTriangleIcon,
-  ClipboardDocumentListIcon,
-  CheckCircleIcon,
-  WrenchScrewdriverIcon,
-  ArchiveBoxIcon,
-  QrCodeIcon
-} from '@heroicons/react/24/outline';
+import {
+  Package,
+  Truck,
+  AlertTriangle,
+  ClipboardList,
+  CheckCircle,
+  Wrench,
+  Archive,
+  QrCode,
+} from 'lucide-react';
 import { Card, Button } from '@/design-system';
 
 const TechnicianDashboard: React.FC = () => {
@@ -64,28 +64,28 @@ const TechnicianDashboard: React.FC = () => {
       title: 'Produits en Stock',
       value: '1,245',
       detail: '22 catégories',
-      icon: CubeIcon,
+      icon: Package,
       color: 'bg-blue-500'
     },
     {
       title: 'Stock Faible',
       value: '8',
       detail: 'nécessitent commande',
-      icon: ExclamationTriangleIcon,
+      icon: AlertTriangle,
       color: 'bg-orange-500'
     },
     {
       title: 'Livraisons en Attente',
       value: '3',
       detail: 'cette semaine',
-      icon: TruckIcon,
+      icon: Truck,
       color: 'bg-cyan-500'
     },
     {
       title: 'Contrôles Qualité',
       value: '12',
       detail: 'ce mois',
-      icon: CheckCircleIcon,
+      icon: CheckCircle,
       color: 'bg-green-500'
     }
   ];
@@ -115,11 +115,11 @@ const TechnicianDashboard: React.FC = () => {
         </div>
         <div className="flex space-x-3">
           <Button variant="outline">
-            <QrCodeIcon className="h-5 w-5 mr-2" />
+            <QrCode className="h-5 w-5 mr-2" />
             Scanner Produit
           </Button>
           <Button variant="default">
-            <CubeIcon className="h-5 w-5 mr-2" />
+            <Package className="h-5 w-5 mr-2" />
             Inventaire
           </Button>
         </div>
@@ -243,7 +243,7 @@ const TechnicianDashboard: React.FC = () => {
             ))}
             
             <Button variant="outline" className="w-full">
-              <TruckIcon className="h-5 w-5 mr-2" />
+              <Truck className="h-5 w-5 mr-2" />
               Planifier Livraison
             </Button>
           </div>
@@ -254,7 +254,7 @@ const TechnicianDashboard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="p-6">
           <div className="flex items-center mb-4">
-            <ArchiveBoxIcon className="h-8 w-8 text-blue-600 mr-3" />
+            <Archive className="h-8 w-8 text-blue-600 mr-3" />
             <div>
               <h3 className="text-lg font-semibold text-gray-900">Inventaire</h3>
               <p className="text-sm text-gray-600">Gestion complète du stock</p>
@@ -275,7 +275,7 @@ const TechnicianDashboard: React.FC = () => {
 
         <Card className="p-6">
           <div className="flex items-center mb-4">
-            <WrenchScrewdriverIcon className="h-8 w-8 text-green-600 mr-3" />
+            <Wrench className="h-8 w-8 text-green-600 mr-3" />
             <div>
               <h3 className="text-lg font-semibold text-gray-900">Maintenance</h3>
               <p className="text-sm text-gray-600">Équipements et installations</p>
@@ -296,7 +296,7 @@ const TechnicianDashboard: React.FC = () => {
 
         <Card className="p-6">
           <div className="flex items-center mb-4">
-            <ClipboardDocumentListIcon className="h-8 w-8 text-cyan-600 mr-3" />
+            <ClipboardList className="h-8 w-8 text-cyan-600 mr-3" />
             <div>
               <h3 className="text-lg font-semibold text-gray-900">Qualité</h3>
               <p className="text-sm text-gray-600">Contrôles et conformité</p>

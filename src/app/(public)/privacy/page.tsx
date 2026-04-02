@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ShieldCheck } from "lucide-react";
+import { PLATFORM } from "@/config/platform";
 
 const sections = [
   {
@@ -27,7 +28,7 @@ const sections = [
   {
     title: "5. Vos droits",
     content:
-      "Vous disposez d'un droit d'accès, de rectification, de portabilité et de suppression de vos données personnelles. Pour exercer ces droits, contactez-nous à privacy@syntixpharma.com.",
+      `Vous disposez d'un droit d'accès, de rectification, de portabilité et de suppression de vos données personnelles. Pour exercer ces droits, contactez-nous à ${PLATFORM.email.privacy}.`,
   },
   {
     title: "6. Cookies",
@@ -42,7 +43,7 @@ const sections = [
   {
     title: "8. Contact",
     content:
-      "Pour toute question relative à la protection de vos données, contactez notre Délégué à la Protection des Données : privacy@syntixpharma.com",
+      `Pour toute question relative à la protection de vos données, contactez notre Délégué à la Protection des Données : ${PLATFORM.email.privacy}`,
   },
 ];
 
@@ -99,10 +100,10 @@ export default function PrivacyPage() {
           <p className="text-sm text-slate-500">
             Questions sur vos données ?{" "}
             <a
-              href="mailto:privacy@syntixpharma.com"
+              href={`mailto:${PLATFORM.email.privacy}`}
               className="text-emerald-600 font-bold hover:underline"
             >
-              privacy@syntixpharma.com
+              {PLATFORM.email.privacy}
             </a>
           </p>
         </div>

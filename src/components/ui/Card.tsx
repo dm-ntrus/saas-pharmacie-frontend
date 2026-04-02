@@ -5,15 +5,28 @@ import { cn } from "@/utils/cn";
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
+  interactive?: boolean;
 }
 
-export function Card({ className, children, ...props }: CardProps) {
+export function Card({ className, children, interactive, onClick, ...props }: CardProps) {
+  const isClickable = interactive || !!onClick;
+
   return (
     <div
       className={cn(
         "rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-700/50 dark:bg-slate-900",
+        isClickable && "cursor-pointer transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2",
         className,
       )}
+      onClick={onClick}
+      role={isClickable ? "button" : undefined}
+      tabIndex={isClickable ? 0 : undefined}
+      onKeyDown={isClickable ? (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick?.(e as any);
+        }
+      } : undefined}
       {...props}
     >
       {children}

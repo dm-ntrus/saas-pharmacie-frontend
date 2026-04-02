@@ -36,7 +36,7 @@ const CAPABILITIES = [
     title: "Inventaire & réassort",
     desc: "Produits, mouvements, péremptions, suggestions de réapprovisionnement — moins de ruptures.",
     highlight: "Stock sous contrôle",
-    color: "from-sky-500 to-sky-600",
+    color: "from-emerald-500 to-emerald-600",
   },
   {
     icon: Users,
@@ -77,7 +77,7 @@ const CAPABILITIES = [
 
 const HERO_FEATURES = [
   { icon: Pill, label: "Inventaire", color: "bg-emerald-500" },
-  { icon: CreditCard, label: "Point de vente", color: "bg-sky-500" },
+  { icon: CreditCard, label: "Point de vente", color: "bg-emerald-500" },
   { icon: TrendingUp, label: "Analytics", color: "bg-purple-500" },
   { icon: Users, label: "Patients", color: "bg-amber-500" },
 ];
@@ -181,7 +181,7 @@ export default function PublicHomePage() {
               className="relative"
             >
               {/* Glow */}
-              <div className="absolute -inset-8 bg-gradient-to-br from-emerald-400/10 via-transparent to-sky-400/10 rounded-[3rem] blur-3xl" />
+              <div className="absolute -inset-8 bg-gradient-to-br from-emerald-400/10 via-transparent to-emerald-400/10 rounded-[3rem] blur-3xl" />
 
               {/* Browser frame */}
               <div className="relative bg-white rounded-2xl sm:rounded-3xl shadow-2xl shadow-slate-900/10 border border-slate-200/60 overflow-hidden">
@@ -209,8 +209,8 @@ export default function PublicHomePage() {
                         label: "Patients",
                         value: "1,234",
                         change: "+5%",
-                        color: "text-sky-600",
-                        bg: "bg-sky-50",
+                        color: "text-emerald-600",
+                        bg: "bg-emerald-50",
                       },
                       {
                         label: "Produits",
@@ -291,7 +291,7 @@ export default function PublicHomePage() {
                           sub: "3 articles · $42.50",
                         },
                         {
-                          color: "bg-sky-500",
+                          color: "bg-emerald-500",
                           text: "Stock mis à jour",
                           sub: "Paracétamol · +200 unités",
                         },

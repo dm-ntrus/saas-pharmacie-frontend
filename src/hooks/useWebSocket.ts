@@ -1,6 +1,10 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
-import { toast } from 'react-hot-toast';
-import { useAppStore } from '@/store/appStore';
+"use client";
+
+import { useEffect, useState, useRef, useCallback } from "react";
+import { io, type Socket } from "socket.io-client";
+import { toast } from "react-hot-toast";
+import { useAppStore } from "@/store/appStore";
+import { useAuth } from "@/context/AuthContext";
 
 interface WebSocketMessage {
   type: string;
@@ -8,254 +12,257 @@ interface WebSocketMessage {
   timestamp: string;
 }
 
-interface UseWebSocketOptions {
+interface UseSocketIOOptions {
   reconnectInterval?: number;
   maxReconnectAttempts?: number;
   enabled?: boolean;
 }
 
-export const useWebSocket = (endpoint: string, options: UseWebSocketOptions = {}) => {
-  const {
-    reconnectInterval = 5000,
-    maxReconnectAttempts = 5,
-    enabled = true
-  } = options;
+function getSocketBaseUrl(): string {
+  const raw = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const base = raw.replace(/\/+$/, "");
+  return base.endsWith("/api/v1") ? base.slice(0, -"/api/v1".length) : base;
+}
 
-  const [socket, setSocket] = useState<WebSocket | null>(null);
-  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected' | 'error'>('disconnected');
+export const useSocketIO = (namespace: string, options: UseSocketIOOptions = {}) => {
+  const { maxReconnectAttempts = 10, enabled = true } = options;
+
+  const [connectionStatus, setConnectionStatus] = useState<
+    "connecting" | "connected" | "disconnected" | "error"
+  >("disconnected");
   const [messages, setMessages] = useState<WebSocketMessage[]>([]);
-  
-  const reconnectCount = useRef(0);
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const socketRef = useRef<Socket | null>(null);
   const { addNotification } = useAppStore();
+  const { user } = useAuth();
 
-  const handleRealtimeNotification = useCallback((message: WebSocketMessage) => {
-    switch (message.type) {
-      case 'STOCK_ALERT':
-        toast(`Stock faible: ${message.data.product?.name || 'Produit inconnu'}`, {
-          duration: 6000,
-        });
-        addNotification({
-          id: `stock-${message.data.productId}-${Date.now()}`,
-          type: 'warning',
-          title: 'Stock faible',
-          message: `${message.data.product?.name} - Reste ${message.data.quantity} unité(s)`,
-          timestamp: new Date().toISOString(),
-          read: false,
-        });
-        break;
-
-      case 'EXPIRY_ALERT':
-        toast(`Produit bientôt périmé: ${message.data.product?.name}`, {
-          duration: 6000,
-        });
-        addNotification({
-          id: `expiry-${message.data.productId}-${Date.now()}`,
-          type: 'warning',
-          title: 'Produit bientôt périmé',
-          message: `${message.data.product?.name} expire le ${new Date(message.data.expiryDate).toLocaleDateString('fr-FR')}`,
-          timestamp: new Date().toISOString(),
-          read: false,
-        });
-        break;
-
-      case 'NEW_PRESCRIPTION':
-        toast('Nouvelle prescription reçue', {
-          duration: 4000,
-        });
-        addNotification({
-          id: `prescription-${message.data.prescriptionId}-${Date.now()}`,
-          type: 'info',
-          title: 'Nouvelle prescription',
-          message: `Patient: ${message.data.patient?.name} - ${message.data.medicationsCount} médicament(s)`,
-          timestamp: new Date().toISOString(),
-          read: false,
-        });
-        break;
-
-      case 'PAYMENT_RECEIVED':
-        toast.success(`Paiement reçu: ${message.data.amount}€`, {
-          duration: 4000,
-        });
-        break;
-
-      case 'USER_LOGIN':
-        if (message.data.userId !== message.data.currentUserId) {
+  const handleRealtimeNotification = useCallback(
+    (message: WebSocketMessage) => {
+      switch (message.type) {
+        case "STOCK_ALERT":
+          toast(
+            `Stock faible: ${message.data.product?.name || "Produit inconnu"}`,
+            { duration: 6000 },
+          );
           addNotification({
-            id: `login-${message.data.userId}-${Date.now()}`,
-            type: 'info',
-            title: 'Utilisateur connecté',
-            message: `${message.data.user?.name} s'est connecté`,
+            id: `stock-${message.data.productId}-${Date.now()}`,
+            type: "warning",
+            title: "Stock faible",
+            message: `${message.data.product?.name} - Reste ${message.data.quantity} unité(s)`,
             timestamp: new Date().toISOString(),
             read: false,
           });
-        }
-        break;
+          break;
 
-      case 'SYSTEM_MAINTENANCE':
-        toast('Maintenance système planifiée', {
-          duration: 8000,
-        });
-        addNotification({
-          id: `maintenance-${Date.now()}`,
-          type: 'info',
-          title: 'Maintenance système',
-          message: message.data.message || 'Une maintenance système est planifiée',
-          timestamp: new Date().toISOString(),
-          read: false,
-        });
-        break;
-
-      default:
-        // Message générique
-        if (message.data.showNotification) {
+        case "EXPIRY_ALERT":
+          toast(
+            `Produit bientôt périmé: ${message.data.product?.name}`,
+            { duration: 6000 },
+          );
           addNotification({
-            id: `generic-${Date.now()}`,
-            type: message.data.type || 'info',
-            title: message.data.title || 'Notification',
-            message: message.data.message || 'Nouvelle notification',
+            id: `expiry-${message.data.productId}-${Date.now()}`,
+            type: "warning",
+            title: "Produit bientôt périmé",
+            message: `${message.data.product?.name} expire le ${new Date(message.data.expiryDate).toLocaleDateString("fr-FR")}`,
             timestamp: new Date().toISOString(),
             read: false,
           });
-        }
-        break;
-    }
-  }, [addNotification]);
+          break;
+
+        case "NEW_PRESCRIPTION":
+          toast("Nouvelle prescription reçue", { duration: 4000 });
+          addNotification({
+            id: `prescription-${message.data.prescriptionId}-${Date.now()}`,
+            type: "info",
+            title: "Nouvelle prescription",
+            message: `Patient: ${message.data.patient?.name} - ${message.data.medicationsCount} médicament(s)`,
+            timestamp: new Date().toISOString(),
+            read: false,
+          });
+          break;
+
+        case "PAYMENT_RECEIVED":
+          toast.success(`Paiement reçu: ${message.data.amount}€`, {
+            duration: 4000,
+          });
+          break;
+
+        case "USER_LOGIN":
+          if (message.data.userId !== user?.id) {
+            addNotification({
+              id: `login-${message.data.userId}-${Date.now()}`,
+              type: "info",
+              title: "Utilisateur connecté",
+              message: `${message.data.user?.name} s'est connecté`,
+              timestamp: new Date().toISOString(),
+              read: false,
+            });
+          }
+          break;
+
+        case "SYSTEM_MAINTENANCE":
+          toast("Maintenance système planifiée", { duration: 8000 });
+          addNotification({
+            id: `maintenance-${Date.now()}`,
+            type: "info",
+            title: "Maintenance système",
+            message: message.data.message || "Une maintenance système est planifiée",
+            timestamp: new Date().toISOString(),
+            read: false,
+          });
+          break;
+
+        default:
+          if (message.data?.showNotification) {
+            addNotification({
+              id: `generic-${Date.now()}`,
+              type: message.data.type || "info",
+              title: message.data.title || "Notification",
+              message: message.data.message || "Nouvelle notification",
+              timestamp: new Date().toISOString(),
+              read: false,
+            });
+          }
+          break;
+      }
+    },
+    [addNotification, user?.id],
+  );
 
   const connect = useCallback(() => {
-    if (!enabled) return;
+    if (!enabled || !user?.id) return;
 
-    try {
-      setConnectionStatus('connecting');
+    if (socketRef.current?.connected) return;
 
-      // Cookie-based auth (BFF) => no JS access to access_token.
-      // Prefer same-site cookie sessions; if backend requires token query param, update server to accept cookies.
-      const wsUrl = `${process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:5000'}/${endpoint}`;
-      const ws = new WebSocket(wsUrl);
+    const socket = io(`${getSocketBaseUrl()}/${namespace}`, {
+      withCredentials: true,
+      transports: ["websocket", "polling"],
+      reconnection: true,
+      reconnectionAttempts: maxReconnectAttempts,
+      reconnectionDelay: 1_000,
+      reconnectionDelayMax: 10_000,
+      auth: {
+        userId: user.id,
+        tenantId: user.tenantId,
+      },
+    });
 
-      ws.onopen = () => {
-        console.log(`WebSocket connected to ${endpoint}`);
-        setConnectionStatus('connected');
-        reconnectCount.current = 0;
-        setSocket(ws);
+    socket.on("connect", () => {
+      setConnectionStatus("connected");
+    });
+
+    socket.on("disconnect", () => {
+      setConnectionStatus("disconnected");
+    });
+
+    socket.on("connect_error", () => {
+      setConnectionStatus("error");
+    });
+
+    socket.on("notification", (payload: any) => {
+      const message: WebSocketMessage = {
+        type: payload.type,
+        data: payload,
+        timestamp: payload.timestamp || new Date().toISOString(),
       };
+      setMessages((prev) => [message, ...prev.slice(0, 99)]);
+      handleRealtimeNotification(message);
+    });
 
-      ws.onmessage = (event) => {
-        try {
-          const message: WebSocketMessage = JSON.parse(event.data);
-          setMessages((prev) => [message, ...prev.slice(0, 99)]); // Garder seulement les 100 derniers messages
-
-          // Gestion des notifications en temps réel
-          handleRealtimeNotification(message);
-        } catch (error) {
-          console.error('Erreur parsing WebSocket message:', error);
-        }
+    socket.on("inventory:update", (payload: any) => {
+      const message: WebSocketMessage = {
+        type: "STOCK_UPDATE",
+        data: payload,
+        timestamp: payload.timestamp || new Date().toISOString(),
       };
+      setMessages((prev) => [message, ...prev.slice(0, 99)]);
+    });
 
-      ws.onclose = (event) => {
-        console.log(`WebSocket disconnected from ${endpoint}:`, event.code, event.reason);
-        setConnectionStatus('disconnected');
-        setSocket(null);
-
-        // Tentative de reconnexion automatique
-        if (event.code !== 1000 && reconnectCount.current < maxReconnectAttempts) {
-          reconnectCount.current++;
-          console.log(`Reconnection attempt ${reconnectCount.current}/${maxReconnectAttempts} in ${reconnectInterval}ms`);
-
-          reconnectTimeoutRef.current = setTimeout(() => {
-            connect();
-          }, reconnectInterval);
-        }
+    socket.on("sales:update", (payload: any) => {
+      const message: WebSocketMessage = {
+        type: "SALE_UPDATE",
+        data: payload,
+        timestamp: payload.timestamp || new Date().toISOString(),
       };
+      setMessages((prev) => [message, ...prev.slice(0, 99)]);
+    });
 
-      ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        setConnectionStatus('error');
+    socket.on("alerts:update", (payload: any) => {
+      const message: WebSocketMessage = {
+        type: payload.data?.type || "STOCK_ALERT",
+        data: payload.data || payload,
+        timestamp: payload.timestamp || new Date().toISOString(),
       };
-    } catch (error) {
-      console.error('Failed to create WebSocket connection:', error);
-      setConnectionStatus('error');
-    }
-  }, [
-    endpoint,
-    enabled,
-    reconnectInterval,
-    maxReconnectAttempts,
-    handleRealtimeNotification,
-  ]);
+      setMessages((prev) => [message, ...prev.slice(0, 99)]);
+      handleRealtimeNotification(message);
+    });
 
-  const sendMessage = useCallback((data: any) => {
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify(data));
-    } else {
-      console.warn('WebSocket is not connected. Cannot send message.');
-    }
-  }, [socket]);
+    socketRef.current = socket;
+    setConnectionStatus("connecting");
+  }, [enabled, namespace, maxReconnectAttempts, user?.id, user?.tenantId, handleRealtimeNotification]);
+
+  const sendMessage = useCallback((event: string, data: any) => {
+    socketRef.current?.emit(event, data);
+  }, []);
+
+  const subscribe = useCallback((channel: string, data?: any) => {
+    socketRef.current?.emit(`subscribe:${channel}`, data);
+  }, []);
 
   const disconnect = useCallback(() => {
-    if (reconnectTimeoutRef.current) {
-      clearTimeout(reconnectTimeoutRef.current);
-      reconnectTimeoutRef.current = null;
+    if (socketRef.current) {
+      socketRef.current.disconnect();
+      socketRef.current = null;
     }
-    
-    if (socket) {
-      socket.close(1000, 'Manual disconnect');
-    }
-  }, [socket]);
+  }, []);
 
-  // Connexion initiale et nettoyage
   useEffect(() => {
-    if (enabled) {
+    if (enabled && user?.id) {
       connect();
     }
-
     return () => {
       disconnect();
     };
-  }, [connect, disconnect, enabled]);
-
-  // Nettoyage au démontage
-  useEffect(() => {
-    return () => {
-      if (reconnectTimeoutRef.current) {
-        clearTimeout(reconnectTimeoutRef.current);
-        reconnectTimeoutRef.current = null;
-      }
-    };
-  }, []);
+  }, [connect, disconnect, enabled, user?.id]);
 
   return {
-    socket,
+    socket: socketRef.current,
     connectionStatus,
     messages,
     sendMessage,
+    subscribe,
     connect,
     disconnect,
-    isConnected: connectionStatus === 'connected',
+    isConnected: connectionStatus === "connected",
   };
 };
 
-// Hook spécialisé pour les notifications temps réel
+/** Notifications via Socket.IO — matches backend NotificationGateway at /notifications */
 export const useRealtimeNotifications = () => {
-  return useWebSocket('notifications', {
+  return useSocketIO("notifications", {
     enabled: true,
-    reconnectInterval: 3000,
     maxReconnectAttempts: 10,
   });
 };
 
-// Hook spécialisé pour les mises à jour de stock
-export const useStockUpdates = () => {
-  return useWebSocket('stock-updates', {
-    enabled: true,
-    reconnectInterval: 5000,
+/** Realtime inventory/sales/alerts via Socket.IO — matches backend RealtimeGateway at /realtime */
+export const useRealtimeUpdates = (organizationId?: string) => {
+  const result = useSocketIO("realtime", {
+    enabled: !!organizationId,
+    maxReconnectAttempts: 10,
   });
+
+  useEffect(() => {
+    if (result.isConnected && organizationId) {
+      result.subscribe("inventory", { table: "inventory", organizationId });
+      result.subscribe("sales", { table: "sales", organizationId });
+      result.subscribe("alerts", { table: "alerts", organizationId });
+    }
+  }, [result.isConnected, organizationId, result.subscribe]);
+
+  return result;
 };
 
-// Hook spécialisé pour les activités utilisateur (admin)
-export const useUserActivity = () => {
-  return useWebSocket('user-activity', {
-    enabled: true,
-    reconnectInterval: 10000,
-  });
+/** Stock updates — alias for useRealtimeUpdates */
+export const useStockUpdates = (organizationId?: string) => {
+  return useRealtimeUpdates(organizationId);
 };

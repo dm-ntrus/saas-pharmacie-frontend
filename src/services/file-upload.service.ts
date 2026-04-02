@@ -1,9 +1,19 @@
 import { tokenService } from "./token.service";
+import { getApiBaseUrl } from "@/helpers/auth-interceptor";
+import { getCookie } from "@/utils/cookies";
+
+function buildAuthHeaders(orgId: string): Record<string, string> {
+  const headers: Record<string, string> = {
+    "X-Organization-ID": orgId,
+  };
+  const token = tokenService.getAccessToken();
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const csrf = getCookie("csrf_token");
+  if (csrf) headers["X-CSRF-Token"] = csrf;
+  return headers;
+}
 
 class FileUploadService {
-  /**
-   * Uploader un fichier
-   */
   async uploadFile(
     orgId: string,
     file: File,
@@ -12,31 +22,24 @@ class FileUploadService {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('type', type);
-    
-    const token = tokenService.getAccessToken();
-    
+
     const response = await fetch(
-      `/api/organizations/${orgId}/files/upload`,
+      `${getApiBaseUrl()}/organizations/${orgId}/files/upload`,
       {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'X-Organization-ID': orgId
-        },
-        body: formData
+        headers: buildAuthHeaders(orgId),
+        credentials: 'include',
+        body: formData,
       }
     );
-    
+
     if (!response.ok) {
       throw new Error('Upload failed');
     }
-    
+
     return response.json();
   }
-  
-  /**
-   * Uploader une image de produit
-   */
+
   async uploadProductImage(
     orgId: string,
     productId: string,
@@ -44,25 +47,21 @@ class FileUploadService {
   ): Promise<{ url: string }> {
     const formData = new FormData();
     formData.append('image', file);
-    
-    const token = tokenService.getAccessToken();
-    
+
     const response = await fetch(
-      `/api/organizations/${orgId}/inventory/products/${productId}/image`,
+      `${getApiBaseUrl()}/organizations/${orgId}/inventory/products/${productId}/image`,
       {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'X-Organization-ID': orgId
-        },
-        body: formData
+        headers: buildAuthHeaders(orgId),
+        credentials: 'include',
+        body: formData,
       }
     );
-    
+
     if (!response.ok) {
       throw new Error('Image upload failed');
     }
-    
+
     return response.json();
   }
 }

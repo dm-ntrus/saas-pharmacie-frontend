@@ -1,18 +1,20 @@
-// Thème centralisé pour le design system
-// À étendre selon les besoins de la plateforme
+/**
+ * Centralized theme tokens — aligned with globals.css emerald palette.
+ * Prefer Tailwind classes in components; use these tokens for JS-driven styling.
+ */
 
 export const colors = {
-  primary: '#6366f1', // sky-500
-  secondary: '#a5b4fc', // sky-200
-  accent: '#a21caf', // cyan-700
-  danger: '#ef4444', // red-500
-  warning: '#f59e42', // orange-400
-  success: '#22c55e', // green-500
-  info: '#0ea5e9', // sky-500
+  primary: '#059669',
+  secondary: '#a7f3d0',
+  accent: '#047857',
+  danger: '#ef4444',
+  warning: '#f59e0b',
+  success: '#10b981',
+  info: '#3b82f6',
   background: '#ffffff',
   foreground: '#171717',
-  muted: '#f3f4f6', // gray-100
-  border: '#e5e7eb', // gray-200
+  muted: '#f3f4f6',
+  border: '#e5e7eb',
 };
 
 export const fontSizes = {
@@ -45,4 +47,4 @@ export const theme = {
   fontSizes,
   radii,
   shadows,
-}; 
+};

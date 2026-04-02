@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Loader2, AlertCircle, ArrowRight } from "lucide-react";
 import AuthShell from "@/components/auth/AuthShell";
+import { getApiBaseUrl } from "@/helpers/auth-interceptor";
 
 export function AuthCallbackClient() {
   const router = useRouter();
@@ -31,9 +32,8 @@ export function AuthCallbackClient() {
         if (!code || !state)
           throw new Error("Missing code/state in callback URL");
 
-        const api = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-        const base = api.replace(/\/+$/, "");
-        const cb = new URL(`${base}/api/v1/bff/auth/callback`);
+        const base = getApiBaseUrl();
+        const cb = new URL(`${base}/bff/auth/callback`);
         cb.searchParams.set("code", code);
         cb.searchParams.set("state", state);
 

@@ -12,7 +12,7 @@ export const InteractiveCard: React.FC<InteractiveCardProps> = ({
   children,
   className,
   hoverEffect = 'lift',
-  glowColor = 'sky',
+  glowColor = 'emerald',
 }) => {
   const getHoverClasses = () => {
     switch (hoverEffect) {
@@ -44,7 +44,7 @@ export const InteractiveCard: React.FC<InteractiveCardProps> = ({
       
       {/* Magnetic field effect */}
       {hoverEffect === 'magnetic' && (
-        <div className="absolute -inset-4 bg-gradient-to-r from-sky-100/0 via-sky-100/20 to-sky-100/0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
+        <div className="absolute -inset-4 bg-gradient-to-r from-emerald-100/0 via-emerald-100/20 to-emerald-100/0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
       )}
       
       {/* Content */}

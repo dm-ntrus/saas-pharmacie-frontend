@@ -63,64 +63,71 @@ class ApiService {
   }
 
   // ---------------------------------------------------------------------------
-  // Domain helpers (thin wrappers, no duplicate transport logic)
+  // Domain helpers (thin wrappers using pharmacy-scoped routes)
   // ---------------------------------------------------------------------------
 
+  private pharmacyPath(pharmacyId: string) {
+    return `/pharmacies/${encodeURIComponent(pharmacyId)}`;
+  }
+
   // Accounting
-  getAccounts(): Promise<any[]> {
-    return this.get('/accounting/accounts');
+  getAccounts(pharmacyId: string): Promise<any[]> {
+    return this.get(`${this.pharmacyPath(pharmacyId)}/accounting/accounts`);
   }
 
-  createAccount(data: unknown): Promise<unknown> {
-    return this.post('/accounting/accounts', data);
+  createAccount(pharmacyId: string, data: unknown): Promise<unknown> {
+    return this.post(`${this.pharmacyPath(pharmacyId)}/accounting/accounts`, data);
   }
 
-  createExpense(data: unknown): Promise<unknown> {
-    // Supports both JSON and multipart (FormData) payloads.
+  createExpense(pharmacyId: string, data: unknown): Promise<unknown> {
     const isFormData = typeof FormData !== 'undefined' && data instanceof FormData;
-    return this.post('/accounting/expenses', data, isFormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : {});
+    return this.post(
+      `${this.pharmacyPath(pharmacyId)}/accounting/expenses`,
+      data,
+      isFormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : {},
+    );
   }
 
-  approveExpense(expenseId: string, approvedBy: string): Promise<unknown> {
-    return this.post(`/accounting/expenses/${encodeURIComponent(expenseId)}/approve`, { approvedBy });
+  approveExpense(pharmacyId: string, expenseId: string, approvedBy: string): Promise<unknown> {
+    return this.post(`${this.pharmacyPath(pharmacyId)}/accounting/expenses/${encodeURIComponent(expenseId)}/approve`, { approvedBy });
   }
 
-  createInvoice(data: unknown): Promise<unknown> {
-    return this.post('/accounting/invoices', data);
+  createInvoice(pharmacyId: string, data: unknown): Promise<unknown> {
+    return this.post(`${this.pharmacyPath(pharmacyId)}/accounting/invoices`, data);
   }
 
-  recordInvoicePayment(invoiceId: string, data: unknown): Promise<unknown> {
-    return this.post(`/accounting/invoices/${encodeURIComponent(invoiceId)}/payments`, data);
+  recordInvoicePayment(pharmacyId: string, invoiceId: string, data: unknown): Promise<unknown> {
+    return this.post(`${this.pharmacyPath(pharmacyId)}/accounting/invoices/${encodeURIComponent(invoiceId)}/payments`, data);
   }
 
-  createJournalEntry(data: unknown): Promise<unknown> {
-    return this.post('/accounting/journal-entries', data);
+  createJournalEntry(pharmacyId: string, data: unknown): Promise<unknown> {
+    return this.post(`${this.pharmacyPath(pharmacyId)}/accounting/journal-entries`, data);
   }
 
-  createTransaction(data: unknown): Promise<unknown> {
-    return this.post('/accounting/transactions', data);
+  createTransaction(pharmacyId: string, data: unknown): Promise<unknown> {
+    return this.post(`${this.pharmacyPath(pharmacyId)}/accounting/transactions`, data);
   }
 
-  // Inventory / products (used by prescriptions UI)
-  getProducts(params?: { search?: string; limit?: number; offset?: number }): Promise<unknown> {
-    return this.get('/inventory/products', { params });
+  // Inventory / products
+  getProducts(pharmacyId: string, params?: { search?: string; limit?: number; offset?: number }): Promise<unknown> {
+    return this.get(`${this.pharmacyPath(pharmacyId)}/inventory/products`, { params });
   }
 
   // Patients / prescriptions
-  createPrescription(patientId: string, data: unknown): Promise<unknown> {
-    return this.post(`/patients/${encodeURIComponent(patientId)}/prescriptions`, data);
+  createPrescription(pharmacyId: string, patientId: string, data: unknown): Promise<unknown> {
+    return this.post(`${this.pharmacyPath(pharmacyId)}/prescriptions`, { ...data as object, patientId });
   }
 
-  deletePatient(patientId: string): Promise<unknown> {
-    return this.delete(`/patients/${encodeURIComponent(patientId)}`);
+  deletePatient(pharmacyId: string, patientId: string): Promise<unknown> {
+    return this.delete(`${this.pharmacyPath(pharmacyId)}/patients/${encodeURIComponent(patientId)}`);
   }
 
-  verifyPrescription(prescriptionId: string, data: unknown): Promise<unknown> {
-    return this.post(`/prescriptions/${encodeURIComponent(prescriptionId)}/verify`, data);
+  verifyPrescription(pharmacyId: string, prescriptionId: string, data: unknown): Promise<unknown> {
+    return this.post(`${this.pharmacyPath(pharmacyId)}/prescriptions/${encodeURIComponent(prescriptionId)}/verify`, data);
   }
 
-  dispensePrescription(prescriptionId: string, data: unknown): Promise<unknown> {
-    return this.post(`/prescriptions/${encodeURIComponent(prescriptionId)}/dispense`, data);
+  dispensePrescription(pharmacyId: string, prescriptionId: string, data: unknown): Promise<unknown> {
+    return this.post(`${this.pharmacyPath(pharmacyId)}/prescriptions/${encodeURIComponent(prescriptionId)}/dispense`, data);
   }
 
   getCurrentUser(): Promise<unknown> {

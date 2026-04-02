@@ -3,15 +3,13 @@ import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { useAppStore } from "@/store/appStore";
 import {
-  BellIcon,
-  Bars3Icon,
-  MagnifyingGlassIcon,
-  UserCircleIcon,
-  CogIcon,
-  ArrowRightOnRectangleIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from "@heroicons/react/24/outline";
+  Bell,
+  Menu as MenuIcon,
+  Search,
+  UserCircle,
+  Settings,
+  LogOut,
+} from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 
@@ -45,7 +43,7 @@ const TopBar: React.FC<TopbarProps> = ({ onMenuClick, sidebarOpen }) => {
             onClick={onMenuClick}
             className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 lg:hidden"
           >
-            <Bars3Icon className="h-6 w-6" />
+            <MenuIcon className="h-6 w-6" />
           </button>
 
           {/* Toggle button for desktop */}
@@ -54,9 +52,9 @@ const TopBar: React.FC<TopbarProps> = ({ onMenuClick, sidebarOpen }) => {
             className="hidden lg:block p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 mr-4"
           >
             {sidebarOpen ? (
-              <ChevronLeftIcon className="h-5 w-5" />
+              <ChevronLeft className="h-5 w-5" />
             ) : (
-              <ChevronRightIcon className="h-5 w-5" />
+              <ChevronRight className="h-5 w-5" />
             )}
           </button> */}
 
@@ -64,11 +62,11 @@ const TopBar: React.FC<TopbarProps> = ({ onMenuClick, sidebarOpen }) => {
           <div className="ml-2 sm:ml-4 max-w-lg w-full">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+                <Search className="h-5 w-5 text-gray-400" />
               </div>
               <input
                 type="search"
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md text-sm placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500"
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md text-sm placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
                 placeholder="Rechercher..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -81,10 +79,10 @@ const TopBar: React.FC<TopbarProps> = ({ onMenuClick, sidebarOpen }) => {
         <div className="flex items-center space-x-2 sm:space-x-4 ml-4">
           {/* Notifications */}
           <Menu as="div" className="relative">
-            <Menu.Button className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-sky-500">
+            <Menu.Button className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-emerald-500">
               <span className="sr-only">Voir les notifications</span>
               <div className="relative">
-                <BellIcon className="h-6 w-6" />
+                <Bell className="h-6 w-6" />
                 {unreadNotifications.length > 0 && (
                   <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
                     {unreadNotifications.length}
@@ -158,7 +156,7 @@ const TopBar: React.FC<TopbarProps> = ({ onMenuClick, sidebarOpen }) => {
                     <div className="px-4 py-2 border-t border-gray-100">
                       <Link
                         href="/notifications"
-                        className="text-sm text-sky-600 hover:text-sky-500"
+                        className="text-sm text-emerald-600 hover:text-emerald-500"
                       >
                         Voir toutes les notifications
                       </Link>
@@ -171,7 +169,7 @@ const TopBar: React.FC<TopbarProps> = ({ onMenuClick, sidebarOpen }) => {
 
           {/* User menu */}
           <Menu as="div" className="relative">
-            <Menu.Button className="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-sky-500">
+            <Menu.Button className="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-500">
               <span className="sr-only">Ouvrir le menu utilisateur</span>
               {user?.avatar ? (
                 <img
@@ -180,7 +178,7 @@ const TopBar: React.FC<TopbarProps> = ({ onMenuClick, sidebarOpen }) => {
                   alt={`${user.firstName} ${user.lastName}`}
                 />
               ) : (
-                <div className="h-8 w-8 bg-sky-600 rounded-full flex items-center justify-center">
+                <div className="h-8 w-8 bg-emerald-600 rounded-full flex items-center justify-center">
                   <span className="text-sm font-medium text-white">
                     {user?.firstName?.[0]}
                     {user?.lastName?.[0]}
@@ -215,7 +213,7 @@ const TopBar: React.FC<TopbarProps> = ({ onMenuClick, sidebarOpen }) => {
                           active ? "bg-gray-100" : ""
                         } flex items-center px-4 py-2 text-sm text-gray-700`}
                       >
-                        <UserCircleIcon className="mr-3 h-5 w-5" />
+                        <UserCircle className="mr-3 h-5 w-5" />
                         Mon profil
                       </Link>
                     )}
@@ -229,7 +227,7 @@ const TopBar: React.FC<TopbarProps> = ({ onMenuClick, sidebarOpen }) => {
                           active ? "bg-gray-100" : ""
                         } flex items-center px-4 py-2 text-sm text-gray-700`}
                       >
-                        <CogIcon className="mr-3 h-5 w-5" />
+                        <Settings className="mr-3 h-5 w-5" />
                         Paramètres
                       </Link>
                     )}
@@ -245,7 +243,7 @@ const TopBar: React.FC<TopbarProps> = ({ onMenuClick, sidebarOpen }) => {
                           active ? "bg-gray-100" : ""
                         } flex items-center w-full px-4 py-2 text-sm text-gray-700`}
                       >
-                        <ArrowRightOnRectangleIcon className="mr-3 h-5 w-5" />
+                        <LogOut className="mr-3 h-5 w-5" />
                         Se déconnecter
                       </button>
                     )}

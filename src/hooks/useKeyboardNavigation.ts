@@ -1,5 +1,5 @@
 import { useEffect, useCallback } from 'react';
-import { useAccessibility } from '@/design-system/AccessibilityProvider';
+import { useAccessibility } from '@/components/ui/AccessibilityProvider';
 
 export const useKeyboardNavigation = () => {
   const { keyboardNavigation } = useAccessibility();

@@ -1,9 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { 
-  BuildingStorefrontIcon, 
-  ArrowTopRightOnSquareIcon 
-} from '@heroicons/react/24/outline';
+import { Store, ExternalLink } from 'lucide-react';
 
 interface TenantSwitcherProps {
   currentTenant?: string;
@@ -34,7 +31,7 @@ const TenantSwitcher: React.FC<TenantSwitcherProps> = ({ currentTenant }) => {
   return (
     <div className="bg-white rounded-xl shadow-lg p-6">
       <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-        <BuildingStorefrontIcon className="h-5 w-5 mr-2" />
+        <Store className="h-5 w-5 mr-2" />
         Pharmacies de Démonstration
       </h3>
       
@@ -44,7 +41,7 @@ const TenantSwitcher: React.FC<TenantSwitcherProps> = ({ currentTenant }) => {
             key={tenant.slug}
             className={`border rounded-lg p-4 transition-colors ${
               currentTenant === tenant.slug 
-                ? 'border-sky-500 bg-sky-50' 
+                ? 'border-emerald-500 bg-emerald-50' 
                 : 'border-gray-200 hover:border-gray-300'
             }`}
           >
@@ -60,17 +57,17 @@ const TenantSwitcher: React.FC<TenantSwitcherProps> = ({ currentTenant }) => {
               <div className="flex space-x-2">
                 <Link
                   href={`/tenant/${tenant.slug}`}
-                  className="text-sky-600 hover:text-sky-800 text-sm font-medium flex items-center"
+                  className="text-emerald-600 hover:text-emerald-800 text-sm font-medium flex items-center"
                 >
                   Visiter
-                  <ArrowTopRightOnSquareIcon className="h-4 w-4 ml-1" />
+                  <ExternalLink className="h-4 w-4 ml-1" />
                 </Link>
               </div>
             </div>
             
             {currentTenant === tenant.slug && (
-              <div className="mt-3 pt-3 border-t border-sky-200">
-                <p className="text-xs text-sky-600 font-medium">
+              <div className="mt-3 pt-3 border-t border-emerald-200">
+                <p className="text-xs text-emerald-600 font-medium">
                   ✓ Pharmacie actuellement visitée
                 </p>
               </div>

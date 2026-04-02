@@ -33,10 +33,54 @@ yarn-error.log*
 package-lock.json
 
 # env files (can opt-in for committing if needed)
-.env*
+# .env*
 
 # vercel
 .vercel
+# cursor (IDE)  
+.cursor
+.cursorrules
+
+# vscode
+.vscode
+
+# eslint
+.eslintcache
+
+# prettier
+.prettiercache
+
+# tsc
+
+# tsconfig
+tsconfig.build.json
+
+# tsconfig.json
+tsconfig.json
+
+# tsconfig.app.json
+tsconfig.app.json
+
+# tsconfig.spec.json
+tsconfig.spec.json
+
+# tsconfig.app.json
+tsconfig.app.json
+
+# tsconfig.spec.json
+tsconfig.spec.json
+
+# tsconfig.app.json
+tsconfig.app.json
+
+# tsconfig.spec.json
+tsconfig.spec.json
+
+# tsconfig.app.json
+tsconfig.app.json
+
+# tsconfig.spec.json
+tsconfig.spec.json
 
 # typescript
 *.tsbuildinfo

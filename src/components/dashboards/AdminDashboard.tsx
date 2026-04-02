@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  ChartBarIcon, 
-  UserGroupIcon, 
-  CurrencyDollarIcon,
-  ShoppingCartIcon,
-  ArrowTrendingUpIcon,
-  ExclamationTriangleIcon,
-  ClockIcon,
-  CheckCircleIcon
-} from '@heroicons/react/24/outline';
+import {
+  BarChart3,
+  Users,
+  DollarSign,
+  ShoppingCart,
+  TrendingUp,
+  AlertTriangle,
+  Clock,
+  CheckCircle,
+} from 'lucide-react';
 import { Card } from '@/design-system';
 // Import for API calls - implement as needed
 
@@ -82,7 +82,7 @@ const AdminDashboard: React.FC = () => {
     {
       title: 'Ventes du Jour',
       value: defaultStats.totalSales.toLocaleString(),
-      icon: ChartBarIcon,
+      icon: BarChart3,
       color: 'bg-blue-500',
       change: '+12%',
       changeType: 'positive'
@@ -90,7 +90,7 @@ const AdminDashboard: React.FC = () => {
     {
       title: 'Chiffre d&apos;Affaires',
       value: `${defaultStats.totalRevenue.toLocaleString()} FC`,
-      icon: CurrencyDollarIcon,
+      icon: DollarSign,
       color: 'bg-green-500',
       change: '+8%',
       changeType: 'positive'
@@ -98,7 +98,7 @@ const AdminDashboard: React.FC = () => {
     {
       title: 'Clients Actifs',
       value: defaultStats.totalCustomers.toLocaleString(),
-      icon: UserGroupIcon,
+      icon: Users,
       color: 'bg-cyan-500',
       change: '+15%',
       changeType: 'positive'
@@ -106,15 +106,15 @@ const AdminDashboard: React.FC = () => {
     {
       title: 'Produits en Stock',
       value: defaultStats.totalProducts.toLocaleString(),
-      icon: ShoppingCartIcon,
-      color: 'bg-sky-500',
+      icon: ShoppingCart,
+      color: 'bg-emerald-500',
       change: '+3%',
       changeType: 'positive'
     },
     {
       title: 'Stock Faible',
       value: defaultStats.lowStockItems.toString(),
-      icon: ExclamationTriangleIcon,
+      icon: AlertTriangle,
       color: 'bg-orange-500',
       change: '-2',
       changeType: 'negative'
@@ -122,7 +122,7 @@ const AdminDashboard: React.FC = () => {
     {
       title: 'Produits Expirés',
       value: defaultStats.expiredItems.toString(),
-      icon: ExclamationTriangleIcon,
+      icon: AlertTriangle,
       color: 'bg-red-500',
       change: '+1',
       changeType: 'negative'
@@ -130,7 +130,7 @@ const AdminDashboard: React.FC = () => {
     {
       title: 'Commandes en Attente',
       value: defaultStats.pendingOrders.toString(),
-      icon: ClockIcon,
+      icon: Clock,
       color: 'bg-yellow-500',
       change: '+5',
       changeType: 'neutral'
@@ -138,7 +138,7 @@ const AdminDashboard: React.FC = () => {
     {
       title: 'Commandes Terminées',
       value: defaultStats.completedOrders.toString(),
-      icon: CheckCircleIcon,
+      icon: CheckCircle,
       color: 'bg-emerald-500',
       change: '+24',
       changeType: 'positive'
@@ -154,7 +154,7 @@ const AdminDashboard: React.FC = () => {
           <p className="text-gray-600">Vue d&apos;ensemble de votre pharmacie</p>
         </div>
         <div className="flex space-x-3 mt-4 sm:mt-0">
-          <select className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
+          <select className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
             <option>Aujourd&apos;hui</option>
             <option>Cette semaine</option>
             <option>Ce mois</option>
@@ -172,7 +172,7 @@ const AdminDashboard: React.FC = () => {
                 <p className="text-sm font-medium text-gray-600">{stat.title}</p>
                 <p className="text-2xl font-bold text-gray-900 mt-1">{stat.value}</p>
                 <div className="flex items-center mt-2">
-                  <ArrowTrendingUpIcon 
+                  <TrendingUp
                     className={`h-4 w-4 mr-1 ${
                       stat.changeType === 'positive' ? 'text-green-500' : 
                       stat.changeType === 'negative' ? 'text-red-500' : 'text-gray-500'
@@ -203,7 +203,7 @@ const AdminDashboard: React.FC = () => {
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Évolution des Ventes</h3>
           <div className="h-64 flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg">
             <div className="text-center">
-              <ChartBarIcon className="h-12 w-12 text-gray-400 mx-auto mb-2" />
+              <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-2" />
               <p className="text-gray-500">Graphique des ventes</p>
             </div>
           </div>

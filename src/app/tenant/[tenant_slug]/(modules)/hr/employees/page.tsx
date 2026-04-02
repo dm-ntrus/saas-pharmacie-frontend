@@ -46,7 +46,7 @@ function HrEmployeesContent() {
         </ProtectedAction>
       </div>
       <div className="flex flex-wrap gap-2">
-        <select className="rounded-lg border px-3 py-2 text-sm" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+        <select className="rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
           <option value="">Tous les statuts</option>
           {Object.entries(EMPLOYMENT_STATUS_LABELS).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
         </select>

@@ -5,15 +5,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAdmin } from "@/context/AdminContext";
 import {
-  UsersIcon,
-  BuildingStorefrontIcon,
-  ChartBarIcon,
-  CogIcon,
-  UserIcon,
-  Bars3Icon,
-  XMarkIcon,
-  ChevronLeftIcon,
-} from "@heroicons/react/24/outline";
+  Users,
+  Store,
+  BarChart3,
+  Settings,
+  User,
+  Menu,
+  X,
+  ChevronLeft,
+} from "lucide-react";
 
 interface NavItem {
   name: string;
@@ -37,29 +37,29 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     {
       name: "Utilisateurs",
       href: "/admin/users",
-      icon: UsersIcon,
+      icon: Users,
       requiredPermissions: ["manage_users"],
     },
     {
       name: "Tenants",
       href: "/admin/tenants",
-      icon: BuildingStorefrontIcon,
+      icon: Store,
       requiredPermissions: ["manage_tenants"],
     },
     {
       name: "Rapports",
       href: "/admin/reports",
-      icon: ChartBarIcon,
+      icon: BarChart3,
       requiredPermissions: ["view_reports"],
     },
   ];
 
   const bottomNavigation: NavItem[] = [
-    { name: "Profil", href: "/admin/profile", icon: UserIcon },
+    { name: "Profil", href: "/admin/profile", icon: User },
     {
       name: "Paramètres",
       href: "/admin/settings",
-      icon: CogIcon,
+      icon: Settings,
       requiredPermissions: ["manage_settings"],
     },
   ];
@@ -95,11 +95,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         >
           {isOpen ? (
             <>
-              <ChevronLeftIcon className="h-5 w-5 hidden lg:flex" />
-              <XMarkIcon className="h-5 w-5 flex lg:hidden" />
+              <ChevronLeft className="h-5 w-5 hidden lg:flex" />
+              <X className="h-5 w-5 flex lg:hidden" />
             </>
           ) : (
-            <Bars3Icon className="h-5 w-5" />
+            <Menu className="h-5 w-5" />
           )}
         </button>
       </div>

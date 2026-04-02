@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { 
-  ShoppingCartIcon,
-  CreditCardIcon,
-  ReceiptPercentIcon,
-  CurrencyDollarIcon,
-  UserIcon,
-  ClockIcon,
-  BanknotesIcon,
-  QrCodeIcon
-} from '@heroicons/react/24/outline';
+import {
+  ShoppingCart,
+  CreditCard,
+  BadgePercent,
+  DollarSign,
+  User,
+  Clock,
+  Banknote,
+  QrCode,
+} from 'lucide-react';
 import { Card, Button } from '@/design-system';
 
 const CashierDashboard: React.FC = () => {
@@ -34,36 +34,36 @@ const CashierDashboard: React.FC = () => {
       title: 'Ventes Aujourd\'hui',
       value: '125,000 FC',
       count: '23 transactions',
-      icon: CurrencyDollarIcon,
+      icon: DollarSign,
       color: 'bg-green-500'
     },
     {
       title: 'Vente en Cours',
       value: currentSale.total.toLocaleString() + ' FC',
       count: `${currentSale.items.length} articles`,
-      icon: ShoppingCartIcon,
+      icon: ShoppingCart,
       color: 'bg-blue-500'
     },
     {
       title: 'Clients Servis',
       value: '18',
       count: 'depuis ce matin',
-      icon: UserIcon,
+      icon: User,
       color: 'bg-cyan-500'
     },
     {
       title: 'Caisse',
       value: '85,000 FC',
       count: 'solde disponible',
-      icon: BanknotesIcon,
-      color: 'bg-sky-500'
+      icon: Banknote,
+      color: 'bg-emerald-500'
     }
   ];
 
   const paymentMethods = [
-    { name: 'Espèces', icon: BanknotesIcon, color: 'bg-green-100 text-green-800' },
-    { name: 'Carte Bancaire', icon: CreditCardIcon, color: 'bg-blue-100 text-blue-800' },
-    { name: 'Mobile Money', icon: QrCodeIcon, color: 'bg-cyan-100 text-cyan-800' }
+    { name: 'Espèces', icon: Banknote, color: 'bg-green-100 text-green-800' },
+    { name: 'Carte Bancaire', icon: CreditCard, color: 'bg-blue-100 text-blue-800' },
+    { name: 'Mobile Money', icon: QrCode, color: 'bg-cyan-100 text-cyan-800' }
   ];
 
   return (
@@ -76,11 +76,11 @@ const CashierDashboard: React.FC = () => {
         </div>
         <div className="flex space-x-3">
           <Button variant="outline">
-            <ReceiptPercentIcon className="h-5 w-5 mr-2" />
+            <BadgePercent className="h-5 w-5 mr-2" />
             Rapport Caisse
           </Button>
           <Button variant="default">
-            <ShoppingCartIcon className="h-5 w-5 mr-2" />
+            <ShoppingCart className="h-5 w-5 mr-2" />
             Nouvelle Vente
           </Button>
         </div>
@@ -114,7 +114,7 @@ const CashierDashboard: React.FC = () => {
             {/* Client */}
             <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 rounded-lg">
               <div className="flex items-center">
-                <UserIcon className="h-5 w-5 text-gray-400 mr-2" />
+                <User className="h-5 w-5 text-gray-400 mr-2" />
                 <span className="font-medium">Client: {currentSale.customer}</span>
               </div>
               <Button size="sm" variant="outline">Changer</Button>
@@ -189,7 +189,7 @@ const CashierDashboard: React.FC = () => {
               </label>
               <input 
                 type="number" 
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                 placeholder="0"
               />
               <p className="text-sm text-gray-500 mt-1">
@@ -203,15 +203,15 @@ const CashierDashboard: React.FC = () => {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Actions Rapides</h3>
             <div className="space-y-3">
               <Button variant="outline" className="w-full justify-start">
-                <ReceiptPercentIcon className="h-5 w-5 mr-2" />
+                <BadgePercent className="h-5 w-5 mr-2" />
                 Appliquer Remise
               </Button>
               <Button variant="outline" className="w-full justify-start">
-                <ClockIcon className="h-5 w-5 mr-2" />
+                <Clock className="h-5 w-5 mr-2" />
                 Ventes Suspendues
               </Button>
               <Button variant="outline" className="w-full justify-start">
-                <UserIcon className="h-5 w-5 mr-2" />
+                <User className="h-5 w-5 mr-2" />
                 Rechercher Client
               </Button>
             </div>

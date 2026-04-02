@@ -1,5 +1,5 @@
 import React from "react";
-import { DocumentTextIcon } from "@heroicons/react/24/outline";
+import { FileText } from "lucide-react";
 import { Button, Modal } from "@/design-system";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import apiClient from "@/lib/api";
@@ -37,7 +37,7 @@ export const VerifyPrescriptionModal: React.FC<
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      icon={<DocumentTextIcon className="h-5 w-5 text-sky-600" />}
+      icon={<FileText className="h-5 w-5 text-emerald-600" />}
       title="Vérifier l'ordonnance"
       size="md"
     >

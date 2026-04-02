@@ -38,7 +38,6 @@ async function fetchPublicPlans(
 
   const url = `${base}/plans/public?${qs.toString()}`;
   const res = await fetch(url, {
-    headers: { "Content-Type": "application/json" },
     credentials: "include",
   });
 
@@ -68,10 +67,12 @@ export function usePublicPlanDetail(planId: string | null | undefined) {
       const base = getApiBaseUrl();
       const res = await fetch(
         `${base}/plans/public/${encodeURIComponent(planId!)}`,
-        { headers: { "Content-Type": "application/json" }, credentials: "include" },
+        { credentials: "include" },
       );
       if (!res.ok) throw new Error(`Plan API ${res.status}`);
-      return res.json();
+      const raw = await res.json();
+      if (raw?.data && typeof raw.data === "object" && !Array.isArray(raw.data)) return raw.data;
+      return raw;
     },
     enabled: !!planId,
     staleTime: 10 * 60 * 1000,

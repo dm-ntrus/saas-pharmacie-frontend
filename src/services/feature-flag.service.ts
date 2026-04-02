@@ -1,4 +1,13 @@
-import { tokenService } from "./token.service";
+/**
+ * @deprecated Use `FeatureFlagContext` (`useFeatureFlags()`) and
+ * `plan-entitlements.service.ts` instead. This service used a legacy
+ * endpoint (`/api/organizations/:id/features/...`) that is no longer
+ * the canonical path for entitlement checks. Kept temporarily for
+ * backward compatibility with `useFeatureLimit`; will be removed in
+ * next major cleanup.
+ */
+
+import { apiClient } from "@/helpers/auth-interceptor";
 
 interface FeatureCheckResponse {
   feature: string;
@@ -6,64 +15,40 @@ interface FeatureCheckResponse {
   limit?: number;
   usage?: number;
   remaining?: number;
-  config?: Record<string, any>;
+  config?: Record<string, unknown>;
 }
 
 class FeatureFlagService {
-  private baseUrl = '/api/organizations';
-  
-  /**
-   * Vérifier si une feature est activée
-   */
   async isFeatureEnabled(
     organizationId: string,
-    featureKey: string
+    featureKey: string,
   ): Promise<boolean> {
-    const response = await fetch(
-      `${this.baseUrl}/${organizationId}/features/${featureKey}/check`,
-      {
-        headers: {
-          'Authorization': `Bearer ${tokenService.getAccessToken()}`,
-          'X-Organization-ID': organizationId
-        }
-      }
-    );
-    
-    if (!response.ok) {
+    try {
+      const { data } = await apiClient.get<FeatureCheckResponse>(
+        `/pharmacies/${organizationId}/plan-entitlements/check/${featureKey}`,
+      );
+      return data?.enabled ?? false;
+    } catch {
       return false;
     }
-    
-    const data: FeatureCheckResponse = await response.json();
-    return data.enabled;
   }
-  
-  /**
-   * Obtenir toutes les features du tenant
-   */
-  async getTenantFeatures(organizationId: string): Promise<Record<string, boolean>> {
-    const response = await fetch(
-      `${this.baseUrl}/${organizationId}/features`,
-      {
-        headers: {
-          'Authorization': `Bearer ${tokenService.getAccessToken()}`,
-          'X-Organization-ID': organizationId
-        }
-      }
-    );
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch features');
+
+  async getTenantFeatures(
+    organizationId: string,
+  ): Promise<Record<string, boolean>> {
+    try {
+      const { data } = await apiClient.get<{ features: Record<string, boolean> }>(
+        `/pharmacies/${organizationId}/plan-entitlements`,
+      );
+      return data?.features ?? {};
+    } catch {
+      return {};
     }
-    
-    return response.json();
   }
-  
-  /**
-   * Vérifier l'usage d'une feature quantitative
-   */
+
   async checkFeatureUsage(
     organizationId: string,
-    featureKey: string
+    featureKey: string,
   ): Promise<{
     allowed: boolean;
     limit: number;
@@ -71,21 +56,14 @@ class FeatureFlagService {
     remaining: number;
     resetDate?: string;
   }> {
-    const response = await fetch(
-      `${this.baseUrl}/${organizationId}/features/${featureKey}/usage`,
-      {
-        headers: {
-          'Authorization': `Bearer ${tokenService.getAccessToken()}`,
-          'X-Organization-ID': organizationId
-        }
-      }
-    );
-    
-    if (!response.ok) {
-      throw new Error('Failed to check feature usage');
+    try {
+      const { data } = await apiClient.get(
+        `/pharmacies/${organizationId}/plan-entitlements/usage/${featureKey}`,
+      );
+      return data as any;
+    } catch {
+      return { allowed: false, limit: 0, usage: 0, remaining: 0 };
     }
-    
-    return response.json();
   }
 }
 

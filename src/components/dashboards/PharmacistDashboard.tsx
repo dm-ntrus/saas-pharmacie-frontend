@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { 
-  BeakerIcon,
-  ClipboardDocumentListIcon,
-  ExclamationTriangleIcon,
-  UserGroupIcon,
-  CheckCircleIcon
-} from '@heroicons/react/24/outline';
+import {
+  FlaskConical,
+  ClipboardList,
+  AlertTriangle,
+  Users,
+  CheckCircle,
+} from 'lucide-react';
 import { Card, Button } from '@/design-system';
 
 const PharmacistDashboard: React.FC = () => {
@@ -49,25 +49,25 @@ const PharmacistDashboard: React.FC = () => {
     {
       title: 'Ordonnances en Attente',
       value: prescriptions.filter(p => p.status === 'pending').length,
-      icon: ClipboardDocumentListIcon,
+      icon: ClipboardList,
       color: 'bg-yellow-500'
     },
     {
       title: 'Préparations en Cours',
       value: prescriptions.filter(p => p.status === 'in_progress').length,
-      icon: BeakerIcon,
+      icon: FlaskConical,
       color: 'bg-blue-500'
     },
     {
       title: 'Prêtes à Délivrer',
       value: prescriptions.filter(p => p.status === 'ready').length,
-      icon: CheckCircleIcon,
+      icon: CheckCircle,
       color: 'bg-green-500'
     },
     {
       title: 'Alertes Stock',
       value: inventoryAlerts.length,
-      icon: ExclamationTriangleIcon,
+      icon: AlertTriangle,
       color: 'bg-red-500'
     }
   ];
@@ -134,7 +134,7 @@ const PharmacistDashboard: React.FC = () => {
           <p className="text-gray-600">Gestion des prescriptions et contrôle qualité</p>
         </div>
         <Button variant="default">
-          <BeakerIcon className="h-5 w-5 mr-2" />
+          <FlaskConical className="h-5 w-5 mr-2" />
           Nouvelle Préparation
         </Button>
       </div>
@@ -267,7 +267,7 @@ const PharmacistDashboard: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <div className="flex items-center mb-2">
-              <ClipboardDocumentListIcon className="h-5 w-5 text-blue-600 mr-2" />
+              <ClipboardList className="h-5 w-5 text-blue-600 mr-2" />
               <h4 className="font-medium text-blue-900">Interactions Médicamenteuses</h4>
             </div>
             <p className="text-sm text-blue-700">
@@ -280,7 +280,7 @@ const PharmacistDashboard: React.FC = () => {
           
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
             <div className="flex items-center mb-2">
-              <CheckCircleIcon className="h-5 w-5 text-green-600 mr-2" />
+              <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
               <h4 className="font-medium text-green-900">Contrôle Qualité</h4>
             </div>
             <p className="text-sm text-green-700">
@@ -293,7 +293,7 @@ const PharmacistDashboard: React.FC = () => {
           
           <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4">
             <div className="flex items-center mb-2">
-              <UserGroupIcon className="h-5 w-5 text-cyan-600 mr-2" />
+              <Users className="h-5 w-5 text-cyan-600 mr-2" />
               <h4 className="font-medium text-cyan-900">Conseils Patients</h4>
             </div>
             <p className="text-sm text-cyan-700">

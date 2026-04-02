@@ -13,7 +13,6 @@ import {
 import { usePublicPlans } from "@/hooks/api/usePublicPlans";
 import PlanCard, {
   PlanCardSkeleton,
-  FALLBACK_PLANS,
 } from "@/components/public/PlanCard";
 import type { Plan } from "@/types/billing";
 
@@ -22,9 +21,18 @@ export default function SignupPage() {
   const { data: apiPlans, isLoading, isError } = usePublicPlans({ active: true });
 
   const plans: Plan[] = useMemo(() => {
-    if (apiPlans && apiPlans.length > 0) return apiPlans;
-    return FALLBACK_PLANS;
-  }, [apiPlans]);
+    if (!apiPlans || apiPlans.length === 0) return [];
+    const interval = annual ? "yearly" : "monthly";
+    const filtered = apiPlans.filter((p) => p.billing_interval === interval);
+    if (filtered.length > 0) return filtered;
+    const seen = new Set<string>();
+    return apiPlans.filter((p) => {
+      const tier = p.plan_tier || p.plan_key;
+      if (seen.has(tier)) return false;
+      seen.add(tier);
+      return true;
+    });
+  }, [apiPlans, annual]);
 
   const isBackendConnected = !isError && apiPlans && apiPlans.length > 0;
 
@@ -100,7 +108,7 @@ export default function SignupPage() {
               ) : (
                 <span className="inline-flex items-center gap-1.5 text-amber-600">
                   <AlertCircle className="w-3.5 h-3.5" />
-                  Plans indicatifs
+                  Impossible de charger les plans
                 </span>
               )}
             </div>
@@ -113,6 +121,11 @@ export default function SignupPage() {
             {[1, 2, 3].map((i) => (
               <PlanCardSkeleton key={i} />
             ))}
+          </div>
+        ) : plans.length === 0 ? (
+          <div className="text-center py-12 mb-16">
+            <p className="text-sm text-slate-500">Les plans seront bientôt disponibles.</p>
+            <Link href="/contact" className="text-emerald-600 font-bold text-sm hover:underline mt-2 inline-block">Nous contacter →</Link>
           </div>
         ) : (
           <div

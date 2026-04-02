@@ -142,6 +142,7 @@ function BillingReports() {
 
       {loading && <Skeleton className="h-64 w-full" />}
 
+      <div data-report-content>
       {!loading && reportType === "daily" && dailyReport && (
         <Card>
           <CardHeader>
@@ -397,9 +398,47 @@ function BillingReports() {
         </Card>
       )}
 
+      </div>
+
       <div className="flex gap-2">
-        <Button variant="outline" leftIcon={<Download className="w-4 h-4" />} disabled>
-          Exporter (bientôt)
+        <Button
+          variant="outline"
+          leftIcon={<Download className="w-4 h-4" />}
+          onClick={() => {
+            const printArea = document.querySelector("[data-report-content]");
+            if (printArea) {
+              window.print();
+            }
+          }}
+        >
+          Exporter PDF
+        </Button>
+        <Button
+          variant="outline"
+          leftIcon={<Download className="w-4 h-4" />}
+          onClick={() => {
+            const tables = document.querySelectorAll("[data-report-content] table");
+            if (tables.length === 0) return;
+            const rows: string[] = [];
+            tables.forEach((table) => {
+              table.querySelectorAll("tr").forEach((tr) => {
+                const cells = Array.from(tr.querySelectorAll("th, td")).map((c) =>
+                  `"${(c.textContent || "").replace(/"/g, '""')}"`,
+                );
+                rows.push(cells.join(","));
+              });
+              rows.push("");
+            });
+            const blob = new Blob([rows.join("\n")], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `rapport-${reportType}-${new Date().toISOString().split("T")[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+          }}
+        >
+          Exporter CSV
         </Button>
       </div>
     </div>

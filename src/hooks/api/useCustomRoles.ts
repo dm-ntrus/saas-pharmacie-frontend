@@ -5,7 +5,7 @@ import { apiService } from "@/services/api.service";
 import { toast } from "react-hot-toast";
 import type { CustomRoleDto, CreateCustomRoleDto, UpdateCustomRoleDto } from "@/types/identity";
 
-const rolesPath = "/api/roles/custom";
+const rolesPath = "/identity/roles/custom";
 
 export function useCustomRoles(params?: { status?: string; type?: string; limit?: number; offset?: number }) {
   return useQuery({

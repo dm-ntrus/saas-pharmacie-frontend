@@ -18,24 +18,25 @@ export const PERMISSIONS = {
   manage_integrations: 'Gestion des intégrations'
 };
 
-export const KEYCLOAK_CONFIG = {
-  /**
-   * Legacy config (dépréciée).
-   * Le flux enterprise-grade utilise désormais la découverte OIDC via `keycloakOidc` (voir `src/services/keycloak-oidc.service.ts`)
-   * et des variables d'env:
-   * - NEXT_PUBLIC_KEYCLOAK_URL
-   * - NEXT_PUBLIC_KEYCLOAK_REALM
-   * - NEXT_PUBLIC_KEYCLOAK_CLIENT_ID
-   */
-  url: process.env.NEXT_PUBLIC_KEYCLOAK_URL || 'https://backend.kipmoni.com:8443',
-  realm: process.env.NEXT_PUBLIC_KEYCLOAK_REALM || 'med-pharmacy',
-  clientId: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || 'spa-frontend',
+function requireEnv(name: string): string {
+  const val = process.env[name];
+  if (!val) throw new Error(`Missing required environment variable: ${name}`);
+  return val;
+}
 
-  endpoints: {
-    token: `/realms/${process.env.NEXT_PUBLIC_KEYCLOAK_REALM || 'med-pharmacy'}/protocol/openid-connect/token`,
-    userInfo: `/realms/${process.env.NEXT_PUBLIC_KEYCLOAK_REALM || 'med-pharmacy'}/protocol/openid-connect/userinfo`,
-    logout: `/realms/${process.env.NEXT_PUBLIC_KEYCLOAK_REALM || 'med-pharmacy'}/protocol/openid-connect/logout`,
-    register: `/realms/${process.env.NEXT_PUBLIC_KEYCLOAK_REALM || 'med-pharmacy'}/protocol/openid-connect/registrations`,
+export const KEYCLOAK_CONFIG = {
+  get url() { return requireEnv('NEXT_PUBLIC_KEYCLOAK_URL'); },
+  get realm() { return requireEnv('NEXT_PUBLIC_KEYCLOAK_REALM'); },
+  get clientId() { return requireEnv('NEXT_PUBLIC_KEYCLOAK_CLIENT_ID'); },
+
+  get endpoints() {
+    const realm = this.realm;
+    return {
+      token: `/realms/${realm}/protocol/openid-connect/token`,
+      userInfo: `/realms/${realm}/protocol/openid-connect/userinfo`,
+      logout: `/realms/${realm}/protocol/openid-connect/logout`,
+      register: `/realms/${realm}/protocol/openid-connect/registrations`,
+    };
   },
 };
 

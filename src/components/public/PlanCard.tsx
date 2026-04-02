@@ -2,52 +2,148 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Check, ArrowRight, Sparkles, Zap, Building } from "lucide-react";
+import {
+  Check,
+  ArrowRight,
+  Sparkles,
+  Zap,
+  Building2,
+  Gift,
+  Crown,
+} from "lucide-react";
 import type { Plan } from "@/types/billing";
 
-const TIER_STYLES: Record<
+const TIER_META: Record<
   string,
-  { badge: string; bg: string; border: string; cta: string; icon: typeof Sparkles }
+  {
+    icon: typeof Zap;
+    label: string;
+    accent: string;
+    badgeBg: string;
+    badgeText: string;
+    ring: string;
+  }
 > = {
   free: {
-    badge: "bg-slate-100 text-slate-600",
-    bg: "bg-slate-50",
-    border: "border-slate-100",
-    cta: "bg-slate-900 text-white hover:bg-emerald-600",
-    icon: Zap,
+    icon: Gift,
+    label: "Gratuit",
+    accent: "text-slate-600",
+    badgeBg: "bg-slate-100",
+    badgeText: "text-slate-700",
+    ring: "ring-slate-200",
   },
   starter: {
-    badge: "bg-sky-100 text-sky-700",
-    bg: "bg-white",
-    border: "border-slate-100",
-    cta: "bg-slate-900 text-white hover:bg-emerald-600",
     icon: Zap,
+    label: "Starter",
+    accent: "text-blue-600",
+    badgeBg: "bg-blue-50",
+    badgeText: "text-blue-700",
+    ring: "ring-blue-200",
   },
   professional: {
-    badge: "bg-emerald-100 text-emerald-700",
-    bg: "bg-slate-900 text-white",
-    border: "border-slate-800",
-    cta: "bg-emerald-600 text-white hover:bg-emerald-500 shadow-lg shadow-emerald-600/20",
     icon: Sparkles,
+    label: "Pro",
+    accent: "text-emerald-600",
+    badgeBg: "bg-emerald-50",
+    badgeText: "text-emerald-700",
+    ring: "ring-emerald-400",
   },
   enterprise: {
-    badge: "bg-purple-100 text-purple-700",
-    bg: "bg-white",
-    border: "border-slate-100",
-    cta: "bg-slate-900 text-white hover:bg-emerald-600",
-    icon: Building,
+    icon: Building2,
+    label: "Enterprise",
+    accent: "text-violet-600",
+    badgeBg: "bg-violet-50",
+    badgeText: "text-violet-700",
+    ring: "ring-violet-200",
   },
   custom: {
-    badge: "bg-amber-100 text-amber-700",
-    bg: "bg-white",
-    border: "border-slate-100",
-    cta: "bg-slate-900 text-white hover:bg-emerald-600",
-    icon: Building,
+    icon: Crown,
+    label: "Sur mesure",
+    accent: "text-amber-600",
+    badgeBg: "bg-amber-50",
+    badgeText: "text-amber-700",
+    ring: "ring-amber-200",
   },
 };
 
-function resolveStyle(tier: string) {
-  return TIER_STYLES[tier] ?? TIER_STYLES.starter;
+const TIER_FEATURES: Record<string, string[]> = {
+  free: [
+    "1 pharmacie",
+    "5 utilisateurs",
+    "Point de vente basique",
+    "Gestion de stock",
+    "Support communautaire",
+  ],
+  starter: [
+    "1 pharmacie",
+    "15 utilisateurs",
+    "Point de vente complet",
+    "Inventaire avancé",
+    "Patients & ordonnances",
+    "Rapports mensuels",
+    "Support email",
+  ],
+  professional: [
+    "Jusqu'à 5 pharmacies",
+    "50 utilisateurs",
+    "Tous les modules inclus",
+    "Analytics & BI",
+    "Supply chain",
+    "Comptabilité intégrée",
+    "CRM & fidélité",
+    "Support prioritaire 24/7",
+  ],
+  enterprise: [
+    "Sites illimités",
+    "Utilisateurs illimités",
+    "Modules personnalisables",
+    "API dédiée",
+    "SSO & conformité",
+    "Account manager dédié",
+    "SLA garanti 99.9%",
+    "Formation sur site",
+  ],
+  custom: [
+    "Infrastructure dédiée",
+    "Fonctionnalités sur mesure",
+    "Intégrations custom",
+    "Support premium",
+  ],
+};
+
+function resolveMeta(tier: string) {
+  return TIER_META[tier] ?? TIER_META.starter;
+}
+
+function resolveFeatures(plan: Plan): string[] {
+  const fromPlan: string[] = [];
+
+  if (plan.feature_flags?.length) {
+    for (const ff of plan.feature_flags) {
+      if (ff.is_included && ff.feature_name) fromPlan.push(ff.feature_name);
+    }
+  }
+
+  if (plan.features && typeof plan.features === "object") {
+    for (const [key, val] of Object.entries(plan.features)) {
+      if (typeof val === "object" && val !== null) {
+        const v = val as Record<string, unknown>;
+        if (v.enabled === true || v.included === true) {
+          fromPlan.push(
+            key
+              .replace(/^module\./, "")
+              .replace(/[._]/g, " ")
+              .replace(/\b\w/g, (c) => c.toUpperCase()),
+          );
+        }
+      }
+    }
+  }
+
+  if (fromPlan.length >= 4) return fromPlan.slice(0, 8);
+
+  const tier = plan.plan_tier || "starter";
+  return TIER_FEATURES[tier] ?? TIER_FEATURES.starter;
 }
 
 interface PlanCardProps {
@@ -57,70 +153,24 @@ interface PlanCardProps {
   recommended?: boolean;
 }
 
-function extractFeatureList(plan: Plan): string[] {
-  const items: string[] = [];
-
-  if (plan.max_users === -1) items.push("Utilisateurs illimités");
-  else if (plan.max_users) items.push(`${plan.max_users} utilisateurs`);
-
-  if (plan.max_pharmacies === -1) items.push("Multi-sites illimité");
-  else if (plan.max_pharmacies && plan.max_pharmacies > 1)
-    items.push(`Jusqu'à ${plan.max_pharmacies} sites`);
-
-  if (plan.max_storage_gb)
-    items.push(
-      plan.max_storage_gb === -1
-        ? "Stockage illimité"
-        : `${plan.max_storage_gb} GB stockage`,
-    );
-
-  if (plan.is_trial_available) items.push("Essai gratuit inclus");
-
-  if (plan.feature_flags?.length) {
-    for (const ff of plan.feature_flags) {
-      if (ff.is_included && ff.feature_name) items.push(ff.feature_name);
-    }
-  }
-
-  if (plan.features && typeof plan.features === "object") {
-    for (const [key, val] of Object.entries(plan.features)) {
-      if (
-        typeof val === "object" &&
-        val !== null &&
-        "enabled" in val &&
-        (val as { enabled: boolean }).enabled
-      ) {
-        const label = key
-          .replace(/^module\./, "")
-          .replace(/[._]/g, " ")
-          .replace(/\b\w/g, (c) => c.toUpperCase());
-        items.push(label);
-      }
-    }
-  }
-
-  if (items.length === 0) {
-    if (plan.description) items.push(plan.description);
-    items.push("Support inclus");
-  }
-
-  return items.slice(0, 8);
-}
-
 export default function PlanCard({
   plan,
   index = 0,
   showAnnual = false,
-  recommended = false,
 }: PlanCardProps) {
   const tier = (plan.plan_tier || "starter") as string;
-  const style = resolveStyle(tier);
-  const isPop = recommended || tier === "professional";
-  const features = extractFeatureList(plan);
+  const meta = resolveMeta(tier);
+  const isPop = tier === "professional";
+  const features = resolveFeatures(plan);
 
-  const displayPrice = showAnnual
-    ? Math.round(plan.price * 0.8)
-    : plan.price;
+  const price = typeof plan.price === "string" ? parseFloat(plan.price) : plan.price;
+  const displayPrice =
+    plan.billing_interval === "yearly" ? Math.round(price / 12) : price;
+  const isFree = !price || price === 0;
+
+  const storage = typeof plan.max_storage_gb === "string"
+    ? parseFloat(plan.max_storage_gb)
+    : plan.max_storage_gb;
 
   const href =
     tier === "enterprise" || tier === "custom"
@@ -130,180 +180,175 @@ export default function PlanCard({
   const ctaLabel =
     tier === "enterprise" || tier === "custom"
       ? "Contacter l'équipe"
-      : plan.is_trial_available
-        ? "Essayer gratuitement"
-        : "Choisir ce plan";
+      : isFree
+        ? "Démarrer gratuitement"
+        : plan.is_trial_available
+          ? "Essai gratuit 30j"
+          : "Choisir ce plan";
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ delay: index * 0.07 }}
-      className={`relative rounded-3xl border p-8 sm:p-10 flex flex-col ${
+      transition={{ delay: index * 0.08, duration: 0.5 }}
+      className={`relative flex flex-col rounded-2xl border-2 transition-shadow duration-300 ${
         isPop
-          ? "bg-slate-900 text-white border-slate-800 shadow-2xl shadow-emerald-600/10 lg:-mt-4 lg:pb-14"
-          : `${style.bg} ${style.border}`
+          ? "border-emerald-500 bg-white shadow-xl shadow-emerald-500/10 scale-[1.02] z-10"
+          : "border-slate-200 bg-white hover:shadow-lg hover:border-slate-300"
       }`}
     >
       {isPop && (
-        <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-5 py-1.5 bg-emerald-600 text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg">
-          Recommandé
-        </span>
+        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20">
+          <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-emerald-600 text-white rounded-full text-[11px] font-bold uppercase tracking-wider shadow-lg shadow-emerald-600/30">
+            <Sparkles className="w-3.5 h-3.5" />
+            Le plus populaire
+          </span>
+        </div>
       )}
 
-      <div className="flex items-center gap-2 mb-4">
-        <span
-          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-            isPop ? "bg-white/10 text-emerald-400" : style.badge
-          }`}
-        >
-          <style.icon className="w-3 h-3" />
-          {tier}
-        </span>
-      </div>
+      <div className={`p-6 sm:p-8 ${isPop ? "pt-10" : ""}`}>
+        {/* Tier badge */}
+        <div className="flex items-center gap-2 mb-5">
+          <span
+            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold ${meta.badgeBg} ${meta.badgeText}`}
+          >
+            <meta.icon className="w-3.5 h-3.5" />
+            {meta.label}
+          </span>
+        </div>
 
-      <h3 className="text-xl font-display font-bold mb-1">{plan.name}</h3>
+        {/* Name */}
+        <h3 className="text-lg font-bold text-slate-900 mb-1">{plan.name}</h3>
 
-      {plan.description && (
-        <p
-          className={`text-sm mb-4 ${
-            isPop ? "text-slate-400" : "text-slate-500"
-          }`}
-        >
-          {plan.description}
-        </p>
-      )}
+        {plan.description && (
+          <p className="text-[13px] text-slate-500 leading-relaxed mb-5 line-clamp-2">
+            {plan.description}
+          </p>
+        )}
 
-      <div className="flex items-baseline gap-1.5 mb-1">
-        <span className="text-5xl font-display font-bold">${displayPrice}</span>
-        <span
-          className={`text-sm font-bold uppercase tracking-widest ${
-            isPop ? "text-slate-400" : "text-slate-500"
-          }`}
-        >
-          / {plan.billing_interval === "yearly" ? "an" : "mois"}
-        </span>
-      </div>
-
-      {showAnnual && plan.billing_interval === "monthly" && (
-        <p className="text-xs text-emerald-500 font-bold mb-4">
-          Économisez 20 % avec le plan annuel
-        </p>
-      )}
-
-      {plan.currency && plan.currency !== "USD" && (
-        <p
-          className={`text-xs mb-4 ${isPop ? "text-slate-500" : "text-slate-400"}`}
-        >
-          Devise : {plan.currency}
-        </p>
-      )}
-
-      <ul className="space-y-2.5 mb-8 flex-1">
-        {features.map((f) => (
-          <li key={f} className="flex items-center gap-3">
-            <div
-              className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${
-                isPop
-                  ? "bg-emerald-500/20 text-emerald-400"
-                  : "bg-emerald-100 text-emerald-600"
-              }`}
-            >
-              <Check className="w-3 h-3" />
+        {/* Price */}
+        <div className="mb-6">
+          {isFree ? (
+            <div className="flex items-baseline gap-1">
+              <span className="text-4xl font-extrabold text-slate-900">
+                Gratuit
+              </span>
             </div>
-            <span className="text-sm font-medium">{f}</span>
-          </li>
-        ))}
-      </ul>
+          ) : tier === "enterprise" || tier === "custom" ? (
+            <div className="flex items-baseline gap-1">
+              <span className="text-4xl font-extrabold text-slate-900">
+                Sur devis
+              </span>
+            </div>
+          ) : (
+            <>
+              <div className="flex items-baseline gap-1">
+                <span className="text-4xl font-extrabold text-slate-900">
+                  {displayPrice}
+                  <span className="text-lg font-medium text-slate-400 ml-0.5">$</span>
+                </span>
+                <span className="text-sm text-slate-500 font-medium">
+                  / mois
+                </span>
+              </div>
+              {plan.billing_interval === "yearly" && (
+                <p className="text-xs text-emerald-600 font-semibold mt-1">
+                  {price}$ facturé annuellement
+                </p>
+              )}
+              {showAnnual && plan.billing_interval === "monthly" && (
+                <p className="text-xs text-slate-400 mt-1">
+                  ou économisez ~15% en annuel
+                </p>
+              )}
+            </>
+          )}
+        </div>
 
-      <Link
-        href={href}
-        className={`w-full py-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${
-          isPop ? style.cta : "bg-slate-900 text-white hover:bg-emerald-600"
-        }`}
-      >
-        {ctaLabel}
-        <ArrowRight className="w-4 h-4" />
-      </Link>
+        {/* CTA */}
+        <Link
+          href={href}
+          className={`w-full py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-200 ${
+            isPop
+              ? "bg-emerald-600 text-white hover:bg-emerald-700 shadow-md shadow-emerald-600/25"
+              : isFree
+                ? "bg-slate-100 text-slate-900 hover:bg-slate-200"
+                : "bg-slate-900 text-white hover:bg-slate-800"
+          }`}
+        >
+          {ctaLabel}
+          <ArrowRight className="w-4 h-4" />
+        </Link>
+      </div>
+
+      {/* Divider */}
+      <div className="border-t border-slate-100 mx-6 sm:mx-8" />
+
+      {/* Features */}
+      <div className="p-6 sm:p-8 pt-5 flex-1">
+        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">
+          Ce qui est inclus
+        </p>
+        <ul className="space-y-3">
+          {features.map((f) => (
+            <li key={f} className="flex items-start gap-2.5">
+              <div
+                className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
+                  isPop
+                    ? "bg-emerald-100 text-emerald-600"
+                    : "bg-slate-100 text-slate-500"
+                }`}
+              >
+                <Check className="w-3 h-3" strokeWidth={3} />
+              </div>
+              <span className="text-sm text-slate-700 leading-snug">{f}</span>
+            </li>
+          ))}
+          {storage && storage > 0 && (
+            <li className="flex items-start gap-2.5">
+              <div
+                className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
+                  isPop
+                    ? "bg-emerald-100 text-emerald-600"
+                    : "bg-slate-100 text-slate-500"
+                }`}
+              >
+                <Check className="w-3 h-3" strokeWidth={3} />
+              </div>
+              <span className="text-sm text-slate-700 leading-snug">
+                {storage === -1 ? "Stockage illimité" : `${storage} GB stockage`}
+              </span>
+            </li>
+          )}
+        </ul>
+      </div>
     </motion.div>
   );
 }
 
-/* ─── Skeleton while loading ─── */
+/* ─── Skeleton ─── */
 
 export function PlanCardSkeleton() {
   return (
-    <div className="rounded-3xl border border-slate-100 p-8 sm:p-10 animate-pulse bg-slate-50">
-      <div className="h-5 w-20 bg-slate-200 rounded-full mb-4" />
-      <div className="h-6 w-40 bg-slate-200 rounded mb-2" />
-      <div className="h-4 w-56 bg-slate-200 rounded mb-6" />
-      <div className="h-12 w-32 bg-slate-200 rounded mb-8" />
-      <div className="space-y-3 mb-8">
-        {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="flex items-center gap-3">
-            <div className="w-5 h-5 rounded-full bg-slate-200" />
-            <div className="h-4 w-full bg-slate-200 rounded" />
+    <div className="rounded-2xl border-2 border-slate-100 bg-white animate-pulse">
+      <div className="p-6 sm:p-8">
+        <div className="h-6 w-20 bg-slate-100 rounded-lg mb-5" />
+        <div className="h-5 w-36 bg-slate-100 rounded mb-2" />
+        <div className="h-4 w-52 bg-slate-100 rounded mb-5" />
+        <div className="h-10 w-28 bg-slate-100 rounded mb-6" />
+        <div className="h-11 w-full bg-slate-100 rounded-xl" />
+      </div>
+      <div className="border-t border-slate-100 mx-6 sm:mx-8" />
+      <div className="p-6 sm:p-8 pt-5 space-y-3">
+        <div className="h-3 w-24 bg-slate-100 rounded mb-4" />
+        {[1, 2, 3, 4, 5].map((i) => (
+          <div key={i} className="flex items-center gap-2.5">
+            <div className="w-5 h-5 rounded-full bg-slate-100 shrink-0" />
+            <div className="h-4 bg-slate-100 rounded flex-1" />
           </div>
         ))}
       </div>
-      <div className="h-12 w-full bg-slate-200 rounded-xl" />
     </div>
   );
 }
-
-/* ─── Fallback static plans when API is unreachable ─── */
-
-export const FALLBACK_PLANS: Plan[] = [
-  {
-    id: "fallback-starter",
-    plan_key: "starter",
-    name: "Starter",
-    description: "Petite pharmacie de quartier.",
-    active: true,
-    currency: "USD",
-    billing_interval: "monthly",
-    type: "paid",
-    plan_tier: "starter",
-    pricing_model: "flat",
-    price: 29,
-    max_users: 3,
-    max_storage_gb: 5,
-    max_pharmacies: 1,
-    is_trial_available: true,
-  },
-  {
-    id: "fallback-professional",
-    plan_key: "professional",
-    name: "Standard",
-    description: "Pharmacie établie, équipe complète.",
-    active: true,
-    currency: "USD",
-    billing_interval: "monthly",
-    type: "paid",
-    plan_tier: "professional",
-    pricing_model: "flat",
-    price: 99,
-    max_users: -1,
-    max_storage_gb: 50,
-    max_pharmacies: 3,
-    is_trial_available: true,
-  },
-  {
-    id: "fallback-enterprise",
-    plan_key: "enterprise",
-    name: "Entreprise",
-    description: "Distributeurs et chaînes multi-sites.",
-    active: true,
-    currency: "USD",
-    billing_interval: "monthly",
-    type: "paid",
-    plan_tier: "enterprise",
-    pricing_model: "flat",
-    price: 199,
-    max_users: -1,
-    max_storage_gb: -1,
-    max_pharmacies: -1,
-    is_trial_available: true,
-  },
-];

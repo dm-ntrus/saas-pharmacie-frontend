@@ -1,5 +1,5 @@
 import React from "react";
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { AlertTriangle } from "lucide-react";
 import { Button, Modal } from "@/design-system";
 
 interface DeleteProductModalProps {
@@ -21,11 +21,14 @@ export const DeleteProductModal: React.FC<DeleteProductModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      icon={<ExclamationTriangleIcon className="h-5 w-5 text-red-600" />}
       title="Discontinuer le produit"
       size="md"
     >
       <div className="mt-4 space-y-4">
+        <div className="flex items-center gap-2 text-red-600">
+          <AlertTriangle className="h-5 w-5" />
+          <span className="font-medium text-sm">Action irréversible</span>
+        </div>
         <div className="bg-gray-50 rounded-lg p-4">
           <p className="text-sm font-medium text-gray-900">{product.name}</p>
           <p className="text-sm text-gray-600">SKU: {product.sku}</p>
@@ -58,7 +61,7 @@ export const DeleteProductModal: React.FC<DeleteProductModalProps> = ({
             Annuler
           </Button>
           <Button
-            variant="destructive"
+            variant="danger"
             onClick={onConfirm}
             className="flex-1"
             loading={isLoading}

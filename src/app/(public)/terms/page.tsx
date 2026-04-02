@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { PLATFORM } from "@/config/platform";
 
 const sections = [
   {
@@ -82,10 +83,10 @@ export default function TermsPage() {
           <p className="text-sm text-slate-500">
             Des questions sur ces conditions ?{" "}
             <a
-              href="mailto:legal@syntixpharma.com"
+              href={`mailto:${PLATFORM.email.legal}`}
               className="text-emerald-600 font-bold hover:underline"
             >
-              legal@syntixpharma.com
+              {PLATFORM.email.legal}
             </a>
           </p>
         </div>

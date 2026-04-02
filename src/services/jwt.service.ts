@@ -2,18 +2,38 @@ import { JWTPayload } from "@/types/types";
 import { jwtDecode } from "jwt-decode";
 
 export interface Organization {
-  id: string; // Organization Keycloak ID
-  name: string; // Nom de l'organisation
-  roles: string[]; // Rôles dans cette organisation
-  attributes: {
-    tenant_id: string[]; // ID du tenant en DB
-    subdomain: string[]; // Sous-domaine
-    [key: string]: string[];
+  id: string;
+  name: string;
+  roles: string[];
+  attributes?: {
+    tenant_id?: string[];
+    subdomain?: string[];
+    [key: string]: string[] | undefined;
   };
 }
 
+/**
+ * Normalise le claim `organizations` du JWT.
+ *
+ * - **Array** (enrichToken / legacy): retourné tel quel.
+ * - **Map** (Keycloak 26+ scope `organization`): `{ slug: { id, roles } }` → tableau.
+ */
+export function normalizeJwtOrganizations(
+  raw: JWTPayload["organizations"] | undefined | null,
+): Organization[] {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw;
+  if (typeof raw === "object") {
+    return Object.entries(raw).map(([slug, val]) => ({
+      id: val?.id ?? slug,
+      name: slug,
+      roles: val?.roles ?? [],
+    }));
+  }
+  return [];
+}
+
 class JWTService {
-  // Décoder le token
   decode(token: string): JWTPayload {
     try {
       return jwtDecode<JWTPayload>(token);
@@ -22,40 +42,32 @@ class JWTService {
     }
   }
 
-  // Extraire les organizations
   getOrganizations(token: string): Organization[] {
     const payload = this.decode(token);
-    return payload.organizations || [];
+    return normalizeJwtOrganizations(payload.organizations);
   }
 
-  // Extraire l'ID utilisateur
   getUserId(token: string): string {
-    const payload = this.decode(token);
-    return payload.sub;
+    return this.decode(token).sub;
   }
 
-  // Extraire l'email
   getEmail(token: string): string {
-    const payload = this.decode(token);
-    return payload.email;
+    return this.decode(token).email;
   }
 
-  // Vérifier si l'utilisateur a un rôle dans une organization
   hasRoleInOrganization(
     token: string,
     organizationId: string,
-    role: string
+    role: string,
   ): boolean {
     const organizations = this.getOrganizations(token);
     const org = organizations.find((o) => o.id === organizationId);
     return org?.roles.includes(role) || false;
   }
 
-  // Vérifier si le token est valide
   isValid(token: string): boolean {
     try {
-      const payload = this.decode(token);
-      return payload.exp * 1000 > Date.now();
+      return this.decode(token).exp * 1000 > Date.now();
     } catch {
       return false;
     }

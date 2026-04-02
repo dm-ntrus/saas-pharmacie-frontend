@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiService } from "@/services/api.service";
+import { getApiBaseUrl } from "@/helpers/auth-interceptor";
 import { useTenantApiContext } from "@/hooks/useTenantApiContext";
 import { toast } from "react-hot-toast";
 import type {
@@ -186,7 +187,7 @@ export function usePharmacyConfigReset() {
 
 /** URL pour télécharger l'export JSON (ouvrir dans un nouvel onglet ou window.location) */
 export function getPharmacyConfigExportUrl(orgId: string, category?: string, pharmacyId?: string): string {
-  const base = typeof window !== "undefined" ? "" : process.env.NEXT_PUBLIC_API_URL ?? "";
+  const base = typeof window !== "undefined" ? getApiBaseUrl() : (process.env.NEXT_PUBLIC_API_URL ?? "");
   const params = new URLSearchParams({ organization_id: orgId });
   if (category) params.set("category", category);
   if (pharmacyId) params.set("pharmacy_id", pharmacyId);

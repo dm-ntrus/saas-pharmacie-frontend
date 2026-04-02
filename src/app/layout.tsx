@@ -1,12 +1,15 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Space_Grotesk } from 'next/font/google';
 import "./globals.css";
-import { AccessibilityProvider } from "@/design-system/AccessibilityProvider";
+import { AccessibilityProvider } from "@/components/ui/AccessibilityProvider";
 import QueryProvider from "@/providers/queryProvider";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "@/context/AuthContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import SoftwareApplicationJsonLd from "@/components/seo/SoftwareApplicationJsonLd";
+import { InstallPrompt } from "@/components/pwa/InstallPrompt";
+import { OfflineIndicator } from "@/components/pwa/OfflineIndicator";
+import { SkipToContent } from "@/components/ui";
 
 function metadataBaseUrl(): URL {
   const raw = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
@@ -58,7 +61,21 @@ export const metadata: Metadata = {
     description:
       "POS, inventaire, patients, supply chain et conformité — une seule plateforme.",
   },
+  manifest: "/manifest.json",
   robots: { index: true, follow: true },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "PharmaSaaS",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#059669",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -100,7 +117,12 @@ export default function RootLayout({
                 }}
               />
               <AccessibilityProvider>
-                {children}
+                <SkipToContent />
+                <OfflineIndicator />
+                <div id="main-content">
+                  {children}
+                </div>
+                <InstallPrompt />
               </AccessibilityProvider>
             </AuthProvider>
           </QueryProvider>

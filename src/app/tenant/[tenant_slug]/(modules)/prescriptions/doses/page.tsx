@@ -130,7 +130,7 @@ function DosesContent() {
           onClick={() => setTab("preparations")}
           className={`flex items-center gap-2 px-3 py-2.5 text-sm rounded-t-lg transition-colors ${
             tab === "preparations"
-              ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-medium border-b-2 border-blue-600"
+              ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 font-medium border-b-2 border-emerald-600"
               : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
           }`}
         >
@@ -141,7 +141,7 @@ function DosesContent() {
           onClick={() => setTab("pilulier")}
           className={`flex items-center gap-2 px-3 py-2.5 text-sm rounded-t-lg transition-colors ${
             tab === "pilulier"
-              ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-medium border-b-2 border-blue-600"
+              ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 font-medium border-b-2 border-emerald-600"
               : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
           }`}
         >
@@ -190,7 +190,16 @@ function PreparationsView({
   setSearch: (s: string) => void;
   verifyMutation: any;
 }) {
-  const mockPreparations: any[] = [];
+  const pharmacyId = usePharmacyId();
+  const { data: preparations = [], isLoading } = useQuery({
+    queryKey: ["dose-preparations", pharmacyId, search],
+    queryFn: () =>
+      apiService.get(
+        `/pharmacies/${pharmacyId}/prescriptions/advanced/dose-preparation`,
+        { params: search ? { search } : undefined },
+      ).then((r: any) => r.data ?? r ?? []),
+    enabled: !!pharmacyId,
+  });
 
   return (
     <div className="space-y-4">
@@ -201,7 +210,13 @@ function PreparationsView({
         leftIcon={<Search className="w-4 h-4" />}
       />
 
-      {mockPreparations.length === 0 ? (
+      {isLoading ? (
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-20 rounded-xl" />
+          ))}
+        </div>
+      ) : preparations.length === 0 ? (
         <Card>
           <CardContent className="p-8">
             <EmptyState
@@ -213,7 +228,7 @@ function PreparationsView({
         </Card>
       ) : (
         <div className="space-y-3">
-          {mockPreparations.map((prep: any) => (
+          {preparations.map((prep: any) => (
             <Card key={prep.id}>
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
@@ -266,10 +281,10 @@ function PreparationsView({
         </div>
       )}
 
-      <Card className="border-blue-200 dark:border-blue-800">
+      <Card className="border-emerald-200 dark:border-emerald-800">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-sm">
-            <AlertTriangle className="w-4 h-4 text-blue-600" />
+            <AlertTriangle className="w-4 h-4 text-emerald-600" />
             Checklist de préparation
           </CardTitle>
         </CardHeader>
@@ -310,7 +325,7 @@ function PilulierView({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Grid3X3 className="w-5 h-5 text-blue-600" />
+            <Grid3X3 className="w-5 h-5 text-emerald-600" />
             Vue pilulier hebdomadaire
           </CardTitle>
         </CardHeader>
@@ -446,7 +461,7 @@ function PrepareForm({
           Médicaments (un par ligne)
         </label>
         <textarea
-          className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-3 text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-3 text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           rows={4}
           placeholder="Metformine 500mg&#10;Lisinopril 10mg&#10;Atorvastatine 20mg"
           value={medications}

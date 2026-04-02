@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import { Button, Modal } from "@/design-system";
 import apiClient from "@/lib/api";
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { AlertTriangle } from "lucide-react";
 
 interface DeletePatientModalProps {
   isOpen: boolean;
@@ -46,7 +46,7 @@ export const DeletePatientModal: React.FC<DeletePatientModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      icon={<ExclamationTriangleIcon className="h-5 w-5 text-red-600" />}
+      icon={<AlertTriangle className="h-5 w-5 text-red-600" />}
       title="Supprimer le patient"
       size="md"
     >

@@ -6,13 +6,18 @@ import React, {
   useEffect,
   useState,
   useCallback,
+  useRef,
 } from "react";
-import { jwtService } from "@/services/jwt.service";
+import { jwtService, normalizeJwtOrganizations } from "@/services/jwt.service";
 import { tokenService } from "@/services/token.service";
 import { useRouter } from "next/navigation";
-import { getCookie, setCookie } from "@/utils/cookies";
+import { getCookie, setCookie, removeCookie } from "@/utils/cookies";
 import { ACCESS_TOKEN_UPDATED_EVENT } from "@/utils/access-token-events";
 import axios from "axios";
+import { getApiBaseUrl } from "@/helpers/auth-interceptor";
+
+const INACTIVITY_TIMEOUT_MS = Number(process.env.NEXT_PUBLIC_INACTIVITY_TIMEOUT_MS) || 30 * 60 * 1000;
+const TOKEN_REFRESH_BUFFER_MS = Number(process.env.NEXT_PUBLIC_TOKEN_REFRESH_BUFFER_MS) || 60 * 1000;
 
 interface AuthUser {
   id: string;
@@ -52,22 +57,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const inactivityTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  //
-  // Decode token + extract roles, tenant, slug, etc.
-  //
   const loadUserFromToken = useCallback((token: string) => {
     try {
       const decoded = jwtService.decode(token);
 
-      const orgs =
-        decoded.organizations?.map((org) => ({
+      const orgs = normalizeJwtOrganizations(decoded.organizations).map(
+        (org) => ({
           id: org.id,
           name: org.name,
           roles: org.roles,
-          tenantId: org.attributes?.tenant_id?.[0],
-          subdomain: org.attributes?.subdomain?.[0],
-        })) || [];
+          tenantId: org.attributes?.tenant_id?.[0] ?? "",
+          subdomain: org.attributes?.subdomain?.[0] || org.name,
+        }),
+      );
 
       const firstOrg = orgs[0] || null;
 
@@ -79,8 +84,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         family_name: decoded.family_name,
         roles: decoded.realm_access?.roles || [],
         tenantId:
-          (decoded as { tenant_id?: string; tenantId?: string }).tenant_id ||
-          (decoded as { tenant_id?: string; tenantId?: string }).tenantId ||
+          (decoded as any).tenant_id ||
+          (decoded as any).tenantId ||
           firstOrg?.tenantId ||
           null,
         tenantSlug: firstOrg?.subdomain || null,
@@ -93,17 +98,63 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  //
-  // Refresh from token
-  //
+  // --- Proactive token refresh ---
+  const scheduleTokenRefresh = useCallback((expiresInMs: number) => {
+    if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
+    const refreshIn = Math.max(expiresInMs - TOKEN_REFRESH_BUFFER_MS, 5000);
+    refreshTimerRef.current = setTimeout(async () => {
+      try {
+        const csrf = getCookie("csrf_token");
+        await axios.post(
+          `${getApiBaseUrl()}/bff/auth/refresh`,
+          {},
+          {
+            withCredentials: true,
+            headers: csrf ? { "X-CSRF-Token": csrf } : {},
+          },
+        );
+      } catch {
+        // Refresh failed — user will be redirected on next API 401
+      }
+    }, refreshIn);
+  }, []);
+
+  // --- Inactivity timeout ---
+  const resetInactivityTimer = useCallback(() => {
+    if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
+    inactivityTimerRef.current = setTimeout(() => {
+      setUser(null);
+      tokenService.clearTokens();
+      removeCookie("slug_organization");
+      removeCookie("tenant_id");
+      removeCookie("entitled_modules");
+      const orgSlug = getCookie("slug_organization");
+      if (orgSlug) router.replace(`/tenant/${orgSlug}/auth/login?reason=inactivity`);
+      else router.replace("/auth/login?reason=inactivity");
+    }, INACTIVITY_TIMEOUT_MS);
+  }, [router]);
+
+  useEffect(() => {
+    if (!user) return;
+    const events = ["mousedown", "keydown", "scroll", "touchstart"];
+    const handler = () => resetInactivityTimer();
+    events.forEach((e) => window.addEventListener(e, handler, { passive: true }));
+    resetInactivityTimer();
+    return () => {
+      events.forEach((e) => window.removeEventListener(e, handler));
+      if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
+    };
+  }, [user, resetInactivityTimer]);
+
+  // --- Load user via BFF on mount ---
   const refreshUser = useCallback(() => {
-    const api = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-    const base = api.replace(/\/+$/, "");
+    const base = getApiBaseUrl();
     setLoading(true);
     axios
-      .get(`${base}/api/v1/bff/auth/me`, { withCredentials: true })
+      .get(`${base}/bff/auth/me`, { withCredentials: true })
       .then((r) => {
-        const u = r.data?.user;
+        const payload = r.data?.data ?? r.data;
+        const u = payload?.user;
         if (!u?.id) {
           setUser(null);
           return;
@@ -116,7 +167,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           family_name: "",
           roles: u.roles || [],
           tenantId: u.tenantId || null,
-          tenantSlug: u.keycloakOrganizations?.[0]?.attributes?.subdomain?.[0] || null,
+          tenantSlug:
+            u.keycloakOrganizations?.[0]?.attributes?.subdomain?.[0] || null,
           organizations: (u.keycloakOrganizations || []).map((org: any) => ({
             id: org.id,
             name: org.name,
@@ -125,14 +177,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             subdomain: org.attributes?.subdomain?.[0],
           })),
         });
+        const ttlMs = r.data?.tokenExpiresInMs;
+        const refreshDelay = typeof ttlMs === "number" && ttlMs > 0 ? ttlMs : 5 * 60 * 1000;
+        scheduleTokenRefresh(refreshDelay);
       })
       .catch(() => setUser(null))
       .finally(() => setLoading(false));
-  }, []);
+  }, [scheduleTokenRefresh]);
 
-  //
-  // Load user on mount
-  //
   useEffect(() => {
     void refreshUser();
   }, [refreshUser]);
@@ -145,18 +197,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
     window.addEventListener(ACCESS_TOKEN_UPDATED_EVENT, onAccessTokenUpdated);
     return () => {
-      window.removeEventListener(
-        ACCESS_TOKEN_UPDATED_EVENT,
-        onAccessTokenUpdated,
-      );
+      window.removeEventListener(ACCESS_TOKEN_UPDATED_EVENT, onAccessTokenUpdated);
     };
   }, [loadUserFromToken]);
 
-  //
-  // Login
-  //
-  const login = async (access: string, refresh: string, expiresIn: number) => {
+  // --- Login ---
+  const login = async (
+    access: string,
+    refresh: string,
+    expiresIn: number,
+  ) => {
+    tokenService.setTokens(access, refresh, expiresIn);
     loadUserFromToken(access);
+    scheduleTokenRefresh(expiresIn * 1000);
 
     const decoded = jwtService.decode(access);
     const isAdmin = decoded.realm_access?.roles?.includes("system_admin");
@@ -164,32 +217,51 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (isAdmin) {
       router.replace("/admin");
     } else {
-      const firstOrg = decoded.organizations?.[0];
-      const slug = firstOrg?.attributes?.subdomain?.[0];
-      setCookie("slug_organization", slug);
+      const orgs = normalizeJwtOrganizations(decoded.organizations);
+      const firstOrg = orgs[0];
+      const slug = firstOrg?.attributes?.subdomain?.[0] || firstOrg?.name;
+      if (slug) setCookie("slug_organization", slug);
       router.replace(`/tenant/${slug}/dashboard`);
     }
   };
 
-  //
-  // Logout
-  //
-  const logout = () => {
-    setUser(null);
+  // --- Logout: clear everything + revoke BFF session ---
+  const logout = useCallback(() => {
+    // Read redirect target BEFORE clearing cookies
     const orgSlug = getCookie("slug_organization");
-    const api = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-    const base = api.replace(/\/+$/, "");
+    const csrf = getCookie("csrf_token");
+    const base = getApiBaseUrl();
+
+    // Clear React state immediately
+    setUser(null);
+
+    // Clear all client-side tokens and session data
+    tokenService.clearTokens();
+    removeCookie("slug_organization");
+    removeCookie("tenant_id");
+    removeCookie("entitled_modules");
+    removeCookie("current_organization");
+    removeCookie("csrf_token");
+
+    // Clear timers
+    if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
+    if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
+
     axios
-      .post(`${base}/api/v1/bff/auth/logout`, {}, { withCredentials: true })
+      .post(
+        `${base}/bff/auth/logout`,
+        {},
+        {
+          withCredentials: true,
+          headers: csrf ? { "X-CSRF-Token": csrf } : {},
+        },
+      )
       .finally(() => {
         if (orgSlug) router.replace(`/tenant/${orgSlug}/auth/login`);
         else router.replace("/auth/login");
       });
-  };
+  }, [router]);
 
-  //
-  // Return current tenant slug
-  //
   const getCurrentTenant = (): string | null => {
     return user?.tenantSlug || null;
   };

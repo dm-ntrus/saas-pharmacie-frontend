@@ -3,15 +3,15 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  PlusIcon,
-  MagnifyingGlassIcon,
-  CubeIcon,
-  ClockIcon,
-  ExclamationTriangleIcon,
-  AdjustmentsVerticalIcon,
-  ArrowDownTrayIcon,
-  FunnelIcon,
-} from "@heroicons/react/24/outline";
+  Plus,
+  Search,
+  Package,
+  Clock,
+  AlertTriangle,
+  SlidersVertical,
+  Download,
+  Filter,
+} from "lucide-react";
 import {
   Button,
   Input,
@@ -177,7 +177,7 @@ const BatchesPage: React.FC = () => {
     {
       title: "Total Lots",
       value: batchesData?.total || 0,
-      icon: CubeIcon,
+      icon: Package,
       color: "bg-blue-500",
     },
     {
@@ -187,7 +187,7 @@ const BatchesPage: React.FC = () => {
           const status = getExpirationStatus(b.expirationDate);
           return status.days >= 0 && status.days <= 30;
         }).length || 0,
-      icon: ClockIcon,
+      icon: Clock,
       color: "bg-yellow-500",
     },
     {
@@ -195,7 +195,7 @@ const BatchesPage: React.FC = () => {
       value:
         batchesData?.batches.filter((b) => b.status === BatchStatus.EXPIRED)
           .length || 0,
-      icon: ExclamationTriangleIcon,
+      icon: AlertTriangle,
       color: "bg-red-500",
     },
     {
@@ -206,20 +206,20 @@ const BatchesPage: React.FC = () => {
           0
         ) || 0
       ),
-      icon: CubeIcon,
+      icon: Package,
       color: "bg-green-500",
     },
   ];
 
   const EmptyState = () => (
     <div className="text-center py-12">
-      <CubeIcon className="h-12 w-12 text-gray-400 mx-auto" />
+      <Package className="h-12 w-12 text-gray-400 mx-auto" />
       <h3 className="mt-2 text-sm font-medium text-gray-900">Aucun lot</h3>
       <p className="mt-1 text-sm text-gray-500">
         Commencez par ajouter un nouveau lot.
       </p>
       <div className="mt-6">
-        <Button icon={<PlusIcon className="h-4 w-4" />}>
+        <Button icon={<Plus className="h-4 w-4" />}>
           <Link href="/inventory/batches/new">Créer un lot</Link>
         </Button>
       </div>
@@ -243,7 +243,7 @@ const BatchesPage: React.FC = () => {
             <Button variant="outline" asChild>
               <Link href="/inventory">Voir les produits</Link>
             </Button>
-            <Button icon={<PlusIcon className="h-4 w-4" />}>
+            <Button icon={<Plus className="h-4 w-4" />}>
               <Link href="/inventory/batches/new">Nouveau lot</Link>
             </Button>
           </div>
@@ -285,20 +285,20 @@ const BatchesPage: React.FC = () => {
                       setSearchTerm(e.target.value);
                       setCurrentPage(1);
                     }}
-                    icon={<MagnifyingGlassIcon className="h-5 w-5" />}
+                    icon={<Search className="h-5 w-5" />}
                   />
                 </div>
                 <Button
                   variant="outline"
                   onClick={() => setShowFilters(!showFilters)}
-                  icon={<FunnelIcon className="h-5 w-5" />}
+                  icon={<Filter className="h-5 w-5" />}
                 >
                   Filtres
                 </Button>
                 <Button
                   variant="outline"
                   onClick={handleExport}
-                  icon={<ArrowDownTrayIcon className="h-5 w-5" />}
+                  icon={<Download className="h-5 w-5" />}
                 >
                   Exporter
                 </Button>
@@ -315,7 +315,7 @@ const BatchesPage: React.FC = () => {
                         setFilterStatus(e.target.value as BatchStatus | "");
                         setCurrentPage(1);
                       }}
-                      className="w-full h-10 px-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-sky-600"
+                      className="w-full h-10 px-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
                     >
                       <option value="">Tous</option>
                       <option value={BatchStatus.ACTIVE}>Actif</option>
@@ -335,7 +335,7 @@ const BatchesPage: React.FC = () => {
                         setFilterExpiringDays(e.target.value);
                         setCurrentPage(1);
                       }}
-                      className="w-full h-10 px-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-sky-600"
+                      className="w-full h-10 px-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
                     >
                       <option value="">Tous</option>
                       <option value="7">7 jours</option>
@@ -354,7 +354,7 @@ const BatchesPage: React.FC = () => {
                           setFilterLowStock(e.target.checked);
                           setCurrentPage(1);
                         }}
-                        className="w-5 h-5 text-sky-600 border-gray-300 rounded focus:ring-sky-500"
+                        className="w-5 h-5 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"
                       />
                       <span className="text-sm text-gray-700">
                         Stock faible uniquement
@@ -516,7 +516,7 @@ const BatchesPage: React.FC = () => {
                                 setIsAdjustModalOpen(true);
                               }}
                               icon={
-                                <AdjustmentsVerticalIcon className="h-4 w-4" />
+                                <SlidersVertical className="h-4 w-4" />
                               }
                             >
                               Ajuster

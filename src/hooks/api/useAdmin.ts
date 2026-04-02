@@ -1,6 +1,9 @@
+"use client";
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import apiService from "@/services/api.service";
 import { toast } from "react-hot-toast";
+import { useAuth } from "@/context/AuthContext";
 
 // Users
 export function useUsers(params?: { tenantId?: string; limit?: number; offset?: number }) {
@@ -23,10 +26,10 @@ export function useCreateUser() {
   return useMutation({
     mutationFn: (data: any) => apiService.post("/identity/users", data),
     onSuccess: () => {
-      toast.success("Utilisateur cree");
+      toast.success("Utilisateur créé");
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
     },
-    onError: () => toast.error("Erreur lors de la creation"),
+    onError: () => toast.error("Erreur lors de la création"),
   });
 }
 
@@ -35,7 +38,7 @@ export function useUpdateUser() {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: any }) => apiService.put(`/identity/users/${id}`, data),
     onSuccess: () => {
-      toast.success("Utilisateur mis a jour");
+      toast.success("Utilisateur mis à jour");
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
     },
     onError: () => toast.error("Erreur"),
@@ -45,9 +48,9 @@ export function useUpdateUser() {
 export function useDeactivateUser() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => apiService.put(`/identity/users/${id}/deactivate`, {}),
+    mutationFn: (id: string) => apiService.post(`/identity/users/${id}/disable`, {}),
     onSuccess: () => {
-      toast.success("Utilisateur desactive");
+      toast.success("Utilisateur désactivé");
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
     },
     onError: () => toast.error("Erreur"),
@@ -58,16 +61,16 @@ export function useDeactivateUser() {
 export function useCustomRoles(params?: { tenantId?: string }) {
   return useQuery({
     queryKey: ["custom-roles", params],
-    queryFn: () => apiService.get("/api/roles/custom", { params }),
+    queryFn: () => apiService.get("/identity/roles/custom", { params }),
   });
 }
 
 export function useCreateCustomRole() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: any) => apiService.post("/api/roles/custom", data),
+    mutationFn: (data: any) => apiService.post("/identity/roles/custom", data),
     onSuccess: () => {
-      toast.success("Role personnalise cree");
+      toast.success("Rôle personnalisé créé");
       queryClient.invalidateQueries({ queryKey: ["custom-roles"] });
     },
     onError: () => toast.error("Erreur"),
@@ -77,9 +80,9 @@ export function useCreateCustomRole() {
 export function useUpdateCustomRole() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => apiService.put(`/api/roles/custom/${id}`, data),
+    mutationFn: ({ id, data }: { id: string; data: any }) => apiService.put(`/identity/roles/custom/${id}`, data),
     onSuccess: () => {
-      toast.success("Role mis a jour");
+      toast.success("Rôle mis à jour");
       queryClient.invalidateQueries({ queryKey: ["custom-roles"] });
     },
     onError: () => toast.error("Erreur"),
@@ -89,9 +92,9 @@ export function useUpdateCustomRole() {
 export function useDeleteCustomRole() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => apiService.delete(`/api/roles/custom/${id}`),
+    mutationFn: (id: string) => apiService.delete(`/identity/roles/custom/${id}`),
     onSuccess: () => {
-      toast.success("Role supprime");
+      toast.success("Rôle supprimé");
       queryClient.invalidateQueries({ queryKey: ["custom-roles"] });
     },
     onError: () => toast.error("Erreur"),
@@ -102,7 +105,7 @@ export function useDeleteCustomRole() {
 export function useUserRoles(userId: string) {
   return useQuery({
     queryKey: ["user-roles", userId],
-    queryFn: () => apiService.get(`/api/users/${userId}/roles`),
+    queryFn: () => apiService.get(`/identity/user-roles/${userId}/roles`),
     enabled: !!userId,
   });
 }
@@ -110,10 +113,10 @@ export function useUserRoles(userId: string) {
 export function useAssignRole() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ userId, data }: { userId: string; data: any }) =>
-      apiService.post(`/api/users/${userId}/roles`, data),
+    mutationFn: ({ userId, data }: { userId: string; data: { roleId: string; organizationId?: string; requiresApproval?: boolean; reason?: string } }) =>
+      apiService.post(`/identity/user-roles/${userId}/roles`, data),
     onSuccess: () => {
-      toast.success("Role assigne");
+      toast.success("Rôle assigné");
       queryClient.invalidateQueries({ queryKey: ["user-roles"] });
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
     },
@@ -137,36 +140,43 @@ export function useOrganizationMembers(orgId: string) {
   });
 }
 
-// 2FA Status
+// 2FA Status — uses current user's ID from auth context
 export function useTOTPStatus() {
+  const { user } = useAuth();
   return useQuery({
-    queryKey: ["totp-status"],
-    queryFn: () => apiService.get("/identity/users/me/2fa/status"),
+    queryKey: ["totp-status", user?.id],
+    queryFn: () => apiService.get(`/identity/users/${user!.id}/2fa/status`),
+    enabled: !!user?.id,
   });
 }
 
 export function useSetupTOTP() {
+  const { user } = useAuth();
   return useMutation({
-    mutationFn: (data: any) => apiService.post("/identity/users/me/2fa/setup", data),
-    onSuccess: () => toast.success("2FA configure"),
+    mutationFn: (data: any) => apiService.post(`/identity/users/${user!.id}/2fa/setup`, data),
+    onSuccess: () => toast.success("2FA configuré"),
     onError: () => toast.error("Erreur"),
   });
 }
 
-// Active Sessions
+// Active Sessions — uses current user's ID from auth context
 export function useActiveSessions() {
+  const { user } = useAuth();
   return useQuery({
-    queryKey: ["active-sessions"],
-    queryFn: () => apiService.get("/identity/users/me/sessions"),
+    queryKey: ["active-sessions", user?.id],
+    queryFn: () => apiService.get(`/identity/users/${user!.id}/sessions`),
+    enabled: !!user?.id,
   });
 }
 
 export function useTerminateSession() {
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (sessionId: string) => apiService.delete(`/identity/users/me/sessions/${sessionId}`),
+    mutationFn: (sessionId: string) =>
+      apiService.post(`/identity/users/${user!.id}/logout`, {}),
     onSuccess: () => {
-      toast.success("Session terminee");
+      toast.success("Session terminée");
       queryClient.invalidateQueries({ queryKey: ["active-sessions"] });
     },
     onError: () => toast.error("Erreur"),

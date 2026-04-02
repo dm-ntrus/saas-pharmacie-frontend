@@ -65,7 +65,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       <div className="flex items-center justify-between p-3 border-b border-gray-700">
         {isOpen && (
           <div className="flex items-center space-x-3">
-            <div className="h-8 w-8 bg-sky-600 rounded-lg flex items-center justify-center">
+            <div className="h-8 w-8 bg-emerald-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold">P</span>
             </div>
             <span className="text-xl font-bold">PharmaSaaS</span>
@@ -86,7 +86,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       {isOpen && user && (
         <div className="p-4 border-b border-gray-700">
           <div className="flex items-center">
-            <div className="h-10 w-10 bg-sky-600 rounded-full flex items-center justify-center">
+            <div className="h-10 w-10 bg-emerald-600 rounded-full flex items-center justify-center">
               <span className="text-sm font-medium">
                 {user.firstName?.[0]}{user.lastName?.[0]}
               </span>

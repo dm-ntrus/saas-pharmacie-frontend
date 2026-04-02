@@ -28,17 +28,25 @@ export interface JWTPayload {
     };
   };
   
-  // Organizations (IMPORTANT!)
-  organizations: Array<{
-    id: string;                   // Organization Keycloak ID
-    name: string;                 // Nom de l'organisation
-    roles: string[];              // Rôles dans cette organisation
-    attributes: {
-      tenant_id: string[];        // ID du tenant en DB
-      subdomain: string[];        // Sous-domaine
-      [key: string]: string[];
-    };
-  }>;
+  /**
+   * Organizations claim. Two possible formats:
+   * - **Array** (enrichToken / legacy): `[{ id, name, roles, attributes }]`
+   * - **Map** (Keycloak 26+ scope `organization`): `{ slug: { id, roles } }`
+   *
+   * Use `normalizeJwtOrganizations()` from `jwt.service` to get a uniform array.
+   */
+  organizations:
+    | Array<{
+        id: string;
+        name: string;
+        roles: string[];
+        attributes?: {
+          tenant_id?: string[];
+          subdomain?: string[];
+          [key: string]: string[] | undefined;
+        };
+      }>
+    | Record<string, { id?: string; roles?: string[] }>;
   
   // Tenant racine plateforme (toutes les orgs du JWT = pharmacies de ce tenant)
   tenant_id?: string;

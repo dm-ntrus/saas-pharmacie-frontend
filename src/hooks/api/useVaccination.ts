@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiService } from "@/services/api.service";
+import { getApiBaseUrl } from "@/helpers/auth-interceptor";
 import { useTenantApiContext } from "@/hooks/useTenantApiContext";
 import { toast } from "react-hot-toast";
 import type {
@@ -643,8 +644,7 @@ export function useVerifyCertificate(certificateId: string) {
 
 // Certificate PDF: use apiService.get with responseType blob in component
 export function getCertificatePdfUrl(pharmacyId: string, certificateId: string): string {
-  const base = process.env.NEXT_PUBLIC_API_URL || "";
-  return `${base}/pharmacies/${pharmacyId}/vaccination/certificates/${certificateId}/pdf`;
+  return `${getApiBaseUrl()}/pharmacies/${pharmacyId}/vaccination/certificates/${certificateId}/pdf`;
 }
 
 // ─── Proximity Alerts ─────────────────────────────────────────────────────

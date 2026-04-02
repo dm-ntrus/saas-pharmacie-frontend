@@ -22,10 +22,10 @@ export const MicroButton: React.FC<MicroButtonProps> = ({
   const baseClasses = "relative inline-flex items-center justify-center font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 overflow-hidden group";
   
   const variantClasses = {
-    primary: "bg-gradient-to-r from-sky-600 to-cyan-600 text-white shadow-lg shadow-sky-500/25 hover:shadow-xl hover:shadow-sky-500/40 hover:-translate-y-0.5 focus-visible:ring-sky-500",
+    primary: "bg-gradient-to-r from-emerald-600 to-cyan-600 text-white shadow-lg shadow-emerald-500/25 hover:shadow-xl hover:shadow-emerald-500/40 hover:-translate-y-0.5 focus-visible:ring-emerald-500",
     secondary: "bg-white text-slate-900 border border-slate-200 hover:bg-slate-50 hover:shadow-md hover:border-slate-300 focus-visible:ring-slate-500",
     ghost: "text-slate-700 hover:bg-slate-100 hover:text-slate-900 focus-visible:ring-slate-500",
-    outline: "border-2 border-sky-500 text-sky-600 hover:bg-sky-50 hover:shadow-md focus-visible:ring-sky-500"
+    outline: "border-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50 hover:shadow-md focus-visible:ring-emerald-500"
   };
   
   const sizeClasses = {
@@ -72,14 +72,14 @@ export const MicroButton: React.FC<MicroButtonProps> = ({
 
       {/* Glow effect */}
       {animation === 'glow' && (
-        <span className="absolute -inset-2 bg-gradient-to-r from-sky-500/0 via-sky-500/20 to-sky-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl rounded-2xl" />
+        <span className="absolute -inset-2 bg-gradient-to-r from-emerald-500/0 via-emerald-500/20 to-emerald-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl rounded-2xl" />
       )}
 
       {/* Magnetic field */}
       {animation === 'magnetic' && (
         <>
-          <span className="absolute -inset-4 bg-gradient-to-r from-sky-100/0 via-sky-100/30 to-sky-100/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl rounded-3xl" />
-          <span className="absolute inset-0 bg-gradient-to-r from-sky-400/0 to-cyan-400/0 group-hover:from-sky-400/10 group-hover:to-cyan-400/10 transition-all duration-300 rounded-xl" />
+          <span className="absolute -inset-4 bg-gradient-to-r from-emerald-100/0 via-emerald-100/30 to-emerald-100/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl rounded-3xl" />
+          <span className="absolute inset-0 bg-gradient-to-r from-emerald-400/0 to-cyan-400/0 group-hover:from-emerald-400/10 group-hover:to-cyan-400/10 transition-all duration-300 rounded-xl" />
         </>
       )}
 

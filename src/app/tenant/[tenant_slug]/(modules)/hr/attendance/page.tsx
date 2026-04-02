@@ -49,7 +49,7 @@ function HrAttendanceContent() {
           <CardContent className="p-4">
             <h2 className="font-semibold mb-3">Pointer une entree</h2>
             <div className="flex gap-3 flex-wrap">
-              <select className="rounded-lg border px-3 py-2 text-sm min-w-[200px]" value={selectedId} onChange={(e) => setSelectedId(e.target.value)}>
+              <select className="rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm min-w-[200px] focus:outline-none focus:ring-2 focus:ring-emerald-500" value={selectedId} onChange={(e) => setSelectedId(e.target.value)}>
                 <option value="">Employe</option>
                 {empList.map((emp: { id: string; first_name?: string; last_name?: string }) => (
                   <option key={emp.id} value={emp.id}>{emp.first_name} {emp.last_name}</option>

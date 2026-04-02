@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Code, Braces, Key, FileText, ArrowRight, Terminal, Webhook } from "lucide-react";
 import Link from "next/link";
+import { PLATFORM } from "@/config/platform";
 
 const endpoints = [
   { method: "GET", path: "/api/v1/products", desc: "Liste des produits de l'inventaire" },
@@ -112,7 +113,7 @@ export default function ApiDocsPage() {
             </span>
           </div>
           <pre className="text-sm text-slate-300 font-mono leading-relaxed">
-            <code>{`curl -X GET https://api.syntixpharma.com/v1/products \\
+            <code>{`curl -X GET ${PLATFORM.apiDocsUrl}/v1/products \\
   -H "Authorization: Bearer YOUR_TOKEN" \\
   -H "Content-Type: application/json"
 

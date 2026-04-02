@@ -1,10 +1,10 @@
 import React from "react";
 import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ChevronDoubleLeftIcon,
-  ChevronDoubleRightIcon,
-} from "@heroicons/react/24/outline";
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
 import { Button } from "@/design-system";
 
 interface PaginationProps {
@@ -79,7 +79,7 @@ export const Pagination: React.FC<PaginationProps> = ({
             <select
               value={itemsPerPage}
               onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
-              className="px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-600"
+              className="px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-600"
             >
               <option value={10}>10</option>
               <option value={20}>20</option>
@@ -95,20 +95,22 @@ export const Pagination: React.FC<PaginationProps> = ({
         {/* First page */}
         <Button
           variant="outline"
-          size="sm"
+          size="icon"
           onClick={() => onPageChange(1)}
           disabled={currentPage === 1}
-          icon={<ChevronDoubleLeftIcon className="h-4 w-4" />}
-        />
+        >
+          <ChevronsLeft className="h-4 w-4" />
+        </Button>
 
         {/* Previous page */}
         <Button
           variant="outline"
-          size="sm"
+          size="icon"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          icon={<ChevronLeftIcon className="h-4 w-4" />}
-        />
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
 
         {/* Page numbers */}
         <div className="hidden sm:flex items-center gap-1">
@@ -123,7 +125,7 @@ export const Pagination: React.FC<PaginationProps> = ({
                 onClick={() => onPageChange(pageNum as number)}
                 className={`min-w-[40px] h-10 px-3 rounded-lg text-sm font-medium transition-all ${
                   currentPage === pageNum
-                    ? "bg-sky-600 text-white shadow-md"
+                    ? "bg-emerald-600 text-white shadow-md"
                     : "text-gray-700 hover:bg-gray-100"
                 }`}
               >
@@ -141,20 +143,22 @@ export const Pagination: React.FC<PaginationProps> = ({
         {/* Next page */}
         <Button
           variant="outline"
-          size="sm"
+          size="icon"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          icon={<ChevronRightIcon className="h-4 w-4" />}
-        />
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
 
         {/* Last page */}
         <Button
           variant="outline"
-          size="sm"
+          size="icon"
           onClick={() => onPageChange(totalPages)}
           disabled={currentPage === totalPages}
-          icon={<ChevronDoubleRightIcon className="h-4 w-4" />}
-        />
+        >
+          <ChevronsRight className="h-4 w-4" />
+        </Button>
       </div>
     </div>
   );

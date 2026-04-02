@@ -28,7 +28,7 @@ export type ProvisioningErrorEvent = {
  * - Socket.IO is mounted at server root (`/socket.io`) with namespace `/tenant-provisioning`
  */
 export function getSocketIoBaseUrl(): string {
-  const raw = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  const raw = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
   const base = raw.replace(/\/+$/, "");
   return base.endsWith("/api/v1") ? base.slice(0, -"/api/v1".length) : base;
 }

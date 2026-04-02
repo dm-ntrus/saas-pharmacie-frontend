@@ -8,12 +8,13 @@ import { useTenantPath } from "@/hooks/useTenantPath";
 import { Permission } from "@/types/permissions";
 import { Role } from "@/types/roles";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-  SkeletonCard,
+  Skeleton,
   BarChartWidget,
   AreaChartWidget,
   LineChartWidget,
@@ -26,7 +27,6 @@ import {
   FileText,
   TrendingUp,
   AlertTriangle,
-  Clock,
   DollarSign,
   Activity,
   Syringe,
@@ -34,15 +34,23 @@ import {
   UserCog,
   BarChart3,
 } from "lucide-react";
+import { PlanDowngradeBanner } from "@/components/billing/PlanDowngradeBanner";
 import { AccountantDashboard } from "@/components/dashboards/AccountantDashboard";
 import { HRDashboard } from "@/components/dashboards/HRDashboard";
 import { InventoryManagerDashboard } from "@/components/dashboards/InventoryManagerDashboard";
 import { QualityManagerDashboard } from "@/components/dashboards/QualityManagerDashboard";
 import { PatientDashboard } from "@/components/dashboards/PatientDashboard";
+import CashierDashboard from "@/components/dashboards/CashierDashboard";
+import { useSalesDashboardKPIs, useSalesDashboardTimeseries, useSalesDashboardProducts } from "@/hooks/api/useSales";
+import { useInventoryKPIs, useInventoryAlerts } from "@/hooks/api/useInventory";
+import { usePatientSummary } from "@/hooks/api/usePatients";
+import { usePrescriptionStats } from "@/hooks/api/usePrescriptions";
+import { formatCurrency, formatNumber } from "@/utils/formatters";
 
 function KPICard({
   title,
   value,
+  loading,
   icon: Icon,
   trend,
   trendLabel,
@@ -51,6 +59,7 @@ function KPICard({
 }: {
   title: string;
   value: string;
+  loading?: boolean;
   icon: React.ComponentType<{ className?: string }>;
   trend?: number;
   trendLabel?: string;
@@ -70,13 +79,13 @@ function KPICard({
       <CardContent className="p-4 sm:p-6">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              {title}
-            </p>
-            <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-              {value}
-            </p>
-            {trend !== undefined && (
+            <p className="text-sm text-slate-500 dark:text-slate-400">{title}</p>
+            {loading ? (
+              <Skeleton className="h-8 w-24" />
+            ) : (
+              <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{value}</p>
+            )}
+            {!loading && trend !== undefined && (
               <p
                 className={`text-xs font-medium ${
                   trend >= 0
@@ -85,13 +94,11 @@ function KPICard({
                 }`}
               >
                 {trend >= 0 ? "+" : ""}
-                {trend}% {trendLabel || "vs hier"}
+                {trend.toFixed(1)}% {trendLabel || "vs hier"}
               </p>
             )}
           </div>
-          <div
-            className={`w-12 h-12 rounded-xl flex items-center justify-center ${colorMap[color]}`}
-          >
+          <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${colorMap[color]}`}>
             <Icon className="w-6 h-6" />
           </div>
         </div>
@@ -99,9 +106,7 @@ function KPICard({
     </Card>
   );
 
-  if (href) {
-    return <Link href={href}>{content}</Link>;
-  }
+  if (href) return <Link href={href}>{content}</Link>;
   return content;
 }
 
@@ -124,12 +129,8 @@ function QuickAction({
             <Icon className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-              {title}
-            </p>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              {description}
-            </p>
+            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{title}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">{description}</p>
           </div>
         </CardContent>
       </Card>
@@ -146,38 +147,84 @@ export default function DashboardPage() {
   const greeting = getGreeting();
   const userName = user?.given_name || user?.name || "Utilisateur";
 
-  const isCashier = hasRole(Role.CASHIER) && !hasAnyPermission([Permission.ACCOUNTING_READ, Permission.EMPLOYEES_READ]);
+  // All hooks must be called unconditionally (React rules of hooks)
+  const salesKPIs = useSalesDashboardKPIs("month");
+  const inventoryKPIs = useInventoryKPIs(30);
+  const patientSummary = usePatientSummary();
+  const prescriptionStats = usePrescriptionStats();
+  const inventoryAlerts = useInventoryAlerts({ limit: 1 });
+  const salesTimeseries = useSalesDashboardTimeseries("week");
+  const topProducts = useSalesDashboardProducts("month", 5);
+
+  const isCashier =
+    hasRole(Role.CASHIER) &&
+    !hasAnyPermission([Permission.ACCOUNTING_READ, Permission.EMPLOYEES_READ]);
   const isAccountant = hasRole(Role.ACCOUNTANT);
   const isHR = hasRole(Role.HR_MANAGER);
   const isInventoryManager = hasRole(Role.INVENTORY_MANAGER);
   const isQualityManager = hasRole(Role.QUALITY_MANAGER);
   const isPatient = hasRole(Role.PATIENT);
 
+  if (isCashier) return <CashierDashboard />;
   if (isAccountant) return <AccountantDashboard />;
   if (isHR) return <HRDashboard />;
   if (isInventoryManager) return <InventoryManagerDashboard />;
   if (isQualityManager) return <QualityManagerDashboard />;
   if (isPatient) return <PatientDashboard />;
 
+  // Extract KPI values safely
+  const kpis = (salesKPIs.data as any)?.kpis || {};
+  const invKpis = (inventoryKPIs.data as any) || {};
+  const patSummary = (patientSummary.data as any) || {};
+  const rxStats = (prescriptionStats.data as any) || {};
+  const alertCount = (inventoryAlerts.data as any)?.total ?? (inventoryAlerts.data as any)?.length ?? 0;
+
+  const todaySalesCount = kpis.totalSales ?? kpis.salesCount ?? 0;
+  const todayRevenue = kpis.totalRevenue ?? kpis.revenue ?? 0;
+  const productCount = invKpis.totalProducts ?? invKpis.productCount ?? 0;
+  const activePatients = patSummary.total ?? patSummary.activeCount ?? 0;
+  const pendingRx = rxStats.pending ?? rxStats.pendingCount ?? 0;
+
+  // Timeseries data for charts
+  const timeseriesData = (salesTimeseries.data as any)?.timeSeries || [];
+  const topProductsData = (topProducts.data as any)?.products || (topProducts.data as any)?.items || [];
+
+  const anyLoading = salesKPIs.isLoading;
+
+  const dashSearchParams = useSearchParams();
+  const crossTenantBlocked = dashSearchParams?.get("cross_tenant_blocked");
+
   return (
     <div className="space-y-6">
+      <PlanDowngradeBanner />
+
+      {crossTenantBlocked && (
+        <div className="flex items-start gap-3 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">
+          <span className="font-semibold shrink-0">Organisation incorrecte :</span>
+          <span>
+            Vous avez tenté d&apos;accéder à <strong>{crossTenantBlocked}</strong>.
+            Vous avez été redirigé vers votre propre organisation.
+          </span>
+        </div>
+      )}
+
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
           {greeting}, {userName}
         </h1>
         <p className="text-slate-500 dark:text-slate-400 mt-1">
-          {currentOrganization?.name || "Pharmacie"} — Vue d&apos;ensemble de
-          votre activité
+          {currentOrganization?.name || "Pharmacie"} — Vue d&apos;ensemble de votre activité
         </p>
       </div>
 
       {/* KPI Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {hasPermission(Permission.SALES_READ) && (
           <KPICard
             title="Ventes du jour"
-            value="—"
+            value={formatNumber(todaySalesCount)}
+            loading={anyLoading}
             icon={ShoppingCart}
             color="emerald"
             href={buildPath("/sales")}
@@ -186,7 +233,8 @@ export default function DashboardPage() {
         {hasPermission(Permission.SALES_READ) && (
           <KPICard
             title="Chiffre d'affaires"
-            value="—"
+            value={formatCurrency(todayRevenue)}
+            loading={anyLoading}
             icon={DollarSign}
             color="blue"
           />
@@ -194,7 +242,8 @@ export default function DashboardPage() {
         {hasPermission(Permission.PRODUCTS_READ) && (
           <KPICard
             title="Produits en stock"
-            value="—"
+            value={formatNumber(productCount)}
+            loading={inventoryKPIs.isLoading}
             icon={Package}
             color="indigo"
             href={buildPath("/inventory")}
@@ -203,7 +252,8 @@ export default function DashboardPage() {
         {hasPermission(Permission.PATIENTS_READ) && (
           <KPICard
             title="Patients actifs"
-            value="—"
+            value={formatNumber(activePatients)}
+            loading={patientSummary.isLoading}
             icon={Users}
             color="emerald"
             href={buildPath("/patients")}
@@ -212,7 +262,8 @@ export default function DashboardPage() {
         {hasPermission(Permission.PRESCRIPTIONS_READ) && (
           <KPICard
             title="Ordonnances en attente"
-            value="—"
+            value={formatNumber(pendingRx)}
+            loading={prescriptionStats.isLoading}
             icon={FileText}
             color="amber"
             href={buildPath("/prescriptions")}
@@ -221,28 +272,11 @@ export default function DashboardPage() {
         {hasPermission(Permission.INVENTORY_ALERTS_READ) && (
           <KPICard
             title="Alertes stock"
-            value="—"
+            value={formatNumber(alertCount)}
+            loading={inventoryAlerts.isLoading}
             icon={AlertTriangle}
             color="red"
             href={buildPath("/inventory/alerts")}
-          />
-        )}
-        {isAccountant && (
-          <KPICard
-            title="CA mensuel"
-            value="—"
-            icon={TrendingUp}
-            color="emerald"
-            href={buildPath("/accounting")}
-          />
-        )}
-        {isHR && (
-          <KPICard
-            title="Employés actifs"
-            value="—"
-            icon={UserCog}
-            color="blue"
-            href={buildPath("/hr")}
           />
         )}
       </div>
@@ -258,7 +292,7 @@ export default function DashboardPage() {
               title="Nouvelle vente"
               description="Démarrer une vente rapide"
               icon={ShoppingCart}
-              href={buildPath("/sales/new")}
+              href={buildPath("/sales/pos")}
             />
           )}
           {hasPermission(Permission.PRESCRIPTIONS_WRITE) && (
@@ -312,7 +346,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Charts */}
+      {/* Charts — wired to real data with fallback */}
       {hasPermission(Permission.SALES_READ) && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card>
@@ -323,20 +357,31 @@ export default function DashboardPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <BarChartWidget
-                data={[
-                  { name: "Lun", ventes: 42 },
-                  { name: "Mar", ventes: 58 },
-                  { name: "Mer", ventes: 35 },
-                  { name: "Jeu", ventes: 61 },
-                  { name: "Ven", ventes: 73 },
-                  { name: "Sam", ventes: 89 },
-                  { name: "Dim", ventes: 24 },
-                ]}
-                xKey="name"
-                yKey="ventes"
-                height={260}
-              />
+              {salesTimeseries.isLoading ? (
+                <Skeleton className="h-[260px] w-full rounded-lg" />
+              ) : (
+                <BarChartWidget
+                  data={
+                    timeseriesData.length > 0
+                      ? timeseriesData.map((d: any) => ({
+                          name: d.date || d.label || d.day || "",
+                          ventes: d.count ?? d.sales ?? d.value ?? 0,
+                        }))
+                      : [
+                          { name: "Lun", ventes: 0 },
+                          { name: "Mar", ventes: 0 },
+                          { name: "Mer", ventes: 0 },
+                          { name: "Jeu", ventes: 0 },
+                          { name: "Ven", ventes: 0 },
+                          { name: "Sam", ventes: 0 },
+                          { name: "Dim", ventes: 0 },
+                        ]
+                  }
+                  xKey="name"
+                  yKey="ventes"
+                  height={260}
+                />
+              )}
             </CardContent>
           </Card>
 
@@ -348,19 +393,23 @@ export default function DashboardPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <AreaChartWidget
-                data={[
-                  { name: "Jan", revenue: 4250000 },
-                  { name: "Fév", revenue: 3890000 },
-                  { name: "Mar", revenue: 4780000 },
-                  { name: "Avr", revenue: 5120000 },
-                  { name: "Mai", revenue: 4950000 },
-                  { name: "Jun", revenue: 5340000 },
-                ]}
-                xKey="name"
-                yKey="revenue"
-                height={260}
-              />
+              {salesTimeseries.isLoading ? (
+                <Skeleton className="h-[260px] w-full rounded-lg" />
+              ) : (
+                <AreaChartWidget
+                  data={
+                    timeseriesData.length > 0
+                      ? timeseriesData.map((d: any) => ({
+                          name: d.date || d.label || d.day || "",
+                          revenue: d.revenue ?? d.totalAmount ?? 0,
+                        }))
+                      : [{ name: "—", revenue: 0 }]
+                  }
+                  xKey="name"
+                  yKey="revenue"
+                  height={260}
+                />
+              )}
             </CardContent>
           </Card>
 
@@ -368,24 +417,27 @@ export default function DashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Activity className="w-5 h-5 text-cyan-600" />
-                Ventes quotidiennes (30 derniers jours)
+                Activité récente
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <LineChartWidget
-                data={[
-                  { jour: "01", ventes: 38 },
-                  { jour: "05", ventes: 52 },
-                  { jour: "10", ventes: 47 },
-                  { jour: "15", ventes: 63 },
-                  { jour: "20", ventes: 55 },
-                  { jour: "25", ventes: 71 },
-                  { jour: "30", ventes: 68 },
-                ]}
-                xKey="jour"
-                yKey="ventes"
-                height={260}
-              />
+              {salesTimeseries.isLoading ? (
+                <Skeleton className="h-[260px] w-full rounded-lg" />
+              ) : (
+                <LineChartWidget
+                  data={
+                    timeseriesData.length > 0
+                      ? timeseriesData.map((d: any) => ({
+                          jour: d.date || d.label || "",
+                          ventes: d.count ?? d.sales ?? 0,
+                        }))
+                      : [{ jour: "—", ventes: 0 }]
+                  }
+                  xKey="jour"
+                  yKey="ventes"
+                  height={260}
+                />
+              )}
             </CardContent>
           </Card>
 
@@ -393,22 +445,27 @@ export default function DashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Package className="w-5 h-5 text-amber-600" />
-                Répartition par catégorie
+                Top produits vendus
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <PieChartWidget
-                data={[
-                  { name: "Médicaments", value: 45 },
-                  { name: "Parapharmacie", value: 22 },
-                  { name: "Cosmétique", value: 15 },
-                  { name: "Matériel médical", value: 10 },
-                  { name: "Autres", value: 8 },
-                ]}
-                dataKey="value"
-                nameKey="name"
-                height={260}
-              />
+              {topProducts.isLoading ? (
+                <Skeleton className="h-[260px] w-full rounded-lg" />
+              ) : (
+                <PieChartWidget
+                  data={
+                    topProductsData.length > 0
+                      ? topProductsData.map((p: any) => ({
+                          name: p.name || p.productName || "Produit",
+                          value: p.totalQuantity ?? p.count ?? p.value ?? 0,
+                        }))
+                      : [{ name: "Aucune donnée", value: 1 }]
+                  }
+                  dataKey="value"
+                  nameKey="name"
+                  height={260}
+                />
+              )}
             </CardContent>
           </Card>
         </div>

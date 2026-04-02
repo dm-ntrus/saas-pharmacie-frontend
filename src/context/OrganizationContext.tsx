@@ -2,13 +2,14 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { jwtService } from "@/services/jwt.service";
+import { jwtService, normalizeJwtOrganizations } from "@/services/jwt.service";
 import { tokenService } from "@/services/token.service";
 import { getCookie, setCookie } from "@/utils/cookies";
 import { useRouter } from "next/navigation";
 import { Permission } from "@/types/permissions";
 import { Role, ROLE_PERMISSION_MAP } from "@/types/roles";
 import { ACCESS_TOKEN_UPDATED_EVENT } from "@/utils/access-token-events";
+import { useAuth } from "@/context/AuthContext";
 
 /**
  * Une entrée = **une pharmacie** (organisation Keycloak dédiée).
@@ -49,15 +50,13 @@ type OrganizationProviderProps = {
   tenantRouteSlug?: string;
 };
 
-function mapJwtOrgs(raw: Record<string, unknown>[]): PharmacyOrganization[] {
+function mapJwtOrgs(raw: Array<{ id: string; name: string; roles: string[]; attributes?: Record<string, string[] | undefined> }>): PharmacyOrganization[] {
   return raw.map((org) => ({
-    id: org.id as string,
-    name: org.name as string,
-    roles: (org.roles as string[]) || [],
-    tenantId:
-      ((org.attributes as Record<string, string[]>)?.tenant_id?.[0]) || "",
-    subdomain:
-      ((org.attributes as Record<string, string[]>)?.subdomain?.[0]) || "",
+    id: org.id,
+    name: org.name,
+    roles: org.roles || [],
+    tenantId: org.attributes?.tenant_id?.[0] || "",
+    subdomain: org.attributes?.subdomain?.[0] || org.name || "",
   }));
 }
 
@@ -83,30 +82,35 @@ export const OrganizationProvider = ({
 }: OrganizationProviderProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { user: authUser } = useAuth();
   const [organizations, setOrganizations] = useState<PharmacyOrganization[]>([]);
   const [rootTenantId, setRootTenantId] = useState("");
   const [currentOrganization, setCurrentOrganization] =
     useState<PharmacyOrganization | null>(null);
 
   const syncFromToken = useCallback(() => {
-    const token = tokenService.getAccessToken();
-    if (!token) {
-      setOrganizations([]);
-      setRootTenantId("");
-      setCurrentOrganization(null);
-      return;
-    }
+    let pharmacies: PharmacyOrganization[] = [];
+    let root = "";
 
-    const decoded = jwtService.decode(token) as {
-      organizations?: Record<string, unknown>[];
-      tenant_id?: string;
-      tenantId?: string;
-    };
-    const root =
-      (decoded.tenant_id || decoded.tenantId || "").trim();
-    const rawOrgs = decoded.organizations || [];
-    const mapped = mapJwtOrgs(rawOrgs);
-    const pharmacies = filterPharmaciesForRootTenant(mapped, root);
+    // Primary: use AuthContext user data (works for BFF HttpOnly sessions)
+    if (authUser?.organizations?.length) {
+      root = (authUser.tenantId || "").trim();
+      pharmacies = filterPharmaciesForRootTenant(authUser.organizations as PharmacyOrganization[], root);
+    } else {
+      // Fallback: decode client-side JWT cookie (direct OIDC flows)
+      const token = tokenService.getAccessToken();
+      if (!token) {
+        setOrganizations([]);
+        setRootTenantId("");
+        setCurrentOrganization(null);
+        return;
+      }
+
+      const decoded = jwtService.decode(token);
+      root = ((decoded as any).tenant_id || (decoded as any).tenantId || "").trim();
+      const normalized = normalizeJwtOrganizations(decoded.organizations);
+      pharmacies = filterPharmaciesForRootTenant(mapJwtOrgs(normalized), root);
+    }
 
     setOrganizations(pharmacies);
     setRootTenantId(root);
@@ -137,7 +141,7 @@ export const OrganizationProvider = ({
     } else {
       setCurrentOrganization(null);
     }
-  }, [tenantRouteSlug]);
+  }, [tenantRouteSlug, authUser]);
 
   useEffect(() => {
     syncFromToken();

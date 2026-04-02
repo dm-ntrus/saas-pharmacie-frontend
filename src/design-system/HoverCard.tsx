@@ -4,7 +4,7 @@ interface HoverCardProps {
   children: React.ReactNode;
   className?: string;
   effect?: 'float' | 'tilt' | 'glow' | 'scale' | 'magnetic';
-  glowColor?: 'sky' | 'green' | 'cyan' | 'blue' | 'red';
+  glowColor?: 'emerald' | 'green' | 'cyan' | 'blue' | 'red';
   borderColor?: string;
 }
 
@@ -12,8 +12,8 @@ export const HoverCard: React.FC<HoverCardProps> = ({
   children,
   className = '',
   effect = 'float',
-  glowColor = 'sky',
-  borderColor = 'from-sky-500 to-cyan-500'
+  glowColor = 'emerald',
+  borderColor = 'from-emerald-500 to-cyan-500'
 }) => {
   const baseClasses = "group relative bg-white rounded-3xl p-8 shadow-xl shadow-slate-200/50 transition-all duration-500 border border-slate-200/50 cursor-pointer";
   

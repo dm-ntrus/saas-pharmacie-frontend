@@ -1,5 +1,14 @@
-// Feature Flags System pour NakiCode PharmaSaaS
-// Permet l'activation/désactivation dynamique des fonctionnalités
+/**
+ * @deprecated LEGACY — This entire file is superseded by `FeatureFlagContext`
+ * (`useFeatureFlags()`) which fetches plan entitlements from the backend API.
+ * The static in-memory flags here are NOT connected to the billing system
+ * and should NOT be used for module gating.
+ *
+ * Migration: use `useFeatureFlags().isFeatureEnabled(key)` from
+ * `@/context/FeatureFlagContext` with keys from `@/constants/product-entitlement-keys`.
+ *
+ * This file will be removed in the next major cleanup.
+ */
 import React from 'react';
 
 export interface FeatureFlag {

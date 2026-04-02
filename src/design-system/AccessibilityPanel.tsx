@@ -1,11 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-  AdjustmentsHorizontalIcon,
-  XMarkIcon,
-  ArrowPathIcon,
-} from "@heroicons/react/24/outline";
+import { SlidersHorizontal, X, RotateCcw } from "lucide-react";
 import { Button } from "./Button";
 import { Card } from "./Card";
 import { useAccessibility } from "./AccessibilityProvider";
@@ -47,11 +43,11 @@ export const AccessibilityPanel: React.FC = () => {
       {/* Floating button */}
       <button
         onClick={togglePanel}
-        className="fixed bottom-6 right-6 z-50 p-3 bg-sky-600 text-white rounded-full shadow-lg hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 transition-all duration-200"
+        className="fixed bottom-6 right-6 z-50 p-3 bg-emerald-600 text-white rounded-full shadow-lg hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all duration-200"
         aria-label="Ouvrir les options d'accessibilité"
         title="Options d'accessibilité"
       >
-        <AdjustmentsHorizontalIcon className="h-6 w-6" />
+        <SlidersHorizontal className="h-6 w-6" />
       </button>
 
       {/* Accessibility panel */}
@@ -66,10 +62,10 @@ export const AccessibilityPanel: React.FC = () => {
                 </h2>
                 <button
                   onClick={togglePanel}
-                  className="p-2 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-sky-500 rounded-lg cursor-pointer"
+                  className="p-2 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded-lg cursor-pointer"
                   aria-label="Fermer le panneau d'accessibilité"
                 >
-                  <XMarkIcon className="h-5 w-5" />
+                  <X className="h-5 w-5" />
                 </button>
               </div>
 
@@ -132,7 +128,7 @@ export const AccessibilityPanel: React.FC = () => {
                     type="checkbox"
                     checked={reducedMotion}
                     onChange={(e) => setReducedMotion(e.target.checked)}
-                    className="h-4 w-4 text-sky-600 focus:ring-sky-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
                   />
                   <span className="text-sm text-gray-700">
                     Mouvement réduit
@@ -145,7 +141,7 @@ export const AccessibilityPanel: React.FC = () => {
                     type="checkbox"
                     checked={screenReader}
                     onChange={toggleScreenReader}
-                    className="h-4 w-4 text-sky-600 focus:ring-sky-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
                   />
                   <span className="text-sm text-gray-700">
                     Mode lecteur d&apos;écran
@@ -158,7 +154,7 @@ export const AccessibilityPanel: React.FC = () => {
                     type="checkbox"
                     checked={focusIndicator}
                     onChange={(e) => setFocusIndicator(e.target.checked)}
-                    className="h-4 w-4 text-sky-600 focus:ring-sky-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
                   />
                   <span className="text-sm text-gray-700">Indicateur de focus</span>
                 </label>
@@ -169,7 +165,7 @@ export const AccessibilityPanel: React.FC = () => {
                     type="checkbox"
                     checked={keyboardNavigation}
                     onChange={(e) => setKeyboardNavigation(e.target.checked)}
-                    className="h-4 w-4 text-sky-600 focus:ring-sky-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
                   />
                   <span className="text-sm text-gray-700">Navigation clavier</span>
                 </label>
@@ -203,7 +199,7 @@ export const AccessibilityPanel: React.FC = () => {
                   onClick={resetToDefaults}
                   className="flex-1"
                 >
-                  <ArrowPathIcon className="h-4 w-4 mr-2" />
+                  <RotateCcw className="h-4 w-4 mr-2" />
                   Réinitialiser
                 </Button>
                 <Button

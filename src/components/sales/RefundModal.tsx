@@ -1,12 +1,19 @@
+"use client";
+
 import React from "react";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import {
-  ExclamationTriangleIcon,
-  ArrowPathIcon,
-} from "@heroicons/react/24/outline";
-import { Button, Modal } from "@/design-system";
+import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { AlertTriangle, RefreshCw } from "lucide-react";
+import { Button, Modal, FormTextarea } from "@/components/ui";
+import { formatCurrency } from "@/utils/formatters";
 import type { Sale } from "@/types";
+
+const refundSchema = z.object({
+  reason: z.string().min(10, "La raison doit contenir au moins 10 caractères"),
+});
+
+type RefundFormData = z.infer<typeof refundSchema>;
 
 interface RefundModalProps {
   isOpen: boolean;
@@ -16,12 +23,6 @@ interface RefundModalProps {
   isLoading?: boolean;
 }
 
-const refundSchema = Yup.object().shape({
-  reason: Yup.string()
-    .min(10, "La raison doit contenir au moins 10 caractères")
-    .required("La raison du remboursement est requise"),
-});
-
 export const RefundModal: React.FC<RefundModalProps> = ({
   isOpen,
   onClose,
@@ -29,53 +30,38 @@ export const RefundModal: React.FC<RefundModalProps> = ({
   onConfirm,
   isLoading = false,
 }) => {
-  const formik = useFormik({
-    initialValues: {
-      reason: "",
-    },
-    validationSchema: refundSchema,
-    onSubmit: (values) => {
-      onConfirm(values.reason);
-    },
+  const methods = useForm<RefundFormData>({
+    resolver: zodResolver(refundSchema),
+    defaultValues: { reason: "" },
   });
 
   const handleClose = () => {
-    formik.resetForm();
+    methods.reset();
     onClose();
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("fr-FR", {
-      style: "currency",
-      currency: "EUR",
-    }).format(amount);
+  const onSubmit = (data: RefundFormData) => {
+    onConfirm(data.reason);
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      icon={<ArrowPathIcon className="h-5 w-5 text-orange-600" />}
-      title="Rembourser la vente"
-      size="md"
-    >
+    <Modal isOpen={isOpen} onClose={handleClose} title="Rembourser la vente" size="md">
       <div className="mt-4 space-y-4">
-        {/* Sale Info */}
-        <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+        <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 space-y-2">
           <div className="flex justify-between">
-            <span className="text-sm text-gray-600">Numéro de vente</span>
-            <span className="text-sm font-medium text-gray-900">
+            <span className="text-sm text-slate-600 dark:text-slate-400">Numéro de vente</span>
+            <span className="text-sm font-medium text-slate-900 dark:text-slate-100">
               {sale.saleNumber}
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-sm text-gray-600">Date</span>
-            <span className="text-sm font-medium text-gray-900">
+            <span className="text-sm text-slate-600 dark:text-slate-400">Date</span>
+            <span className="text-sm font-medium text-slate-900 dark:text-slate-100">
               {new Date(sale.createdAt).toLocaleDateString("fr-FR")}
             </span>
           </div>
-          <div className="flex justify-between border-t border-gray-200 pt-2">
-            <span className="text-sm font-medium text-gray-900">
+          <div className="flex justify-between border-t border-slate-200 dark:border-slate-700 pt-2">
+            <span className="text-sm font-medium text-slate-900 dark:text-slate-100">
               Montant à rembourser
             </span>
             <span className="text-lg font-bold text-orange-600">
@@ -84,85 +70,54 @@ export const RefundModal: React.FC<RefundModalProps> = ({
           </div>
         </div>
 
-        {/* Items List */}
-        <div className="border border-gray-200 rounded-lg p-4">
-          <p className="text-sm font-medium text-gray-900 mb-2">
+        <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+          <p className="text-sm font-medium text-slate-900 dark:text-slate-100 mb-2">
             Articles concernés
           </p>
           <ul className="space-y-1">
-            {sale.items?.slice(0, 3).map((item, index) => (
-              <li key={index} className="text-sm text-gray-600">
-                • {(item as any).product?.name} - Qté: {item.quantity} -{" "}
+            {sale.items?.slice(0, 3).map((item, i) => (
+              <li key={i} className="text-sm text-slate-600 dark:text-slate-400">
+                &bull; {(item as any).product?.name} - Qté: {item.quantity} -{" "}
                 {formatCurrency(item.quantity * item.unitPrice)}
               </li>
             ))}
             {sale.items && sale.items.length > 3 && (
-              <li className="text-sm text-gray-500">
-                ... et {sale.items.length - 3} autre(s)
-              </li>
+              <li className="text-sm text-slate-500">... et {sale.items.length - 3} autre(s)</li>
             )}
           </ul>
         </div>
 
-        {/* Reason Input */}
-        <form onSubmit={formik.handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Raison du remboursement <span className="text-red-600">*</span>
-            </label>
-            <textarea
-              {...formik.getFieldProps("reason")}
+        <FormProvider {...methods}>
+          <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
+            <FormTextarea<RefundFormData>
+              name="reason"
+              label="Raison du remboursement"
+              required
               rows={4}
               placeholder="Ex: Produit défectueux, erreur de facturation, demande du client..."
-              className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-sky-600 ${
-                formik.touched.reason && formik.errors.reason
-                  ? "border-red-500"
-                  : "border-gray-300"
-              }`}
             />
-            {formik.touched.reason && formik.errors.reason && (
-              <p className="mt-1 text-sm text-red-600">
-                {formik.errors.reason}
-              </p>
-            )}
-          </div>
 
-          {/* Warning */}
-          <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 flex gap-3">
-            <ExclamationTriangleIcon className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
-            <div className="text-sm text-orange-800">
-              <p className="font-medium mb-1">
-                Attention : Action irréversible
-              </p>
-              <p>
-                Le remboursement mettra à jour les stocks et annulera cette
-                transaction. Cette action ne peut pas être annulée.
-              </p>
+            <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-4 flex gap-3">
+              <AlertTriangle className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-orange-800 dark:text-orange-200">
+                <p className="font-medium mb-1">Attention : Action irréversible</p>
+                <p>
+                  Le remboursement mettra à jour les stocks et annulera cette transaction.
+                  Cette action ne peut pas être annulée.
+                </p>
+              </div>
             </div>
-          </div>
 
-          {/* Actions */}
-          <div className="flex gap-3 pt-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-              className="flex-1"
-              disabled={isLoading}
-            >
-              Annuler
-            </Button>
-            <Button
-              type="submit"
-              variant="destructive"
-              className="flex-1"
-              loading={isLoading}
-              disabled={isLoading}
-            >
-              Confirmer le remboursement
-            </Button>
-          </div>
-        </form>
+            <div className="flex gap-3 pt-2">
+              <Button type="button" variant="outline" onClick={handleClose} className="flex-1" disabled={isLoading}>
+                Annuler
+              </Button>
+              <Button type="submit" variant="destructive" className="flex-1" loading={isLoading}>
+                Confirmer le remboursement
+              </Button>
+            </div>
+          </form>
+        </FormProvider>
       </div>
     </Modal>
   );

@@ -1,10 +1,18 @@
-export * from './Button';
-export * from './Card';
-export * from './Input';
-export * from './Loader';
-export * from './Modal';
-export * from './MicroButton';
-export * from './HoverCard';
-export * from './InteractiveCard';
-export * from './AccessibilityPanel';
-export * from './AccessibilityProvider';
+/**
+ * Backward-compatibility barrel — all design primitives now live in @/components/ui.
+ * New code should import directly from @/components/ui.
+ */
+export {
+  Button,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+  Input,
+  Modal,
+  Loader,
+  AccessibilityProvider,
+  useAccessibility,
+  AccessibilityPanel,
+} from "@/components/ui";

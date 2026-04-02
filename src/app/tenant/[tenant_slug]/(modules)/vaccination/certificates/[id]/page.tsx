@@ -8,6 +8,7 @@ import { Permission } from "@/types/permissions";
 import { useVaccinationCertificateById } from "@/hooks/api/useVaccination";
 import { useOrganization } from "@/context/OrganizationContext";
 import { Button, Card, CardContent, ErrorBanner, Skeleton } from "@/components/ui";
+import { getApiBaseUrl } from "@/helpers/auth-interceptor";
 import { ArrowLeft } from "lucide-react";
 import { formatDate } from "@/utils/formatters";
 
@@ -50,7 +51,7 @@ function CertificateDetailContent() {
 
   const pdfUrl =
     currentOrganization?.id &&
-    `${process.env.NEXT_PUBLIC_API_URL || ""}/pharmacies/${currentOrganization.id}/vaccination/certificates/${certificate.id}/pdf`;
+    `${getApiBaseUrl()}/pharmacies/${currentOrganization.id}/vaccination/certificates/${certificate.id}/pdf`;
 
   return (
     <div className="space-y-6">

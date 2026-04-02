@@ -1,5 +1,5 @@
 import React from "react";
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { AlertTriangle } from "lucide-react";
 import { Button, Modal } from "@/design-system";
 import type { Sale } from "@/types";
 
@@ -29,7 +29,7 @@ export const DeleteSaleModal: React.FC<DeleteModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      icon={<ExclamationTriangleIcon className="h-5 w-5 text-red-600" />}
+      icon={<AlertTriangle className="h-5 w-5 text-red-600" />}
       title="Supprimer la vente"
       size="md"
     >
@@ -66,7 +66,7 @@ export const DeleteSaleModal: React.FC<DeleteModalProps> = ({
 
         {/* Warning */}
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex gap-3">
-          <ExclamationTriangleIcon className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+          <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
           <div className="text-sm text-red-800">
             <p className="font-medium mb-1">Attention : Action irréversible</p>
             <ul className="list-disc list-inside space-y-1">

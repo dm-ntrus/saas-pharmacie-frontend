@@ -210,8 +210,8 @@ function VaccinationDashboardContent() {
           onClick={() => router.push(buildPath("/vaccination/proximity-alerts"))}
         >
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
-              <Activity className="w-5 h-5 text-sky-600" />
+            <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+              <Activity className="w-5 h-5 text-emerald-600" />
             </div>
             <div>
               <p className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
