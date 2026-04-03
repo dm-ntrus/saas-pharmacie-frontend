@@ -112,7 +112,7 @@ export const RefundModal: React.FC<RefundModalProps> = ({
               <Button type="button" variant="outline" onClick={handleClose} className="flex-1" disabled={isLoading}>
                 Annuler
               </Button>
-              <Button type="submit" variant="destructive" className="flex-1" loading={isLoading}>
+              <Button type="submit" variant="danger" className="flex-1" loading={isLoading}>
                 Confirmer le remboursement
               </Button>
             </div>

@@ -1,15 +1,24 @@
 "use client";
 
+import { useMemo } from "react";
 import { motion } from "framer-motion";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ArrowRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 import {
-  HOMEPAGE_MODULE_HIGHLIGHTS,
+  buildHomepageModuleHighlights,
   TOTAL_PLATFORM_MODULES,
 } from "@/content/platform-marketing";
 import { MarketingIcon } from "@/components/public/marketing-icons";
 
 export default function PlatformModulesPreview() {
+  const t = useTranslations("pages.home");
+  const tp = useTranslations("platformModules");
+  const highlights = useMemo(
+    () => buildHomepageModuleHighlights((key) => tp(key)),
+    [tp],
+  );
+
   return (
     <section
       className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-slate-50"
@@ -19,23 +28,23 @@ export default function PlatformModulesPreview() {
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-12 sm:mb-16">
           <div className="max-w-2xl">
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 mb-4">
-              Plateforme
+              {t("modulesPreviewTag")}
             </p>
             <h2
               id="modules-preview-heading"
               className="text-3xl sm:text-5xl lg:text-6xl font-display font-bold text-slate-900 tracking-tight leading-[1.05]"
             >
-              Des modules qui couvrent{" "}
-              <span className="text-emerald-600 italic">toute l&apos;officine</span>
+              {t("modulesPreviewTitleStart")}{" "}
+              <span className="text-emerald-600 italic">{t("modulesPreviewTitleHighlight")}</span>
             </h2>
           </div>
           <p className="text-lg text-slate-600 max-w-md font-medium leading-relaxed">
-            Un aperçu des briques les plus utilisées — la liste complète détaille chaque capacité métier.
+            {t("modulesPreviewDesc")}
           </p>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {HOMEPAGE_MODULE_HIGHLIGHTS.map((m, i) => (
+          {highlights.map((m, i) => (
             <motion.article
               key={m.id}
               initial={{ opacity: 0, y: 12 }}
@@ -78,7 +87,7 @@ export default function PlatformModulesPreview() {
             href="/modules"
             className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-widest text-emerald-600 hover:text-slate-900 transition-colors"
           >
-            Voir les {TOTAL_PLATFORM_MODULES} modules détaillés
+            {t("modulesPreviewCta", { count: TOTAL_PLATFORM_MODULES })}
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

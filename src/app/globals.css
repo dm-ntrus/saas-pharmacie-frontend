@@ -93,6 +93,13 @@ body {
   color: var(--foreground);
 }
 
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
 /* ─── Focus & Accessibility ─── */
 
 .focus-visible {

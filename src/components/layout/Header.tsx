@@ -1,9 +1,8 @@
 import React from "react";
-import Link from "next/link";
+import { Link, usePathname } from "@/i18n/navigation";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/design-system";
 import { Heart } from "lucide-react";
-import { usePathname } from "next/navigation";
 
 export default function Header() {
   const pathname = usePathname();
@@ -48,12 +47,12 @@ export default function Header() {
           </nav>
 
           <div className="flex items-center space-x-3">
-            <Link href="/login">
+            <Link href="/auth/login">
               <Button variant="ghost" size="md" className="font-medium">
                 Se connecter
               </Button>
             </Link>
-            <Link href="/register">
+            <Link href="/auth/register">
               <Button size="md" className="font-medium shadow-lg">
                 Démo Gratuite
               </Button>

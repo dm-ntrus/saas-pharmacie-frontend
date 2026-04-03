@@ -1,15 +1,19 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Space_Grotesk } from 'next/font/google';
+import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { AccessibilityProvider } from "@/components/ui/AccessibilityProvider";
 import QueryProvider from "@/providers/queryProvider";
-import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "@/context/AuthContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import SoftwareApplicationJsonLd from "@/components/seo/SoftwareApplicationJsonLd";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { OfflineIndicator } from "@/components/pwa/OfflineIndicator";
 import { SkipToContent } from "@/components/ui";
+import AppToaster from "@/components/providers/AppToaster";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
+import { I18N_CONFIG } from "@/i18n/i18n.config";
+import type { Locale } from "@/i18n/routing";
 
 function metadataBaseUrl(): URL {
   const raw = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
@@ -21,13 +25,13 @@ function metadataBaseUrl(): URL {
 }
 
 const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-sans',
+  subsets: ["latin"],
+  variable: "--font-sans",
 });
 
 const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin'],
-  variable: '--font-display',
+  subsets: ["latin"],
+  variable: "--font-display",
 });
 
 export const metadata: Metadata = {
@@ -78,54 +82,36 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = (await getLocale()) as Locale;
+  const messages = await getMessages();
+  const direction = I18N_CONFIG.languageSettings[locale]?.direction ?? "ltr";
+
   return (
-    <html lang="fr">
+    <html lang={locale} dir={direction}>
       <body
+        suppressHydrationWarning
         className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}
       >
         <SoftwareApplicationJsonLd />
         <ErrorBoundary>
-          <QueryProvider>
-            <AuthProvider>
-              <Toaster
-                position="top-center"
-                toastOptions={{
-                  duration: 4000,
-                  style: {
-                    background: "#363636",
-                    color: "#fff",
-                  },
-                  success: {
-                    duration: 3000,
-                    iconTheme: {
-                      primary: "#4ade80",
-                      secondary: "#fff",
-                    },
-                  },
-                  error: {
-                    duration: 5000,
-                    iconTheme: {
-                      primary: "#ef4444",
-                      secondary: "#fff",
-                    },
-                  },
-                }}
-              />
-              <AccessibilityProvider>
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            <QueryProvider>
+              <AuthProvider>
+                <AppToaster />
                 <SkipToContent />
-                <OfflineIndicator />
-                <div id="main-content">
-                  {children}
-                </div>
-                <InstallPrompt />
-              </AccessibilityProvider>
-            </AuthProvider>
-          </QueryProvider>
+                <AccessibilityProvider>
+                  <OfflineIndicator />
+                  <div id="main-content" suppressHydrationWarning>{children}</div>
+                  <InstallPrompt />
+                </AccessibilityProvider>
+              </AuthProvider>
+            </QueryProvider>
+          </NextIntlClientProvider>
         </ErrorBoundary>
       </body>
     </html>

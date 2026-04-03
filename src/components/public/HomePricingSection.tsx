@@ -2,24 +2,25 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { ArrowRight, Check, Sparkles, Gift, Zap, Building2 } from "lucide-react";
 import { usePublicPlans } from "@/hooks/api/usePublicPlans";
 import { PlanCardSkeleton } from "@/components/public/PlanCard";
 import type { Plan } from "@/types/billing";
 
-const TIER_META: Record<string, { icon: typeof Zap; label: string; badgeBg: string; badgeText: string }> = {
-  free: { icon: Gift, label: "Gratuit", badgeBg: "bg-slate-100", badgeText: "text-slate-700" },
-  starter: { icon: Zap, label: "Starter", badgeBg: "bg-blue-50", badgeText: "text-blue-700" },
-  professional: { icon: Sparkles, label: "Pro", badgeBg: "bg-emerald-50", badgeText: "text-emerald-700" },
-  enterprise: { icon: Building2, label: "Enterprise", badgeBg: "bg-violet-50", badgeText: "text-violet-700" },
+const TIER_META: Record<string, { icon: typeof Zap; badgeBg: string; badgeText: string }> = {
+  free: { icon: Gift, badgeBg: "bg-slate-100", badgeText: "text-slate-700" },
+  starter: { icon: Zap, badgeBg: "bg-blue-50", badgeText: "text-blue-700" },
+  professional: { icon: Sparkles, badgeBg: "bg-emerald-50", badgeText: "text-emerald-700" },
+  enterprise: { icon: Building2, badgeBg: "bg-violet-50", badgeText: "text-violet-700" },
 };
 
-const TIER_SHORT_FEATURES: Record<string, string[]> = {
-  free: ["5 utilisateurs", "POS basique", "Gestion de stock", "Support communautaire"],
-  starter: ["15 utilisateurs", "POS complet", "Inventaire avancé", "Patients & ordonnances", "Essai gratuit"],
-  professional: ["50 utilisateurs", "Tous les modules", "Analytics & BI", "CRM & fidélité", "Support 24/7"],
-  enterprise: ["Utilisateurs illimités", "Sites illimités", "API dédiée", "Account manager", "SLA 99.9%"],
+const TIER_SHORT_FEATURE_KEYS: Record<string, string[]> = {
+  free: ["shortFeat_5users", "shortFeat_basicPos", "shortFeat_stockMgmt", "shortFeat_communitySupport"],
+  starter: ["shortFeat_15users", "shortFeat_fullPos", "shortFeat_advancedInventory", "shortFeat_patientsRx", "shortFeat_freeTrial"],
+  professional: ["shortFeat_50users", "shortFeat_allModules", "shortFeat_analyticsBI", "shortFeat_crmLoyalty", "shortFeat_support247"],
+  enterprise: ["shortFeat_unlimitedUsers", "shortFeat_unlimitedSites", "shortFeat_dedicatedApi", "shortFeat_accountManager", "shortFeat_sla"],
 };
 
 function deduplicateByTier(plans: Plan[]): Plan[] {
@@ -33,6 +34,7 @@ function deduplicateByTier(plans: Plan[]): Plan[] {
 }
 
 export default function HomePricingSection() {
+  const t = useTranslations("pages.pricing");
   const { data: apiPlans, isLoading, isError } = usePublicPlans({ active: true, interval: "monthly" });
 
   const plans: Plan[] = useMemo(() => {
@@ -46,17 +48,17 @@ export default function HomePricingSection() {
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-14">
           <span className="inline-block text-[11px] font-bold uppercase tracking-[0.25em] text-emerald-600 mb-3">
-            Tarification
+            {t("tag")}
           </span>
           <h2 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mb-4 leading-[1.15]">
-            Choisissez le plan{" "}
+            {t("title")}{" "}
             <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
-              adapté
+              {t("titleHighlight")}
             </span>{" "}
-            à votre pharmacie
+            {t("titleEnd")}
           </h2>
           <p className="text-slate-500 text-sm sm:text-base leading-relaxed">
-            Commencez gratuitement. Évoluez quand vous le souhaitez.
+            {t("desc")}
           </p>
         </div>
 
@@ -73,13 +75,13 @@ export default function HomePricingSection() {
         {!isLoading && (isError || plans.length === 0) && (
           <div className="text-center py-16 mb-10">
             <p className="text-slate-500 mb-3">
-              Les plans seront bientôt disponibles.
+              {t("plansComingSoon")}
             </p>
             <Link
               href="/contact"
               className="inline-flex items-center gap-2 text-emerald-600 font-bold text-sm hover:underline"
             >
-              Nous contacter <ArrowRight className="w-4 h-4" />
+              {t("contactUs")} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         )}
@@ -99,7 +101,7 @@ export default function HomePricingSection() {
               const tier = plan.plan_tier || "starter";
               const isPop = tier === "professional";
               const meta = TIER_META[tier] ?? TIER_META.starter;
-              const features = TIER_SHORT_FEATURES[tier] ?? TIER_SHORT_FEATURES.starter;
+              const featureKeys = TIER_SHORT_FEATURE_KEYS[tier] ?? TIER_SHORT_FEATURE_KEYS.starter;
               const price = typeof plan.price === "string" ? parseFloat(plan.price) : plan.price;
               const isFree = !price || price === 0;
               const isEnterprise = tier === "enterprise" || tier === "custom";
@@ -125,7 +127,7 @@ export default function HomePricingSection() {
                     <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20">
                       <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-emerald-600 text-white rounded-full text-[11px] font-bold uppercase tracking-wider shadow-lg shadow-emerald-600/30">
                         <Sparkles className="w-3.5 h-3.5" />
-                        Populaire
+                        {t("popularShort")}
                       </span>
                     </div>
                   )}
@@ -136,7 +138,7 @@ export default function HomePricingSection() {
                       className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold mb-4 ${meta.badgeBg} ${meta.badgeText}`}
                     >
                       <meta.icon className="w-3.5 h-3.5" />
-                      {meta.label}
+                      {t(`tierLabel_${tier}`)}
                     </span>
 
                     {/* Name */}
@@ -147,16 +149,16 @@ export default function HomePricingSection() {
                     {/* Price */}
                     <div className="mb-5">
                       {isFree ? (
-                        <span className="text-3xl font-extrabold text-slate-900">Gratuit</span>
+                        <span className="text-3xl font-extrabold text-slate-900">{t("free")}</span>
                       ) : isEnterprise ? (
-                        <span className="text-3xl font-extrabold text-slate-900">Sur devis</span>
+                        <span className="text-3xl font-extrabold text-slate-900">{t("onQuote")}</span>
                       ) : (
                         <div className="flex items-baseline gap-1">
                           <span className="text-3xl font-extrabold text-slate-900">
                             {price}
                             <span className="text-base font-medium text-slate-400 ml-0.5">$</span>
                           </span>
-                          <span className="text-sm text-slate-500">/ mois</span>
+                          <span className="text-sm text-slate-500">{t("perMonth")}</span>
                         </div>
                       )}
                     </div>
@@ -172,7 +174,7 @@ export default function HomePricingSection() {
                             : "bg-slate-900 text-white hover:bg-slate-800"
                       }`}
                     >
-                      {isEnterprise ? "Contacter" : isFree ? "Démarrer" : "Essayer"}
+                      {isEnterprise ? t("ctaContact") : isFree ? t("ctaStart") : t("ctaTry")}
                       <ArrowRight className="w-4 h-4" />
                     </Link>
                   </div>
@@ -181,8 +183,8 @@ export default function HomePricingSection() {
                   <div className="border-t border-slate-100 mx-6" />
                   <div className="p-6 pt-4 flex-1">
                     <ul className="space-y-2.5">
-                      {features.map((f) => (
-                        <li key={f} className="flex items-start gap-2.5">
+                      {featureKeys.map((key) => (
+                        <li key={key} className="flex items-start gap-2.5">
                           <div
                             className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
                               isPop
@@ -192,7 +194,7 @@ export default function HomePricingSection() {
                           >
                             <Check className="w-3 h-3" strokeWidth={3} />
                           </div>
-                          <span className="text-sm text-slate-700">{f}</span>
+                          <span className="text-sm text-slate-700">{t(key)}</span>
                         </li>
                       ))}
                     </ul>
@@ -209,7 +211,7 @@ export default function HomePricingSection() {
             href="/pricing"
             className="inline-flex items-center gap-2 text-sm font-bold text-emerald-600 hover:text-emerald-700 transition-colors"
           >
-            Voir le comparatif détaillé
+            {t("viewComparison")}
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

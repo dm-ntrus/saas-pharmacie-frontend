@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import {
   ArrowLeft,
   Loader2,
@@ -12,8 +12,10 @@ import {
 } from "lucide-react";
 import { keycloakOidc } from "@/services/keycloak-oidc.service";
 import AuthShell from "@/components/auth/AuthShell";
+import { Link } from "@/i18n/navigation";
 
 export default function TenantForgotPasswordPage() {
+  const t = useTranslations("authPages.forgotPassword");
   const params = useParams();
   const tenant_slug = params?.tenant_slug as string;
   const [isRedirecting, setIsRedirecting] = useState(false);
@@ -41,7 +43,7 @@ export default function TenantForgotPasswordPage() {
           className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-slate-700 font-bold transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          Retour à la connexion
+          {t("backToLogin")}
         </Link>
 
         <div className="bg-white rounded-3xl border border-slate-100 p-6 sm:p-8 shadow-sm space-y-5">
@@ -51,11 +53,10 @@ export default function TenantForgotPasswordPage() {
 
           <div>
             <h1 className="text-2xl font-display font-bold text-slate-900 mb-2">
-              Mot de passe oublié ?
+              {t("title")}
             </h1>
             <p className="text-sm text-slate-500 leading-relaxed">
-              Vous allez être redirigé vers notre service d&apos;authentification
-              sécurisé pour réinitialiser votre mot de passe.
+              {t("desc")}
             </p>
           </div>
 
@@ -68,20 +69,18 @@ export default function TenantForgotPasswordPage() {
             {isRedirecting ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
-                Redirection…
+                {t("redirecting")}
               </>
             ) : (
               <>
-                Réinitialiser mon mot de passe
+                {t("button")}
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </>
             )}
           </button>
 
           <p className="text-xs text-slate-400 text-center leading-relaxed">
-            Un email de réinitialisation sera envoyé à l&apos;adresse
-            associée à votre compte. Vérifiez vos spams si vous ne le
-            recevez pas.
+            {t("emailNote")}
           </p>
         </div>
       </motion.div>

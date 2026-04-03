@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import {
   CheckCircle2,
   ArrowRight,
@@ -15,8 +15,10 @@ import PlanCard, {
   PlanCardSkeleton,
 } from "@/components/public/PlanCard";
 import type { Plan } from "@/types/billing";
+import { Link } from "@/i18n/navigation";
 
 export default function SignupPage() {
+  const t = useTranslations("pages.signup");
   const [annual, setAnnual] = useState(false);
   const { data: apiPlans, isLoading, isError } = usePublicPlans({ active: true });
 
@@ -46,22 +48,22 @@ export default function SignupPage() {
             animate={{ opacity: 1, y: 0 }}
           >
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 mb-3">
-              Offres &amp; packs
+              {t("tag")}
             </p>
             <h1 className="text-3xl sm:text-5xl font-display font-bold text-slate-900 mb-4 tracking-tight">
-              Choisissez votre{" "}
-              <span className="text-emerald-600">plan</span>
+              {t("title")}{" "}
+              <span className="text-emerald-600">{t("titleHighlight")}</span>
             </h1>
             <p className="text-base text-slate-500 leading-relaxed max-w-xl mx-auto">
-              Premier mois gratuit, aucun engagement, annulation en 1 clic.
+              {t("desc")}
             </p>
           </motion.div>
 
           <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mt-6 text-sm text-slate-500">
             {[
-              { icon: CheckCircle2, text: "30 jours gratuits" },
-              { icon: Shield, text: "Aucun engagement" },
-              { icon: Smartphone, text: "Mobile Money accepté" },
+              { icon: CheckCircle2, text: t("badges.freeTrial") },
+              { icon: Shield, text: t("badges.noCommitment") },
+              { icon: Smartphone, text: t("badges.mobileMoney") },
             ].map((b) => (
               <span key={b.text} className="inline-flex items-center gap-1.5">
                 <b.icon className="w-4 h-4 text-emerald-600" />
@@ -80,7 +82,7 @@ export default function SignupPage() {
                   : "text-slate-500 hover:text-slate-700"
               }`}
             >
-              Mensuel
+              {t("monthly")}
             </button>
             <button
               onClick={() => setAnnual(true)}
@@ -90,9 +92,9 @@ export default function SignupPage() {
                   : "text-slate-500 hover:text-slate-700"
               }`}
             >
-              Annuel{" "}
+              {t("annual")}{" "}
               <span className="text-emerald-600 text-xs font-black">
-                -20%
+                {t("annualDiscount")}
               </span>
             </button>
           </div>
@@ -103,12 +105,12 @@ export default function SignupPage() {
               {isBackendConnected ? (
                 <span className="inline-flex items-center gap-1.5 text-emerald-600">
                   <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                  Plans synchronisés
+                  {t("plansSynced")}
                 </span>
               ) : (
                 <span className="inline-flex items-center gap-1.5 text-amber-600">
                   <AlertCircle className="w-3.5 h-3.5" />
-                  Impossible de charger les plans
+                  {t("plansLoadError")}
                 </span>
               )}
             </div>
@@ -124,8 +126,8 @@ export default function SignupPage() {
           </div>
         ) : plans.length === 0 ? (
           <div className="text-center py-12 mb-16">
-            <p className="text-sm text-slate-500">Les plans seront bientôt disponibles.</p>
-            <Link href="/contact" className="text-emerald-600 font-bold text-sm hover:underline mt-2 inline-block">Nous contacter →</Link>
+            <p className="text-sm text-slate-500">{t("plansSoon")}</p>
+            <Link href="/contact" className="text-emerald-600 font-bold text-sm hover:underline mt-2 inline-block">{t("contactUsArrow")}</Link>
           </div>
         ) : (
           <div
@@ -149,25 +151,25 @@ export default function SignupPage() {
         {/* FAQ */}
         <div className="max-w-3xl mx-auto bg-slate-50 rounded-3xl p-8 sm:p-12">
           <h2 className="text-xl font-display font-bold text-slate-900 mb-6 text-center">
-            Questions fréquentes
+            {t("faqTitle")}
           </h2>
           <div className="grid sm:grid-cols-2 gap-6">
             {[
               {
-                q: "Puis-je changer de plan plus tard ?",
-                a: "Oui, montée ou descente en gamme à tout moment depuis votre interface.",
+                q: t("faq.q1"),
+                a: t("faq.a1"),
               },
               {
-                q: "Y a-t-il des frais cachés ?",
-                a: "Non. Le prix affiché est tout inclus — pas de frais d'installation ni de support.",
+                q: t("faq.q2"),
+                a: t("faq.a2"),
               },
               {
-                q: "Comment fonctionne l'essai gratuit ?",
-                a: "30 jours complets avec toutes les fonctionnalités. Aucune carte bancaire requise.",
+                q: t("faq.q3"),
+                a: t("faq.a3"),
               },
               {
-                q: "Support technique inclus ?",
-                a: "Oui, tous les plans incluent du support. Les plans supérieurs ont un support prioritaire.",
+                q: t("faq.q4"),
+                a: t("faq.a4"),
               },
             ].map((faq) => (
               <div key={faq.q}>
@@ -185,20 +187,20 @@ export default function SignupPage() {
         {/* CTA */}
         <div className="text-center mt-12">
           <p className="text-sm text-slate-500 mb-4">
-            Plus de 500 pharmacies nous font confiance en Afrique
+            {t("ctaTrust")}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               href="/auth/register"
               className="px-8 py-3.5 bg-slate-900 text-white rounded-xl font-bold hover:bg-emerald-600 transition-all shadow-lg"
             >
-              Essayer gratuitement
+              {t("ctaTry")}
             </Link>
             <Link
               href="/contact"
               className="px-8 py-3.5 bg-slate-100 text-slate-900 rounded-xl font-bold hover:bg-slate-200 transition-all"
             >
-              Parler à un expert
+              {t("ctaTalk")}
             </Link>
           </div>
         </div>

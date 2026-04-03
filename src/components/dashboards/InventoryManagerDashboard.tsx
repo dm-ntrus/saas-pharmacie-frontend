@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useTenantPath } from "@/hooks/useTenantPath";
 import {
   useProducts,
@@ -32,6 +33,7 @@ import {
 } from "lucide-react";
 
 export function InventoryManagerDashboard() {
+  const t = useTranslations("dashboardInventoryManager");
   const { buildPath } = useTenantPath();
   const { data: kpisData, isLoading: loadingKPIs } = useInventoryKPIs();
   const { data: alertsData, isLoading: loadingAlerts } = useInventoryAlerts({ status: "active", limit: 5 });
@@ -40,6 +42,23 @@ export function InventoryManagerDashboard() {
   const { data: productsData, isLoading: loadingProducts } = useProducts({ limit: 1 });
 
   const isLoading = loadingKPIs || loadingAlerts || loadingExpiration || loadingTransfers || loadingProducts;
+
+  const seriesIn = t("chart.in");
+  const seriesOut = t("chart.out");
+  const dayLabels = [
+    t("days.mon"),
+    t("days.tue"),
+    t("days.wed"),
+    t("days.thu"),
+    t("days.fri"),
+    t("days.sat"),
+    t("days.sun"),
+  ];
+  const barMovementData = dayLabels.map((name) => ({
+    name,
+    [seriesIn]: 0,
+    [seriesOut]: 0,
+  }));
 
   if (isLoading) {
     return (
@@ -70,13 +89,13 @@ export function InventoryManagerDashboard() {
 
   const kpiCards = [
     {
-      title: "Total produits",
+      title: t("kpis.totalProducts"),
       value: (kpis.totalProducts ?? totalProducts ?? 0).toString(),
       icon: Package,
       color: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
     },
     {
-      title: "Alertes stock faible",
+      title: t("kpis.lowStockAlerts"),
       value: (kpis.lowStockAlerts ?? alertsList.length).toString(),
       icon: AlertTriangle,
       color: alertsList.length > 0
@@ -84,7 +103,7 @@ export function InventoryManagerDashboard() {
         : "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400",
     },
     {
-      title: "Expirent bientôt",
+      title: t("kpis.expiringSoon"),
       value: expiringCount.toString(),
       icon: Clock,
       color: expiringCount > 0
@@ -92,7 +111,7 @@ export function InventoryManagerDashboard() {
         : "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400",
     },
     {
-      title: "Transferts en attente",
+      title: t("kpis.pendingTransfers"),
       value: transfersList.length.toString(),
       icon: Repeat,
       color: "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400",
@@ -101,28 +120,39 @@ export function InventoryManagerDashboard() {
 
   const quickActions = [
     {
-      title: "Nouveau comptage",
-      description: "Lancer un inventaire physique",
+      title: t("quickActions.count.title"),
+      description: t("quickActions.count.description"),
       icon: ClipboardCheck,
       href: buildPath("/inventory/counts/new"),
     },
     {
-      title: "Voir alertes",
-      description: `${alertsList.length} alerte(s) active(s)`,
+      title: t("quickActions.alerts.title"),
+      description: t("quickActions.alerts.description", { count: alertsList.length }),
       icon: Bell,
       href: buildPath("/inventory/alerts"),
     },
     {
-      title: "Gérer transferts",
-      description: "Transferts inter-dépôts",
+      title: t("quickActions.transfers.title"),
+      description: t("quickActions.transfers.description"),
       icon: Truck,
       href: buildPath("/inventory/transfers"),
     },
   ];
 
+  const alertTypeLabel = (type: string | undefined) => {
+    if (type === "low_stock") return t("alertTypes.lowStock");
+    if (type === "expiration") return t("alertTypes.expiration");
+    return type ?? t("alertTypes.generic");
+  };
+
+  const severityLabel = (sev: string | undefined) => {
+    if (sev === "critical") return t("severity.critical");
+    if (sev === "warning") return t("severity.warning");
+    return sev ?? t("severity.info");
+  };
+
   return (
     <div className="space-y-6">
-      {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpiCards.map((kpi) => (
           <Card key={kpi.title} className="hover:shadow-md transition-shadow">
@@ -141,10 +171,9 @@ export function InventoryManagerDashboard() {
         ))}
       </div>
 
-      {/* Actions rapides */}
       <div>
         <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3">
-          Actions rapides
+          {t("quickActionsTitle")}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {quickActions.map((action) => (
@@ -165,28 +194,19 @@ export function InventoryManagerDashboard() {
         </div>
       </div>
 
-      {/* Charts — Mouvements de stock + Répartition alertes */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BarChart3 className="w-5 h-5 text-emerald-600" />
-              Mouvements de stock (7 derniers jours)
+              {t("charts.stockMovements")}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <BarChartWidget
-              data={[
-                { name: "Lun", entrées: 0, sorties: 0 },
-                { name: "Mar", entrées: 0, sorties: 0 },
-                { name: "Mer", entrées: 0, sorties: 0 },
-                { name: "Jeu", entrées: 0, sorties: 0 },
-                { name: "Ven", entrées: 0, sorties: 0 },
-                { name: "Sam", entrées: 0, sorties: 0 },
-                { name: "Dim", entrées: 0, sorties: 0 },
-              ]}
+              data={barMovementData}
               xKey="name"
-              yKey={["entrées", "sorties"]}
+              yKey={[seriesIn, seriesOut]}
               colors={["#10b981", "#f59e0b"]}
               height={260}
             />
@@ -197,15 +217,15 @@ export function InventoryManagerDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-amber-600" />
-              Répartition des alertes
+              {t("charts.alertDistribution")}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <PieChartWidget
               data={[
-                { name: "Stock faible", value: Number(kpis.lowStockAlerts ?? alertsList.length) || 0 },
-                { name: "Péremption", value: expiringCount },
-                { name: "Transferts", value: transfersList.length },
+                { name: t("pie.lowStock"), value: Number(kpis.lowStockAlerts ?? alertsList.length) || 0 },
+                { name: t("pie.expiration"), value: expiringCount },
+                { name: t("pie.transfers"), value: transfersList.length },
               ]}
               dataKey="value"
               nameKey="name"
@@ -215,19 +235,18 @@ export function InventoryManagerDashboard() {
         </Card>
       </div>
 
-      {/* Alertes stock faible */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-red-500" />
-              Alertes de stock
+              {t("alerts.title")}
             </CardTitle>
             <Link
               href={buildPath("/inventory/alerts")}
               className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
             >
-              Tout voir <ArrowRight className="w-4 h-4" />
+              {t("seeAll")} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </CardHeader>
@@ -238,13 +257,11 @@ export function InventoryManagerDashboard() {
                 <div key={alert.id ?? idx} className="flex items-center justify-between py-3">
                   <div>
                     <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                      {alert.productName || alert.product_name || alert.message || `Alerte #${idx + 1}`}
+                      {alert.productName || alert.product_name || alert.message || t("alertFallback", { n: idx + 1 })}
                     </p>
                     <p className="text-xs text-slate-500 dark:text-slate-400">
-                      {alert.type === "low_stock" ? "Stock faible" :
-                       alert.type === "expiration" ? "Expiration proche" :
-                       alert.type ?? "Alerte"}
-                      {alert.currentStock != null && ` — Stock: ${alert.currentStock}`}
+                      {alertTypeLabel(alert.type)}
+                      {alert.currentStock != null && ` — ${t("stockLabel")}: ${alert.currentStock}`}
                     </p>
                   </div>
                   <span className={`text-xs font-medium px-2 py-1 rounded-full ${
@@ -254,8 +271,7 @@ export function InventoryManagerDashboard() {
                         ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"
                         : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
                   }`}>
-                    {alert.severity === "critical" ? "Critique" :
-                     alert.severity === "warning" ? "Attention" : alert.severity ?? "Info"}
+                    {severityLabel(alert.severity)}
                   </span>
                 </div>
               ))}
@@ -264,7 +280,7 @@ export function InventoryManagerDashboard() {
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <Package className="w-10 h-10 text-slate-300 dark:text-slate-600 mb-3" />
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                Aucune alerte de stock active
+                {t("alerts.empty")}
               </p>
             </div>
           )}

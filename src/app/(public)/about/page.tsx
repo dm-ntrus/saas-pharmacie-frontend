@@ -2,24 +2,29 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Users, Target, Heart, Shield, Globe, Award } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 
-const timeline = [
-  { year: "2021", title: "Lancement", desc: "Première version bêta déployée à Kinshasa avec 10 pharmacies pilotes." },
-  { year: "2022", title: "Expansion RDC", desc: "Ouverture à Lubumbashi et Goma. 100+ pharmacies actives." },
-  { year: "2023", title: "International", desc: "Déploiement au Burundi et au Congo-Brazzaville. Lancement de l'IA prédictive." },
-  { year: "2024", title: "Scale-up", desc: "500+ pharmacies. Partenariats avec les grands répartiteurs nationaux." },
-];
-
-const values = [
-  { icon: Heart, title: "Empathie", desc: "Nous plaçons l'humain au cœur de chaque ligne de code." },
-  { icon: Shield, title: "Intégrité", desc: "La sécurité et la confidentialité des données sont nos priorités absolues." },
-  { icon: Award, title: "Excellence", desc: "Nous visons la perfection dans l'expérience utilisateur et le support." },
-  { icon: Users, title: "Collaboration", desc: "Nous grandissons avec nos clients en écoutant leurs besoins réels." },
-];
+const valueIcons = [Heart, Shield, Award, Users] as const;
+const valueKeys = ["Empathy", "Integrity", "Excellence", "Collaboration"] as const;
+const timelineYears = ["2021", "2022", "2023", "2024"] as const;
 
 export default function AboutPage() {
+  const t = useTranslations("pages.about");
+
+  const timeline = timelineYears.map((year) => ({
+    year,
+    title: t(`timeline${year}`),
+    desc: t(`timeline${year}Desc`),
+  }));
+
+  const values = valueKeys.map((key, i) => ({
+    icon: valueIcons[i],
+    title: t(`value${key}`),
+    desc: t(`value${key}Desc`),
+  }));
+
   return (
     <div className="min-h-screen pt-24 sm:pt-28 pb-0 bg-white">
       {/* Hero */}
@@ -32,22 +37,20 @@ export default function AboutPage() {
               className="lg:col-span-7"
             >
               <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 mb-3">
-                Notre histoire
+                {t("tag")}
               </p>
               <h1 className="text-3xl sm:text-5xl lg:text-6xl font-display font-bold text-slate-900 mb-4 tracking-tight leading-[1.05]">
-                Révolutionner la{" "}
-                <span className="text-emerald-600">santé</span> en Afrique.
+                {t("title")}{" "}
+                <span className="text-emerald-600">{t("titleHighlight")}</span> {t("titleEnd")}
               </h1>
               <p className="text-base sm:text-lg text-slate-500 leading-relaxed mb-8 font-medium max-w-2xl">
-                SyntixPharma est né d&apos;une vision simple : donner aux pharmaciens
-                les outils technologiques nécessaires pour offrir des soins de
-                qualité supérieure, partout et à tout moment.
+                {t("desc")}
               </p>
               <div className="flex flex-wrap gap-8 sm:gap-14">
                 {[
-                  { val: "2021", label: "Fondation" },
-                  { val: "500+", label: "Clients" },
-                  { val: "4", label: "Pays" },
+                  { val: "2021", label: t("statFoundation") },
+                  { val: "500+", label: t("statClients") },
+                  { val: "4", label: t("statCountries") },
                 ].map((s) => (
                   <div key={s.label}>
                     <p className="text-4xl sm:text-5xl font-display font-bold text-slate-900 mb-1">
@@ -76,7 +79,7 @@ export default function AboutPage() {
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent" />
               <div className="absolute bottom-8 sm:bottom-12 left-6 sm:left-10 right-6 sm:right-10">
                 <p className="text-white text-xl sm:text-2xl font-display font-bold italic leading-tight">
-                  &quot;Notre mission est d&apos;éliminer les barrières technologiques.&quot;
+                  &quot;{t("quote")}&quot;
                 </p>
               </div>
             </motion.div>
@@ -93,13 +96,10 @@ export default function AboutPage() {
                 <Target className="w-7 h-7 text-emerald-600" />
               </div>
               <h2 className="text-xl font-display font-bold text-slate-900 mb-3">
-                Notre mission
+                {t("missionLabel")}
               </h2>
               <p className="text-sm text-slate-500 leading-relaxed">
-                Fournir une plateforme de gestion intégrée, intuitive et
-                sécurisée qui permet aux pharmacies de toutes tailles d&apos;optimiser
-                leurs opérations, de réduire les pertes et d&apos;améliorer l&apos;accès
-                aux médicaments essentiels pour leurs communautés.
+                {t("missionText")}
               </p>
             </div>
             <div className="p-8 sm:p-10 bg-slate-900 text-white rounded-3xl shadow-xl relative overflow-hidden">
@@ -108,13 +108,10 @@ export default function AboutPage() {
                 <Globe className="w-7 h-7 text-emerald-400" />
               </div>
               <h2 className="text-xl font-display font-bold mb-3">
-                Notre vision
+                {t("visionLabel")}
               </h2>
               <p className="text-sm text-slate-400 leading-relaxed">
-                Devenir le standard technologique de la gestion pharmaceutique
-                en Afrique subsaharienne, en créant un écosystème de santé
-                connecté où chaque patient reçoit le bon traitement, au bon
-                moment.
+                {t("visionText")}
               </p>
             </div>
           </div>
@@ -126,11 +123,10 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12 sm:mb-16">
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-3">
-              Notre parcours
+              {t("timelineTag")}
             </p>
             <h2 className="text-3xl sm:text-5xl font-display font-bold text-slate-900 tracking-tight">
-              Une croissance{" "}
-              <span className="text-emerald-600">accélérée.</span>
+              {t("timelineTitle")}
             </h2>
           </div>
           <div className="relative">
@@ -166,11 +162,10 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-10 sm:mb-12">
             <h2 className="text-3xl sm:text-4xl font-display font-bold text-slate-900 mb-3">
-              Nos valeurs fondamentales
+              {t("valuesTag")}
             </h2>
             <p className="text-base text-slate-500 max-w-xl mx-auto">
-              Ce qui nous guide au quotidien dans le développement de nos
-              solutions.
+              {t("valuesTitle")}
             </p>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -200,19 +195,16 @@ export default function AboutPage() {
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <div>
               <h2 className="text-3xl sm:text-4xl font-display font-bold mb-4 leading-tight">
-                Une équipe{" "}
-                <span className="text-emerald-400">passionnée</span> par
-                l&apos;impact.
+                {t("teamCta")}
               </h2>
               <p className="text-base text-slate-400 leading-relaxed mb-8">
-                Nos ingénieurs, pharmaciens et experts en santé travaillent main
-                dans la main pour construire le futur de l&apos;officine.
+                {t("teamCtaDesc")}
               </p>
               <Link
                 href="/contact"
                 className="inline-flex px-8 py-4 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-600/20"
               >
-                Rejoindre l&apos;aventure
+                {t("teamCtaButton")}
               </Link>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -223,13 +215,13 @@ export default function AboutPage() {
                 >
                   <Image
                     src="/images/hero.svg"
-                    alt={`Membre ${n}`}
+                    alt={`${t("teamCtaContact")} ${n}`}
                     fill
                     className="object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-60" />
                   <div className="absolute bottom-4 left-4">
-                    <p className="font-bold text-sm">Membre {n}</p>
+                    <p className="font-bold text-sm">{t("teamCtaContact")} {n}</p>
                     <p className="text-emerald-400 text-xs">Expert SyntixPharma</p>
                   </div>
                 </div>

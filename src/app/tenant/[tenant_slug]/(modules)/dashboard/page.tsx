@@ -7,7 +7,8 @@ import { usePermissions } from "@/hooks/usePermissions";
 import { useTenantPath } from "@/hooks/useTenantPath";
 import { Permission } from "@/types/permissions";
 import { Role } from "@/types/roles";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import {
   Card,
@@ -139,13 +140,14 @@ function QuickAction({
 }
 
 export default function DashboardPage() {
+  const t = useTranslations("dashboardMain");
   const { user } = useAuth();
   const { currentOrganization } = useOrganization();
   const { hasPermission, hasRole, hasAnyPermission } = usePermissions();
   const { buildPath } = useTenantPath();
 
-  const greeting = getGreeting();
-  const userName = user?.given_name || user?.name || "Utilisateur";
+  const greeting = getGreeting(t);
+  const userName = user?.given_name || user?.name || t("userDefault");
 
   // All hooks must be called unconditionally (React rules of hooks)
   const salesKPIs = useSalesDashboardKPIs("month");
@@ -200,10 +202,9 @@ export default function DashboardPage() {
 
       {crossTenantBlocked && (
         <div className="flex items-start gap-3 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">
-          <span className="font-semibold shrink-0">Organisation incorrecte :</span>
+          <span className="font-semibold shrink-0">{t("wrongOrganizationLabel")}</span>
           <span>
-            Vous avez tenté d&apos;accéder à <strong>{crossTenantBlocked}</strong>.
-            Vous avez été redirigé vers votre propre organisation.
+            {t("crossTenantPart1")} <strong>{crossTenantBlocked}</strong>. {t("crossTenantPart2")}
           </span>
         </div>
       )}
@@ -214,7 +215,7 @@ export default function DashboardPage() {
           {greeting}, {userName}
         </h1>
         <p className="text-slate-500 dark:text-slate-400 mt-1">
-          {currentOrganization?.name || "Pharmacie"} — Vue d&apos;ensemble de votre activité
+          {currentOrganization?.name || t("pharmacyFallback")} — {t("overviewSubtitle")}
         </p>
       </div>
 
@@ -222,7 +223,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {hasPermission(Permission.SALES_READ) && (
           <KPICard
-            title="Ventes du jour"
+            title={t("kpi.salesToday")}
             value={formatNumber(todaySalesCount)}
             loading={anyLoading}
             icon={ShoppingCart}
@@ -232,7 +233,7 @@ export default function DashboardPage() {
         )}
         {hasPermission(Permission.SALES_READ) && (
           <KPICard
-            title="Chiffre d'affaires"
+            title={t("kpi.revenue")}
             value={formatCurrency(todayRevenue)}
             loading={anyLoading}
             icon={DollarSign}
@@ -241,7 +242,7 @@ export default function DashboardPage() {
         )}
         {hasPermission(Permission.PRODUCTS_READ) && (
           <KPICard
-            title="Produits en stock"
+            title={t("kpi.productsInStock")}
             value={formatNumber(productCount)}
             loading={inventoryKPIs.isLoading}
             icon={Package}
@@ -251,7 +252,7 @@ export default function DashboardPage() {
         )}
         {hasPermission(Permission.PATIENTS_READ) && (
           <KPICard
-            title="Patients actifs"
+            title={t("kpi.activePatients")}
             value={formatNumber(activePatients)}
             loading={patientSummary.isLoading}
             icon={Users}
@@ -261,7 +262,7 @@ export default function DashboardPage() {
         )}
         {hasPermission(Permission.PRESCRIPTIONS_READ) && (
           <KPICard
-            title="Ordonnances en attente"
+            title={t("kpi.pendingPrescriptions")}
             value={formatNumber(pendingRx)}
             loading={prescriptionStats.isLoading}
             icon={FileText}
@@ -271,7 +272,7 @@ export default function DashboardPage() {
         )}
         {hasPermission(Permission.INVENTORY_ALERTS_READ) && (
           <KPICard
-            title="Alertes stock"
+            title={t("kpi.stockAlerts")}
             value={formatNumber(alertCount)}
             loading={inventoryAlerts.isLoading}
             icon={AlertTriangle}
@@ -284,61 +285,61 @@ export default function DashboardPage() {
       {/* Quick Actions */}
       <div>
         <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3">
-          Actions rapides
+          {t("quickActions")}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
           {hasPermission(Permission.SALES_CREATE) && (
             <QuickAction
-              title="Nouvelle vente"
-              description="Démarrer une vente rapide"
+              title={t("actions.newSaleTitle")}
+              description={t("actions.newSaleDesc")}
               icon={ShoppingCart}
               href={buildPath("/sales/pos")}
             />
           )}
           {hasPermission(Permission.PRESCRIPTIONS_WRITE) && (
             <QuickAction
-              title="Nouvelle ordonnance"
-              description="Enregistrer une prescription"
+              title={t("actions.newPrescriptionTitle")}
+              description={t("actions.newPrescriptionDesc")}
               icon={FileText}
               href={buildPath("/prescriptions")}
             />
           )}
           {hasPermission(Permission.PATIENTS_WRITE) && (
             <QuickAction
-              title="Nouveau patient"
-              description="Ajouter un patient"
+              title={t("actions.newPatientTitle")}
+              description={t("actions.newPatientDesc")}
               icon={Users}
               href={buildPath("/patients/new")}
             />
           )}
           {hasPermission(Permission.PRODUCTS_CREATE) && (
             <QuickAction
-              title="Nouveau produit"
-              description="Ajouter au catalogue"
+              title={t("actions.newProductTitle")}
+              description={t("actions.newProductDesc")}
               icon={Package}
               href={buildPath("/inventory/products/new")}
             />
           )}
           {hasPermission(Permission.VACCINATION_WRITE) && (
             <QuickAction
-              title="Vaccination"
-              description="Planifier un rendez-vous"
+              title={t("actions.vaccinationTitle")}
+              description={t("actions.vaccinationDesc")}
               icon={Syringe}
               href={buildPath("/vaccination")}
             />
           )}
           {hasPermission(Permission.QUALITY_EVENTS_CREATE) && (
             <QuickAction
-              title="Événement qualité"
-              description="Signaler un incident"
+              title={t("actions.qualityEventTitle")}
+              description={t("actions.qualityEventDesc")}
               icon={ClipboardCheck}
               href={buildPath("/quality")}
             />
           )}
           {hasPermission(Permission.BI_READ) && (
             <QuickAction
-              title="Rapports"
-              description="Consulter les analytics"
+              title={t("actions.reportsTitle")}
+              description={t("actions.reportsDesc")}
               icon={BarChart3}
               href={buildPath("/analytics")}
             />
@@ -353,7 +354,7 @@ export default function DashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BarChart3 className="w-5 h-5 text-emerald-600" />
-                Ventes de la semaine
+                {t("charts.weeklySales")}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -368,13 +369,13 @@ export default function DashboardPage() {
                           ventes: d.count ?? d.sales ?? d.value ?? 0,
                         }))
                       : [
-                          { name: "Lun", ventes: 0 },
-                          { name: "Mar", ventes: 0 },
-                          { name: "Mer", ventes: 0 },
-                          { name: "Jeu", ventes: 0 },
-                          { name: "Ven", ventes: 0 },
-                          { name: "Sam", ventes: 0 },
-                          { name: "Dim", ventes: 0 },
+                          { name: t("days.mon"), ventes: 0 },
+                          { name: t("days.tue"), ventes: 0 },
+                          { name: t("days.wed"), ventes: 0 },
+                          { name: t("days.thu"), ventes: 0 },
+                          { name: t("days.fri"), ventes: 0 },
+                          { name: t("days.sat"), ventes: 0 },
+                          { name: t("days.sun"), ventes: 0 },
                         ]
                   }
                   xKey="name"
@@ -389,7 +390,7 @@ export default function DashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-indigo-600" />
-                Tendance du chiffre d&apos;affaires
+                {t("charts.revenueTrend")}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -417,7 +418,7 @@ export default function DashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Activity className="w-5 h-5 text-cyan-600" />
-                Activité récente
+                {t("charts.recentActivity")}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -445,7 +446,7 @@ export default function DashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Package className="w-5 h-5 text-amber-600" />
-                Top produits vendus
+                {t("charts.topProducts")}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -456,10 +457,10 @@ export default function DashboardPage() {
                   data={
                     topProductsData.length > 0
                       ? topProductsData.map((p: any) => ({
-                          name: p.name || p.productName || "Produit",
+                          name: p.name || p.productName || t("productFallback"),
                           value: p.totalQuantity ?? p.count ?? p.value ?? 0,
                         }))
-                      : [{ name: "Aucune donnée", value: 1 }]
+                      : [{ name: t("noData"), value: 1 }]
                   }
                   dataKey="value"
                   nameKey="name"
@@ -474,9 +475,9 @@ export default function DashboardPage() {
   );
 }
 
-function getGreeting(): string {
+function getGreeting(t: (key: string) => string): string {
   const hour = new Date().getHours();
-  if (hour < 12) return "Bonjour";
-  if (hour < 18) return "Bon après-midi";
-  return "Bonsoir";
+  if (hour < 12) return t("greetings.morning");
+  if (hour < 18) return t("greetings.afternoon");
+  return t("greetings.evening");
 }

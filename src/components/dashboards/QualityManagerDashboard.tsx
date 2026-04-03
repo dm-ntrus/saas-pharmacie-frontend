@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useTenantPath } from "@/hooks/useTenantPath";
 import {
   useQualityEvents,
@@ -16,8 +17,6 @@ import {
   CardHeader,
   CardTitle,
   SkeletonCard,
-  BarChartWidget,
-  PieChartWidget,
 } from "@/components/ui";
 import {
   ShieldAlert,
@@ -32,6 +31,7 @@ import {
 } from "lucide-react";
 
 export function QualityManagerDashboard() {
+  const t = useTranslations("dashboardQualityManager");
   const { buildPath } = useTenantPath();
   const { data: eventsData, isLoading: loadingEvents } = useQualityEvents({ status: "open", limit: 5 });
   const { data: capasData, isLoading: loadingCAPAs } = useCAPAs({ status: "open" });
@@ -66,14 +66,14 @@ export function QualityManagerDashboard() {
   const capasList = Array.isArray(capas) ? capas : [];
   const trainingList = Array.isArray(training) ? training : [];
 
-  const completedTraining = trainingList.filter((t: any) => t.status === "completed").length;
+  const completedTraining = trainingList.filter((tr: any) => tr.status === "completed").length;
   const trainingCompliance = trainingList.length > 0
     ? Math.round((completedTraining / trainingList.length) * 100)
     : 100;
 
   const kpis = [
     {
-      title: "Événements ouverts",
+      title: t("kpis.openEvents"),
       value: (dashboard.openEvents ?? eventsList.length).toString(),
       icon: ShieldAlert,
       color: eventsList.length > 0
@@ -81,7 +81,7 @@ export function QualityManagerDashboard() {
         : "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400",
     },
     {
-      title: "CAPAs en cours",
+      title: t("kpis.openCapas"),
       value: (dashboard.pendingCAPAs ?? capasList.length).toString(),
       icon: AlertOctagon,
       color: capasList.length > 0
@@ -89,7 +89,7 @@ export function QualityManagerDashboard() {
         : "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400",
     },
     {
-      title: "Conformité formation",
+      title: t("kpis.trainingCompliance"),
       value: `${trainingCompliance}%`,
       icon: GraduationCap,
       color: trainingCompliance >= 80
@@ -97,7 +97,7 @@ export function QualityManagerDashboard() {
         : "bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400",
     },
     {
-      title: "Audits à venir",
+      title: t("kpis.upcomingAudits"),
       value: (dashboard.upcomingAudits ?? 0).toString(),
       icon: CalendarSearch,
       color: "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400",
@@ -106,28 +106,34 @@ export function QualityManagerDashboard() {
 
   const quickActions = [
     {
-      title: "Créer événement",
-      description: "Signaler un incident qualité",
+      title: t("quickActions.createEvent.title"),
+      description: t("quickActions.createEvent.description"),
       icon: FilePlus,
       href: buildPath("/quality/events/new"),
     },
     {
-      title: "Voir CAPAs",
-      description: `${capasList.length} action(s) corrective(s)`,
+      title: t("quickActions.viewCapas.title"),
+      description: t("quickActions.viewCapas.description", { count: capasList.length }),
       icon: Eye,
       href: buildPath("/quality/capas"),
     },
     {
-      title: "Gérer documents",
-      description: "Procédures et formulaires",
+      title: t("quickActions.documents.title"),
+      description: t("quickActions.documents.description"),
       icon: FileStack,
       href: buildPath("/quality/documents"),
     },
   ];
 
+  const severityLabel = (sev: string | undefined) => {
+    if (sev === "critical") return t("severity.critical");
+    if (sev === "major") return t("severity.major");
+    if (sev === "minor") return t("severity.minor");
+    return sev ?? "—";
+  };
+
   return (
     <div className="space-y-6">
-      {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((kpi) => (
           <Card key={kpi.title} className="hover:shadow-md transition-shadow">
@@ -146,10 +152,9 @@ export function QualityManagerDashboard() {
         ))}
       </div>
 
-      {/* Actions rapides */}
       <div>
         <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3">
-          Actions rapides
+          {t("quickActionsTitle")}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {quickActions.map((action) => (
@@ -170,19 +175,18 @@ export function QualityManagerDashboard() {
         </div>
       </div>
 
-      {/* Événements qualité récents */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
               <Activity className="w-5 h-5 text-emerald-600" />
-              Événements qualité récents
+              {t("recentEvents.title")}
             </CardTitle>
             <Link
               href={buildPath("/quality/events")}
               className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
             >
-              Tout voir <ArrowRight className="w-4 h-4" />
+              {t("seeAll")} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </CardHeader>
@@ -193,10 +197,10 @@ export function QualityManagerDashboard() {
                 <div key={event.id ?? idx} className="flex items-center justify-between py-3">
                   <div>
                     <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                      {event.title || event.description || `Événement #${idx + 1}`}
+                      {event.title || event.description || t("eventFallback", { n: idx + 1 })}
                     </p>
                     <p className="text-xs text-slate-500 dark:text-slate-400">
-                      {event.type ? event.type.replace(/_/g, " ") : "—"}
+                      {event.type ? String(event.type).replace(/_/g, " ") : "—"}
                       {event.created_at ? ` — ${formatDate(event.created_at)}` : ""}
                     </p>
                   </div>
@@ -207,9 +211,7 @@ export function QualityManagerDashboard() {
                         ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"
                         : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
                   }`}>
-                    {event.severity === "critical" ? "Critique" :
-                     event.severity === "major" ? "Majeur" :
-                     event.severity === "minor" ? "Mineur" : event.severity ?? "—"}
+                    {severityLabel(event.severity)}
                   </span>
                 </div>
               ))}
@@ -218,7 +220,7 @@ export function QualityManagerDashboard() {
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <ShieldAlert className="w-10 h-10 text-slate-300 dark:text-slate-600 mb-3" />
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                Aucun événement qualité ouvert
+                {t("recentEvents.empty")}
               </p>
             </div>
           )}

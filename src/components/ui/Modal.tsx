@@ -5,7 +5,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { cn } from "@/utils/cn";
 import { X } from "lucide-react";
 
-interface ModalProps {
+export interface ModalProps {
   /** Preferred API (Radix): controlled open state. */
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -14,9 +14,11 @@ interface ModalProps {
   onClose?: () => void;
   title?: string;
   description?: string;
+  icon?: React.ReactNode;
   children: React.ReactNode;
-  size?: "sm" | "md" | "lg" | "xl" | "full";
+  size?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "full";
   className?: string;
+  showCloseButton?: boolean;
 }
 
 const sizeClasses: Record<string, string> = {
@@ -24,6 +26,9 @@ const sizeClasses: Record<string, string> = {
   md: "max-w-lg",
   lg: "max-w-2xl",
   xl: "max-w-4xl",
+  "2xl": "max-w-5xl",
+  "3xl": "max-w-6xl",
+  "4xl": "max-w-7xl",
   full: "max-w-[95vw] sm:max-w-[90vw]",
 };
 
@@ -34,6 +39,7 @@ export function Modal({
   onClose,
   title,
   description,
+  icon,
   children,
   size = "md",
   className,
@@ -64,7 +70,9 @@ export function Modal({
         >
           {(title || description) && (
             <div className="flex items-start justify-between p-4 sm:p-6 border-b border-slate-100 dark:border-slate-700/50">
-              <div>
+              <div className="flex items-center gap-2">
+                {icon && <span className="shrink-0">{icon}</span>}
+                <div>
                 {title && (
                   <Dialog.Title className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                     {title}
@@ -75,6 +83,7 @@ export function Modal({
                     {description}
                   </Dialog.Description>
                 )}
+                </div>
               </div>
               <Dialog.Close className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
                 <X className="w-4 h-4" />

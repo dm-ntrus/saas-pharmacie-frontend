@@ -1,32 +1,28 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
+import { useMessages, useTranslations } from "next-intl";
 
 export default function TrustedBy() {
-  const logos = [
-    'Pharmacie Centrale',
-    'Groupe Santé',
-    'BioMed Lab',
-    'PharmaPlus',
-    'MediCare Africa',
-    'Global Health',
-    'Kinshasa Pharma',
-    'Lubumbashi Med'
-  ];
+  const t = useTranslations("marketing");
+  const messages = useMessages() as {
+    platformModules?: { trustedLogos?: string[] };
+  };
+  const logos = messages.platformModules?.trustedLogos ?? [];
 
   return (
     <section className="py-16 overflow-hidden border-y border-slate-100 bg-slate-50/50">
       <div className="container mx-auto px-4 mb-12">
         <p className="text-center text-xs font-bold text-slate-400 uppercase tracking-[0.3em]">
-          Ils nous font confiance à travers le continent
+          {t("trustedBy")}
         </p>
       </div>
-      
+
       <div className="relative flex overflow-hidden">
         <div className="animate-marquee whitespace-nowrap flex items-center gap-16 md:gap-32">
           {[...logos, ...logos].map((logo, i) => (
             <div
-              key={i}
+              key={`${logo}-${i}`}
               className="text-2xl md:text-4xl font-bold text-slate-200 hover:text-emerald-600 transition-colors duration-500 font-display cursor-default select-none"
             >
               {logo}

@@ -1,17 +1,33 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ChevronRight } from "lucide-react";
-import {
-  MARKETING_HEADER_PRIMARY,
-  MARKETING_HEADER_SECONDARY,
-} from "@/content/marketing-site";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { Link } from "@/i18n/navigation";
+
+const PRIMARY_LINKS = [
+  { href: "/modules", key: "platform" },
+  { href: "/solutions", key: "solutions" },
+  { href: "/features", key: "features" },
+  { href: "/pricing", key: "pricing" },
+  { href: "/about", key: "about" },
+  { href: "/contact", key: "contact" },
+] as const;
+
+const SECONDARY_LINKS = [
+  { href: "/support", key: "helpCenter" },
+  { href: "/plan_demo", key: "demo" },
+  { href: "/api-docs", key: "api" },
+  { href: "/status", key: "statusPage" },
+  { href: "/signup", key: "offers" },
+] as const;
 
 export default function Header() {
   const pathname = usePathname();
+  const t = useTranslations("layout.header");
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => setMenuOpen(false), [pathname]);
@@ -37,7 +53,7 @@ export default function Header() {
 
             {/* Desktop nav */}
             <nav className="hidden lg:flex items-center gap-8">
-              {MARKETING_HEADER_PRIMARY.map((link) => (
+              {PRIMARY_LINKS.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -47,38 +63,40 @@ export default function Header() {
                       : "text-slate-600 hover:text-emerald-600"
                   }`}
                 >
-                  {link.label}
+                  {t(link.key)}
                 </Link>
               ))}
             </nav>
 
             {/* Desktop CTA */}
             <div className="hidden lg:flex items-center gap-5">
+              <LanguageSwitcher variant="compact" />
               <Link
                 href="/auth/login"
                 className="text-[13px] font-bold text-slate-600 hover:text-slate-900 uppercase tracking-widest transition-colors"
               >
-                Connexion
+                {t("login")}
               </Link>
               <Link
                 href="/auth/register"
                 className="px-6 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-emerald-600 transition-all shadow-lg shadow-slate-900/10"
               >
-                Essai Gratuit
+                {t("freeTrial")}
               </Link>
             </div>
 
             {/* Mobile */}
             <div className="flex lg:hidden items-center gap-2">
+              <LanguageSwitcher variant="compact" />
               <Link
                 href="/auth/login"
-                className="text-xs font-bold text-slate-500 uppercase tracking-widest mr-1"
+                className="inline-flex items-center px-2.5 py-1.5 rounded-lg text-xs font-bold text-slate-500 uppercase tracking-widest hover:text-emerald-600 hover:bg-emerald-50 transition-all"
               >
-                Connexion
+                {t("login")}
               </Link>
               <button
                 onClick={() => setMenuOpen((v) => !v)}
-                aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+                aria-label={menuOpen ? t("closeMenu") : t("openMenu")}
                 className="w-10 h-10 flex items-center justify-center rounded-xl text-slate-600 border border-slate-200 bg-white hover:border-emerald-300 hover:text-emerald-600 transition-all"
               >
                 <AnimatePresence mode="wait" initial={false}>
@@ -134,7 +152,7 @@ export default function Header() {
             >
               {/* Primary links */}
               <nav className="p-3 space-y-0.5">
-                {MARKETING_HEADER_PRIMARY.map((link, i) => (
+                {PRIMARY_LINKS.map((link, i) => (
                   <motion.div
                     key={link.href}
                     initial={{ opacity: 0, x: -8 }}
@@ -149,7 +167,7 @@ export default function Header() {
                           : "text-slate-700 hover:bg-slate-50"
                       }`}
                     >
-                      {link.label}
+                      {t(link.key)}
                       <ChevronRight className="w-4 h-4 text-slate-300" />
                     </Link>
                   </motion.div>
@@ -160,16 +178,14 @@ export default function Header() {
 
               {/* Secondary links */}
               <nav className="p-3 space-y-0.5">
-                {MARKETING_HEADER_SECONDARY.filter(
-                  (l) => !l.href.startsWith("/auth"),
-                ).map((link, i) => (
+                {SECONDARY_LINKS.map((link, i) => (
                   <motion.div
                     key={link.href}
                     initial={{ opacity: 0, x: -8 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{
                       delay:
-                        MARKETING_HEADER_PRIMARY.length * 0.03 +
+                        PRIMARY_LINKS.length * 0.03 +
                         i * 0.03 +
                         0.06,
                     }}
@@ -180,7 +196,7 @@ export default function Header() {
                         pathname === link.href ? "text-emerald-600 font-bold" : ""
                       }`}
                     >
-                      {link.label}
+                      {t(link.key)}
                     </Link>
                   </motion.div>
                 ))}
@@ -194,7 +210,7 @@ export default function Header() {
                   href="/auth/register"
                   className="block w-full py-3.5 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-emerald-600 transition-all text-center shadow-lg shadow-slate-900/10"
                 >
-                  Essai Gratuit
+                  {t("freeTrial")}
                 </Link>
               </div>
             </motion.div>

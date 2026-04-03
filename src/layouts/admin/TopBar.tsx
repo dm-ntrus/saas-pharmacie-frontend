@@ -1,7 +1,6 @@
 "use client";
 
 import React, { Fragment, useState } from "react";
-import Link from "next/link";
 import { Menu, Transition } from "@headlessui/react";
 import {
   Bell,
@@ -13,6 +12,8 @@ import {
 } from "lucide-react";
 import { useAppStore } from "@/store/appStore";
 import { useAuth } from "@/context/AuthContext";
+import { Link } from "@/i18n/navigation";
+import { useLocale, useTranslations } from "next-intl";
 
 type TopBarProps = {
   onMenuClick: () => void;
@@ -22,6 +23,9 @@ type TopBarProps = {
 const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
   const { user, logout } = useAuth();
   const { notifications, markNotificationAsRead } = useAppStore();
+  const locale = useLocale();
+  const tCommon = useTranslations("common");
+  const tNotifications = useTranslations("notifications");
   const [searchQuery, setSearchQuery] = useState("");
 
   const unreadNotifications = notifications.filter((n) => !n.read);
@@ -51,7 +55,7 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
               <input
                 type="search"
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md text-sm placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
-                placeholder="Rechercher..."
+                placeholder={tCommon("search")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -64,7 +68,7 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
           {/* Notifications */}
           <Menu as="div" className="relative">
             <Menu.Button className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-emerald-500">
-              <span className="sr-only">Voir les notifications</span>
+              <span className="sr-only">{tNotifications("title")}</span>
               <div className="relative">
                 <Bell className="h-6 w-6" />
                 {unreadNotifications.length > 0 && (
@@ -88,13 +92,13 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
                 <div className="py-2">
                   <div className="px-4 py-2 border-b border-gray-100">
                     <p className="text-sm font-medium text-gray-900">
-                      Notifications ({unreadNotifications.length})
+                      {tNotifications("title")} ({unreadNotifications.length})
                     </p>
                   </div>
 
                   {unreadNotifications.length === 0 ? (
                     <div className="px-4 py-6 text-center text-sm text-gray-500">
-                      Aucune nouvelle notification
+                      {tNotifications("noUnread")}
                     </div>
                   ) : (
                     <div className="max-h-80 overflow-y-auto">
@@ -125,7 +129,7 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
                                 {notification.message}
                               </p>
                               <p className="mt-1 text-xs text-gray-400">
-                                {new Date(notification.timestamp).toLocaleTimeString("fr-FR")}
+                                {new Date(notification.timestamp).toLocaleTimeString(locale)}
                               </p>
                             </button>
                           )}

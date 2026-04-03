@@ -49,6 +49,7 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
+    ".next/dev/types/routes.d.ts",
     "node_modules",
     "src/app/tenant/[tenant_slug]/(modules)/**"
   ]

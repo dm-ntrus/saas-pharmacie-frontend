@@ -2,8 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import { WifiOff, Wifi } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export function OfflineIndicator() {
+  const t = useTranslations("layout.pwa");
   const [isOnline, setIsOnline] = useState(true);
   const [showReconnect, setShowReconnect] = useState(false);
 
@@ -42,12 +44,12 @@ export function OfflineIndicator() {
         {isOnline ? (
           <>
             <Wifi className="w-4 h-4" />
-            <span>Connexion rétablie</span>
+            <span>{t("reconnected")}</span>
           </>
         ) : (
           <>
             <WifiOff className="w-4 h-4" />
-            <span>Mode hors-ligne — les données seront synchronisées à la reconnexion</span>
+            <span>{t("offlineMessage")}</span>
           </>
         )}
       </div>

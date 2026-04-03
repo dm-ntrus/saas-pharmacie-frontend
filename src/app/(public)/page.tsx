@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import {
@@ -15,6 +14,7 @@ import {
   Pill,
   CreditCard,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import TrustedBy from "@/components/public/trusted-by";
 import Testimonials from "@/components/public/testimonials";
 import FAQ from "@/components/public/faq";
@@ -22,67 +22,70 @@ import ValueStrip from "@/components/public/ValueStrip";
 import PlatformModulesPreview from "@/components/public/PlatformModulesPreview";
 import ClientJourneySection from "@/components/public/ClientJourneySection";
 import HomePricingSection from "@/components/public/HomePricingSection";
-
-const STATS = [
-  { value: "500+", label: "Pharmacies" },
-  { value: "1M+", label: "Transactions" },
-  { value: "99.9%", label: "Uptime" },
-  { value: "24/7", label: "Support" },
-];
-
-const CAPABILITIES = [
-  {
-    icon: Package,
-    title: "Inventaire & réassort",
-    desc: "Produits, mouvements, péremptions, suggestions de réapprovisionnement — moins de ruptures.",
-    highlight: "Stock sous contrôle",
-    color: "from-emerald-500 to-emerald-600",
-  },
-  {
-    icon: Users,
-    title: "Patients & prescriptions",
-    desc: "Dossiers patients, ordonnances, vaccination pour un service soignant structuré.",
-    highlight: "Sécurité de dispensation",
-    color: "from-purple-500 to-purple-600",
-  },
-  {
-    icon: Zap,
-    title: "Point de vente",
-    desc: "POS moderne, facturation et moyens de paiement adaptés à votre marché.",
-    highlight: "Encaissement fluide",
-    color: "from-amber-500 to-amber-600",
-  },
-  {
-    icon: BarChart3,
-    title: "Pilotage & rapports",
-    desc: "Tableaux de bord, rapports et BI pour arbitrer marges, volumes et équipes.",
-    highlight: "Décisions éclairées",
-    color: "from-rose-500 to-rose-600",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Conformité & audit",
-    desc: "Qualité, journal métier et traçabilité pour répondre aux contrôles.",
-    highlight: "Traçabilité 100%",
-    color: "from-emerald-500 to-emerald-600",
-  },
-  {
-    icon: CheckCircle2,
-    title: "Supply chain intégrée",
-    desc: "Demandes d'achat, commandes, réceptions et suivi fournisseurs dans un même fil.",
-    highlight: "Circuit achat complet",
-    color: "from-indigo-500 to-indigo-600",
-  },
-];
-
-const HERO_FEATURES = [
-  { icon: Pill, label: "Inventaire", color: "bg-emerald-500" },
-  { icon: CreditCard, label: "Point de vente", color: "bg-emerald-500" },
-  { icon: TrendingUp, label: "Analytics", color: "bg-purple-500" },
-  { icon: Users, label: "Patients", color: "bg-amber-500" },
-];
+import { Link } from "@/i18n/navigation";
 
 export default function PublicHomePage() {
+  const t = useTranslations("pages.home");
+
+  const STATS = [
+    { value: "500+", label: t("statsPharmacies") },
+    { value: "1M+", label: t("statsTransactions") },
+    { value: "99.9%", label: t("statsUptime") },
+    { value: "24/7", label: t("statsSupport") },
+  ];
+
+  const CAPABILITIES = [
+    {
+      icon: Package,
+      title: t("capInventory"),
+      desc: t("capInventoryDesc"),
+      highlight: t("capInventoryHighlight"),
+      color: "from-emerald-500 to-emerald-600",
+    },
+    {
+      icon: Users,
+      title: t("capPatients"),
+      desc: t("capPatientsDesc"),
+      highlight: t("capPatientsHighlight"),
+      color: "from-purple-500 to-purple-600",
+    },
+    {
+      icon: Zap,
+      title: t("capPOS"),
+      desc: t("capPOSDesc"),
+      highlight: t("capPOSHighlight"),
+      color: "from-amber-500 to-amber-600",
+    },
+    {
+      icon: BarChart3,
+      title: t("capAnalytics"),
+      desc: t("capAnalyticsDesc"),
+      highlight: t("capAnalyticsHighlight"),
+      color: "from-rose-500 to-rose-600",
+    },
+    {
+      icon: ShieldCheck,
+      title: t("capCompliance"),
+      desc: t("capComplianceDesc"),
+      highlight: t("capComplianceHighlight"),
+      color: "from-emerald-500 to-emerald-600",
+    },
+    {
+      icon: CheckCircle2,
+      title: t("capSupplyChain"),
+      desc: t("capSupplyChainDesc"),
+      highlight: t("capSupplyChainHighlight"),
+      color: "from-indigo-500 to-indigo-600",
+    },
+  ];
+
+  const HERO_FEATURES = [
+    { icon: Pill, label: t("inventory"), color: "bg-emerald-500" },
+    { icon: CreditCard, label: t("pos"), color: "bg-emerald-500" },
+    { icon: TrendingUp, label: t("analytics"), color: "bg-purple-500" },
+    { icon: Users, label: t("patients"), color: "bg-amber-500" },
+  ];
+
   return (
     <div className="bg-white">
       {/* ═══════════ HERO ═══════════ */}
@@ -97,21 +100,20 @@ export default function PublicHomePage() {
             >
               <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-black uppercase tracking-[0.25em] mb-5 border border-emerald-100">
                 <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                Plateforme SaaS pour pharmacies
+                {t("badge")}
               </div>
 
               <h1 className="text-[2.2rem] leading-[1.08] sm:text-5xl lg:text-6xl xl:text-[4.2rem] font-display font-bold text-slate-900 tracking-tight mb-5">
-                Votre pharmacie,
+                {t("heroTitle1")}
                 <br />
-                plus rentable{" "}
+                {t("heroTitle2")}{" "}
                 <span className="text-emerald-600 italic">
-                  avec la gestion intelligente.
+                  {t("heroTitle3")}
                 </span>
               </h1>
 
               <p className="text-base sm:text-lg text-slate-500 leading-relaxed font-medium max-w-lg mb-6">
-                Automatisation complète, optimisation des ventes et conformité
-                garantie — du comptoir au pilotage stratégique.
+                {t("heroDesc")}
               </p>
 
               <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-8">
@@ -119,14 +121,14 @@ export default function PublicHomePage() {
                   href="/auth/register"
                   className="inline-flex items-center justify-center gap-3 px-6 py-3.5 bg-slate-900 text-white rounded-2xl font-bold text-base hover:bg-emerald-600 transition-all shadow-xl shadow-slate-900/15 group"
                 >
-                  Démarrer l&apos;aventure
+                  {t("ctaPrimary")}
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link
                   href="/plan_demo"
                   className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white text-slate-700 border border-slate-200 rounded-2xl font-bold text-base hover:border-emerald-200 hover:text-emerald-700 transition-all"
                 >
-                  Voir la démo
+                  {t("ctaDemo")}
                 </Link>
               </div>
 
@@ -150,7 +152,7 @@ export default function PublicHomePage() {
               </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-4 gap-3 sm:gap-6 border-t border-slate-100 pt-5">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6 border-t border-slate-100 pt-5">
                 {STATS.map((s, i) => (
                   <motion.div
                     key={s.label}
@@ -199,21 +201,21 @@ export default function PublicHomePage() {
                   <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-3">
                     {[
                       {
-                        label: "Ventes",
+                        label: t("sales"),
                         value: "$48.2K",
                         change: "+12%",
                         color: "text-emerald-600",
                         bg: "bg-emerald-50",
                       },
                       {
-                        label: "Patients",
+                        label: t("patients"),
                         value: "1,234",
                         change: "+5%",
                         color: "text-emerald-600",
                         bg: "bg-emerald-50",
                       },
                       {
-                        label: "Produits",
+                        label: t("products"),
                         value: "2,847",
                         change: "98%",
                         color: "text-purple-600",
@@ -243,14 +245,14 @@ export default function PublicHomePage() {
                   <div className="bg-white rounded-xl p-3 sm:p-4 border border-slate-100 mb-3">
                     <div className="flex items-center justify-between mb-3">
                       <p className="text-[10px] sm:text-xs font-bold text-slate-600">
-                        Revenus mensuels
+                        {t("monthlyRevenue")}
                       </p>
                       <div className="flex gap-1">
                         <span className="w-8 h-4 bg-emerald-50 rounded text-[8px] font-bold text-emerald-600 flex items-center justify-center">
-                          7j
+                          {t("period7d")}
                         </span>
                         <span className="w-8 h-4 bg-slate-100 rounded text-[8px] font-bold text-slate-400 flex items-center justify-center">
-                          30j
+                          {t("period30d")}
                         </span>
                       </div>
                     </div>
@@ -281,24 +283,24 @@ export default function PublicHomePage() {
                   {/* Recent activity */}
                   <div className="bg-white rounded-xl p-3 border border-slate-100">
                     <p className="text-[10px] sm:text-xs font-bold text-slate-600 mb-2">
-                      Activité récente
+                      {t("recentActivity")}
                     </p>
                     <div className="space-y-2">
                       {[
                         {
                           color: "bg-emerald-500",
-                          text: "Vente #4821",
-                          sub: "3 articles · $42.50",
+                          text: t("saleNumber"),
+                          sub: t("saleDetails"),
                         },
                         {
                           color: "bg-emerald-500",
-                          text: "Stock mis à jour",
-                          sub: "Paracétamol · +200 unités",
+                          text: t("stockUpdated"),
+                          sub: t("stockUpdateDetails"),
                         },
                         {
                           color: "bg-purple-500",
-                          text: "Nouveau patient",
-                          sub: "Marie K. · Prescription",
+                          text: t("newPatient"),
+                          sub: t("newPatientDetails"),
                         },
                       ].map((item) => (
                         <div
@@ -341,18 +343,17 @@ export default function PublicHomePage() {
           <div className="flex flex-col lg:flex-row justify-between lg:items-end gap-6 mb-12 sm:mb-16">
             <div className="max-w-2xl">
               <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-3">
-                Capacités
+                {t("capabilitiesTag")}
               </p>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-slate-900 tracking-tight leading-[1.08]">
-                Tout ce dont votre pharmacie a besoin{" "}
+                {t("capabilitiesTitle")}{" "}
                 <span className="text-emerald-600 italic">
-                  pour maximiser sa rentabilité.
+                  {t("capabilitiesHighlight")}
                 </span>
               </h2>
             </div>
             <p className="text-sm sm:text-base text-slate-500 max-w-md font-medium leading-relaxed">
-              Une plateforme complète conçue pour les pharmacies modernes, avec
-              des outils pensés pour le terrain.
+              {t("capabilitiesDesc")}
             </p>
           </div>
 
@@ -386,7 +387,7 @@ export default function PublicHomePage() {
                   href="/modules"
                   className="mt-5 inline-flex items-center gap-2 text-emerald-600 font-bold text-xs uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity"
                 >
-                  Voir le module
+                  {t("viewModule")}
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </motion.div>
@@ -409,17 +410,16 @@ export default function PublicHomePage() {
             <div className="md:col-span-8 bg-slate-50 rounded-2xl sm:rounded-3xl p-6 sm:p-10 relative overflow-hidden group">
               <div className="relative z-10 max-w-md">
                 <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2 font-display">
-                  Point de vente ultra-rapide
+                  {t("bentoPOS")}
                 </h3>
                 <p className="text-slate-500 text-sm leading-relaxed mb-4">
-                  Interface intuitive conçue pour la rapidité. Gérez les files
-                  d&apos;attente sans effort.
+                  {t("bentoPOSDesc")}
                 </p>
                 <ul className="space-y-2">
                   {[
-                    "Scan code-barres instantané",
-                    "Multi-paiement intégré",
-                    "Tickets numériques",
+                    t("bentoPOSFeature1"),
+                    t("bentoPOSFeature2"),
+                    t("bentoPOSFeature3"),
                   ].map((item) => (
                     <li
                       key={item}
@@ -448,11 +448,10 @@ export default function PublicHomePage() {
                   <BarChart3 className="w-5 h-5" />
                 </div>
                 <h3 className="text-xl font-bold mb-2 font-display">
-                  Analytics avancés
+                  {t("bentoAnalytics")}
                 </h3>
                 <p className="text-emerald-50 text-sm leading-relaxed">
-                  Prédisez vos besoins en stock et identifiez vos produits les
-                  plus rentables.
+                  {t("bentoAnalyticsDesc")}
                 </p>
               </div>
               <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
@@ -464,11 +463,10 @@ export default function PublicHomePage() {
                 <ShieldCheck className="w-5 h-5" />
               </div>
               <h3 className="text-xl font-bold mb-2 font-display">
-                Conformité totale
+                {t("bentoCompliance")}
               </h3>
               <p className="text-slate-400 text-sm leading-relaxed">
-                Rapports fiscaux automatisés et traçabilité complète des
-                médicaments sensibles.
+                {t("bentoComplianceDesc")}
               </p>
             </div>
 
@@ -479,11 +477,10 @@ export default function PublicHomePage() {
                   <Users className="w-5 h-5" />
                 </div>
                 <h3 className="text-xl font-bold text-slate-900 mb-2 font-display">
-                  Gestion patients
+                  {t("bentoPatients")}
                 </h3>
                 <p className="text-slate-500 text-sm leading-relaxed">
-                  Suivez l&apos;historique médical, gérez les prescriptions
-                  récurrentes et envoyez des rappels automatiques.
+                  {t("bentoPatientsDesc")}
                 </p>
               </div>
               <div className="w-full sm:w-40 h-28 sm:h-full bg-white rounded-xl flex items-center justify-center shadow-sm border border-slate-200 shrink-0">
@@ -505,13 +502,12 @@ export default function PublicHomePage() {
             <div className="grid lg:grid-cols-3 gap-8 items-center relative z-10">
               <div className="lg:col-span-2">
                 <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-white mb-3 tracking-tight">
-                  Prêt à{" "}
-                  <span className="text-emerald-500">moderniser</span>
-                  <br className="hidden sm:block" /> votre pharmacie ?
+                  {t("ctaTitle")}{" "}
+                  <span className="text-emerald-500">{t("ctaHighlight")}</span>
+                  <br className="hidden sm:block" /> {t("ctaTitleEnd")}
                 </h2>
                 <p className="text-sm text-slate-400 leading-relaxed max-w-lg">
-                  Rejoignez plus de 500 pharmacies qui font confiance à
-                  SyntixPharma pour optimiser leurs opérations quotidiennes.
+                  {t("ctaDesc")}
                 </p>
               </div>
               <div className="flex flex-col gap-3">
@@ -519,16 +515,16 @@ export default function PublicHomePage() {
                   href="/auth/register"
                   className="px-6 py-3.5 text-center bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-600/20"
                 >
-                  Essayer gratuitement
+                  {t("ctaRegister")}
                 </Link>
                 <Link
                   href="/contact"
                   className="px-6 py-3.5 text-center bg-white text-slate-900 rounded-xl font-bold hover:bg-slate-100 transition-all"
                 >
-                  Contacter l&apos;équipe
+                  {t("ctaContact")}
                 </Link>
                 <p className="text-[10px] text-slate-500 text-center font-medium">
-                  Installation en 24 h · Formation incluse · Support 7j/7
+                  {t("ctaFootnote")}
                 </p>
               </div>
             </div>

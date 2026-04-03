@@ -1,12 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Head from "next/head";
 import { useAuth } from "@/hooks/useAuth";
 import { useAppStore } from "@/store/appStore";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
 import { Loader } from "@/design-system";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { SkipLinks } from "@/components/accessibility/SkipLink";
 import { useKeyboardNavigation } from "@/hooks/useKeyboardNavigation";
 import Header from "./Header";
@@ -63,7 +62,7 @@ const Layout: React.FC<LayoutProps> = ({
     if (!mounted || loading) return;
 
     if (requireAuth && !isAuthenticated) {
-      router.push("/login");
+      router.push("/auth/login");
       return;
     }
 
@@ -118,18 +117,6 @@ const Layout: React.FC<LayoutProps> = ({
 
   return (
     <>
-      <Head>
-        <title>{title}</title>
-        <meta
-          name="description"
-          content="Plateforme SaaS de gestion des pharmacies"
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-        <meta name="theme-color" content="#0066cc" />
-        <meta name="color-scheme" content="light dark" />
-      </Head>
-
       <div className="min-h-screen bg-gray-50">
         {/* Skip links pour la navigation clavier */}
         {/* <SkipLinks /> */}

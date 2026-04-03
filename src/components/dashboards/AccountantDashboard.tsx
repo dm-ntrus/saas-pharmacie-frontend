@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { useTenantPath } from "@/hooks/useTenantPath";
 import { useAccounts, useTransactions, useTrialBalance } from "@/hooks/api/useAccounting";
 import { formatCurrency, formatDate } from "@/utils/formatters";
@@ -27,6 +28,8 @@ import {
 } from "lucide-react";
 
 export function AccountantDashboard() {
+  const t = useTranslations("dashboardAccountant");
+  const locale = useLocale();
   const { buildPath } = useTenantPath();
   const { data: accountsData, isLoading: loadingAccounts } = useAccounts();
   const { data: transactionsData, isLoading: loadingTransactions } = useTransactions({ limit: 5 });
@@ -62,26 +65,26 @@ export function AccountantDashboard() {
 
   const kpis = [
     {
-      title: "Chiffre d'affaires",
+      title: t("kpis.revenue"),
       value: formatCurrency(totalRevenue),
       icon: TrendingUp,
       color: "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400",
     },
     {
-      title: "Dépenses",
+      title: t("kpis.expenses"),
       value: formatCurrency(totalExpenses),
       icon: TrendingDown,
       color: "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400",
     },
     {
-      title: "Factures en attente",
+      title: t("kpis.pendingInvoices"),
       value: outstandingInvoices.toString(),
       icon: FileText,
       color: "bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400",
     },
     {
-      title: "Trésorerie nette",
-      value: `${cashFlow.toLocaleString("fr-FR")} FC`,
+      title: t("kpis.netCash"),
+      value: `${cashFlow.toLocaleString(locale)} FC`,
       icon: DollarSign,
       color: cashFlow >= 0
         ? "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
@@ -91,20 +94,20 @@ export function AccountantDashboard() {
 
   const quickActions = [
     {
-      title: "Nouvelle écriture",
-      description: "Enregistrer une transaction comptable",
+      title: t("quickActions.newEntry.title"),
+      description: t("quickActions.newEntry.description"),
       icon: Receipt,
       href: buildPath("/accounting/transactions/new"),
     },
     {
-      title: "Rapports financiers",
-      description: "Bilan, compte de résultat, balance",
+      title: t("quickActions.financialReports.title"),
+      description: t("quickActions.financialReports.description"),
       icon: BarChart3,
       href: buildPath("/accounting/reports"),
     },
     {
-      title: "Période fiscale",
-      description: "Statut de la clôture en cours",
+      title: t("quickActions.fiscalPeriod.title"),
+      description: t("quickActions.fiscalPeriod.description"),
       icon: CalendarCheck,
       href: buildPath("/accounting/fiscal-periods"),
     },
@@ -134,7 +137,7 @@ export function AccountantDashboard() {
       {/* Actions rapides */}
       <div>
         <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3">
-          Actions rapides
+          {t("quickActionsTitle")}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {quickActions.map((action) => (
@@ -161,18 +164,18 @@ export function AccountantDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BarChart3 className="w-5 h-5 text-emerald-600" />
-              Revenus vs Dépenses
+              {t("charts.revenueVsExpenses")}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <BarChartWidget
               data={[
-                { name: "Jan", revenus: 0, depenses: 0 },
-                { name: "Fév", revenus: 0, depenses: 0 },
-                { name: "Mar", revenus: 0, depenses: 0 },
-                { name: "Avr", revenus: 0, depenses: 0 },
-                { name: "Mai", revenus: 0, depenses: 0 },
-                { name: "Jun", revenus: 0, depenses: 0 },
+                { name: t("months.jan"), revenus: 0, depenses: 0 },
+                { name: t("months.feb"), revenus: 0, depenses: 0 },
+                { name: t("months.mar"), revenus: 0, depenses: 0 },
+                { name: t("months.apr"), revenus: 0, depenses: 0 },
+                { name: t("months.may"), revenus: 0, depenses: 0 },
+                { name: t("months.jun"), revenus: 0, depenses: 0 },
               ]}
               xKey="name"
               yKey={["revenus", "depenses"]}
@@ -186,16 +189,16 @@ export function AccountantDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <DollarSign className="w-5 h-5 text-blue-600" />
-              Répartition des dépenses
+              {t("charts.expenseDistribution")}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <PieChartWidget
               data={[
-                { name: "Fournitures", value: totalExpenses > 0 ? totalExpenses : 0 },
-                { name: "Salaires", value: 0 },
-                { name: "Loyer", value: 0 },
-                { name: "Autres", value: 0 },
+                { name: t("expenseCategories.supplies"), value: totalExpenses > 0 ? totalExpenses : 0 },
+                { name: t("expenseCategories.salaries"), value: 0 },
+                { name: t("expenseCategories.rent"), value: 0 },
+                { name: t("expenseCategories.others"), value: 0 },
               ]}
               dataKey="value"
               nameKey="name"
@@ -211,13 +214,13 @@ export function AccountantDashboard() {
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
               <Banknote className="w-5 h-5 text-emerald-600" />
-              Dernières écritures
+              {t("recentEntries.title")}
             </CardTitle>
             <Link
               href={buildPath("/accounting/transactions")}
               className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
             >
-              Tout voir <ArrowRight className="w-4 h-4" />
+              {t("seeAll")} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </CardHeader>
@@ -228,7 +231,7 @@ export function AccountantDashboard() {
                 <div key={tx.id ?? idx} className="flex items-center justify-between py-3">
                   <div>
                     <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                      {tx.description || tx.reference || `Écriture #${idx + 1}`}
+                      {tx.description || tx.reference || t("recentEntries.entryFallback", { n: idx + 1 })}
                     </p>
                     <p className="text-xs text-slate-500 dark:text-slate-400">
                       {formatDate(tx.date)}
@@ -248,7 +251,7 @@ export function AccountantDashboard() {
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <Banknote className="w-10 h-10 text-slate-300 dark:text-slate-600 mb-3" />
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                Aucune écriture récente
+                {t("recentEntries.empty")}
               </p>
             </div>
           )}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 import {
   FlaskConical,
   ClipboardList,
@@ -9,6 +10,8 @@ import {
 import { Card, Button } from '@/design-system';
 
 const PharmacistDashboard: React.FC = () => {
+  const t = useTranslations('dashboardPharmacist');
+  const locale = useLocale();
   const [prescriptions, setPrescriptions] = useState([
     {
       id: 1,
@@ -47,25 +50,25 @@ const PharmacistDashboard: React.FC = () => {
 
   const stats = [
     {
-      title: 'Ordonnances en Attente',
+      title: t('stats.pending'),
       value: prescriptions.filter(p => p.status === 'pending').length,
       icon: ClipboardList,
       color: 'bg-yellow-500'
     },
     {
-      title: 'Préparations en Cours',
+      title: t('stats.inProgress'),
       value: prescriptions.filter(p => p.status === 'in_progress').length,
       icon: FlaskConical,
       color: 'bg-blue-500'
     },
     {
-      title: 'Prêtes à Délivrer',
+      title: t('stats.ready'),
       value: prescriptions.filter(p => p.status === 'ready').length,
       icon: CheckCircle,
       color: 'bg-green-500'
     },
     {
-      title: 'Alertes Stock',
+      title: t('stats.stockAlerts'),
       value: inventoryAlerts.length,
       icon: AlertTriangle,
       color: 'bg-red-500'
@@ -94,10 +97,10 @@ const PharmacistDashboard: React.FC = () => {
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      pending: { color: 'bg-yellow-100 text-yellow-800', text: 'En attente' },
-      in_progress: { color: 'bg-blue-100 text-blue-800', text: 'En préparation' },
-      ready: { color: 'bg-green-100 text-green-800', text: 'Prêt' },
-      delivered: { color: 'bg-gray-100 text-gray-800', text: 'Délivré' }
+      pending: { color: 'bg-yellow-100 text-yellow-800', text: t('status.pending') },
+      in_progress: { color: 'bg-blue-100 text-blue-800', text: t('status.inProgress') },
+      ready: { color: 'bg-green-100 text-green-800', text: t('status.ready') },
+      delivered: { color: 'bg-gray-100 text-gray-800', text: t('status.delivered') }
     };
     
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
@@ -111,9 +114,9 @@ const PharmacistDashboard: React.FC = () => {
 
   const getPriorityBadge = (priority: string) => {
     const priorityConfig = {
-      urgent: { color: 'bg-red-100 text-red-800', text: 'Urgent' },
-      normal: { color: 'bg-gray-100 text-gray-800', text: 'Normal' },
-      low: { color: 'bg-blue-100 text-blue-800', text: 'Faible' }
+      urgent: { color: 'bg-red-100 text-red-800', text: t('priority.urgent') },
+      normal: { color: 'bg-gray-100 text-gray-800', text: t('priority.normal') },
+      low: { color: 'bg-blue-100 text-blue-800', text: t('priority.low') }
     };
     
     const config = priorityConfig[priority as keyof typeof priorityConfig] || priorityConfig.normal;
@@ -126,16 +129,16 @@ const PharmacistDashboard: React.FC = () => {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
       {/* En-tête */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Tableau de Bord Pharmacien</h1>
-          <p className="text-gray-600">Gestion des prescriptions et contrôle qualité</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('header.title')}</h1>
+          <p className="text-gray-600">{t('header.subtitle')}</p>
         </div>
         <Button variant="default">
           <FlaskConical className="h-5 w-5 mr-2" />
-          Nouvelle Préparation
+          {t('header.newPreparation')}
         </Button>
       </div>
 
@@ -159,7 +162,7 @@ const PharmacistDashboard: React.FC = () => {
       {/* Ordonnances */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Ordonnances à Traiter</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('sections.prescriptions')}</h3>
           <div className="space-y-4">
             {prescriptions
               .filter(p => p.status !== 'delivered')
@@ -168,9 +171,9 @@ const PharmacistDashboard: React.FC = () => {
                 <div className="flex justify-between items-start mb-3">
                   <div>
                     <h4 className="font-medium text-gray-900">{prescription.patientName}</h4>
-                    <p className="text-sm text-gray-600">Par {prescription.doctorName}</p>
+                    <p className="text-sm text-gray-600">{t('byDoctor')} {prescription.doctorName}</p>
                     <p className="text-xs text-gray-500 mt-1">
-                      {prescription.items} médicament{prescription.items > 1 ? 's' : ''}
+                      {t('medicationCount', { count: prescription.items })}
                     </p>
                   </div>
                   <div className="flex flex-col items-end space-y-2">
@@ -181,7 +184,7 @@ const PharmacistDashboard: React.FC = () => {
                 
                 <div className="flex justify-between items-center">
                   <p className="text-xs text-gray-500">
-                    {new Date(prescription.createdAt).toLocaleString('fr-FR')}
+                    {new Date(prescription.createdAt).toLocaleString(locale)}
                   </p>
                   <div className="flex space-x-2">
                     {prescription.status === 'pending' && (
@@ -190,7 +193,7 @@ const PharmacistDashboard: React.FC = () => {
                         variant="default"
                         onClick={() => handlePrescriptionAction(prescription.id, 'start')}
                       >
-                        Commencer
+                        {t('actions.start')}
                       </Button>
                     )}
                     {prescription.status === 'in_progress' && (
@@ -199,7 +202,7 @@ const PharmacistDashboard: React.FC = () => {
                         variant="default"
                         onClick={() => handlePrescriptionAction(prescription.id, 'complete')}
                       >
-                        Terminer
+                        {t('actions.complete')}
                       </Button>
                     )}
                     {prescription.status === 'ready' && (
@@ -208,7 +211,7 @@ const PharmacistDashboard: React.FC = () => {
                         variant="secondary"
                         onClick={() => handlePrescriptionAction(prescription.id, 'deliver')}
                       >
-                        Délivrer
+                        {t('actions.deliver')}
                       </Button>
                     )}
                   </div>
@@ -220,7 +223,7 @@ const PharmacistDashboard: React.FC = () => {
 
         {/* Alertes de stock */}
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Alertes de Stock</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('sections.stockAlerts')}</h3>
           <div className="space-y-4">
             {inventoryAlerts.map((alert, index) => (
               <div 
@@ -235,10 +238,10 @@ const PharmacistDashboard: React.FC = () => {
                   <div>
                     <h4 className="font-medium text-gray-900">{alert.medication}</h4>
                     <p className="text-sm text-gray-600">
-                      Stock actuel: {alert.stock} unités
+                      {t('stockCurrent', { count: alert.stock })}
                     </p>
                     <p className="text-xs text-gray-500">
-                      Minimum requis: {alert.minStock} unités
+                      {t('stockMin', { count: alert.minStock })}
                     </p>
                   </div>
                   <span className={`px-2 py-1 text-xs font-medium rounded-full ${
@@ -246,13 +249,13 @@ const PharmacistDashboard: React.FC = () => {
                     alert.severity === 'high' ? 'bg-orange-100 text-orange-800' :
                     'bg-yellow-100 text-yellow-800'
                   }`}>
-                    {alert.severity === 'critical' ? 'Critique' :
-                     alert.severity === 'high' ? 'Élevé' : 'Moyen'}
+                    {alert.severity === 'critical' ? t('severity.critical') :
+                     alert.severity === 'high' ? t('severity.high') : t('severity.medium')}
                   </span>
                 </div>
                 <div className="mt-3">
                   <Button size="sm" variant="outline">
-                    Commander maintenant
+                    {t('actions.orderNow')}
                   </Button>
                 </div>
               </div>
@@ -263,44 +266,44 @@ const PharmacistDashboard: React.FC = () => {
 
       {/* Section de validation pharmaceutique */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Validation Pharmaceutique</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('sections.validation')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <div className="flex items-center mb-2">
               <ClipboardList className="h-5 w-5 text-blue-600 mr-2" />
-              <h4 className="font-medium text-blue-900">Interactions Médicamenteuses</h4>
+              <h4 className="font-medium text-blue-900">{t('validation.interactionsTitle')}</h4>
             </div>
             <p className="text-sm text-blue-700">
-              Vérification automatique des interactions entre médicaments prescrits
+              {t('validation.interactionsDesc')}
             </p>
             <Button size="sm" variant="outline" className="mt-3 border-blue-300 text-blue-700">
-              Voir les alertes
+              {t('validation.interactionsBtn')}
             </Button>
           </div>
           
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
             <div className="flex items-center mb-2">
               <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
-              <h4 className="font-medium text-green-900">Contrôle Qualité</h4>
+              <h4 className="font-medium text-green-900">{t('validation.qualityTitle')}</h4>
             </div>
             <p className="text-sm text-green-700">
-              Validation de la conformité des préparations pharmaceutiques
+              {t('validation.qualityDesc')}
             </p>
             <Button size="sm" variant="outline" className="mt-3 border-green-300 text-green-700">
-              Effectuer contrôle
+              {t('validation.qualityBtn')}
             </Button>
           </div>
           
           <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4">
             <div className="flex items-center mb-2">
               <Users className="h-5 w-5 text-cyan-600 mr-2" />
-              <h4 className="font-medium text-cyan-900">Conseils Patients</h4>
+              <h4 className="font-medium text-cyan-900">{t('validation.patientsTitle')}</h4>
             </div>
             <p className="text-sm text-cyan-700">
-              Guide de consultation pharmaceutique pour les patients
+              {t('validation.patientsDesc')}
             </p>
             <Button size="sm" variant="outline" className="mt-3 border-cyan-300 text-cyan-700">
-              Voir protocoles
+              {t('validation.patientsBtn')}
             </Button>
           </div>
         </div>

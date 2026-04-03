@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { PLATFORM } from "@/config/platform";
+import { useTranslations } from "next-intl";
 import {
   Book,
   MessageCircle,
@@ -12,49 +13,35 @@ import {
   Phone,
   Zap,
 } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
-const channels = [
-  {
-    icon: HeadphonesIcon,
-    title: "Support en direct",
-    desc: "Chat en temps réel avec notre équipe technique, disponible du lundi au vendredi.",
-    cta: "Ouvrir le chat",
-    href: "#",
-  },
-  {
-    icon: Book,
-    title: "Base de connaissances",
-    desc: "Tutoriels, guides et FAQ pour résoudre vos problèmes en autonomie.",
-    cta: "Explorer",
-    href: "#",
-  },
-  {
-    icon: MessageCircle,
-    title: "Communauté",
-    desc: "Échangez avec d'autres pharmaciens utilisant SyntixPharma.",
-    cta: "Rejoindre",
-    href: "#",
-  },
-  {
-    icon: FileQuestion,
-    title: "Tickets",
-    desc: "Soumettez un ticket détaillé pour un suivi personnalisé de votre demande.",
-    cta: "Créer un ticket",
-    href: "#",
-  },
-];
-
-const popularArticles = [
-  "Comment importer mon stock existant ?",
-  "Configurer Mobile Money (M-Pesa, Orange)",
-  "Ajouter un nouvel utilisateur",
-  "Générer un rapport de ventes mensuel",
-  "Paramétrer les alertes de péremption",
-  "Connecter une imprimante thermique",
-];
+const channelsMeta = [
+  { icon: HeadphonesIcon, key: "liveSupport", href: "/contact?topic=live-chat" },
+  { icon: Book, key: "knowledgeBase", href: "/api-docs" },
+  { icon: MessageCircle, key: "community", href: "/about" },
+  { icon: FileQuestion, key: "tickets", href: "/contact?topic=ticket" },
+] as const;
 
 export default function SupportPage() {
+  const t = useTranslations("pages.support");
+
+  const channels = channelsMeta.map((ch) => ({
+    icon: ch.icon,
+    href: ch.href,
+    title: t(`channels.${ch.key}.title`),
+    desc: t(`channels.${ch.key}.desc`),
+    cta: t(`channels.${ch.key}.cta`),
+  }));
+
+  const popularArticles = [
+    { label: t("popularArticles.a1"), href: "/api-docs" },
+    { label: t("popularArticles.a2"), href: "/api-docs" },
+    { label: t("popularArticles.a3"), href: "/api-docs" },
+    { label: t("popularArticles.a4"), href: "/api-docs" },
+    { label: t("popularArticles.a5"), href: "/api-docs" },
+    { label: t("popularArticles.a6"), href: "/api-docs" },
+  ];
+
   return (
     <div className="min-h-screen pt-28 sm:pt-32 pb-16 sm:pb-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -65,15 +52,14 @@ export default function SupportPage() {
             animate={{ opacity: 1, y: 0 }}
           >
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 mb-3">
-              Support
+              {t("tag")}
             </p>
             <h1 className="text-3xl sm:text-5xl font-display font-bold text-slate-900 mb-4 tracking-tight">
-              Comment pouvons-nous vous{" "}
-              <span className="text-emerald-600">aider ?</span>
+              {t("title")}{" "}
+              <span className="text-emerald-600">{t("titleHighlight")}</span>
             </h1>
             <p className="text-base text-slate-500 font-medium leading-relaxed max-w-lg mx-auto">
-              Plusieurs canaux à votre disposition pour une assistance rapide et
-              personnalisée.
+              {t("desc")}
             </p>
           </motion.div>
         </div>
@@ -112,18 +98,18 @@ export default function SupportPage() {
         {/* Popular articles */}
         <div className="bg-slate-50 rounded-3xl border border-slate-100 p-8 sm:p-12 mb-12">
           <h2 className="text-xl font-display font-bold text-slate-900 mb-6">
-            Articles populaires
+            {t("popularArticlesTitle")}
           </h2>
           <div className="grid sm:grid-cols-2 gap-3">
             {popularArticles.map((article) => (
               <Link
-                key={article}
-                href="#"
+                key={article.label}
+                href={article.href}
                 className="flex items-center gap-3 p-4 bg-white rounded-xl border border-slate-100 hover:border-emerald-200 hover:shadow-sm transition-all group"
               >
                 <Zap className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span className="text-sm font-medium text-slate-600 group-hover:text-slate-900 transition-colors">
-                  {article}
+                  {article.label}
                 </span>
               </Link>
             ))}
@@ -138,10 +124,10 @@ export default function SupportPage() {
             </div>
             <div>
               <h4 className="font-bold text-sm text-slate-900 mb-1">
-                Email de support
+                {t("supportEmailTitle")}
               </h4>
               <p className="text-sm text-slate-600 mb-2">
-                Réponse sous 4h en jours ouvrés.
+                {t("supportEmailDesc")}
               </p>
               <a
                 href={`mailto:${PLATFORM.email.support}`}
@@ -157,16 +143,16 @@ export default function SupportPage() {
             </div>
             <div>
               <h4 className="font-bold text-sm text-slate-900 mb-1">
-                Assistance téléphonique
+                {t("phoneSupportTitle")}
               </h4>
               <p className="text-sm text-slate-600 mb-2">
-                Lun – Ven · 8h – 18h (heure de Kinshasa)
+                {t("phoneSupportDesc")}
               </p>
               <a
                 href="tel:+243990000000"
                 className="text-slate-900 text-sm font-bold hover:text-emerald-600 transition-colors"
               >
-                +243 99 000 0000
+                {t("phoneSupportValue")}
               </a>
             </div>
           </div>

@@ -16,7 +16,7 @@ export function PlanDowngradeBanner() {
   const { buildPath } = useTenantPath();
   const { loading } = useFeatureFlags();
 
-  const blockedModule = searchParams.get("plan_blocked");
+  const blockedModule = searchParams?.get("plan_blocked");
 
   if (!blockedModule || loading) return null;
 

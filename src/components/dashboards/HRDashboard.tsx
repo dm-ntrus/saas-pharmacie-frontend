@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { useTenantPath } from "@/hooks/useTenantPath";
 import { useEmployeeStats, usePendingLeaves, useDailyAttendance, useShiftSchedule } from "@/hooks/api/useHR";
 import {
@@ -26,6 +27,8 @@ import {
 } from "lucide-react";
 
 export function HRDashboard() {
+  const t = useTranslations("dashboardHr");
+  const locale = useLocale();
   const { buildPath } = useTenantPath();
   const { data: statsData, isLoading: loadingStats } = useEmployeeStats();
   const { data: leavesData, isLoading: loadingLeaves } = usePendingLeaves();
@@ -34,6 +37,22 @@ export function HRDashboard() {
   const { data: shiftsData, isLoading: loadingShifts } = useShiftSchedule(today, today);
 
   const isLoading = loadingStats || loadingLeaves || loadingAttendance || loadingShifts;
+
+  const seriesPresent = t("chart.present");
+  const seriesAbsent = t("chart.absent");
+  const dayLabels = [
+    t("days.mon"),
+    t("days.tue"),
+    t("days.wed"),
+    t("days.thu"),
+    t("days.fri"),
+    t("days.sat"),
+  ];
+  const barWeekData = dayLabels.map((name) => ({
+    name,
+    [seriesPresent]: 0,
+    [seriesAbsent]: 0,
+  }));
 
   if (isLoading) {
     return (
@@ -64,19 +83,19 @@ export function HRDashboard() {
 
   const kpis = [
     {
-      title: "Total employés",
+      title: t("kpis.totalEmployees"),
       value: totalEmployees.toString(),
       icon: Users,
       color: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
     },
     {
-      title: "Présents aujourd'hui",
+      title: t("kpis.presentToday"),
       value: presentToday.toString(),
       icon: UserCheck,
       color: "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400",
     },
     {
-      title: "Congés en attente",
+      title: t("kpis.pendingLeaves"),
       value: pendingLeavesCount.toString(),
       icon: CalendarOff,
       color: pendingLeavesCount > 0
@@ -84,7 +103,7 @@ export function HRDashboard() {
         : "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400",
     },
     {
-      title: "Shifts planifiés",
+      title: t("kpis.scheduledShifts"),
       value: upcomingShiftsCount.toString(),
       icon: ClipboardList,
       color: "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400",
@@ -93,20 +112,20 @@ export function HRDashboard() {
 
   const quickActions = [
     {
-      title: "Créer un shift",
-      description: "Planifier un nouveau créneau",
+      title: t("quickActions.createShift.title"),
+      description: t("quickActions.createShift.description"),
       icon: CalendarPlus,
       href: buildPath("/hr/shifts/new"),
     },
     {
-      title: "Approuver congés",
-      description: `${pendingLeavesCount} demande(s) en attente`,
+      title: t("quickActions.approveLeaves.title"),
+      description: t("quickActions.approveLeaves.description", { count: pendingLeavesCount }),
       icon: CheckSquare,
       href: buildPath("/hr/leaves"),
     },
     {
-      title: "Gestion paie",
-      description: "Consulter les cycles de paie",
+      title: t("quickActions.payroll.title"),
+      description: t("quickActions.payroll.description"),
       icon: Banknote,
       href: buildPath("/hr/payroll"),
     },
@@ -114,7 +133,6 @@ export function HRDashboard() {
 
   return (
     <div className="space-y-6">
-      {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((kpi) => (
           <Card key={kpi.title} className="hover:shadow-md transition-shadow">
@@ -133,10 +151,9 @@ export function HRDashboard() {
         ))}
       </div>
 
-      {/* Actions rapides */}
       <div>
         <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3">
-          Actions rapides
+          {t("quickActionsTitle")}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {quickActions.map((action) => (
@@ -157,27 +174,19 @@ export function HRDashboard() {
         </div>
       </div>
 
-      {/* Charts — Présence hebdomadaire + Répartition statuts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <UserCheck className="w-5 h-5 text-emerald-600" />
-              Présence de la semaine
+              {t("charts.weeklyAttendance")}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <BarChartWidget
-              data={[
-                { name: "Lun", présents: 0, absents: 0 },
-                { name: "Mar", présents: 0, absents: 0 },
-                { name: "Mer", présents: 0, absents: 0 },
-                { name: "Jeu", présents: 0, absents: 0 },
-                { name: "Ven", présents: 0, absents: 0 },
-                { name: "Sam", présents: 0, absents: 0 },
-              ]}
+              data={barWeekData}
               xKey="name"
-              yKey={["présents", "absents"]}
+              yKey={[seriesPresent, seriesAbsent]}
               colors={["#10b981", "#ef4444"]}
               height={260}
             />
@@ -188,15 +197,15 @@ export function HRDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <ClipboardList className="w-5 h-5 text-indigo-600" />
-              Répartition des congés
+              {t("charts.leaveDistribution")}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <PieChartWidget
               data={[
-                { name: "En attente", value: pendingLeavesCount },
-                { name: "Approuvés", value: 0 },
-                { name: "Refusés", value: 0 },
+                { name: t("leavePie.pending"), value: pendingLeavesCount },
+                { name: t("leavePie.approved"), value: 0 },
+                { name: t("leavePie.rejected"), value: 0 },
               ]}
               dataKey="value"
               nameKey="name"
@@ -206,19 +215,18 @@ export function HRDashboard() {
         </Card>
       </div>
 
-      {/* Présence du jour */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
               <Clock className="w-5 h-5 text-emerald-600" />
-              Présence du jour
+              {t("attendance.title")}
             </CardTitle>
             <Link
               href={buildPath("/hr/attendance")}
               className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
             >
-              Tout voir <ArrowRight className="w-4 h-4" />
+              {t("seeAll")} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </CardHeader>
@@ -229,11 +237,17 @@ export function HRDashboard() {
                 <div key={entry.id ?? idx} className="flex items-center justify-between py-3">
                   <div>
                     <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                      {entry.employeeName || entry.employee_name || `Employé #${idx + 1}`}
+                      {entry.employeeName || entry.employee_name || t("employeeFallback", { n: idx + 1 })}
                     </p>
                     <p className="text-xs text-slate-500 dark:text-slate-400">
-                      {entry.clockIn ? new Date(entry.clockIn).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) : "—"}
-                      {entry.clockOut ? ` — ${new Date(entry.clockOut).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}` : " (en cours)"}
+                      {entry.clockIn
+                        ? new Date(entry.clockIn).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" })
+                        : "—"}
+                      {entry.clockOut
+                        ? ` — ${new Date(entry.clockOut).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" })}`
+                        : entry.clockIn
+                          ? ` ${t("attendance.inProgress")}`
+                          : ""}
                     </p>
                   </div>
                   <span className={`text-xs font-medium px-2 py-1 rounded-full ${
@@ -243,7 +257,11 @@ export function HRDashboard() {
                         ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"
                         : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
                   }`}>
-                    {entry.status === "present" ? "Présent" : entry.status === "late" ? "En retard" : entry.status ?? "—"}
+                    {entry.status === "present"
+                      ? t("status.present")
+                      : entry.status === "late"
+                        ? t("status.late")
+                        : entry.status ?? "—"}
                   </span>
                 </div>
               ))}
@@ -252,7 +270,7 @@ export function HRDashboard() {
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <UserCheck className="w-10 h-10 text-slate-300 dark:text-slate-600 mb-3" />
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                Aucune donnée de présence pour aujourd&apos;hui
+                {t("attendance.empty")}
               </p>
             </div>
           )}

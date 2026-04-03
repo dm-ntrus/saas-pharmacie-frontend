@@ -9,11 +9,12 @@ interface VerifyPrescriptionModalProps {
   isOpen: boolean;
   onClose: () => void;
   prescription: any;
+  pharmacyId: string;
 }
 
 export const VerifyPrescriptionModal: React.FC<
   VerifyPrescriptionModalProps
-> = ({ isOpen, onClose, prescription }) => {
+> = ({ isOpen, onClose, prescription, pharmacyId }) => {
   const queryClient = useQueryClient();
   const { data: user } = useQuery({
     queryKey: ["current-user"],
@@ -22,7 +23,7 @@ export const VerifyPrescriptionModal: React.FC<
 
   const verifyMutation = useMutation({
     mutationFn: () =>
-      apiClient.verifyPrescription(prescription.id, { verifierId: (user as any)?.id || "" }),
+      apiClient.verifyPrescription(pharmacyId, prescription.id, { verifierId: (user as any)?.id || "" }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patient-prescriptions"] });
       toast.success("Ordonnance vérifiée avec succès");
@@ -37,11 +38,10 @@ export const VerifyPrescriptionModal: React.FC<
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      icon={<FileText className="h-5 w-5 text-emerald-600" />}
       title="Vérifier l'ordonnance"
       size="md"
     >
-      <div className="mt-4 space-y-4">
+      <div className="space-y-4">
         <div className="bg-gray-50 rounded-lg p-4">
           <p className="text-sm font-medium text-gray-900">
             N° {prescription.prescriptionNumber}

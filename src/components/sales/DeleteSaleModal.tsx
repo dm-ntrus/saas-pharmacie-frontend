@@ -96,7 +96,7 @@ export const DeleteSaleModal: React.FC<DeleteModalProps> = ({
           </Button>
           <Button
             type="button"
-            variant="destructive"
+            variant="danger"
             onClick={onConfirm}
             className="flex-1"
             loading={isLoading}

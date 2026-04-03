@@ -1,32 +1,16 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { CheckCircle2, AlertTriangle, Clock, Activity } from "lucide-react";
 
-const services = [
-  { name: "Application Web", status: "operational" as const },
-  { name: "API Backend", status: "operational" as const },
-  { name: "Base de données", status: "operational" as const },
-  { name: "Authentification (Keycloak)", status: "operational" as const },
-  { name: "Paiements (Stripe)", status: "operational" as const },
-  { name: "Mobile Money", status: "operational" as const },
-  { name: "Notifications Email", status: "operational" as const },
-  { name: "CDN & Assets", status: "operational" as const },
-];
-
-const history = [
-  { date: "31 Mars 2026", status: "operational" as const, desc: "Tous les systèmes opérationnels." },
-  { date: "30 Mars 2026", status: "operational" as const, desc: "Tous les systèmes opérationnels." },
-  { date: "29 Mars 2026", status: "maintenance" as const, desc: "Maintenance planifiée – mise à jour base de données (2h)." },
-  { date: "28 Mars 2026", status: "operational" as const, desc: "Tous les systèmes opérationnels." },
-];
-
 function StatusBadge({ status }: { status: "operational" | "degraded" | "maintenance" | "outage" }) {
+  const t = useTranslations("pages.status");
   const config = {
-    operational: { label: "Opérationnel", color: "bg-emerald-100 text-emerald-700", dot: "bg-emerald-500" },
-    degraded: { label: "Dégradé", color: "bg-amber-100 text-amber-700", dot: "bg-amber-500" },
-    maintenance: { label: "Maintenance", color: "bg-blue-100 text-blue-700", dot: "bg-blue-500" },
-    outage: { label: "Panne", color: "bg-red-100 text-red-700", dot: "bg-red-500" },
+    operational: { label: t("badges.operational"), color: "bg-emerald-100 text-emerald-700", dot: "bg-emerald-500" },
+    degraded: { label: t("badges.degraded"), color: "bg-amber-100 text-amber-700", dot: "bg-amber-500" },
+    maintenance: { label: t("badges.maintenance"), color: "bg-blue-100 text-blue-700", dot: "bg-blue-500" },
+    outage: { label: t("badges.outage"), color: "bg-red-100 text-red-700", dot: "bg-red-500" },
   }[status];
 
   return (
@@ -38,6 +22,23 @@ function StatusBadge({ status }: { status: "operational" | "degraded" | "mainten
 }
 
 export default function StatusPage() {
+  const t = useTranslations("pages.status");
+  const services = [
+    { name: t("services.webApp"), status: "operational" as const },
+    { name: t("services.apiBackend"), status: "operational" as const },
+    { name: t("services.database"), status: "operational" as const },
+    { name: t("services.auth"), status: "operational" as const },
+    { name: t("services.payments"), status: "operational" as const },
+    { name: t("services.mobileMoney"), status: "operational" as const },
+    { name: t("services.email"), status: "operational" as const },
+    { name: t("services.cdn"), status: "operational" as const },
+  ];
+  const history = [
+    { date: t("history.d1Date"), status: "operational" as const, desc: t("history.d1Desc") },
+    { date: t("history.d2Date"), status: "operational" as const, desc: t("history.d2Desc") },
+    { date: t("history.d3Date"), status: "maintenance" as const, desc: t("history.d3Desc") },
+    { date: t("history.d4Date"), status: "operational" as const, desc: t("history.d4Desc") },
+  ];
   const allOperational = services.every((s) => s.status === "operational");
 
   return (
@@ -50,10 +51,10 @@ export default function StatusPage() {
             animate={{ opacity: 1, y: 0 }}
           >
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-3">
-              Statut des services
+              {t("tag")}
             </p>
             <h1 className="text-3xl sm:text-5xl font-display font-bold text-slate-900 mb-6 tracking-tight">
-              État de la plateforme
+              {t("title")}
             </h1>
           </motion.div>
 
@@ -72,8 +73,8 @@ export default function StatusPage() {
             )}
             <span className="font-bold text-slate-900">
               {allOperational
-                ? "Tous les systèmes sont opérationnels"
-                : "Certains services rencontrent des problèmes"}
+                ? t("allOperational")
+                : t("someIssues")}
             </span>
           </div>
         </div>
@@ -82,7 +83,7 @@ export default function StatusPage() {
         <div className="mb-12 sm:mb-16">
           <h2 className="text-lg font-display font-bold text-slate-900 mb-4 flex items-center gap-2">
             <Activity className="w-5 h-5 text-emerald-600" />
-            Services
+            {t("servicesTitle")}
           </h2>
           <div className="space-y-2">
             {services.map((svc) => (
@@ -102,7 +103,7 @@ export default function StatusPage() {
         {/* Uptime bar */}
         <div className="mb-12 sm:mb-16">
           <h2 className="text-lg font-display font-bold text-slate-900 mb-4">
-            Disponibilité (30 derniers jours)
+            {t("uptimeTitle")}
           </h2>
           <div className="flex gap-0.5 h-8 rounded-lg overflow-hidden">
             {Array.from({ length: 30 }).map((_, i) => (
@@ -111,19 +112,19 @@ export default function StatusPage() {
                 className={`flex-1 ${
                   i === 27 ? "bg-blue-400" : "bg-emerald-500"
                 } hover:opacity-80 transition-opacity`}
-                title={i === 27 ? "Maintenance planifiée" : "Opérationnel"}
+                title={i === 27 ? t("plannedMaintenance") : t("badges.operational")}
               />
             ))}
           </div>
           <div className="flex justify-between mt-2 text-[10px] text-slate-400 font-bold">
-            <span>30 jours</span>
+            <span>{t("uptimeWindow")}</span>
             <span>
-              Uptime :{" "}
+              {t("uptimeLabel")}{" "}
               <span className="text-emerald-600 text-xs font-black">
                 99.93%
               </span>
             </span>
-            <span>Aujourd&apos;hui</span>
+            <span>{t("today")}</span>
           </div>
         </div>
 
@@ -131,7 +132,7 @@ export default function StatusPage() {
         <div>
           <h2 className="text-lg font-display font-bold text-slate-900 mb-4 flex items-center gap-2">
             <Clock className="w-5 h-5 text-slate-400" />
-            Historique récent
+            {t("historyTitle")}
           </h2>
           <div className="space-y-3">
             {history.map((h) => (

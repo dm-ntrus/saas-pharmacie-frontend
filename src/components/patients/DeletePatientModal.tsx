@@ -10,6 +10,7 @@ interface DeletePatientModalProps {
   isOpen: boolean;
   onClose: () => void;
   patient: any;
+  pharmacyId: string;
   onConfirm: () => void;
   isLoading?: boolean;
 }
@@ -18,6 +19,7 @@ export const DeletePatientModal: React.FC<DeletePatientModalProps> = ({
   isOpen,
   onClose,
   patient,
+  pharmacyId,
   onConfirm,
   isLoading = false,
 }) => {
@@ -25,7 +27,7 @@ export const DeletePatientModal: React.FC<DeletePatientModalProps> = ({
   const router = useRouter();
 
   const deleteMutation = useMutation({
-    mutationFn: () => apiClient?.deletePatient(patient.id),
+    mutationFn: () => apiClient?.deletePatient(pharmacyId, patient.id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patients"] });
       toast.success("Patient supprimé avec succès");
@@ -46,11 +48,10 @@ export const DeletePatientModal: React.FC<DeletePatientModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      icon={<AlertTriangle className="h-5 w-5 text-red-600" />}
       title="Supprimer le patient"
       size="md"
     >
-      <div className="mt-4 space-y-4">
+      <div className="space-y-4">
         <div className="bg-gray-50 rounded-lg p-4">
           <p className="text-sm font-medium text-gray-900">
             {patient.firstName} {patient.lastName}
@@ -81,7 +82,7 @@ export const DeletePatientModal: React.FC<DeletePatientModalProps> = ({
             Annuler
           </Button>
           <Button
-            variant="destructive"
+            variant="danger"
             onClick={handleDelete}
             className="flex-1"
             loading={deleteMutation.isPending}

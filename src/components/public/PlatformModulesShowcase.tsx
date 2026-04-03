@@ -1,42 +1,46 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import {
-  MODULE_CATEGORIES,
+  buildModuleCategories,
   MARKETING_BRAND,
 } from "@/content/platform-marketing";
 import { MarketingIcon } from "@/components/public/marketing-icons";
 
 export default function PlatformModulesShowcase() {
-  const [activeId, setActiveId] = useState(MODULE_CATEGORIES[0]?.id ?? "");
+  const t = useTranslations("pages.modules");
+  const tp = useTranslations("platformModules");
+  const categories = useMemo(() => buildModuleCategories((key) => tp(key)), [tp]);
+  const [activeId, setActiveId] = useState(categories[0]?.id ?? "");
 
   const active =
-    MODULE_CATEGORIES.find((c) => c.id === activeId) ?? MODULE_CATEGORIES[0];
+    categories.find((c) => c.id === activeId) ?? categories[0];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <p className="text-center text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 mb-4">
-        Catalogue produit
+        {t("tag")}
       </p>
       <h1 className="text-center text-3xl sm:text-5xl lg:text-6xl font-display font-bold text-slate-900 tracking-tight leading-[1.05] max-w-4xl mx-auto mb-4">
-        Chaque module de{" "}
+        {t("title")}{" "}
         <span className="text-emerald-600 italic">{MARKETING_BRAND.name}</span>,
-        expliqué pour vos équipes
+        {" "}{t("titleEnd")}
       </h1>
       <p className="text-center text-lg text-slate-500 max-w-2xl mx-auto mb-10 sm:mb-14 font-medium leading-relaxed">
-        {MARKETING_BRAND.region}
+        {tp("brand.region")}
       </p>
 
       {/* Mobile: horizontal chips */}
       <div
         className="flex sm:hidden gap-2 overflow-x-auto pb-4 -mx-4 px-4 snap-x snap-mandatory scrollbar-thin"
         role="tablist"
-        aria-label="Catégories"
+        aria-label={t("categories")}
       >
-        {MODULE_CATEGORIES.map((cat) => (
+        {categories.map((cat) => (
           <button
             key={cat.id}
             type="button"
@@ -59,9 +63,9 @@ export default function PlatformModulesShowcase() {
         <nav
           className="w-56 lg:w-64 shrink-0 flex flex-col gap-1"
           role="tablist"
-          aria-label="Catégories"
+          aria-label={t("categories")}
         >
-          {MODULE_CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <button
               key={cat.id}
               type="button"
@@ -189,24 +193,24 @@ export default function PlatformModulesShowcase() {
 
       <div className="mt-16 sm:mt-20 rounded-[2rem] sm:rounded-[3rem] bg-slate-900 text-white p-8 sm:p-12 lg:p-16 text-center">
         <h2 className="text-2xl sm:text-4xl font-display font-bold mb-4">
-          Prêt à voir la plateforme en action ?
+          {t("readyTitle")}
         </h2>
         <p className="text-slate-400 max-w-lg mx-auto mb-8 text-sm sm:text-base">
-          Inscription guidée, espace dédié par pharmacie et parcours d&apos;équipe inclus.
+          {t("readyDesc")}
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/auth/register"
             className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-emerald-600 text-white font-bold hover:bg-emerald-500 transition-colors"
           >
-            Démarrer gratuitement
+            {t("readyButton")}
             <ArrowRight className="w-5 h-5" />
           </Link>
           <Link
             href="/pricing"
             className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl border border-white/20 font-bold hover:bg-white/10 transition-colors"
           >
-            Voir les tarifs
+            {t("viewPricing")}
           </Link>
         </div>
       </div>

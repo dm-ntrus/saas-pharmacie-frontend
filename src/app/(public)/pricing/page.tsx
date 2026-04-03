@@ -1,39 +1,38 @@
 "use client";
 
 import { useState, useMemo, Fragment } from "react";
+import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import {
   Check,
   Minus,
-  ArrowRight,
-  HelpCircle,
   Shield,
   Zap,
   Phone,
   AlertCircle,
   ChevronDown,
 } from "lucide-react";
-import Link from "next/link";
 import { usePublicPlans } from "@/hooks/api/usePublicPlans";
 import PlanCard, { PlanCardSkeleton } from "@/components/public/PlanCard";
 import type { Plan } from "@/types/billing";
+import { Link } from "@/i18n/navigation";
 
 /* ────────────────────────── comparison matrix ────────────────────────── */
 
 const COMPARISON_FEATURES = [
-  { key: "max_users", label: "Utilisateurs", category: "Limites" },
-  { key: "max_pharmacies", label: "Nombre de sites", category: "Limites" },
-  { key: "max_storage_gb", label: "Stockage cloud", category: "Limites" },
-  { key: "max_api_calls_per_month", label: "Appels API / mois", category: "Limites" },
-  { key: "module.sales", label: "Point de vente (POS)", category: "Modules" },
-  { key: "module.inventory", label: "Gestion d'inventaire", category: "Modules" },
-  { key: "module.prescriptions", label: "Ordonnances", category: "Modules" },
-  { key: "module.supply_chain", label: "Supply chain & achats", category: "Modules" },
-  { key: "module.accounting", label: "Comptabilité", category: "Modules" },
-  { key: "module.analytics", label: "Analytics & BI", category: "Modules" },
-  { key: "module.crm", label: "Fidélité & CRM", category: "Modules" },
-  { key: "module.delivery", label: "Gestion des livraisons", category: "Modules" },
-  { key: "is_trial_available", label: "Essai gratuit 30 jours", category: "Support" },
+  { key: "max_users", labelKey: "users", categoryKey: "limits" },
+  { key: "max_pharmacies", labelKey: "sites", categoryKey: "limits" },
+  { key: "max_storage_gb", labelKey: "storage", categoryKey: "limits" },
+  { key: "max_api_calls_per_month", labelKey: "apiCalls", categoryKey: "limits" },
+  { key: "module.sales", labelKey: "moduleSales", categoryKey: "modules" },
+  { key: "module.inventory", labelKey: "moduleInventory", categoryKey: "modules" },
+  { key: "module.prescriptions", labelKey: "modulePrescriptions", categoryKey: "modules" },
+  { key: "module.supply_chain", labelKey: "moduleSupplyChain", categoryKey: "modules" },
+  { key: "module.accounting", labelKey: "moduleAccounting", categoryKey: "modules" },
+  { key: "module.analytics", labelKey: "moduleAnalytics", categoryKey: "modules" },
+  { key: "module.crm", labelKey: "moduleCrm", categoryKey: "modules" },
+  { key: "module.delivery", labelKey: "moduleDelivery", categoryKey: "modules" },
+  { key: "is_trial_available", labelKey: "trialAvailable", categoryKey: "support" },
 ];
 
 const TIER_MODULES: Record<string, string[]> = {
@@ -78,26 +77,27 @@ const TIER_MODULES: Record<string, string[]> = {
 function getComparisonValue(
   plan: Plan,
   key: string,
+  t: (key: string) => string,
 ): boolean | string | number {
   if (key === "max_users") {
     const v = plan.max_users;
     if (!v) return "1";
-    return v === -1 ? "Illimité" : String(v);
+    return v === -1 ? t("unlimited") : String(v);
   }
   if (key === "max_pharmacies") {
     const v = plan.max_pharmacies;
     if (!v) return "1";
-    return v === -1 ? "Illimité" : String(v);
+    return v === -1 ? t("unlimited") : String(v);
   }
   if (key === "max_storage_gb") {
     const raw = typeof plan.max_storage_gb === "string" ? parseFloat(plan.max_storage_gb) : plan.max_storage_gb;
     if (!raw) return "2 GB";
-    return raw === -1 ? "Illimité" : `${raw} GB`;
+    return raw === -1 ? t("unlimited") : `${raw} GB`;
   }
   if (key === "max_api_calls_per_month") {
     const v = plan.max_api_calls_per_month;
     if (!v) return "1 000";
-    if (v === -1) return "Illimité";
+    if (v === -1) return t("unlimited");
     return v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v);
   }
   if (key === "is_trial_available") return !!plan.is_trial_available;
@@ -141,25 +141,6 @@ function CellValue({ val }: { val: boolean | string | number }) {
 
 /* ─────────────────────────── FAQ ─────────────────────────── */
 
-const FAQS = [
-  {
-    q: "Puis-je changer de plan à tout moment ?",
-    a: "Oui, montée ou descente en gamme depuis votre tableau de bord. La différence est calculée au prorata.",
-  },
-  {
-    q: "Comment fonctionne l'essai gratuit ?",
-    a: "30 jours complets avec toutes les fonctionnalités du plan choisi. Aucune carte bancaire requise pour commencer.",
-  },
-  {
-    q: "Y a-t-il des frais d'installation ?",
-    a: "Non. L'inscription et la configuration sont 100 % gratuites. Vous êtes opérationnel en moins de 24h.",
-  },
-  {
-    q: "Quels moyens de paiement acceptez-vous ?",
-    a: "Carte bancaire (Visa, Mastercard), virement SEPA, et Mobile Money (M-Pesa, Airtel Money, Orange Money).",
-  },
-];
-
 function FaqItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
@@ -185,6 +166,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 /* ─────────────────────────── page ─────────────────────────── */
 
 export default function PricingPage() {
+  const t = useTranslations("pages.pricing");
   const [annual, setAnnual] = useState(false);
   const { data: apiPlans, isLoading, isError } = usePublicPlans({ active: true });
 
@@ -221,6 +203,25 @@ export default function PricingPage() {
 
   const isReady = !isLoading && !isError && plans.length > 0;
 
+  const faqs = useMemo(
+    () => [
+      { q: t("faq1Q"), a: t("faq1A") },
+      { q: t("faq2Q"), a: t("faq2A") },
+      { q: t("faq3Q"), a: t("faq3A") },
+      { q: t("faq4Q"), a: t("faq4A") },
+    ],
+    [t],
+  );
+
+  const trustItems = useMemo(
+    () => [
+      { icon: Shield, title: t("guaranteeTitle"), desc: t("guaranteeDesc") },
+      { icon: Zap, title: t("expressTitle"), desc: t("expressDesc") },
+      { icon: Phone, title: t("humanSupportTitle"), desc: t("humanSupportDesc") },
+    ],
+    [t],
+  );
+
   return (
     <div className="min-h-screen bg-white">
       {/* ─── Hero ─── */}
@@ -232,18 +233,18 @@ export default function PricingPage() {
           className="max-w-3xl mx-auto"
         >
           <span className="inline-block text-[11px] font-bold uppercase tracking-[0.25em] text-emerald-600 mb-4">
-            Tarifs simples & transparents
+            {t("heroTag")}
           </span>
           <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mb-4 leading-[1.15]">
-            Le plan parfait pour{" "}
+            {t("heroTitle")}{" "}
             <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
-              votre pharmacie
+              {t("heroHighlight")}
             </span>
           </h1>
           <p className="text-base sm:text-lg text-slate-500 max-w-xl mx-auto leading-relaxed">
-            Commencez gratuitement, évoluez quand vous le souhaitez.
+            {t("heroDesc")}
             <br className="hidden sm:block" />
-            Aucun frais caché, aucun engagement.
+            {t("heroDescLine2")}
           </p>
         </motion.div>
       </section>
@@ -259,7 +260,7 @@ export default function PricingPage() {
                 : "text-slate-500 hover:text-slate-700"
             }`}
           >
-            Mensuel
+            {t("monthly")}
           </button>
           <button
             onClick={() => setAnnual(true)}
@@ -269,7 +270,7 @@ export default function PricingPage() {
                 : "text-slate-500 hover:text-slate-700"
             }`}
           >
-            Annuel
+            {t("annual")}
             {annualDiscount > 0 && (
               <span className="text-[11px] font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">
                 -{annualDiscount}%
@@ -284,9 +285,9 @@ export default function PricingPage() {
         <div className="max-w-lg mx-auto text-center px-4 mb-12">
           <div className="inline-flex items-center gap-2 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-5 py-3">
             <AlertCircle className="w-4 h-4 shrink-0" />
-            Impossible de charger les plans pour le moment.{" "}
+            {t("loadError")}{" "}
             <Link href="/contact" className="font-bold underline">
-              Contactez-nous
+              {t("contactUs")}
             </Link>
           </div>
         </div>
@@ -328,10 +329,10 @@ export default function PricingPage() {
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-                Comparatif complet
+                {t("comparisonTitle")}
               </h2>
               <p className="text-slate-500 mt-2 text-sm">
-                Tout ce que chaque plan inclut, en un coup d'oeil.
+                {t("comparisonDesc")}
               </p>
             </div>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
@@ -339,7 +340,7 @@ export default function PricingPage() {
                 <thead>
                   <tr className="border-b border-slate-100 bg-slate-50/50">
                     <th className="px-5 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider w-56">
-                      Fonctionnalité
+                      {t("featureHeader")}
                     </th>
                     {plans.map((p) => (
                       <th
@@ -357,8 +358,11 @@ export default function PricingPage() {
                 </thead>
                 <tbody>
                   {COMPARISON_FEATURES.map((row, idx) => {
-                    const prevCat = idx > 0 ? COMPARISON_FEATURES[idx - 1].category : null;
-                    const showCat = row.category !== prevCat;
+                    const prevCat =
+                      idx > 0
+                        ? COMPARISON_FEATURES[idx - 1].categoryKey
+                        : null;
+                    const showCat = row.categoryKey !== prevCat;
                     return (
                       <Fragment key={row.key}>
                         {showCat && (
@@ -367,13 +371,13 @@ export default function PricingPage() {
                               colSpan={plans.length + 1}
                               className="px-5 pt-6 pb-2 text-xs font-bold text-slate-400 uppercase tracking-wider bg-white"
                             >
-                              {row.category}
+                              {t(row.categoryKey)}
                             </td>
                           </tr>
                         )}
                         <tr className="border-t border-slate-50 hover:bg-slate-50/50 transition-colors">
                           <td className="px-5 py-3 text-sm font-medium text-slate-700">
-                            {row.label}
+                            {t(row.labelKey)}
                           </td>
                           {plans.map((p) => (
                             <td
@@ -382,7 +386,7 @@ export default function PricingPage() {
                                 p.plan_tier === "professional" ? "bg-emerald-50/30" : ""
                               }`}
                             >
-                              <CellValue val={getComparisonValue(p, row.key)} />
+                              <CellValue val={getComparisonValue(p, row.key, t)} />
                             </td>
                           ))}
                         </tr>
@@ -401,11 +405,11 @@ export default function PricingPage() {
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-10">
             <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-              Questions fréquentes
+              {t("faqTitle")}
             </h2>
           </div>
           <div className="space-y-3">
-            {FAQS.map((faq) => (
+            {faqs.map((faq) => (
               <FaqItem key={faq.q} q={faq.q} a={faq.a} />
             ))}
           </div>
@@ -415,23 +419,7 @@ export default function PricingPage() {
       {/* ─── Trust bar ─── */}
       <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-slate-50 border-t border-slate-100">
         <div className="max-w-5xl mx-auto grid sm:grid-cols-3 gap-5">
-          {[
-            {
-              icon: Shield,
-              title: "Garantie 30 jours",
-              desc: "Satisfait ou remboursé, sans condition.",
-            },
-            {
-              icon: Zap,
-              title: "Mise en service express",
-              desc: "Opérationnel en moins de 24 heures.",
-            },
-            {
-              icon: Phone,
-              title: "Support humain",
-              desc: "Une vraie équipe vous accompagne.",
-            },
-          ].map((g) => (
+          {trustItems.map((g) => (
             <div
               key={g.title}
               className="flex items-start gap-4 p-5 bg-white rounded-xl border border-slate-200"

@@ -1,6 +1,8 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import {
   Check,
@@ -17,7 +19,6 @@ const TIER_META: Record<
   string,
   {
     icon: typeof Zap;
-    label: string;
     accent: string;
     badgeBg: string;
     badgeText: string;
@@ -26,7 +27,6 @@ const TIER_META: Record<
 > = {
   free: {
     icon: Gift,
-    label: "Gratuit",
     accent: "text-slate-600",
     badgeBg: "bg-slate-100",
     badgeText: "text-slate-700",
@@ -34,7 +34,6 @@ const TIER_META: Record<
   },
   starter: {
     icon: Zap,
-    label: "Starter",
     accent: "text-blue-600",
     badgeBg: "bg-blue-50",
     badgeText: "text-blue-700",
@@ -42,7 +41,6 @@ const TIER_META: Record<
   },
   professional: {
     icon: Sparkles,
-    label: "Pro",
     accent: "text-emerald-600",
     badgeBg: "bg-emerald-50",
     badgeText: "text-emerald-700",
@@ -50,7 +48,6 @@ const TIER_META: Record<
   },
   enterprise: {
     icon: Building2,
-    label: "Enterprise",
     accent: "text-violet-600",
     badgeBg: "bg-violet-50",
     badgeText: "text-violet-700",
@@ -58,7 +55,6 @@ const TIER_META: Record<
   },
   custom: {
     icon: Crown,
-    label: "Sur mesure",
     accent: "text-amber-600",
     badgeBg: "bg-amber-50",
     badgeText: "text-amber-700",
@@ -66,48 +62,48 @@ const TIER_META: Record<
   },
 };
 
-const TIER_FEATURES: Record<string, string[]> = {
+const TIER_FEATURE_KEYS: Record<string, string[]> = {
   free: [
-    "1 pharmacie",
-    "5 utilisateurs",
-    "Point de vente basique",
-    "Gestion de stock",
-    "Support communautaire",
+    "feat_1pharmacy",
+    "feat_5users",
+    "feat_basicPos",
+    "feat_stockMgmt",
+    "feat_communitySupport",
   ],
   starter: [
-    "1 pharmacie",
-    "15 utilisateurs",
-    "Point de vente complet",
-    "Inventaire avancé",
-    "Patients & ordonnances",
-    "Rapports mensuels",
-    "Support email",
+    "feat_1pharmacy",
+    "feat_15users",
+    "feat_fullPos",
+    "feat_advancedInventory",
+    "feat_patientsRx",
+    "feat_monthlyReports",
+    "feat_emailSupport",
   ],
   professional: [
-    "Jusqu'à 5 pharmacies",
-    "50 utilisateurs",
-    "Tous les modules inclus",
-    "Analytics & BI",
-    "Supply chain",
-    "Comptabilité intégrée",
-    "CRM & fidélité",
-    "Support prioritaire 24/7",
+    "feat_5pharmacies",
+    "feat_50users",
+    "feat_allModules",
+    "feat_analyticsBI",
+    "feat_supplyChain",
+    "feat_integratedAccounting",
+    "feat_crmLoyalty",
+    "feat_prioritySupport",
   ],
   enterprise: [
-    "Sites illimités",
-    "Utilisateurs illimités",
-    "Modules personnalisables",
-    "API dédiée",
-    "SSO & conformité",
-    "Account manager dédié",
-    "SLA garanti 99.9%",
-    "Formation sur site",
+    "feat_unlimitedSites",
+    "feat_unlimitedUsers",
+    "feat_customModules",
+    "feat_dedicatedApi",
+    "feat_ssoCompliance",
+    "feat_accountManager",
+    "feat_sla",
+    "feat_onsiteTraining",
   ],
   custom: [
-    "Infrastructure dédiée",
-    "Fonctionnalités sur mesure",
-    "Intégrations custom",
-    "Support premium",
+    "feat_dedicatedInfra",
+    "feat_customFeatures",
+    "feat_customIntegrations",
+    "feat_premiumSupport",
   ],
 };
 
@@ -115,7 +111,7 @@ function resolveMeta(tier: string) {
   return TIER_META[tier] ?? TIER_META.starter;
 }
 
-function resolveFeatures(plan: Plan): string[] {
+function resolveApiFeatures(plan: Plan): string[] | null {
   const fromPlan: string[] = [];
 
   if (plan.feature_flags?.length) {
@@ -141,9 +137,7 @@ function resolveFeatures(plan: Plan): string[] {
   }
 
   if (fromPlan.length >= 4) return fromPlan.slice(0, 8);
-
-  const tier = plan.plan_tier || "starter";
-  return TIER_FEATURES[tier] ?? TIER_FEATURES.starter;
+  return null;
 }
 
 interface PlanCardProps {
@@ -158,10 +152,17 @@ export default function PlanCard({
   index = 0,
   showAnnual = false,
 }: PlanCardProps) {
+  const t = useTranslations("pages.pricing");
   const tier = (plan.plan_tier || "starter") as string;
   const meta = resolveMeta(tier);
   const isPop = tier === "professional";
-  const features = resolveFeatures(plan);
+
+  const features = useMemo(() => {
+    const api = resolveApiFeatures(plan);
+    if (api) return api;
+    const keys = TIER_FEATURE_KEYS[tier] ?? TIER_FEATURE_KEYS.starter;
+    return keys.map((k) => t(k));
+  }, [plan, tier, t]);
 
   const price = typeof plan.price === "string" ? parseFloat(plan.price) : plan.price;
   const displayPrice =
@@ -179,12 +180,12 @@ export default function PlanCard({
 
   const ctaLabel =
     tier === "enterprise" || tier === "custom"
-      ? "Contacter l'équipe"
+      ? t("contactTeam")
       : isFree
-        ? "Démarrer gratuitement"
+        ? t("startFree")
         : plan.is_trial_available
-          ? "Essai gratuit 30j"
-          : "Choisir ce plan";
+          ? t("freeTrial")
+          : t("choosePlan");
 
   return (
     <motion.div
@@ -202,7 +203,7 @@ export default function PlanCard({
         <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20">
           <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-emerald-600 text-white rounded-full text-[11px] font-bold uppercase tracking-wider shadow-lg shadow-emerald-600/30">
             <Sparkles className="w-3.5 h-3.5" />
-            Le plus populaire
+            {t("popular")}
           </span>
         </div>
       )}
@@ -214,7 +215,7 @@ export default function PlanCard({
             className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold ${meta.badgeBg} ${meta.badgeText}`}
           >
             <meta.icon className="w-3.5 h-3.5" />
-            {meta.label}
+            {t(`tierLabel_${tier}`)}
           </span>
         </div>
 
@@ -232,13 +233,13 @@ export default function PlanCard({
           {isFree ? (
             <div className="flex items-baseline gap-1">
               <span className="text-4xl font-extrabold text-slate-900">
-                Gratuit
+                {t("free")}
               </span>
             </div>
           ) : tier === "enterprise" || tier === "custom" ? (
             <div className="flex items-baseline gap-1">
               <span className="text-4xl font-extrabold text-slate-900">
-                Sur devis
+                {t("onQuote")}
               </span>
             </div>
           ) : (
@@ -249,17 +250,17 @@ export default function PlanCard({
                   <span className="text-lg font-medium text-slate-400 ml-0.5">$</span>
                 </span>
                 <span className="text-sm text-slate-500 font-medium">
-                  / mois
+                  {t("perMonth")}
                 </span>
               </div>
               {plan.billing_interval === "yearly" && (
                 <p className="text-xs text-emerald-600 font-semibold mt-1">
-                  {price}$ facturé annuellement
+                  {price}$ {t("billedAnnually")}
                 </p>
               )}
               {showAnnual && plan.billing_interval === "monthly" && (
                 <p className="text-xs text-slate-400 mt-1">
-                  ou économisez ~15% en annuel
+                  {t("saveAnnual")}
                 </p>
               )}
             </>
@@ -288,7 +289,7 @@ export default function PlanCard({
       {/* Features */}
       <div className="p-6 sm:p-8 pt-5 flex-1">
         <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">
-          Ce qui est inclus
+          {t("whatsIncluded")}
         </p>
         <ul className="space-y-3">
           {features.map((f) => (
@@ -317,7 +318,9 @@ export default function PlanCard({
                 <Check className="w-3 h-3" strokeWidth={3} />
               </div>
               <span className="text-sm text-slate-700 leading-snug">
-                {storage === -1 ? "Stockage illimité" : `${storage} GB stockage`}
+                {storage === -1
+                  ? t("unlimitedStorage")
+                  : t("storageGb", { amount: storage })}
               </span>
             </li>
           )}

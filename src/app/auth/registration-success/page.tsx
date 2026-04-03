@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import {
   CheckCircle2,
   ArrowRight,
@@ -27,6 +27,7 @@ import { isValidProvisioningId } from "@/services/tenant-registration.service";
 import { buildTenantLoginPath } from "@/lib/tenant/tenant-urls";
 import type { TenantProvisioningPublicStatus } from "@/types/tenant-registration.types";
 import AuthShell from "@/components/auth/AuthShell";
+import { Link } from "@/i18n/navigation";
 
 export default function RegistrationSuccessPage() {
   return (
@@ -47,6 +48,7 @@ function Fallback() {
 }
 
 function RegistrationSuccessInner() {
+  const t = useTranslations("authPages.registrationSuccess");
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
   const provisioningId =
@@ -54,10 +56,11 @@ function RegistrationSuccessInner() {
   const subdomainHint =
     searchParams?.get("subdomain")?.trim().toLowerCase() ?? "";
 
+  const hasValidProvisioningId = !!provisioningId && isValidProvisioningId(provisioningId);
+  const hasInvalidProvisioningId = !!provisioningId && !isValidProvisioningId(provisioningId);
+
   const statusQuery = useTenantProvisioningStatus(
-    provisioningId && isValidProvisioningId(provisioningId)
-      ? provisioningId
-      : undefined,
+    hasValidProvisioningId ? provisioningId : undefined,
   );
 
   const [wsConnected, setWsConnected] = useState(false);
@@ -86,7 +89,7 @@ function RegistrationSuccessInner() {
   const loginHref = buildTenantLoginPath(effectiveSubdomain);
 
   useEffect(() => {
-    if (!provisioningId || !isValidProvisioningId(provisioningId)) return;
+    if (!hasValidProvisioningId) return;
 
     const socket = createTenantProvisioningSocket();
 
@@ -128,8 +131,13 @@ function RegistrationSuccessInner() {
       });
     };
 
+    const onConnectError = () => {
+      setWsConnected(false);
+    };
+
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
+    socket.on("connect_error", onConnectError);
     socket.on("provisioning_progress", onProgress);
     socket.on("provisioning_success", onSuccess);
     socket.on("provisioning_error", onError);
@@ -142,6 +150,7 @@ function RegistrationSuccessInner() {
       }
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
+      socket.off("connect_error", onConnectError);
       socket.off("provisioning_progress", onProgress);
       socket.off("provisioning_success", onSuccess);
       socket.off("provisioning_error", onError);
@@ -149,7 +158,9 @@ function RegistrationSuccessInner() {
     };
   }, [provisioningId, queryClient]);
 
-  const display = resolveDisplayState(apiStatus, pollError);
+  const display = hasInvalidProvisioningId
+    ? { kind: "failed" as const, message: t("invalidProvisioningId") }
+    : resolveDisplayState(apiStatus, pollError, t);
   const progress =
     progressMeta?.progress ??
     (display.kind === "completed" ? 100 : undefined);
@@ -157,10 +168,9 @@ function RegistrationSuccessInner() {
   return (
     <AuthShell
       testimonial={{
-        quote:
-          "L'installation a pris 10 minutes. Nous étions opérationnels le jour même.",
-        name: "Dr. Amisi",
-        title: "Pharmacie de la Paix",
+        quote: t("testimonialQuote"),
+        name: t("testimonialName"),
+        title: t("testimonialTitle"),
       }}
     >
       <motion.div
@@ -194,15 +204,15 @@ function RegistrationSuccessInner() {
         <div>
           <h1 className="text-3xl sm:text-4xl font-display font-bold text-slate-900 mb-2 tracking-tight">
             {display.kind === "completed"
-              ? "Votre espace est prêt !"
+              ? t("readyTitle")
               : display.kind === "failed"
-                ? "Un problème est survenu"
-                : "Préparation en cours…"}
+                ? t("errorTitle")
+                : t("pendingTitle")}
           </h1>
           <p className="text-sm text-slate-500 leading-relaxed">
             {provisioningId
               ? display.message
-              : "Merci pour votre inscription ! Vérifiez votre email (y compris indésirables) pour vos identifiants."}
+              : t("noProvisioningIdDesc")}
           </p>
         </div>
 
@@ -222,10 +232,13 @@ function RegistrationSuccessInner() {
             {progressMeta?.stepIndex != null &&
               progressMeta?.totalSteps != null && (
                 <p className="text-xs text-slate-400">
-                  Étape {progressMeta.stepIndex}/{progressMeta.totalSteps}
+                  {t("stepLabel", {
+                    current: progressMeta.stepIndex,
+                    total: progressMeta.totalSteps,
+                  })}
                   {progressMeta.step ? ` — ${progressMeta.step}` : ""}
                   {wsConnected && (
-                    <span className="ml-2 text-emerald-500">● temps réel</span>
+                    <span className="ml-2 text-emerald-500">● {t("realTime")}</span>
                   )}
                 </p>
               )}
@@ -240,7 +253,7 @@ function RegistrationSuccessInner() {
             </div>
             <div>
               <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
-                Votre espace
+                {t("yourSpace")}
               </p>
               <p className="text-base font-bold text-emerald-600 font-mono">
                 {effectiveSubdomain}
@@ -254,13 +267,13 @@ function RegistrationSuccessInner() {
           {[
             {
               icon: LayoutDashboard,
-              title: "Tableau de bord",
-              desc: "Ventes, stocks, patients",
+              title: t("cards.dashboardTitle"),
+              desc: t("cards.dashboardDesc"),
             },
             {
               icon: Star,
-              title: "IA Prédictive",
-              desc: "Anticipez vos ruptures",
+              title: t("cards.aiTitle"),
+              desc: t("cards.aiDesc"),
             },
           ].map((card) => (
             <div
@@ -283,15 +296,15 @@ function RegistrationSuccessInner() {
             className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-base hover:bg-emerald-600 transition-all flex items-center justify-center gap-3 shadow-xl shadow-slate-900/15 group"
           >
             {effectiveSubdomain
-              ? "Connexion à mon espace"
-              : "Accéder à la connexion"}
+              ? t("loginToSpace")
+              : t("goToLogin")}
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Link>
           <Link
             href="/support"
             className="w-full py-3.5 bg-slate-50 text-slate-600 border border-slate-100 rounded-2xl font-bold text-sm hover:bg-slate-100 transition-all text-center"
           >
-            Besoin d&apos;aide ?
+            {t("needHelp")}
           </Link>
         </div>
       </motion.div>
@@ -309,27 +322,28 @@ function extractSubdomainFromUnknown(meta: unknown): string {
 function resolveDisplayState(
   api: TenantProvisioningPublicStatus | undefined,
   pollErr: string | null,
+  t: (key: string) => string,
 ): { kind: "pending" | "completed" | "failed"; message: string } {
   if (pollErr && !api) return { kind: "failed", message: pollErr };
   if (!api)
     return {
       kind: "pending",
-      message: pollErr ?? "Récupération du statut…",
+      message: pollErr ?? t("statusFetching"),
     };
   if (api.status === "completed")
     return {
       kind: "completed",
-      message: api.message ?? "Provisioning terminé.",
+      message: api.message ?? t("statusCompleted"),
     };
   if (api.status === "failed")
     return {
       kind: "failed",
       message:
         api.message ??
-        "Le provisioning a échoué. Contactez le support avec votre référence.",
+        t("statusFailed"),
     };
   return {
     kind: "pending",
-    message: api.message ?? "Provisioning en cours…",
+    message: api.message ?? t("statusPending"),
   };
 }

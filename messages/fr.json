@@ -113,6 +113,11 @@
     "country": "Pays",
     "id": "Identifiant"
   },
+  "languageSwitcher": {
+    "label": "Changer de langue",
+    "current": "Langue actuelle",
+    "selectLanguage": "Sélectionner une langue"
+  },
   "auth": {
     "login": "Connexion",
     "logout": "Déconnexion",
@@ -646,6 +651,14 @@
   "hr": {
     "title": "Ressources Humaines",
     "employees": "Employés",
+    "timeTracking": "Pointage",
+    "attendanceToday": "Présence du jour",
+    "clockInTitle": "Pointer une entrée",
+    "employee": "Employé",
+    "clockInButton": "Pointer l'entrée",
+    "noAttendance": "Aucun pointage.",
+    "clockInLabel": "Entrée",
+    "clockOutLabel": "Sortie",
     "shifts": "Planning",
     "attendance": "Présence",
     "leaves": "Congés",
@@ -1373,5 +1386,1493 @@
     "insufficientStock": "Stock insuffisant",
     "expiredProduct": "Ce produit est expiré",
     "sessionRequired": "Une session de caisse doit être ouverte"
+  },
+  "pages": {
+    "home": {
+      "badge": "Plateforme SaaS pour pharmacies",
+      "heroTitle1": "Votre pharmacie,",
+      "heroTitle2": "plus rentable",
+      "heroTitle3": "avec la gestion intelligente.",
+      "heroDesc": "Automatisation complète, optimisation des ventes et conformité garantie — du comptoir au pilotage stratégique.",
+      "ctaPrimary": "Démarrer l'aventure",
+      "ctaDemo": "Voir la démo",
+      "statsPharmacies": "Pharmacies",
+      "statsTransactions": "Transactions",
+      "statsUptime": "Uptime",
+      "statsSupport": "Support",
+      "capabilitiesTag": "Capacités",
+      "capabilitiesTitle": "Tout ce dont votre pharmacie a besoin",
+      "capabilitiesHighlight": "pour maximiser sa rentabilité.",
+      "capabilitiesDesc": "Une plateforme complète conçue pour les pharmacies modernes, avec des outils pensés pour le terrain.",
+      "capInventory": "Inventaire & réassort",
+      "capInventoryDesc": "Produits, mouvements, péremptions, suggestions de réapprovisionnement — moins de ruptures.",
+      "capInventoryHighlight": "Stock sous contrôle",
+      "capPatients": "Patients & prescriptions",
+      "capPatientsDesc": "Dossiers patients, ordonnances, vaccination pour un service soignant structuré.",
+      "capPatientsHighlight": "Sécurité de dispensation",
+      "capPOS": "Point de vente",
+      "capPOSDesc": "POS moderne, facturation et moyens de paiement adaptés à votre marché.",
+      "capPOSHighlight": "Encaissement fluide",
+      "capAnalytics": "Pilotage & rapports",
+      "capAnalyticsDesc": "Tableaux de bord, rapports et BI pour arbitrer marges, volumes et équipes.",
+      "capAnalyticsHighlight": "Décisions éclairées",
+      "capCompliance": "Conformité & audit",
+      "capComplianceDesc": "Qualité, journal métier et traçabilité pour répondre aux contrôles.",
+      "capComplianceHighlight": "Traçabilité 100%",
+      "capSupplyChain": "Supply chain intégrée",
+      "capSupplyChainDesc": "Demandes d'achat, commandes, réceptions et suivi fournisseurs dans un même fil.",
+      "capSupplyChainHighlight": "Circuit achat complet",
+      "viewModule": "Voir le module",
+      "bentoPOS": "Point de vente ultra-rapide",
+      "bentoPOSDesc": "Interface intuitive conçue pour la rapidité. Gérez les files d'attente sans effort.",
+      "bentoPOSFeature1": "Scan code-barres instantané",
+      "bentoPOSFeature2": "Multi-paiement intégré",
+      "bentoPOSFeature3": "Tickets numériques",
+      "bentoAnalytics": "Analytics avancés",
+      "bentoAnalyticsDesc": "Prédisez vos besoins en stock et identifiez vos produits les plus rentables.",
+      "bentoCompliance": "Conformité totale",
+      "bentoComplianceDesc": "Rapports fiscaux automatisés et traçabilité complète des médicaments sensibles.",
+      "bentoPatients": "Gestion patients",
+      "bentoPatientsDesc": "Suivez l'historique médical, gérez les prescriptions récurrentes et envoyez des rappels automatiques.",
+      "ctaTitle": "Prêt à",
+      "ctaHighlight": "moderniser",
+      "ctaTitleEnd": "votre pharmacie ?",
+      "ctaDesc": "Rejoignez plus de 500 pharmacies qui font confiance à SyntixPharma pour optimiser leurs opérations quotidiennes.",
+      "ctaRegister": "Essayer gratuitement",
+      "ctaContact": "Contacter l'équipe",
+      "ctaFootnote": "Installation en 24 h · Formation incluse · Support 7j/7",
+      "monthlyRevenue": "Revenus mensuels",
+      "recentActivity": "Activité récente",
+      "sales": "Ventes",
+      "patients": "Patients",
+      "products": "Produits",
+      "inventory": "Inventaire",
+      "pos": "Point de vente",
+      "analytics": "Analytics",
+      "saleNumber": "Vente #4821",
+      "saleDetails": "3 articles · $42.50",
+      "stockUpdated": "Stock mis à jour",
+      "stockUpdateDetails": "Paracétamol · +200 unités",
+      "newPatient": "Nouveau patient",
+      "newPatientDetails": "Marie K. · Prescription",
+      "modulesPreviewTag": "Plateforme",
+      "modulesPreviewTitleStart": "Des modules qui couvrent",
+      "modulesPreviewTitleHighlight": "toute l'officine",
+      "modulesPreviewDesc": "Un aperçu des briques les plus utilisées — la liste complète détaille chaque capacité métier.",
+      "modulesPreviewCta": "Voir les {count} modules détaillés",
+      "period7d": "7j",
+      "period30d": "30j"
+    },
+    "about": {
+      "tag": "Notre histoire",
+      "title": "Révolutionner la",
+      "titleHighlight": "santé",
+      "titleEnd": "en Afrique.",
+      "desc": "SyntixPharma est né d'une vision simple : donner aux pharmaciens les outils technologiques nécessaires pour offrir des soins de qualité supérieure, partout et à tout moment.",
+      "statFoundation": "Fondation",
+      "statClients": "Clients",
+      "statCountries": "Pays",
+      "quote": "Notre mission est d'éliminer les barrières technologiques.",
+      "missionTag": "Mission & Vision",
+      "missionTitle": "Transformer la pharmacie africaine.",
+      "missionDesc": "Nous construisons l'infrastructure technologique qui permet aux pharmacies africaines de rivaliser avec les meilleurs standards internationaux.",
+      "missionLabel": "Notre mission",
+      "missionText": "Rendre la technologie pharmaceutique accessible à chaque pharmacien en Afrique, quel que soit son niveau technique ou sa localisation.",
+      "visionLabel": "Notre vision",
+      "visionText": "Un continent où chaque patient bénéficie d'un service pharmaceutique numérisé, traçable et de classe mondiale.",
+      "timelineTag": "Parcours",
+      "timelineTitle": "Notre évolution",
+      "timeline2021": "Lancement",
+      "timeline2021Desc": "Première version bêta déployée à Kinshasa avec 10 pharmacies pilotes.",
+      "timeline2022": "Expansion RDC",
+      "timeline2022Desc": "Ouverture à Lubumbashi et Goma. 100+ pharmacies actives.",
+      "timeline2023": "International",
+      "timeline2023Desc": "Déploiement au Burundi et au Congo-Brazzaville. Lancement de l'IA prédictive.",
+      "timeline2024": "Scale-up",
+      "timeline2024Desc": "500+ pharmacies. Partenariats avec les grands répartiteurs nationaux.",
+      "valuesTag": "Valeurs",
+      "valuesTitle": "Ce qui nous guide",
+      "valueEmpathy": "Empathie",
+      "valueEmpathyDesc": "Nous plaçons l'humain au cœur de chaque ligne de code.",
+      "valueIntegrity": "Intégrité",
+      "valueIntegrityDesc": "La sécurité et la confidentialité des données sont nos priorités absolues.",
+      "valueExcellence": "Excellence",
+      "valueExcellenceDesc": "Nous visons la perfection dans l'expérience utilisateur et le support.",
+      "valueCollaboration": "Collaboration",
+      "valueCollaborationDesc": "Nous grandissons avec nos clients en écoutant leurs besoins réels.",
+      "teamCta": "Envie de nous rejoindre ?",
+      "teamCtaDesc": "Nous recrutons des talents passionnés par la HealthTech et l'impact social en Afrique.",
+      "teamCtaButton": "Voir les postes ouverts",
+      "teamCtaContact": "Nous contacter"
+    },
+    "contact": {
+      "tag": "Contact",
+      "title": "Parlons de votre",
+      "titleHighlight": "projet.",
+      "desc": "Notre équipe est disponible pour répondre à toutes vos questions et vous accompagner dans votre transition numérique.",
+      "email": "Email",
+      "phone": "Téléphone",
+      "address": "Adresse",
+      "hours": "Horaires",
+      "hoursValue": "Lun – Ven · 8h – 18h",
+      "techSupport": "Support technique",
+      "techSupportDesc": "Déjà client ? Accédez à notre portail de support pour une assistance prioritaire.",
+      "accessSupport": "Accéder au support",
+      "formTitle": "Envoyez-nous un message",
+      "fullName": "Nom complet",
+      "fullNamePlaceholder": "Dr. Jean Dupont",
+      "emailLabel": "Email",
+      "emailPlaceholder": "jean@pharmacie.com",
+      "phoneLabel": "Téléphone",
+      "phonePlaceholder": "+243 99 000 0000",
+      "subject": "Sujet",
+      "subjectDemo": "Demande de démo",
+      "subjectPricing": "Question tarifs",
+      "subjectPartnership": "Partenariat",
+      "subjectSupport": "Support technique",
+      "subjectOther": "Autre",
+      "message": "Message",
+      "messagePlaceholder": "Décrivez votre besoin...",
+      "sendButton": "Envoyer le message"
+    },
+    "pricing": {
+      "tag": "Tarification",
+      "title": "Choisissez le plan",
+      "titleHighlight": "adapté",
+      "titleEnd": "à votre pharmacie",
+      "desc": "Commencez gratuitement. Évoluez quand vous le souhaitez.",
+      "popular": "Le plus populaire",
+      "free": "Gratuit",
+      "onQuote": "Sur devis",
+      "perMonth": "/ mois",
+      "billedAnnually": "facturé annuellement",
+      "saveAnnual": "ou économisez ~15% en annuel",
+      "contactTeam": "Contacter l'équipe",
+      "startFree": "Démarrer gratuitement",
+      "freeTrial": "Essai gratuit 30j",
+      "choosePlan": "Choisir ce plan",
+      "whatsIncluded": "Ce qui est inclus",
+      "viewComparison": "Voir le comparatif détaillé",
+      "comparisonTitle": "Comparaison détaillée",
+      "limits": "Limites",
+      "modules": "Modules",
+      "support": "Support",
+      "users": "Utilisateurs",
+      "sites": "Nombre de sites",
+      "storage": "Stockage cloud",
+      "apiCalls": "Appels API / mois",
+      "unlimited": "Illimité",
+      "faqTitle": "Questions fréquentes",
+      "faqDesc": "Réponses aux questions les plus courantes sur nos tarifs.",
+      "plansComingSoon": "Les plans seront bientôt disponibles.",
+      "contactUs": "Nous contacter",
+      "heroTag": "Tarifs simples & transparents",
+      "heroTitle": "Le plan parfait pour",
+      "heroHighlight": "votre pharmacie",
+      "heroDesc": "Commencez gratuitement, évoluez quand vous le souhaitez.",
+      "heroDescLine2": "Aucun frais caché, aucun engagement.",
+      "monthly": "Mensuel",
+      "annual": "Annuel",
+      "loadError": "Impossible de charger les plans pour le moment.",
+      "comparisonDesc": "Tout ce que chaque plan inclut, en un coup d'œil.",
+      "featureHeader": "Fonctionnalité",
+      "moduleSales": "Point de vente (POS)",
+      "moduleInventory": "Gestion d'inventaire",
+      "modulePrescriptions": "Ordonnances",
+      "moduleSupplyChain": "Supply chain & achats",
+      "moduleAccounting": "Comptabilité",
+      "moduleAnalytics": "Analytics & BI",
+      "moduleCrm": "Fidélité & CRM",
+      "moduleDelivery": "Gestion des livraisons",
+      "trialAvailable": "Essai gratuit 30 jours",
+      "faq1Q": "Puis-je changer de plan à tout moment ?",
+      "faq1A": "Oui, montée ou descente en gamme depuis votre tableau de bord. La différence est calculée au prorata.",
+      "faq2Q": "Comment fonctionne l'essai gratuit ?",
+      "faq2A": "30 jours complets avec toutes les fonctionnalités du plan choisi. Aucune carte bancaire requise pour commencer.",
+      "faq3Q": "Y a-t-il des frais d'installation ?",
+      "faq3A": "Non. L'inscription et la configuration sont 100 % gratuites. Vous êtes opérationnel en moins de 24h.",
+      "faq4Q": "Quels moyens de paiement acceptez-vous ?",
+      "faq4A": "Carte bancaire (Visa, Mastercard), virement SEPA, et Mobile Money (M-Pesa, Airtel Money, Orange Money).",
+      "guaranteeTitle": "Garantie 30 jours",
+      "guaranteeDesc": "Satisfait ou remboursé, sans condition.",
+      "expressTitle": "Mise en service express",
+      "expressDesc": "Opérationnel en moins de 24 heures.",
+      "humanSupportTitle": "Support humain",
+      "humanSupportDesc": "Une vraie équipe vous accompagne.",
+      "unlimitedStorage": "Stockage illimité",
+      "storageGb": "{amount} GB stockage",
+      "tierLabel_free": "Gratuit",
+      "tierLabel_starter": "Starter",
+      "tierLabel_professional": "Pro",
+      "tierLabel_enterprise": "Enterprise",
+      "tierLabel_custom": "Sur mesure",
+      "feat_1pharmacy": "1 pharmacie",
+      "feat_5users": "5 utilisateurs",
+      "feat_basicPos": "Point de vente basique",
+      "feat_stockMgmt": "Gestion de stock",
+      "feat_communitySupport": "Support communautaire",
+      "feat_15users": "15 utilisateurs",
+      "feat_fullPos": "Point de vente complet",
+      "feat_advancedInventory": "Inventaire avancé",
+      "feat_patientsRx": "Patients & ordonnances",
+      "feat_monthlyReports": "Rapports mensuels",
+      "feat_emailSupport": "Support email",
+      "feat_5pharmacies": "Jusqu'à 5 pharmacies",
+      "feat_50users": "50 utilisateurs",
+      "feat_allModules": "Tous les modules inclus",
+      "feat_analyticsBI": "Analytics & BI",
+      "feat_supplyChain": "Supply chain",
+      "feat_integratedAccounting": "Comptabilité intégrée",
+      "feat_crmLoyalty": "CRM & fidélité",
+      "feat_prioritySupport": "Support prioritaire 24/7",
+      "feat_unlimitedSites": "Sites illimités",
+      "feat_unlimitedUsers": "Utilisateurs illimités",
+      "feat_customModules": "Modules personnalisables",
+      "feat_dedicatedApi": "API dédiée",
+      "feat_ssoCompliance": "SSO & conformité",
+      "feat_accountManager": "Account manager dédié",
+      "feat_sla": "SLA garanti 99.9%",
+      "feat_onsiteTraining": "Formation sur site",
+      "feat_dedicatedInfra": "Infrastructure dédiée",
+      "feat_customFeatures": "Fonctionnalités sur mesure",
+      "feat_customIntegrations": "Intégrations custom",
+      "feat_premiumSupport": "Support premium",
+      "shortFeat_5users": "5 utilisateurs",
+      "shortFeat_basicPos": "POS basique",
+      "shortFeat_stockMgmt": "Gestion de stock",
+      "shortFeat_communitySupport": "Support communautaire",
+      "shortFeat_15users": "15 utilisateurs",
+      "shortFeat_fullPos": "POS complet",
+      "shortFeat_advancedInventory": "Inventaire avancé",
+      "shortFeat_patientsRx": "Patients & ordonnances",
+      "shortFeat_freeTrial": "Essai gratuit",
+      "shortFeat_50users": "50 utilisateurs",
+      "shortFeat_allModules": "Tous les modules",
+      "shortFeat_analyticsBI": "Analytics & BI",
+      "shortFeat_crmLoyalty": "CRM & fidélité",
+      "shortFeat_support247": "Support 24/7",
+      "shortFeat_unlimitedUsers": "Utilisateurs illimités",
+      "shortFeat_unlimitedSites": "Sites illimités",
+      "shortFeat_dedicatedApi": "API dédiée",
+      "shortFeat_accountManager": "Account manager",
+      "shortFeat_sla": "SLA 99.9%",
+      "ctaContact": "Contacter",
+      "ctaStart": "Démarrer",
+      "ctaTry": "Essayer",
+      "popularShort": "Populaire"
+    },
+    "modules": {
+      "tag": "Catalogue produit",
+      "title": "Chaque module de",
+      "titleEnd": "expliqué pour vos équipes",
+      "readyTitle": "Prêt à voir la plateforme en action ?",
+      "readyDesc": "Inscription guidée, espace dédié par pharmacie et parcours d'équipe inclus.",
+      "readyButton": "Démarrer gratuitement",
+      "viewPricing": "Voir les tarifs",
+      "categories": "Catégories"
+    },
+    "support": {
+      "tag": "Support",
+      "title": "Comment pouvons-nous vous",
+      "titleHighlight": "aider ?",
+      "desc": "Plusieurs canaux à votre disposition pour une assistance rapide et personnalisée.",
+      "channels": {
+        "liveSupport": {
+          "title": "Support en direct",
+          "desc": "Chat en temps réel avec notre équipe technique, disponible du lundi au vendredi.",
+          "cta": "Ouvrir le chat"
+        },
+        "knowledgeBase": {
+          "title": "Base de connaissances",
+          "desc": "Tutoriels, guides et FAQ pour résoudre vos problèmes en autonomie.",
+          "cta": "Explorer"
+        },
+        "community": {
+          "title": "Communauté",
+          "desc": "Échangez avec d'autres pharmaciens utilisant SyntixPharma.",
+          "cta": "Rejoindre"
+        },
+        "tickets": {
+          "title": "Tickets",
+          "desc": "Soumettez un ticket détaillé pour un suivi personnalisé de votre demande.",
+          "cta": "Créer un ticket"
+        }
+      },
+      "popularArticlesTitle": "Articles populaires",
+      "popularArticles": {
+        "a1": "Comment importer mon stock existant ?",
+        "a2": "Configurer Mobile Money (M-Pesa, Orange)",
+        "a3": "Ajouter un nouvel utilisateur",
+        "a4": "Générer un rapport de ventes mensuel",
+        "a5": "Paramétrer les alertes de péremption",
+        "a6": "Connecter une imprimante thermique"
+      },
+      "supportEmailTitle": "Email de support",
+      "supportEmailDesc": "Réponse sous 4h en jours ouvrés.",
+      "phoneSupportTitle": "Assistance téléphonique",
+      "phoneSupportDesc": "Lun – Ven · 8h – 18h (heure de Kinshasa)",
+      "phoneSupportValue": "+243 99 000 0000"
+    },
+    "solutions": {
+      "tag": "Nos solutions",
+      "title": "Adapté à chaque",
+      "titleHighlight": "métier",
+      "titleEnd": "de la santé.",
+      "desc": "Que vous soyez une petite officine de quartier ou un grand répartiteur national, SyntixPharma a la solution.",
+      "startCta": "Démarrer avec cette solution",
+      "impactTag": "Impact réel",
+      "storiesTitle": "Histoires de",
+      "storiesTitleHighlight": "succès.",
+      "storiesDesc": "Découvrez comment SyntixPharma transforme le quotidien des professionnels de santé.",
+      "solutions": {
+        "officine": {
+          "title": "Pharmacie d'officine",
+          "desc": "Optimisez vos ventes au comptoir et la fidélisation de vos patients.",
+          "features": {
+            "f1": "Ventes POS rapides",
+            "f2": "Gestion des ordonnances",
+            "f3": "Alertes de stock",
+            "f4": "Fidélité client"
+          }
+        },
+        "grossiste": {
+          "title": "Grossistes & répartiteurs",
+          "desc": "Gérez des volumes massifs et une logistique complexe en toute simplicité.",
+          "features": {
+            "f1": "Gestion d'entrepôt",
+            "f2": "Suivi des livraisons",
+            "f3": "Portail clients B2B",
+            "f4": "Analytique avancée"
+          }
+        },
+        "hopital": {
+          "title": "Pharmacie hospitalière",
+          "desc": "Intégrez la pharmacie au parcours de soins de l'établissement.",
+          "features": {
+            "f1": "Dossier patient partagé",
+            "f2": "Gestion des services",
+            "f3": "Traçabilité unitaire",
+            "f4": "Inventaire centralisé"
+          }
+        }
+      },
+      "stories": {
+        "pax": {
+          "title": "Pharmacie de la Paix",
+          "location": "Lubumbashi, RDC",
+          "impact": "+45 % de rentabilité en 6 mois",
+          "quote": "Grâce à la gestion prédictive des stocks, nous avons réduit nos pertes par péremption de 80 %."
+        },
+        "horizon": {
+          "title": "Groupe Médical Horizon",
+          "location": "Abidjan, Côte d'Ivoire",
+          "impact": "Zéro erreur de délivrance",
+          "quote": "La traçabilité unitaire a sécurisé tout notre circuit du médicament, de l'entrepôt au patient."
+        }
+      },
+      "ctaTitle": "Besoin d'une solution sur mesure ?",
+      "ctaDesc": "Notre équipe d'ingénieurs peut adapter SyntixPharma aux besoins spécifiques de votre organisation de santé.",
+      "ctaContact": "Contacter un expert",
+      "ctaPricing": "Voir les tarifs"
+    },
+    "features": {
+      "tag": "Fonctionnalités",
+      "title": "Tout ce dont vous avez besoin pour",
+      "titleHighlight": "réussir.",
+      "desc": "Une plateforme tout-en-un conçue spécifiquement pour les défis de la pharmacie moderne en Afrique.",
+      "modulesCatalogCta": "Catalogue détaillé de tous les modules",
+      "features": {
+        "inventorySmart": {
+          "title": "Gestion des stocks intelligente",
+          "desc": "Suivi en temps réel, alertes de péremption automatiques et gestion multi-dépôts.",
+          "details": {
+            "d1": "Inventaire tournant",
+            "d2": "Codes-barres",
+            "d3": "Transferts inter-sites",
+            "d4": "Valorisation du stock"
+          }
+        },
+        "posBilling": {
+          "title": "Ventes & facturation POS",
+          "desc": "Interface de vente ultra-rapide compatible avec écrans tactiles et lecteurs de codes-barres.",
+          "details": {
+            "d1": "Multi-modes de paiement",
+            "d2": "Remises gérées",
+            "d3": "Tickets personnalisés",
+            "d4": "Mode hors-ligne"
+          }
+        },
+        "patientsCrm": {
+          "title": "Gestion des patients & CRM",
+          "desc": "Historique complet des prescriptions et suivi personnalisé pour chaque patient.",
+          "details": {
+            "d1": "Dossier médical partagé",
+            "d2": "Rappels de traitement",
+            "d3": "Programmes de fidélité",
+            "d4": "Notes cliniques"
+          }
+        },
+        "complianceSecurity": {
+          "title": "Conformité & sécurité",
+          "desc": "Hébergement sécurisé des données de santé et traçabilité complète de chaque action.",
+          "details": {
+            "d1": "Chiffrement AES-256",
+            "d2": "Sauvegardes horaires",
+            "d3": "Logs d'audit",
+            "d4": "Accès par rôles"
+          }
+        },
+        "cloudMobility": {
+          "title": "Accès cloud & mobilité",
+          "desc": "Gérez votre pharmacie depuis n'importe où, sur PC, tablette ou smartphone.",
+          "details": {
+            "d1": "Synchro temps réel",
+            "d2": "Responsive design",
+            "d3": "Multi-utilisateurs",
+            "d4": "Zéro installation"
+          }
+        },
+        "reportsAnalytics": {
+          "title": "Rapports & analyses",
+          "desc": "Tableaux de bord prédictifs pour anticiper vos besoins et optimiser votre rentabilité.",
+          "details": {
+            "d1": "Prévisions de ventes",
+            "d2": "Top 10 produits",
+            "d3": "Marges nettes",
+            "d4": "Exports Excel / PDF"
+          }
+        },
+        "deliveryLogistics": {
+          "title": "Livraisons & logistique",
+          "desc": "Suivi des tournées, statuts de commande et service à domicile structuré.",
+          "details": {
+            "d1": "Bons de livraison",
+            "d2": "Suivi des statuts",
+            "d3": "Zones de livraison",
+            "d4": "Notifications client"
+          }
+        },
+        "loyaltyCrm": {
+          "title": "Fidélité & CRM",
+          "desc": "Programmes de points, avantages et campagnes ciblées pour fidéliser vos patients.",
+          "details": {
+            "d1": "Points de fidélité",
+            "d2": "Offres personnalisées",
+            "d3": "Historique client",
+            "d4": "Segments & ciblage"
+          }
+        },
+        "supplyChainPurchases": {
+          "title": "Supply chain & achats",
+          "desc": "De la demande d'achat à la réception marchandise, un circuit achat complet.",
+          "details": {
+            "d1": "Demandes d'achat",
+            "d2": "Bons de commande",
+            "d3": "Réception (GRN)",
+            "d4": "Devis fournisseurs"
+          }
+        }
+      },
+      "ecosystemTag": "Écosystème",
+      "ecosystemTitle": "Connecté à votre",
+      "ecosystemTitleHighlight": "monde.",
+      "ecosystemDesc": "SyntixPharma s'intègre parfaitement avec les outils que vous utilisez déjà.",
+      "integrations": {
+        "mobileMoney": { "title": "Mobile Money", "desc": "M-Pesa, Airtel Money, Orange Money." },
+        "accounting": { "title": "Comptabilité", "desc": "Export direct vers Sage, QuickBooks." },
+        "wholesalers": { "title": "Grossistes", "desc": "Commandes automatiques via EDI." },
+        "insurances": { "title": "Assurances", "desc": "Vérification des droits en temps réel." }
+      },
+      "deployTag": "Déploiement",
+      "deployTitle": "Prêt en",
+      "deployTitleHighlight": "3 étapes.",
+      "deployDesc": "Une transition fluide vers la pharmacie du futur.",
+      "deploySteps": {
+        "01": { "title": "Configuration", "desc": "Importez vos stocks existants et configurez vos accès utilisateurs en quelques clics." },
+        "02": { "title": "Formation", "desc": "Accédez à nos tutoriels interactifs ou demandez une session avec nos experts." },
+        "03": { "title": "Lancement", "desc": "Commencez à vendre et à gérer votre officine avec une efficacité décuplée." }
+      },
+      "deepDive": {
+        "title": "Une interface",
+        "titleHighlight": "intuitive",
+        "titleEnd": ", aucune formation requise.",
+        "desc": "Des milliers d'heures d'observation en officine pour créer l'interface la plus fluide du marché. Opérationnel en moins de 30 minutes.",
+        "items": {
+          "i1": "Mode sombre pour le travail de nuit",
+          "i2": "Raccourcis clavier pour les experts",
+          "i3": "Recherche universelle ultra-rapide",
+          "i4": "Support multilingue (Français, Anglais, Arabe)"
+        }
+      },
+      "tryFreeCta": "Essayer gratuitement"
+    },
+    "planDemo": {
+      "tag": "Découvrir",
+      "title": "Planifiez une",
+      "titleHighlight": "démo",
+      "titleEnd": "gratuite.",
+      "desc": "Découvrez comment SyntixPharma peut transformer votre pharmacie lors d'une session personnalisée avec un de nos experts.",
+      "quickInfo": {
+        "duration": "30 minutes",
+        "remote": "En visioconférence",
+        "flexible": "Horaire flexible"
+      },
+      "benefits": {
+        "b1": "Démonstration personnalisée de 30 min",
+        "b2": "Configuration adaptée à votre pharmacie",
+        "b3": "Questions / réponses en direct",
+        "b4": "Plan de migration gratuit",
+        "b5": "Aucun engagement"
+      },
+      "testimonial": {
+        "quote": "La démo nous a convaincus en 15 minutes. L'interface est tellement intuitive que notre équipe était opérationnelle le jour même.",
+        "author": "Dr. Amisi, Pharmacie de la Paix"
+      },
+      "form": {
+        "title": "Réservez votre créneau",
+        "fullName": "Nom complet",
+        "fullNamePlaceholder": "Dr. Jean Dupont",
+        "workEmail": "Email professionnel",
+        "workEmailPlaceholder": "jean@pharmacie.com",
+        "phone": "Téléphone",
+        "phonePlaceholder": "+243 99 000 0000",
+        "pharmacyName": "Nom de la pharmacie",
+        "pharmacyNamePlaceholder": "Pharmacie Centrale",
+        "preferredSlot": "Créneau préféré",
+        "slotMorning": "Matin (8h – 12h)",
+        "slotAfternoon": "Après-midi (13h – 17h)",
+        "slotEvening": "Soir (17h – 19h)",
+        "submit": "Réserver ma démo",
+        "footnote": "Gratuit · Sans engagement · Réponse sous 24h"
+      }
+    },
+    "signup": {
+      "tag": "Offres & packs",
+      "title": "Choisissez votre",
+      "titleHighlight": "plan",
+      "desc": "Premier mois gratuit, aucun engagement, annulation en 1 clic.",
+      "badges": {
+        "freeTrial": "30 jours gratuits",
+        "noCommitment": "Aucun engagement",
+        "mobileMoney": "Mobile Money accepté"
+      },
+      "monthly": "Mensuel",
+      "annual": "Annuel",
+      "annualDiscount": "-20%",
+      "plansSynced": "Plans synchronisés",
+      "plansLoadError": "Impossible de charger les plans",
+      "plansSoon": "Les plans seront bientôt disponibles.",
+      "contactUsArrow": "Nous contacter →",
+      "faqTitle": "Questions fréquentes",
+      "faq": {
+        "q1": "Puis-je changer de plan plus tard ?",
+        "a1": "Oui, montée ou descente en gamme à tout moment depuis votre interface.",
+        "q2": "Y a-t-il des frais cachés ?",
+        "a2": "Non. Le prix affiché est tout inclus — pas de frais d'installation ni de support.",
+        "q3": "Comment fonctionne l'essai gratuit ?",
+        "a3": "30 jours complets avec toutes les fonctionnalités. Aucune carte bancaire requise.",
+        "q4": "Support technique inclus ?",
+        "a4": "Oui, tous les plans incluent du support. Les plans supérieurs ont un support prioritaire."
+      },
+      "ctaTrust": "Plus de 500 pharmacies nous font confiance en Afrique",
+      "ctaTry": "Essayer gratuitement",
+      "ctaTalk": "Parler à un expert"
+    },
+    "terms": {
+      "tag": "Légal",
+      "title": "Conditions d'utilisation",
+      "lastUpdate": "Dernière mise à jour : 1er avril 2026",
+      "questions": "Des questions sur ces conditions ?",
+      "sections": {
+        "s1": {
+          "title": "1. Acceptation des conditions",
+          "content": "En accédant à SyntixPharma, vous acceptez d'être lié par ces conditions d'utilisation. Si vous n'acceptez pas l'ensemble de ces conditions, vous ne devez pas utiliser nos services."
+        },
+        "s2": {
+          "title": "2. Description du service",
+          "content": "SyntixPharma est une plateforme SaaS de gestion pharmaceutique proposant des fonctionnalités de point de vente, gestion des stocks, suivi des patients, supply chain, comptabilité et analytique. Le service est fourni tel quel et est accessible via navigateur web."
+        },
+        "s3": {
+          "title": "3. Comptes utilisateurs",
+          "content": "Vous êtes responsable de la confidentialité de vos identifiants de connexion et de toutes les activités réalisées sous votre compte. Vous devez nous notifier immédiatement en cas d'utilisation non autorisée de votre compte."
+        },
+        "s4": {
+          "title": "4. Protection des données",
+          "content": "Les données de santé sont traitées conformément aux réglementations en vigueur. Nous utilisons un chiffrement AES-256 et des sauvegardes quotidiennes. Les données restent la propriété exclusive du client."
+        },
+        "s5": {
+          "title": "5. Abonnements et paiements",
+          "content": "Les abonnements sont facturés mensuellement ou annuellement selon le plan choisi. Les prix sont indiqués en dollars américains (USD). En cas de non-paiement, l'accès au service peut être suspendu après notification."
+        },
+        "s6": {
+          "title": "6. Résiliation",
+          "content": "Vous pouvez résilier votre abonnement à tout moment depuis votre tableau de bord. La résiliation prend effet à la fin de la période de facturation en cours. Vos données restent disponibles pendant 30 jours après résiliation."
+        },
+        "s7": {
+          "title": "7. Limitation de responsabilité",
+          "content": "SyntixPharma ne saurait être tenu responsable des dommages indirects, accidentels ou consécutifs résultant de l'utilisation ou de l'impossibilité d'utiliser le service. Notre responsabilité totale est limitée au montant payé par le client au cours des 12 derniers mois."
+        },
+        "s8": {
+          "title": "8. Modifications",
+          "content": "Nous nous réservons le droit de modifier ces conditions à tout moment. Les modifications prennent effet dès leur publication sur cette page."
+        }
+      }
+    },
+    "privacy": {
+      "tag": "Légal",
+      "title": "Politique de confidentialité",
+      "lastUpdate": "Dernière mise à jour : 1er avril 2026",
+      "intro": "Chez SyntixPharma, la protection de vos données et de celles de vos patients est notre priorité absolue. Nous nous engageons à une transparence totale sur la collecte, l'utilisation et la protection de vos informations.",
+      "questions": "Questions sur vos données ?",
+      "sections": {
+        "s1": {
+          "title": "1. Données collectées",
+          "content": "Nous collectons les données nécessaires à la fourniture de nos services : informations de compte (nom, email, téléphone), données d'utilisation (logs, préférences), et données métier (inventaire, ventes, patients) saisies par vos soins."
+        },
+        "s2": {
+          "title": "2. Utilisation des données",
+          "content": "Vos données sont utilisées exclusivement pour fournir, améliorer et sécuriser nos services. Nous n'utilisons jamais les données de santé de vos patients à des fins publicitaires ou de marketing."
+        },
+        "s3": {
+          "title": "3. Stockage et sécurité",
+          "content": "Les données sont hébergées sur des serveurs sécurisés avec chiffrement AES-256 au repos et TLS 1.3 en transit. Des sauvegardes automatiques sont réalisées toutes les heures. L'accès aux données est strictement contrôlé par rôle."
+        },
+        "s4": {
+          "title": "4. Partage des données",
+          "content": "Nous ne vendons jamais vos données. Le partage est limité aux prestataires techniques nécessaires au fonctionnement du service (hébergement, paiement) et aux obligations légales."
+        },
+        "s5": {
+          "title": "5. Vos droits",
+          "content": "Vous disposez d'un droit d'accès, de rectification, de portabilité et de suppression de vos données personnelles. Pour exercer ces droits, contactez-nous à {email}."
+        },
+        "s6": {
+          "title": "6. Cookies",
+          "content": "Nous utilisons des cookies strictement nécessaires au fonctionnement du service (session, préférences). Aucun cookie de tracking publicitaire n'est utilisé."
+        },
+        "s7": {
+          "title": "7. Conservation",
+          "content": "Les données de compte sont conservées pendant la durée de l'abonnement plus 30 jours. Les données d'utilisation anonymisées peuvent être conservées à des fins statistiques."
+        },
+        "s8": {
+          "title": "8. Contact",
+          "content": "Pour toute question relative à la protection de vos données, contactez notre Délégué à la Protection des Données : {email}"
+        }
+      }
+    },
+    "status": {
+      "tag": "Statut des services",
+      "title": "État de la plateforme",
+      "allOperational": "Tous les systèmes sont opérationnels",
+      "someIssues": "Certains services rencontrent des problèmes",
+      "servicesTitle": "Services",
+      "uptimeTitle": "Disponibilité (30 derniers jours)",
+      "plannedMaintenance": "Maintenance planifiée",
+      "uptimeWindow": "30 jours",
+      "uptimeLabel": "Uptime :",
+      "today": "Aujourd'hui",
+      "historyTitle": "Historique récent",
+      "badges": {
+        "operational": "Opérationnel",
+        "degraded": "Dégradé",
+        "maintenance": "Maintenance",
+        "outage": "Panne"
+      },
+      "services": {
+        "webApp": "Application Web",
+        "apiBackend": "API Backend",
+        "database": "Base de données",
+        "auth": "Authentification (Keycloak)",
+        "payments": "Paiements (Stripe)",
+        "mobileMoney": "Mobile Money",
+        "email": "Notifications Email",
+        "cdn": "CDN & Assets"
+      },
+      "history": {
+        "d1Date": "31 Mars 2026",
+        "d1Desc": "Tous les systèmes opérationnels.",
+        "d2Date": "30 Mars 2026",
+        "d2Desc": "Tous les systèmes opérationnels.",
+        "d3Date": "29 Mars 2026",
+        "d3Desc": "Maintenance planifiée – mise à jour base de données (2h).",
+        "d4Date": "28 Mars 2026",
+        "d4Desc": "Tous les systèmes opérationnels."
+      }
+    },
+    "apiDocs": {
+      "tag": "Développeurs",
+      "title": "API",
+      "titleHighlight": "RESTful",
+      "desc": "Intégrez SyntixPharma à vos systèmes existants grâce à notre API sécurisée et bien documentée.",
+      "authJwt": "Auth JWT / OAuth2",
+      "authJwtDesc": "Authentification sécurisée via tokens.",
+      "webhooks": "Webhooks temps réel",
+      "webhooksDesc": "Notifications push pour chaque événement.",
+      "openApi": "OpenAPI 3.0",
+      "openApiDesc": "Spécification complète avec Swagger UI.",
+      "popularEndpoints": "Points d'accès populaires",
+      "quickExample": "Exemple rapide",
+      "sdksTitle": "SDKs & Bibliothèques",
+      "available": "Disponible",
+      "readyToIntegrate": "Prêt à intégrer ?",
+      "readyToIntegrateDesc": "Créez votre compte développeur et obtenez vos clés API en quelques minutes.",
+      "getApiKeys": "Obtenir mes clés API",
+      "talkToTeam": "Parler à l'équipe"
+    },
+    "unauthorized": {
+      "title": "Accès non autorisé",
+      "desc": "Vous n'avez pas les permissions nécessaires pour accéder à cette page.",
+      "backHome": "Retour à l'accueil"
+    }
+  },
+  "authPages": {
+    "login": {
+      "title": "Bon retour,",
+      "titleHighlight": "Docteur.",
+      "subtitle": "Connectez-vous pour gérer votre officine en toute simplicité.",
+      "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",
+      "inactivity": "Déconnecté pour inactivité. Reconnectez-vous pour continuer.",
+      "button": "Se connecter",
+      "redirecting": "Redirection sécurisée…",
+      "secureAuth": "Authentification sécurisée via votre fournisseur d'identité.",
+      "authError": "Erreur d'authentification",
+      "newUser": "Nouveau sur SyntixPharma ?",
+      "createAccount": "Créer un compte",
+      "forgotPassword": "Mot de passe oublié ?"
+    },
+    "register": {
+      "title": "Créez votre pharmacie",
+      "titleHighlight": "en ligne.",
+      "step1": "Compte",
+      "step2": "Pharmacie",
+      "step3": "Plan",
+      "step4": "Paiement",
+      "step5": "Confirmation",
+      "personalInfo": "Informations personnelles",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Adresse e-mail",
+      "phone": "Téléphone",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "pharmacyInfo": "Informations de la pharmacie",
+      "pharmacyName": "Nom de la pharmacie",
+      "pharmacyType": "Type de pharmacie",
+      "country": "Pays",
+      "city": "Ville",
+      "address": "Adresse",
+      "subdomain": "Sous-domaine",
+      "subdomainHint": "Votre pharmacie sera accessible à",
+      "selectPlan": "Choisissez votre plan",
+      "paymentMethod": "Mode de paiement",
+      "billingCycle": "Cycle de facturation",
+      "monthly": "Mensuel",
+      "annual": "Annuel",
+      "termsAccept": "J'accepte les conditions d'utilisation",
+      "createPharmacy": "Créer ma pharmacie",
+      "creating": "Création en cours…",
+      "alreadyAccount": "Déjà un compte ?",
+      "login": "Se connecter",
+      "nextStep": "Suivant",
+      "prevStep": "Précédent"
+    },
+    "forgotPassword": {
+      "backToLogin": "Retour à la connexion",
+      "title": "Mot de passe oublié ?",
+      "desc": "Vous allez être redirigé vers notre service d'authentification sécurisé pour réinitialiser votre mot de passe.",
+      "button": "Réinitialiser mon mot de passe",
+      "redirecting": "Redirection…",
+      "emailNote": "Un email de réinitialisation sera envoyé à l'adresse associée à votre compte. Vérifiez vos spams si vous ne le recevez pas.",
+      "testimonialQuote": "La sécurité de SyntixPharma nous rassure au quotidien. Nos données de santé sont entre de bonnes mains.",
+      "testimonialName": "Dr. Paul Tshimanga",
+      "testimonialTitle": "Pharmacie Espoir, Lubumbashi"
+    },
+    "registrationSuccess": {
+      "title": "Inscription réussie !",
+      "desc": "Votre pharmacie a été créée avec succès. Vous pouvez maintenant vous connecter.",
+      "loginButton": "Se connecter",
+      "invalidProvisioningId": "Référence de provisioning invalide. Vérifiez le lien reçu par email ou réessayez l'inscription.",
+      "testimonialQuote": "L'installation a pris 10 minutes. Nous étions opérationnels le jour même.",
+      "testimonialName": "Dr. Amisi",
+      "testimonialTitle": "Pharmacie de la Paix",
+      "readyTitle": "Votre espace est prêt !",
+      "errorTitle": "Un problème est survenu",
+      "pendingTitle": "Préparation en cours…",
+      "noProvisioningIdDesc": "Merci pour votre inscription ! Vérifiez votre email (y compris indésirables) pour vos identifiants.",
+      "stepLabel": "Étape {current}/{total}",
+      "realTime": "temps réel",
+      "yourSpace": "Votre espace",
+      "cards": {
+        "dashboardTitle": "Tableau de bord",
+        "dashboardDesc": "Ventes, stocks, patients",
+        "aiTitle": "IA Prédictive",
+        "aiDesc": "Anticipez vos ruptures"
+      },
+      "loginToSpace": "Connexion à mon espace",
+      "goToLogin": "Accéder à la connexion",
+      "needHelp": "Besoin d'aide ?",
+      "statusFetching": "Récupération du statut…",
+      "statusCompleted": "Provisioning terminé.",
+      "statusFailed": "Le provisioning a échoué. Contactez le support avec votre référence.",
+      "statusPending": "Provisioning en cours…"
+    },
+    "selectOrganization": {
+      "loadError": "Impossible de charger vos organisations. Veuillez vous reconnecter.",
+      "testimonialQuote": "Gérer plusieurs pharmacies n'a jamais été aussi simple. Un clic et je suis dans le bon environnement.",
+      "testimonialName": "Dr. Amisi Kabila",
+      "testimonialTitle": "Groupe Médical Horizon",
+      "title": "Choisissez votre",
+      "titleHighlight": "organisation",
+      "desc": "Sélectionnez l'espace de travail auquel vous souhaitez accéder.",
+      "backToLogin": "Retour à la connexion",
+      "noOrganization": "Aucune organisation trouvée pour ce compte.",
+      "createPharmacy": "Créer une pharmacie",
+      "member": "Membre",
+      "continue": "Continuer"
+    },
+    "callback": {
+      "missingCodeState": "Paramètres code/state manquants dans l'URL de callback",
+      "callbackError": "Erreur de callback",
+      "failedTitle": "Connexion échouée",
+      "retry": "Réessayer",
+      "inProgressTitle": "Connexion en cours…",
+      "inProgressDesc": "Finalisation de votre session sécurisée."
+    },
+    "tenant": {
+      "wrongOrganization": "Organisation incorrecte",
+      "crossTenantPart1": "Vous avez tenté d'accéder à",
+      "crossTenantPart2": "appartient à cette organisation. Vous avez été redirigé ici.",
+      "crossTenantBelong": "Vous appartenez à",
+      "goTo": "Aller sur",
+      "retryAnotherAccount": "Réessayer avec un autre compte"
+    }
+  },
+  "layout": {
+    "header": {
+      "platform": "Plateforme",
+      "solutions": "Solutions",
+      "features": "Fonctionnalités",
+      "pricing": "Tarifs",
+      "about": "À propos",
+      "contact": "Contact",
+      "helpCenter": "Centre d'aide",
+      "demo": "Démo",
+      "api": "API",
+      "statusPage": "Statut",
+      "offers": "Offres",
+      "createAccount": "Créer un compte",
+      "login": "Connexion",
+      "freeTrial": "Essai Gratuit",
+      "openMenu": "Ouvrir le menu",
+      "closeMenu": "Fermer le menu"
+    },
+    "footer": {
+      "footerAriaLabel": "Pied de page",
+      "socialLinkedIn": "LinkedIn",
+      "socialTwitter": "Twitter / X",
+      "socialFacebook": "Facebook",
+      "socialWhatsApp": "WhatsApp",
+      "newsletterTitle": "Restez à la pointe de",
+      "newsletterHighlight": "l'innovation",
+      "newsletterDesc": "Recevez nos conseils, nos mises à jour produit et les meilleures pratiques officine directement dans votre boîte mail.",
+      "newsletterPlaceholder": "votre@email.com",
+      "newsletterButton": "S'inscrire",
+      "brandDesc": "La plateforme SaaS pour piloter votre officine, de la caisse à la conformité. Cloud, multi-tenant, prêt pour l'Afrique et au-delà.",
+      "product": "Produit",
+      "home": "Accueil",
+      "modulesCapabilities": "Modules & capacités",
+      "businessSolutions": "Solutions métier",
+      "featuresLabel": "Fonctionnalités",
+      "pricingLabel": "Tarifs",
+      "demoLabel": "Démo",
+      "offersLabel": "Offres & packs",
+      "devReliability": "Développeurs & fiabilité",
+      "apiDocumentation": "Documentation API",
+      "serviceStatus": "Statut des services",
+      "helpAccess": "Aide & accès",
+      "helpCenter": "Centre d'aide",
+      "contactUs": "Nous contacter",
+      "loginLabel": "Connexion",
+      "trialSignup": "Essai / inscription",
+      "companyLegal": "Entreprise & légal",
+      "aboutLabel": "À propos",
+      "privacyLabel": "Confidentialité",
+      "termsLabel": "Conditions d'utilisation",
+      "copyright": "© {year} SyntixPharma. Tous droits réservés.",
+      "terms": "Conditions d'utilisation",
+      "privacy": "Confidentialité",
+      "status": "Statut"
+    },
+    "pwa": {
+      "installTitle": "Installer SyntixPharma",
+      "installDesc": "Accédez plus rapidement depuis votre écran d'accueil",
+      "installButton": "Installer",
+      "laterButton": "Plus tard",
+      "closeLabel": "Fermer",
+      "offlineMessage": "Mode hors-ligne — les données seront synchronisées à la reconnexion",
+      "reconnected": "Connexion rétablie"
+    },
+    "errorBoundary": {
+      "title": "Une erreur est survenue",
+      "reloadButton": "Recharger la page"
+    },
+    "topbar": {
+      "viewAllNotifications": "Voir toutes les notifications",
+      "openUserMenu": "Ouvrir le menu utilisateur",
+      "myProfile": "Mon profil",
+      "settings": "Paramètres",
+      "logout": "Se déconnecter"
+    }
+  },
+  "languageSwitcher": {
+    "label": "Langue",
+    "fr": "Français",
+    "en": "English",
+    "ar": "العربية"
+  },
+  "dashboardMain": {
+    "userDefault": "Utilisateur",
+    "wrongOrganizationLabel": "Organisation incorrecte :",
+    "crossTenantPart1": "Vous avez tenté d'accéder à",
+    "crossTenantPart2": "Vous avez été redirigé vers votre propre organisation.",
+    "pharmacyFallback": "Pharmacie",
+    "overviewSubtitle": "Vue d'ensemble de votre activité",
+    "quickActions": "Actions rapides",
+    "productFallback": "Produit",
+    "noData": "Aucune donnée",
+    "greetings": {
+      "morning": "Bonjour",
+      "afternoon": "Bon après-midi",
+      "evening": "Bonsoir"
+    },
+    "kpi": {
+      "salesToday": "Ventes du jour",
+      "revenue": "Chiffre d'affaires",
+      "productsInStock": "Produits en stock",
+      "activePatients": "Patients actifs",
+      "pendingPrescriptions": "Ordonnances en attente",
+      "stockAlerts": "Alertes stock"
+    },
+    "actions": {
+      "newSaleTitle": "Nouvelle vente",
+      "newSaleDesc": "Démarrer une vente rapide",
+      "newPrescriptionTitle": "Nouvelle ordonnance",
+      "newPrescriptionDesc": "Enregistrer une prescription",
+      "newPatientTitle": "Nouveau patient",
+      "newPatientDesc": "Ajouter un patient",
+      "newProductTitle": "Nouveau produit",
+      "newProductDesc": "Ajouter au catalogue",
+      "vaccinationTitle": "Vaccination",
+      "vaccinationDesc": "Planifier un rendez-vous",
+      "qualityEventTitle": "Événement qualité",
+      "qualityEventDesc": "Signaler un incident",
+      "reportsTitle": "Rapports",
+      "reportsDesc": "Consulter les analytics"
+    },
+    "charts": {
+      "weeklySales": "Ventes de la semaine",
+      "revenueTrend": "Tendance du chiffre d'affaires",
+      "recentActivity": "Activité récente",
+      "topProducts": "Top produits vendus"
+    },
+    "days": {
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mer",
+      "thu": "Jeu",
+      "fri": "Ven",
+      "sat": "Sam",
+      "sun": "Dim"
+    }
+  },
+  "dashboardPharmacist": {
+    "header": {
+      "title": "Tableau de Bord Pharmacien",
+      "subtitle": "Gestion des prescriptions et contrôle qualité",
+      "newPreparation": "Nouvelle Préparation"
+    },
+    "stats": {
+      "pending": "Ordonnances en Attente",
+      "inProgress": "Préparations en Cours",
+      "ready": "Prêtes à Délivrer",
+      "stockAlerts": "Alertes Stock"
+    },
+    "status": {
+      "pending": "En attente",
+      "inProgress": "En préparation",
+      "ready": "Prêt",
+      "delivered": "Délivré"
+    },
+    "priority": {
+      "urgent": "Urgent",
+      "normal": "Normal",
+      "low": "Faible"
+    },
+    "sections": {
+      "prescriptions": "Ordonnances à Traiter",
+      "stockAlerts": "Alertes de Stock",
+      "validation": "Validation Pharmaceutique"
+    },
+    "byDoctor": "Par",
+    "medicationCount": "{count} médicament(s)",
+    "actions": {
+      "start": "Commencer",
+      "complete": "Terminer",
+      "deliver": "Délivrer",
+      "orderNow": "Commander maintenant"
+    },
+    "stockCurrent": "Stock actuel: {count} unités",
+    "stockMin": "Minimum requis: {count} unités",
+    "severity": {
+      "critical": "Critique",
+      "high": "Élevé",
+      "medium": "Moyen"
+    },
+    "validation": {
+      "interactionsTitle": "Interactions Médicamenteuses",
+      "interactionsDesc": "Vérification automatique des interactions entre médicaments prescrits",
+      "interactionsBtn": "Voir les alertes",
+      "qualityTitle": "Contrôle Qualité",
+      "qualityDesc": "Validation de la conformité des préparations pharmaceutiques",
+      "qualityBtn": "Effectuer contrôle",
+      "patientsTitle": "Conseils Patients",
+      "patientsDesc": "Guide de consultation pharmaceutique pour les patients",
+      "patientsBtn": "Voir protocoles"
+    }
+  },
+  "dashboardTechnician": {
+    "header": {
+      "title": "Tableau de Bord Technicien",
+      "subtitle": "Gestion des stocks et logistique",
+      "scanProduct": "Scanner Produit",
+      "inventory": "Inventaire"
+    },
+    "stats": {
+      "productsInStock": "Produits en Stock",
+      "productsInStockDetail": "22 catégories",
+      "lowStock": "Stock Faible",
+      "lowStockDetail": "nécessitent commande",
+      "pendingDeliveries": "Livraisons en Attente",
+      "pendingDeliveriesDetail": "cette semaine",
+      "qualityChecks": "Contrôles Qualité",
+      "qualityChecksDetail": "ce mois"
+    },
+    "sections": {
+      "stockAlerts": "Alertes de Stock",
+      "deliveries": "Livraisons",
+      "recentActivities": "Activités Récentes"
+    },
+    "location": "Emplacement",
+    "stock": "Stock",
+    "min": "Min",
+    "expiresSoon": "Expire bientôt",
+    "expiration": "Expiration",
+    "itemsCount": "{count} articles",
+    "expectedOn": "Prévue le",
+    "status": {
+      "received": "Reçue",
+      "pending": "En attente"
+    },
+    "severity": {
+      "critical": "Critique",
+      "low": "Faible",
+      "normal": "Normal"
+    },
+    "actions": {
+      "order": "Commander",
+      "restock": "Réapprovisionner",
+      "receive": "Réceptionner",
+      "reschedule": "Reporter",
+      "viewDetails": "Voir Détails",
+      "scheduleDelivery": "Planifier Livraison"
+    },
+    "tools": {
+      "inventoryTitle": "Inventaire",
+      "inventoryDesc": "Gestion complète du stock",
+      "inventoryActions": {
+        "a1": "Comptage physique",
+        "a2": "Ajustements stock",
+        "a3": "Rapport d'inventaire"
+      },
+      "maintenanceTitle": "Maintenance",
+      "maintenanceDesc": "Équipements et installations",
+      "maintenanceActions": {
+        "a1": "Planifier maintenance",
+        "a2": "Calibrage équipements",
+        "a3": "Historique interventions"
+      },
+      "qualityTitle": "Qualité",
+      "qualityDesc": "Contrôles et conformité",
+      "qualityActions": {
+        "a1": "Contrôle qualité",
+        "a2": "Vérification expiration",
+        "a3": "Audit conformité"
+      }
+    },
+    "activity": {
+      "a1": { "action": "Réception livraison", "details": "150 unités de Paracétamol 500mg", "time": "Il y a 2h" },
+      "a2": { "action": "Alerte stock faible", "details": "Amoxicilline 250mg - Stock critique", "time": "Il y a 4h" },
+      "a3": { "action": "Contrôle qualité", "details": "Vérification lot #LOT2025001", "time": "Il y a 6h" },
+      "a4": { "action": "Ajustement stock", "details": "Correction inventaire - Vitamine C", "time": "Il y a 1 jour" }
+    }
+  },
+  "dashboardAdmin": {
+    "errors": {
+      "loadStats": "Erreur lors du chargement des statistiques:"
+    },
+    "header": {
+      "title": "Tableau de Bord Administrateur",
+      "subtitle": "Vue d'ensemble de votre pharmacie"
+    },
+    "filters": {
+      "today": "Aujourd'hui",
+      "thisWeek": "Cette semaine",
+      "thisMonth": "Ce mois",
+      "thisYear": "Cette année"
+    },
+    "stats": {
+      "salesToday": "Ventes du Jour",
+      "revenue": "Chiffre d'Affaires",
+      "activeCustomers": "Clients Actifs",
+      "productsInStock": "Produits en Stock",
+      "lowStock": "Stock Faible",
+      "expiredProducts": "Produits Expirés",
+      "pendingOrders": "Commandes en Attente",
+      "completedOrders": "Commandes Terminées"
+    },
+    "sections": {
+      "salesTrend": "Évolution des Ventes",
+      "salesChartPlaceholder": "Graphique des ventes",
+      "topProducts": "Produits les Plus Vendus",
+      "importantAlerts": "Alertes Importantes"
+    },
+    "salesCount": "{count} ventes",
+    "alerts": {
+      "a1": { "message": "5 produits ont un stock faible et doivent être réapprovisionnés", "time": "Il y a 2h" },
+      "a2": { "message": "2 lots de médicaments expirent dans 7 jours", "time": "Il y a 4h" },
+      "a3": { "message": "Livraison de 150 produits reçue avec succès", "time": "Il y a 6h" },
+      "a4": { "message": "Rapport mensuel généré et envoyé par email", "time": "Il y a 1 jour" }
+    }
+  },
+  "dashboardCashier": {
+    "header": {
+      "title": "Point de Vente",
+      "subtitle": "Gestion des ventes et encaissements",
+      "cashReport": "Rapport Caisse",
+      "newSale": "Nouvelle Vente"
+    },
+    "stats": {
+      "salesToday": "Ventes Aujourd'hui",
+      "salesTodayCount": "23 transactions",
+      "currentSale": "Vente en Cours",
+      "customersServed": "Clients Servis",
+      "customersServedCount": "depuis ce matin",
+      "cashRegister": "Caisse",
+      "cashRegisterCount": "solde disponible"
+    },
+    "sections": {
+      "currentSale": "Vente en Cours",
+      "payment": "Paiement",
+      "quickActions": "Actions Rapides",
+      "recentSales": "Ventes Récentes"
+    },
+    "customerLabel": "Client",
+    "itemsCount": "{count} articles",
+    "totals": {
+      "subtotal": "Sous-total",
+      "tax": "TVA (10%)",
+      "total": "Total"
+    },
+    "payment": {
+      "receivedAmount": "Montant reçu",
+      "changeDue": "Monnaie à rendre: 0 FC"
+    },
+    "paymentMethods": {
+      "cash": "Espèces",
+      "card": "Carte Bancaire",
+      "mobileMoney": "Mobile Money",
+      "cardShort": "Carte",
+      "mobileShort": "Mobile"
+    },
+    "quickActions": {
+      "applyDiscount": "Appliquer Remise",
+      "suspendedSales": "Ventes Suspendues",
+      "searchCustomer": "Rechercher Client"
+    },
+    "actions": {
+      "change": "Changer",
+      "suspend": "Suspendre",
+      "proceedPayment": "Procéder au Paiement",
+      "receipt": "Reçu"
+    },
+    "table": {
+      "customer": "Client",
+      "amount": "Montant",
+      "items": "Articles",
+      "time": "Heure",
+      "payment": "Paiement",
+      "actions": "Actions"
+    }
+  },
+  "dashboardHr": {
+    "kpis": {
+      "totalEmployees": "Total employés",
+      "presentToday": "Présents aujourd'hui",
+      "pendingLeaves": "Congés en attente",
+      "scheduledShifts": "Shifts planifiés"
+    },
+    "quickActionsTitle": "Actions rapides",
+    "quickActions": {
+      "createShift": {
+        "title": "Créer un shift",
+        "description": "Planifier un nouveau créneau"
+      },
+      "approveLeaves": {
+        "title": "Approuver congés",
+        "description": "{count} demande(s) en attente"
+      },
+      "payroll": {
+        "title": "Gestion paie",
+        "description": "Consulter les cycles de paie"
+      }
+    },
+    "charts": {
+      "weeklyAttendance": "Présence de la semaine",
+      "leaveDistribution": "Répartition des congés"
+    },
+    "chart": {
+      "present": "Présents",
+      "absent": "Absents"
+    },
+    "days": {
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mer",
+      "thu": "Jeu",
+      "fri": "Ven",
+      "sat": "Sam"
+    },
+    "leavePie": {
+      "pending": "En attente",
+      "approved": "Approuvés",
+      "rejected": "Refusés"
+    },
+    "attendance": {
+      "title": "Présence du jour",
+      "empty": "Aucune donnée de présence pour aujourd'hui",
+      "inProgress": "(en cours)"
+    },
+    "seeAll": "Tout voir",
+    "status": {
+      "present": "Présent",
+      "late": "En retard"
+    },
+    "employeeFallback": "Employé #{n}"
+  },
+  "dashboardInventoryManager": {
+    "kpis": {
+      "totalProducts": "Total produits",
+      "lowStockAlerts": "Alertes stock faible",
+      "expiringSoon": "Expirent bientôt",
+      "pendingTransfers": "Transferts en attente"
+    },
+    "quickActionsTitle": "Actions rapides",
+    "quickActions": {
+      "count": {
+        "title": "Nouveau comptage",
+        "description": "Lancer un inventaire physique"
+      },
+      "alerts": {
+        "title": "Voir alertes",
+        "description": "{count} alerte(s) active(s)"
+      },
+      "transfers": {
+        "title": "Gérer transferts",
+        "description": "Transferts inter-dépôts"
+      }
+    },
+    "charts": {
+      "stockMovements": "Mouvements de stock (7 derniers jours)",
+      "alertDistribution": "Répartition des alertes"
+    },
+    "chart": {
+      "in": "Entrées",
+      "out": "Sorties"
+    },
+    "days": {
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mer",
+      "thu": "Jeu",
+      "fri": "Ven",
+      "sat": "Sam",
+      "sun": "Dim"
+    },
+    "pie": {
+      "lowStock": "Stock faible",
+      "expiration": "Péremption",
+      "transfers": "Transferts"
+    },
+    "alerts": {
+      "title": "Alertes de stock",
+      "empty": "Aucune alerte de stock active"
+    },
+    "seeAll": "Tout voir",
+    "alertTypes": {
+      "lowStock": "Stock faible",
+      "expiration": "Expiration proche",
+      "generic": "Alerte"
+    },
+    "severity": {
+      "critical": "Critique",
+      "warning": "Attention",
+      "info": "Info"
+    },
+    "stockLabel": "Stock",
+    "alertFallback": "Alerte #{n}"
+  },
+  "dashboardQualityManager": {
+    "kpis": {
+      "openEvents": "Événements ouverts",
+      "openCapas": "CAPAs en cours",
+      "trainingCompliance": "Conformité formation",
+      "upcomingAudits": "Audits à venir"
+    },
+    "quickActionsTitle": "Actions rapides",
+    "quickActions": {
+      "createEvent": {
+        "title": "Créer événement",
+        "description": "Signaler un incident qualité"
+      },
+      "viewCapas": {
+        "title": "Voir CAPAs",
+        "description": "{count} action(s) corrective(s)"
+      },
+      "documents": {
+        "title": "Gérer documents",
+        "description": "Procédures et formulaires"
+      }
+    },
+    "recentEvents": {
+      "title": "Événements qualité récents",
+      "empty": "Aucun événement qualité ouvert"
+    },
+    "seeAll": "Tout voir",
+    "severity": {
+      "critical": "Critique",
+      "major": "Majeur",
+      "minor": "Mineur"
+    },
+    "eventFallback": "Événement #{n}"
+  },
+  "dashboardPatient": {
+    "kpis": {
+      "activePrescriptions": "Ordonnances actives",
+      "upcomingAppointments": "Rendez-vous à venir",
+      "recentPurchases": "Achats récents"
+    },
+    "quickActionsTitle": "Actions rapides",
+    "quickActions": {
+      "myPrescriptions": {
+        "title": "Mes ordonnances",
+        "description": "Consulter l'historique des prescriptions"
+      },
+      "vaccination": {
+        "title": "Vaccination",
+        "description": "Prendre un rendez-vous vaccinal"
+      }
+    },
+    "history": {
+      "title": "Historique des ordonnances",
+      "prescriptionFallback": "Ordonnance #{n}",
+      "medicationCount": "{count} médicament(s)",
+      "empty": "Aucune ordonnance récente"
+    },
+    "status": {
+      "active": "Active",
+      "expired": "Expirée",
+      "dispensed": "Dispensée"
+    },
+    "seeAll": "Tout voir"
+  },
+  "dashboardAccountant": {
+    "kpis": {
+      "revenue": "Chiffre d'affaires",
+      "expenses": "Dépenses",
+      "pendingInvoices": "Factures en attente",
+      "netCash": "Trésorerie nette"
+    },
+    "quickActionsTitle": "Actions rapides",
+    "quickActions": {
+      "newEntry": {
+        "title": "Nouvelle écriture",
+        "description": "Enregistrer une transaction comptable"
+      },
+      "financialReports": {
+        "title": "Rapports financiers",
+        "description": "Bilan, compte de résultat, balance"
+      },
+      "fiscalPeriod": {
+        "title": "Période fiscale",
+        "description": "Statut de la clôture en cours"
+      }
+    },
+    "charts": {
+      "revenueVsExpenses": "Revenus vs Dépenses",
+      "expenseDistribution": "Répartition des dépenses"
+    },
+    "months": {
+      "jan": "Jan",
+      "feb": "Fév",
+      "mar": "Mar",
+      "apr": "Avr",
+      "may": "Mai",
+      "jun": "Jun"
+    },
+    "expenseCategories": {
+      "supplies": "Fournitures",
+      "salaries": "Salaires",
+      "rent": "Loyer",
+      "others": "Autres"
+    },
+    "recentEntries": {
+      "title": "Dernières écritures",
+      "entryFallback": "Écriture #{n}",
+      "empty": "Aucune écriture récente"
+    },
+    "seeAll": "Tout voir"
+  },
+  "marketing": {
+    "trustedBy": "Ils nous font confiance à travers le continent",
+    "testimonialsTitle": "Ce que disent nos",
+    "testimonialsHighlight": "utilisateurs",
+    "testimonialsDesc": "Rejoignez une communauté de pharmaciens qui modernisent la santé.",
+    "testimonial1Name": "Dr. Sarah Mensah",
+    "testimonial1Role": "Propriétaire, Pharmacie de l'Espoir",
+    "testimonial1Content": "SyntixPharma a transformé ma gestion quotidienne. Je peux enfin suivre mes stocks à distance et mes ventes ont augmenté de 20% en 6 mois.",
+    "testimonial2Name": "Jean-Pierre Talla",
+    "testimonial2Role": "Gérant, Pharmacie du Centre",
+    "testimonial2Content": "L'interface est tellement simple que mes employés l'ont prise en main en une matinée. Le support technique est toujours là quand on en a besoin.",
+    "testimonial3Name": "Dr. Amina Diallo",
+    "testimonial3Role": "Pharmacienne, Clinique BioSanté",
+    "testimonial3Content": "La conformité réglementaire était un cauchemar avant SyntixPharma. Maintenant, tout est automatisé et sécurisé. Je recommande vivement.",
+    "faqTitle": "Questions",
+    "faqHighlight": "Fréquentes",
+    "faqDesc": "Tout ce que vous devez savoir pour démarrer sereinement.",
+    "faq1Q": "Est-ce que SyntixPharma fonctionne sans internet ?",
+    "faq1A": "Oui ! SyntixPharma dispose d'un mode hors-ligne complet. Vous pouvez continuer à effectuer des ventes et gérer vos stocks. Les données seront synchronisées automatiquement dès que la connexion sera rétablie.",
+    "faq2Q": "Mes données sont-elles sécurisées ?",
+    "faq2A": "Absolument. Nous utilisons un chiffrement de niveau bancaire (AES-256) et nos serveurs sont conformes aux normes de santé internationales. Vos données sont sauvegardées quotidiennement.",
+    "faq3Q": "Combien de temps prend l'installation ?",
+    "faq3A": "L'inscription prend moins de 2 minutes. L'importation de vos stocks peut prendre entre 30 minutes et quelques heures selon la taille de votre inventaire. Notre équipe peut vous assister gratuitement.",
+    "faq4Q": "Puis-je utiliser mon propre matériel ?",
+    "faq4A": "Oui, SyntixPharma est compatible avec la plupart des lecteurs de codes-barres, imprimantes thermiques et tiroirs-caisses standard du marché.",
+    "authShellTestimonial": "SyntixPharma a transformé la façon dont nous gérons notre officine. C'est devenu l'outil indispensable de notre équipe.",
+    "authShellName": "Dr. Marie Kabange",
+    "authShellTitle": "Pharmacie Centrale, Kinshasa",
+    "authShellStatsPharmacies": "Pharmacies",
+    "authShellStatsSalesPerMonth": "Ventes / mois",
+    "termsShort": "CGU",
+    "privacyShort": "Confidentialité",
+    "help": "Aide"
   }
 }

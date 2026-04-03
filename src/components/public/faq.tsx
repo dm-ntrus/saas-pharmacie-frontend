@@ -3,25 +3,16 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export default function FAQ() {
+  const t = useTranslations('marketing');
+
   const faqs = [
-    {
-      q: 'Est-ce que SyntixPharma fonctionne sans internet ?',
-      a: 'Oui ! SyntixPharma dispose d\'un mode hors-ligne complet. Vous pouvez continuer à effectuer des ventes et gérer vos stocks. Les données seront synchronisées automatiquement dès que la connexion sera rétablie.'
-    },
-    {
-      q: 'Mes données sont-elles sécurisées ?',
-      a: 'Absolument. Nous utilisons un chiffrement de niveau bancaire (AES-256) et nos serveurs sont conformes aux normes de santé internationales. Vos données sont sauvegardées quotidiennement.'
-    },
-    {
-      q: 'Combien de temps prend l\'installation ?',
-      a: 'L\'inscription prend moins de 2 minutes. L\'importation de vos stocks peut prendre entre 30 minutes et quelques heures selon la taille de votre inventaire. Notre équipe peut vous assister gratuitement.'
-    },
-    {
-      q: 'Puis-je utiliser mon propre matériel ?',
-      a: 'Oui, SyntixPharma est compatible avec la plupart des lecteurs de codes-barres, imprimantes thermiques et tiroirs-caisses standard du marché.'
-    }
+    { q: t('faq1Q'), a: t('faq1A') },
+    { q: t('faq2Q'), a: t('faq2A') },
+    { q: t('faq3Q'), a: t('faq3A') },
+    { q: t('faq4Q'), a: t('faq4A') }
   ];
 
   const [openIndex, setOpenIndex] = useState<number | null>(0);
@@ -32,10 +23,11 @@ export default function FAQ() {
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4 font-display">
-              Questions <span className="text-emerald-600">Fréquentes</span>
+              {t('faqTitle')}{' '}
+              <span className="text-emerald-600">{t('faqHighlight')}</span>
             </h2>
             <p className="text-slate-600">
-              Tout ce que vous devez savoir pour démarrer sereinement.
+              {t('faqDesc')}
             </p>
           </div>
 

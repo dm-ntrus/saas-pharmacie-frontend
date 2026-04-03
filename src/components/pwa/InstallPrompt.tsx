@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Download, X } from "lucide-react";
 import { Button } from "@/components/ui";
+import { useTranslations } from "next-intl";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -10,6 +11,7 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export function InstallPrompt() {
+  const t = useTranslations("layout.pwa");
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showBanner, setShowBanner] = useState(false);
 
@@ -54,24 +56,24 @@ export function InstallPrompt() {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-              Installer PharmaSaaS
+              {t("installTitle")}
             </p>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Accédez plus rapidement depuis votre écran d&apos;accueil
+              {t("installDesc")}
             </p>
             <div className="flex gap-2 mt-3">
               <Button size="sm" variant="primary" onClick={handleInstall}>
-                Installer
+                {t("installButton")}
               </Button>
               <Button size="sm" variant="ghost" onClick={handleDismiss}>
-                Plus tard
+                {t("laterButton")}
               </Button>
             </div>
           </div>
           <button
             onClick={handleDismiss}
             className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-            aria-label="Fermer"
+            aria-label={t("closeLabel")}
           >
             <X className="w-4 h-4" />
           </button>

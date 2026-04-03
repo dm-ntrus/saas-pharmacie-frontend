@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import {
   Package,
   BarChart3,
@@ -15,149 +16,64 @@ import {
   Gift,
   FileText,
 } from "lucide-react";
-import Link from "next/link";
 import Image from "next/image";
+import { Link } from "@/i18n/navigation";
 
-const features = [
-  {
-    icon: Package,
-    title: "Gestion des stocks intelligente",
-    desc: "Suivi en temps réel, alertes de péremption automatiques et gestion multi-dépôts.",
-    details: [
-      "Inventaire tournant",
-      "Codes-barres",
-      "Transferts inter-sites",
-      "Valorisation du stock",
-    ],
-  },
-  {
-    icon: BarChart3,
-    title: "Ventes & facturation POS",
-    desc: "Interface de vente ultra-rapide compatible avec écrans tactiles et lecteurs de codes-barres.",
-    details: [
-      "Multi-modes de paiement",
-      "Remises gérées",
-      "Tickets personnalisés",
-      "Mode hors-ligne",
-    ],
-  },
-  {
-    icon: Users,
-    title: "Gestion des patients & CRM",
-    desc: "Historique complet des prescriptions et suivi personnalisé pour chaque patient.",
-    details: [
-      "Dossier médical partagé",
-      "Rappels de traitement",
-      "Programmes de fidélité",
-      "Notes cliniques",
-    ],
-  },
-  {
-    icon: ShieldCheck,
-    title: "Conformité & sécurité",
-    desc: "Hébergement sécurisé des données de santé et traçabilité complète de chaque action.",
-    details: [
-      "Chiffrement AES-256",
-      "Sauvegardes horaires",
-      "Logs d'audit",
-      "Accès par rôles",
-    ],
-  },
-  {
-    icon: Cloud,
-    title: "Accès cloud & mobilité",
-    desc: "Gérez votre pharmacie depuis n'importe où, sur PC, tablette ou smartphone.",
-    details: [
-      "Synchro temps réel",
-      "Responsive design",
-      "Multi-utilisateurs",
-      "Zéro installation",
-    ],
-  },
-  {
-    icon: Layers,
-    title: "Rapports & analyses",
-    desc: "Tableaux de bord prédictifs pour anticiper vos besoins et optimiser votre rentabilité.",
-    details: [
-      "Prévisions de ventes",
-      "Top 10 produits",
-      "Marges nettes",
-      "Exports Excel / PDF",
-    ],
-  },
-  {
-    icon: Truck,
-    title: "Livraisons & logistique",
-    desc: "Suivi des tournées, statuts de commande et service à domicile structuré.",
-    details: [
-      "Bons de livraison",
-      "Suivi des statuts",
-      "Zones de livraison",
-      "Notifications client",
-    ],
-  },
-  {
-    icon: Gift,
-    title: "Fidélité & CRM",
-    desc: "Programmes de points, avantages et campagnes ciblées pour fidéliser vos patients.",
-    details: [
-      "Points de fidélité",
-      "Offres personnalisées",
-      "Historique client",
-      "Segments & ciblage",
-    ],
-  },
-  {
-    icon: FileText,
-    title: "Supply chain & achats",
-    desc: "De la demande d'achat à la réception marchandise, un circuit achat complet.",
-    details: [
-      "Demandes d'achat",
-      "Bons de commande",
-      "Réception (GRN)",
-      "Devis fournisseurs",
-    ],
-  },
-];
+const featureMeta = [
+  { id: "inventorySmart", icon: Package },
+  { id: "posBilling", icon: BarChart3 },
+  { id: "patientsCrm", icon: Users },
+  { id: "complianceSecurity", icon: ShieldCheck },
+  { id: "cloudMobility", icon: Cloud },
+  { id: "reportsAnalytics", icon: Layers },
+  { id: "deliveryLogistics", icon: Truck },
+  { id: "loyaltyCrm", icon: Gift },
+  { id: "supplyChainPurchases", icon: FileText },
+] as const;
 
-const integrations = [
-  {
-    title: "Mobile Money",
-    desc: "M-Pesa, Airtel Money, Orange Money.",
-  },
-  {
-    title: "Comptabilité",
-    desc: "Export direct vers Sage, QuickBooks.",
-  },
-  {
-    title: "Grossistes",
-    desc: "Commandes automatiques via EDI.",
-  },
-  {
-    title: "Assurances",
-    desc: "Vérification des droits en temps réel.",
-  },
-];
+const integrationsMeta = [
+  { id: "mobileMoney" },
+  { id: "accounting" },
+  { id: "wholesalers" },
+  { id: "insurances" },
+] as const;
 
-const deploySteps = [
-  {
-    step: "01",
-    title: "Configuration",
-    desc: "Importez vos stocks existants et configurez vos accès utilisateurs en quelques clics.",
-  },
-  {
-    step: "02",
-    title: "Formation",
-    desc: "Accédez à nos tutoriels interactifs ou demandez une session avec nos experts.",
-  },
-  {
-    step: "03",
-    title: "Lancement",
-    desc: "Commencez à vendre et à gérer votre officine avec une efficacité décuplée.",
-  },
-];
+const deployStepsMeta = [{ step: "01" }, { step: "02" }, { step: "03" }] as const;
 
 export default function FeaturesPage() {
+  const t = useTranslations("pages.features");
+
+  const features = featureMeta.map((f) => ({
+    ...f,
+    title: t(`features.${f.id}.title`),
+    desc: t(`features.${f.id}.desc`),
+    details: [
+      t(`features.${f.id}.details.d1`),
+      t(`features.${f.id}.details.d2`),
+      t(`features.${f.id}.details.d3`),
+      t(`features.${f.id}.details.d4`),
+    ],
+  }));
+
+  const integrations = integrationsMeta.map((it) => ({
+    id: it.id,
+    title: t(`integrations.${it.id}.title`),
+    desc: t(`integrations.${it.id}.desc`),
+  }));
+
+  const deploySteps = deployStepsMeta.map((s) => ({
+    step: s.step,
+    title: t(`deploySteps.${s.step}.title`),
+    desc: t(`deploySteps.${s.step}.desc`),
+  }));
+
+  const deepDiveItems = [
+    t("deepDive.items.i1"),
+    t("deepDive.items.i2"),
+    t("deepDive.items.i3"),
+    t("deepDive.items.i4"),
+  ];
+
   return (
     <div className="min-h-screen pt-28 sm:pt-32 pb-0 bg-white">
       {/* Header */}
@@ -168,21 +84,20 @@ export default function FeaturesPage() {
             animate={{ opacity: 1, y: 0 }}
           >
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 mb-3">
-              Fonctionnalités
+              {t("tag")}
             </p>
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-display font-bold text-slate-900 mb-4 tracking-tight">
-              Tout ce dont vous avez besoin pour{" "}
-              <span className="text-emerald-600">réussir</span>.
+              {t("title")}{" "}
+              <span className="text-emerald-600">{t("titleHighlight")}</span>
             </h1>
             <p className="text-base sm:text-lg text-slate-500 leading-relaxed max-w-2xl mx-auto mb-6">
-              Une plateforme tout-en-un conçue spécifiquement pour les défis de
-              la pharmacie moderne en Afrique.
+              {t("desc")}
             </p>
             <Link
               href="/modules"
               className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-widest text-emerald-600 hover:text-slate-900 transition-colors"
             >
-              Catalogue détaillé de tous les modules
+              {t("modulesCatalogCta")}
               <ArrowRight className="w-4 h-4" />
             </Link>
           </motion.div>
@@ -234,15 +149,14 @@ export default function FeaturesPage() {
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <div>
               <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 mb-3">
-                Écosystème
+                {t("ecosystemTag")}
               </p>
               <h2 className="text-3xl sm:text-5xl font-display font-bold text-slate-900 mb-4 tracking-tight">
-                Connecté à votre{" "}
-                <span className="text-emerald-600">monde.</span>
+                {t("ecosystemTitle")}{" "}
+                <span className="text-emerald-600">{t("ecosystemTitleHighlight")}</span>
               </h2>
               <p className="text-base text-slate-500 leading-relaxed font-medium mb-10">
-                SyntixPharma s&apos;intègre parfaitement avec les outils que vous
-                utilisez déjà.
+                {t("ecosystemDesc")}
               </p>
               <div className="grid grid-cols-2 gap-6">
                 {integrations.map((item) => (
@@ -277,14 +191,14 @@ export default function FeaturesPage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12 sm:mb-16">
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-3">
-              Déploiement
+              {t("deployTag")}
             </p>
             <h2 className="text-3xl sm:text-5xl font-display font-bold text-slate-900 mb-3 tracking-tight">
-              Prêt en{" "}
-              <span className="text-emerald-600">3 étapes.</span>
+              {t("deployTitle")}{" "}
+              <span className="text-emerald-600">{t("deployTitleHighlight")}</span>
             </h2>
             <p className="text-base text-slate-500 max-w-2xl mx-auto font-medium">
-              Une transition fluide vers la pharmacie du futur.
+              {t("deployDesc")}
             </p>
           </div>
 
@@ -317,22 +231,14 @@ export default function FeaturesPage() {
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <div>
               <h2 className="text-3xl sm:text-5xl font-display font-bold mb-4 leading-tight">
-                Une interface{" "}
-                <span className="text-emerald-400">intuitive</span>, aucune
-                formation requise.
+                {t("deepDive.title")}{" "}
+                <span className="text-emerald-400">{t("deepDive.titleHighlight")}</span> {t("deepDive.titleEnd")}
               </h2>
               <p className="text-base text-slate-400 mb-8 leading-relaxed">
-                Des milliers d&apos;heures d&apos;observation en officine pour créer
-                l&apos;interface la plus fluide du marché. Opérationnel en moins de
-                30 minutes.
+                {t("deepDive.desc")}
               </p>
               <div className="space-y-3 mb-8">
-                {[
-                  "Mode sombre pour le travail de nuit",
-                  "Raccourcis clavier pour les experts",
-                  "Recherche universelle ultra-rapide",
-                  "Support multilingue (Français, Anglais, Swahili)",
-                ].map((item) => (
+                {deepDiveItems.map((item) => (
                   <div key={item} className="flex items-center gap-3">
                     <div className="w-5 h-5 bg-emerald-500/20 rounded-full flex items-center justify-center shrink-0">
                       <Zap className="w-3 h-3 text-emerald-400" />
@@ -347,7 +253,7 @@ export default function FeaturesPage() {
                 href="/auth/register"
                 className="inline-flex items-center gap-3 px-8 py-4 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-600/20"
               >
-                Essayer gratuitement
+                {t("tryFreeCta")}
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </div>

@@ -1,8 +1,7 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
 import {
   LayoutDashboard,
   ShoppingCart,
@@ -11,6 +10,7 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { useTranslations } from "next-intl";
 
 interface NavItem {
   href: string;
@@ -25,14 +25,15 @@ interface MobileBottomNavProps {
 
 export default function MobileBottomNav({ tenantSlug }: MobileBottomNavProps) {
   const pathname = usePathname();
+  const t = useTranslations("nav");
   const basePath = `/tenant/${tenantSlug}`;
 
   const items: NavItem[] = [
-    { href: `${basePath}/dashboard`, label: "Accueil", icon: LayoutDashboard, match: "/dashboard" },
-    { href: `${basePath}/sales/pos`, label: "Caisse", icon: ShoppingCart, match: "/sales" },
-    { href: `${basePath}/inventory`, label: "Stock", icon: Package, match: "/inventory" },
-    { href: `${basePath}/patients`, label: "Patients", icon: Users, match: "/patients" },
-    { href: `${basePath}/settings`, label: "Plus", icon: MoreHorizontal, match: "/settings" },
+    { href: `${basePath}/dashboard`, label: t("dashboard"), icon: LayoutDashboard, match: "/dashboard" },
+    { href: `${basePath}/sales/pos`, label: t("sales"), icon: ShoppingCart, match: "/sales" },
+    { href: `${basePath}/inventory`, label: t("inventory"), icon: Package, match: "/inventory" },
+    { href: `${basePath}/patients`, label: t("patients"), icon: Users, match: "/patients" },
+    { href: `${basePath}/settings`, label: t("settings"), icon: MoreHorizontal, match: "/settings" },
   ];
 
   return (

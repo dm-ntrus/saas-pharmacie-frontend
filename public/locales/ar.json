@@ -1,0 +1,2843 @@
+{
+  "common": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "create": "إنشاء",
+    "add": "إضافة",
+    "remove": "إزالة",
+    "search": "بحث...",
+    "filter": "تصفية",
+    "export": "تصدير",
+    "import": "استيراد",
+    "print": "طباعة",
+    "download": "تحميل",
+    "upload": "رفع",
+    "loading": "جارٍ التحميل...",
+    "noData": "لا توجد بيانات",
+    "noResults": "لم يتم العثور على نتائج",
+    "error": "حدث خطأ",
+    "success": "تمت العملية بنجاح",
+    "confirm": "تأكيد",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "close": "إغلاق",
+    "actions": "إجراءات",
+    "status": "الحالة",
+    "date": "التاريخ",
+    "total": "الإجمالي",
+    "amount": "المبلغ",
+    "quantity": "الكمية",
+    "price": "السعر",
+    "name": "الاسم",
+    "description": "الوصف",
+    "notes": "ملاحظات",
+    "type": "النوع",
+    "category": "الفئة",
+    "yes": "نعم",
+    "no": "لا",
+    "all": "الكل",
+    "none": "لا شيء",
+    "required": "مطلوب",
+    "optional": "اختياري",
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "enabled": "مُفعَّل",
+    "disabled": "مُعطَّل",
+    "details": "التفاصيل",
+    "view": "عرض",
+    "viewAll": "عرض الكل",
+    "refresh": "تحديث",
+    "reset": "إعادة تعيين",
+    "submit": "إرسال",
+    "approve": "الموافقة",
+    "reject": "رفض",
+    "archive": "أرشفة",
+    "restore": "استعادة",
+    "duplicate": "تكرار",
+    "copy": "نسخ",
+    "move": "نقل",
+    "send": "إرسال",
+    "retry": "إعادة المحاولة",
+    "select": "اختيار",
+    "selectAll": "تحديد الكل",
+    "unselectAll": "إلغاء تحديد الكل",
+    "showMore": "عرض المزيد",
+    "showLess": "عرض أقل",
+    "sortBy": "ترتيب حسب",
+    "ascending": "تصاعدي",
+    "descending": "تنازلي",
+    "rowsPerPage": "صفوف في الصفحة",
+    "of": "من",
+    "page": "الصفحة",
+    "createdAt": "تاريخ الإنشاء",
+    "updatedAt": "تاريخ التعديل",
+    "createdBy": "أُنشئ بواسطة",
+    "startDate": "تاريخ البدء",
+    "endDate": "تاريخ الانتهاء",
+    "from": "من",
+    "to": "إلى",
+    "today": "اليوم",
+    "yesterday": "أمس",
+    "thisWeek": "هذا الأسبوع",
+    "thisMonth": "هذا الشهر",
+    "thisYear": "هذه السنة",
+    "lastWeek": "الأسبوع الماضي",
+    "lastMonth": "الشهر الماضي",
+    "lastYear": "السنة الماضية",
+    "custom": "مخصص",
+    "confirmDelete": "هل أنت متأكد من رغبتك في حذف هذا العنصر؟",
+    "confirmAction": "هل أنت متأكد من رغبتك في تنفيذ هذا الإجراء؟",
+    "unsavedChanges": "لديك تعديلات غير محفوظة. هل تريد المغادرة؟",
+    "savedSuccessfully": "تم الحفظ بنجاح",
+    "deletedSuccessfully": "تم الحذف بنجاح",
+    "updatedSuccessfully": "تم التحديث بنجاح",
+    "createdSuccessfully": "تم الإنشاء بنجاح",
+    "operationFailed": "فشلت العملية",
+    "networkError": "خطأ في الشبكة. تحقق من اتصالك",
+    "sessionExpired": "انتهت صلاحية جلستك. يرجى تسجيل الدخول مجدداً",
+    "unauthorized": "غير مصرح لك بتنفيذ هذا الإجراء",
+    "forbidden": "الوصول محظور",
+    "notFound": "المورد غير موجود",
+    "serverError": "خطأ في الخادم. يرجى المحاولة لاحقاً",
+    "validationError": "يرجى تصحيح أخطاء النموذج",
+    "currency": "العملة",
+    "percentage": "النسبة المئوية",
+    "phone": "الهاتف",
+    "email": "البريد الإلكتروني",
+    "address": "العنوان",
+    "city": "المدينة",
+    "postalCode": "الرمز البريدي",
+    "country": "البلد",
+    "id": "المعرّف"
+  },
+  "languageSwitcher": {
+    "label": "تغيير اللغة",
+    "current": "اللغة الحالية",
+    "selectLanguage": "اختر لغة"
+  },
+  "auth": {
+    "login": "تسجيل الدخول",
+    "logout": "تسجيل الخروج",
+    "register": "إنشاء حساب",
+    "forgotPassword": "هل نسيت كلمة المرور؟",
+    "resetPassword": "إعادة تعيين كلمة المرور",
+    "changePassword": "تغيير كلمة المرور",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "rememberMe": "تذكرني",
+    "loginSuccess": "تم تسجيل الدخول بنجاح",
+    "loginError": "بيانات الاعتماد غير صحيحة",
+    "logoutSuccess": "تم تسجيل الخروج بنجاح",
+    "passwordChanged": "تم تغيير كلمة المرور بنجاح",
+    "twoFactor": "المصادقة الثنائية",
+    "enterCode": "أدخل رمز التحقق",
+    "verifyCode": "التحقق من الرمز",
+    "setupMFA": "إعداد المصادقة الثنائية",
+    "backupCodes": "رموز الاسترداد",
+    "scanQRCode": "امسح رمز QR بتطبيقك"
+  },
+  "nav": {
+    "dashboard": "لوحة التحكم",
+    "sales": "المبيعات",
+    "inventory": "المخزون",
+    "patients": "المرضى",
+    "prescriptions": "الوصفات الطبية",
+    "accounting": "المحاسبة",
+    "billing": "الفوترة",
+    "hr": "الموارد البشرية",
+    "vaccination": "التطعيم",
+    "quality": "الجودة",
+    "delivery": "التوصيل",
+    "suppliers": "الموردون",
+    "analytics": "التحليلات",
+    "notifications": "الإشعارات",
+    "settings": "الإعدادات",
+    "reports": "التقارير",
+    "eInvoice": "الفوترة الإلكترونية",
+    "insurance": "التأمين",
+    "supplyChain": "سلسلة التوريد"
+  },
+  "sales": {
+    "title": "المبيعات",
+    "newSale": "عملية بيع جديدة",
+    "pos": "نقطة البيع",
+    "cashier": "جلسات الصندوق",
+    "dashboard": "لوحة تحكم المبيعات",
+    "reports": "تقارير المبيعات",
+    "history": "سجل المبيعات",
+    "refund": "استرداد",
+    "receipt": "إيصال البيع",
+    "printReceipt": "طباعة الإيصال",
+    "dailyReport": "التقرير اليومي",
+    "fields": {
+      "saleNumber": "رقم البيع",
+      "saleDate": "تاريخ البيع",
+      "cashier": "أمين الصندوق",
+      "patient": "المريض",
+      "paymentMethod": "طريقة الدفع",
+      "amountPaid": "المبلغ المدفوع",
+      "changeGiven": "المبلغ المرتجع",
+      "balanceDue": "الرصيد المستحق",
+      "subtotal": "المجموع الفرعي",
+      "taxAmount": "مبلغ الضريبة",
+      "taxRate": "معدل الضريبة",
+      "discountAmount": "الخصم",
+      "totalAmount": "المبلغ الإجمالي",
+      "isCreditSale": "بيع بالآجل",
+      "sourceType": "المصدر",
+      "insuranceProvider": "شركة التأمين",
+      "insurancePolicyNumber": "رقم بوليصة التأمين",
+      "insuranceCoverage": "التغطية التأمينية",
+      "notes": "ملاحظات",
+      "internalNotes": "ملاحظات داخلية"
+    },
+    "items": {
+      "product": "المنتج",
+      "quantity": "الكمية",
+      "unitPrice": "سعر الوحدة",
+      "discount": "الخصم",
+      "total": "الإجمالي",
+      "batch": "الدفعة",
+      "addItem": "إضافة صنف",
+      "removeItem": "إزالة الصنف",
+      "noItems": "لم تتم إضافة أي أصناف"
+    },
+    "status": {
+      "pending": "قيد الانتظار",
+      "completed": "مكتملة",
+      "cancelled": "ملغاة",
+      "refunded": "مستردة",
+      "partiallyPaid": "مدفوعة جزئياً"
+    },
+    "paymentMethods": {
+      "cash": "نقداً",
+      "card": "بطاقة",
+      "mobileMoney": "الدفع عبر الهاتف",
+      "insurance": "تأمين",
+      "credit": "آجل",
+      "check": "شيك"
+    },
+    "session": {
+      "openSession": "فتح جلسة",
+      "closeSession": "إغلاق الجلسة",
+      "openingBalance": "الرصيد الافتتاحي",
+      "closingBalance": "الرصيد الختامي",
+      "totalSales": "إجمالي المبيعات",
+      "totalRefunds": "إجمالي المستردات",
+      "discrepancy": "الفارق",
+      "discrepancyReason": "سبب الفارق",
+      "sessionOpen": "الجلسة مفتوحة",
+      "sessionClosed": "الجلسة مغلقة",
+      "noActiveSession": "لا توجد جلسة نشطة"
+    },
+    "emptyState": {
+      "title": "لا توجد مبيعات",
+      "description": "ابدأ بإنشاء عملية بيع جديدة"
+    }
+  },
+  "inventory": {
+    "title": "المخزون",
+    "products": "المنتجات",
+    "batches": "الدفعات",
+    "alerts": "التنبيهات",
+    "transfers": "التحويلات",
+    "counts": "الجرد",
+    "recalls": "سحب الدفعات",
+    "locations": "المواقع",
+    "pricing": "التسعير",
+    "dashboard": "لوحة تحكم المخزون",
+    "newProduct": "منتج جديد",
+    "newBatch": "دفعة جديدة",
+    "newTransfer": "تحويل جديد",
+    "newCount": "جرد جديد",
+    "newRecall": "عملية سحب جديدة",
+    "fields": {
+      "productName": "اسم المنتج",
+      "barcode": "الرمز الشريطي",
+      "sku": "SKU",
+      "internalCode": "الرمز الداخلي",
+      "manufacturer": "الشركة المصنعة",
+      "brand": "العلامة التجارية",
+      "activeIngredient": "المادة الفعالة",
+      "strength": "التركيز",
+      "dosageForm": "الشكل الصيدلاني",
+      "unitOfMeasure": "وحدة القياس",
+      "packagingSize": "حجم العبوة",
+      "category": "الفئة",
+      "type": "النوع",
+      "requiresPrescription": "يستلزم وصفة طبية",
+      "isNarcotic": "مادة مخدرة",
+      "isColdChain": "سلسلة التبريد",
+      "deaSchedule": "تصنيف DEA",
+      "storageConditions": "ظروف التخزين",
+      "referencePrice": "السعر المرجعي",
+      "sellingPrice": "سعر البيع",
+      "costPrice": "سعر الشراء",
+      "marginPercent": "هامش الربح (%)",
+      "batchNumber": "رقم الدفعة",
+      "expiryDate": "تاريخ انتهاء الصلاحية",
+      "quantity": "الكمية",
+      "unitCost": "تكلفة الوحدة",
+      "supplier": "المورد",
+      "location": "الموقع",
+      "fromLocation": "الموقع المصدر",
+      "toLocation": "الموقع الوجهة",
+      "reason": "السبب",
+      "severity": "الخطورة",
+      "affectedQuantity": "الكمية المتأثرة",
+      "instructions": "التعليمات"
+    },
+    "categories": {
+      "medicine": "الأدوية",
+      "supplement": "المكملات الغذائية",
+      "equipment": "المعدات الطبية",
+      "beauty": "الجمال والعناية",
+      "motherBaby": "الأم والطفل",
+      "hygiene": "النظافة",
+      "firstAid": "الإسعافات الأولية",
+      "orthopedics": "تقويم العظام",
+      "veterinary": "بيطري"
+    },
+    "productTypes": {
+      "prescription": "بوصفة طبية",
+      "otc": "بدون وصفة طبية",
+      "supplement": "مكمل غذائي",
+      "medicalDevice": "جهاز طبي",
+      "cosmetic": "مستحضر تجميلي"
+    },
+    "status": {
+      "active": "نشط",
+      "discontinued": "متوقف",
+      "pendingApproval": "بانتظار الموافقة"
+    },
+    "alertTypes": {
+      "lowStock": "مخزون منخفض",
+      "outOfStock": "نفاد المخزون",
+      "expiringSoon": "قرب انتهاء الصلاحية",
+      "expired": "منتهي الصلاحية",
+      "overstock": "فائض في المخزون",
+      "recall": "سحب دفعة",
+      "temperatureDeviation": "انحراف في درجة الحرارة"
+    },
+    "alertSeverity": {
+      "low": "منخفض",
+      "medium": "متوسط",
+      "high": "مرتفع",
+      "critical": "حرج"
+    },
+    "kpis": {
+      "totalProducts": "إجمالي المنتجات",
+      "totalStockValue": "قيمة المخزون",
+      "turnoverRate": "معدل الدوران",
+      "daysOfStock": "أيام المخزون",
+      "expiryRate": "معدل انتهاء الصلاحية",
+      "stockoutRate": "معدل نفاد المخزون",
+      "lowStockCount": "منتجات بمخزون منخفض",
+      "expiredCount": "منتجات منتهية الصلاحية",
+      "expiringSoonCount": "قرب انتهاء الصلاحية"
+    },
+    "emptyState": {
+      "title": "لا توجد منتجات",
+      "description": "ابدأ بإضافة منتجات إلى مخزونك"
+    }
+  },
+  "patients": {
+    "title": "المرضى",
+    "newPatient": "مريض جديد",
+    "editPatient": "تعديل بيانات المريض",
+    "patientDetails": "تفاصيل المريض",
+    "patientHistory": "سجل المريض",
+    "linkAccount": "ربط حساب",
+    "fields": {
+      "firstName": "الاسم الأول",
+      "lastName": "اسم العائلة",
+      "dateOfBirth": "تاريخ الميلاد",
+      "gender": "الجنس",
+      "phone": "الهاتف",
+      "email": "البريد الإلكتروني",
+      "address": "العنوان",
+      "emergencyContact": "جهة اتصال الطوارئ",
+      "emergencyPhone": "هاتف الطوارئ",
+      "insuranceProvider": "شركة التأمين",
+      "insuranceNumber": "رقم التأمين",
+      "allergies": "الحساسية",
+      "medicalConditions": "الحالات الطبية",
+      "currentMedications": "الأدوية الحالية"
+    },
+    "gender": {
+      "male": "ذكر",
+      "female": "أنثى",
+      "other": "آخر",
+      "preferNotToSay": "غير محدد"
+    },
+    "status": {
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "deceased": "متوفى",
+      "transferred": "محوَّل"
+    },
+    "emptyState": {
+      "title": "لا يوجد مرضى",
+      "description": "ابدأ بتسجيل مريض جديد"
+    }
+  },
+  "prescriptions": {
+    "title": "الوصفات الطبية",
+    "newPrescription": "وصفة طبية جديدة",
+    "editPrescription": "تعديل الوصفة الطبية",
+    "prescriptionDetails": "تفاصيل الوصفة الطبية",
+    "dispensation": "صرف الأدوية",
+    "bpm": "المراجعات الدوائية المشتركة",
+    "scanner": "ماسح الوصفات الطبية",
+    "alerts": "التنبيهات",
+    "doses": "متابعة الجرعات",
+    "fields": {
+      "prescriptionNumber": "رقم الوصفة",
+      "patient": "المريض",
+      "prescriberName": "الطبيب المعالج",
+      "prescriberNpi": "رقم تسجيل الطبيب",
+      "prescriberPhone": "هاتف الطبيب",
+      "prescribedDate": "تاريخ الوصف",
+      "receivedDate": "تاريخ الاستلام",
+      "type": "النوع",
+      "deliveryMethod": "طريقة الصرف",
+      "priorityLevel": "مستوى الأولوية",
+      "isEmergency": "حالة طارئة",
+      "isCompound": "تحضير مُركَّب",
+      "requiresCounseling": "يتطلب إرشاداً صيدلانياً",
+      "counselingCompleted": "تم الإرشاد الصيدلاني",
+      "refillsAllowed": "التجديدات المسموحة",
+      "refillsRemaining": "التجديدات المتبقية",
+      "daysSupply": "مدة العلاج (بالأيام)",
+      "totalAmount": "المبلغ الإجمالي",
+      "insuranceCopay": "حصة التأمين",
+      "patientPay": "حصة المريض",
+      "specialInstructions": "تعليمات خاصة",
+      "pharmacyNotes": "ملاحظات الصيدلي"
+    },
+    "items": {
+      "product": "الدواء",
+      "quantity": "الكمية",
+      "dosage": "الجرعة",
+      "frequency": "التكرار",
+      "duration": "المدة (بالأيام)",
+      "instructions": "التعليمات",
+      "addItem": "إضافة دواء"
+    },
+    "types": {
+      "new": "جديدة",
+      "refill": "تجديد",
+      "transferIn": "تحويل وارد",
+      "transferOut": "تحويل صادر",
+      "emergency": "طارئة",
+      "compound": "تحضير مُركَّب"
+    },
+    "status": {
+      "pending": "قيد الانتظار",
+      "verified": "تم التحقق",
+      "inProgress": "قيد التنفيذ",
+      "ready": "جاهزة",
+      "dispensed": "تم الصرف",
+      "cancelled": "ملغاة",
+      "returned": "مُرتجعة",
+      "onHold": "معلَّقة"
+    },
+    "deliveryMethods": {
+      "inStorePickup": "استلام من الصيدلية",
+      "homeDelivery": "توصيل للمنزل",
+      "curbsidePickup": "استلام من السيارة",
+      "mailOrder": "شحن بريدي"
+    },
+    "emptyState": {
+      "title": "لا توجد وصفات طبية",
+      "description": "ابدأ بتسجيل وصفة طبية جديدة"
+    }
+  },
+  "accounting": {
+    "title": "المحاسبة",
+    "accounts": "دليل الحسابات",
+    "transactions": "القيود المحاسبية",
+    "journal": "دفتر اليومية",
+    "budgets": "الميزانيات",
+    "expenses": "المصروفات",
+    "bankAccounts": "الحسابات المصرفية",
+    "reconciliation": "التسوية المصرفية",
+    "reports": "التقارير المالية",
+    "balanceSheet": "الميزانية العمومية",
+    "incomeStatement": "قائمة الدخل",
+    "trialBalance": "ميزان المراجعة",
+    "periods": "الفترات المحاسبية",
+    "newAccount": "حساب جديد",
+    "newTransaction": "قيد جديد",
+    "newJournalEntry": "قيد يومية جديد",
+    "newBudget": "ميزانية جديدة",
+    "newExpense": "مصروف جديد",
+    "newBankAccount": "حساب مصرفي جديد",
+    "fields": {
+      "accountCode": "رمز الحساب",
+      "accountName": "اسم الحساب",
+      "accountType": "نوع الحساب",
+      "subType": "النوع الفرعي",
+      "normalBalance": "الرصيد الطبيعي",
+      "parentAccount": "الحساب الرئيسي",
+      "balance": "الرصيد",
+      "transactionNumber": "رقم القيد",
+      "transactionDate": "التاريخ",
+      "transactionType": "النوع",
+      "amount": "المبلغ",
+      "description": "الوصف",
+      "referenceNumber": "رقم المرجع",
+      "debit": "مدين",
+      "credit": "دائن",
+      "budgetName": "اسم الميزانية",
+      "budgetCategory": "الفئة",
+      "periodStart": "بداية الفترة",
+      "periodEnd": "نهاية الفترة",
+      "budgetAmount": "المبلغ المخصص",
+      "actualAmount": "المبلغ الفعلي",
+      "variance": "الانحراف",
+      "variancePercent": "الانحراف (%)",
+      "expenseDate": "تاريخ المصروف",
+      "expenseCategory": "الفئة",
+      "vendorName": "المورد",
+      "receiptUrl": "المستند المرفق",
+      "isRecurring": "متكرر",
+      "recurringFrequency": "التكرار",
+      "bankName": "البنك",
+      "accountNumber": "رقم الحساب",
+      "routingNumber": "رمز SWIFT",
+      "bankAccountType": "نوع الحساب",
+      "currentBalance": "الرصيد الحالي",
+      "availableBalance": "الرصيد المتاح",
+      "isPrimary": "الحساب الرئيسي",
+      "lastReconcileDate": "آخر تسوية"
+    },
+    "accountTypes": {
+      "asset": "أصول",
+      "liability": "خصوم",
+      "equity": "حقوق الملكية",
+      "revenue": "إيرادات",
+      "expense": "مصروفات"
+    },
+    "transactionStatus": {
+      "pending": "قيد الانتظار",
+      "posted": "مُسجَّل",
+      "reversed": "مُعكَس"
+    },
+    "budgetStatus": {
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "completed": "مكتمل"
+    },
+    "periodStatus": {
+      "open": "مفتوح",
+      "closed": "مُقفَل",
+      "locked": "مُقفَل نهائياً"
+    },
+    "expenseStatus": {
+      "pending": "قيد الانتظار",
+      "approved": "معتمد",
+      "paid": "مدفوع",
+      "rejected": "مرفوض"
+    },
+    "bankAccountTypes": {
+      "checking": "حساب جارٍ",
+      "savings": "حساب توفير",
+      "credit": "خط ائتمان",
+      "loan": "قرض"
+    },
+    "emptyState": {
+      "title": "لا توجد بيانات محاسبية",
+      "description": "ابدأ بإعداد دليل الحسابات"
+    }
+  },
+  "billing": {
+    "title": "الفوترة",
+    "invoices": "الفواتير",
+    "payments": "المدفوعات",
+    "insuranceClaims": "مطالبات التأمين",
+    "dailyReports": "التقارير اليومية",
+    "newInvoice": "فاتورة جديدة",
+    "newPayment": "دفعة جديدة",
+    "newClaim": "مطالبة جديدة",
+    "sendInvoice": "إرسال الفاتورة",
+    "cancelInvoice": "إلغاء الفاتورة",
+    "processRefund": "معالجة الاسترداد",
+    "fields": {
+      "invoiceNumber": "رقم الفاتورة",
+      "invoiceDate": "تاريخ الفاتورة",
+      "dueDate": "تاريخ الاستحقاق",
+      "invoiceType": "نوع الفاتورة",
+      "patient": "المريض",
+      "customer": "العميل",
+      "subtotal": "المجموع الفرعي",
+      "discountPercentage": "الخصم (%)",
+      "discountAmount": "مبلغ الخصم",
+      "taxRate": "معدل الضريبة (%)",
+      "taxAmount": "مبلغ الضريبة",
+      "totalAmount": "المبلغ الإجمالي",
+      "amountPaid": "المبلغ المدفوع",
+      "balanceDue": "الرصيد المستحق",
+      "paymentMethod": "طريقة الدفع",
+      "paymentTerms": "شروط الدفع",
+      "paymentNumber": "رقم الدفعة",
+      "paymentDate": "تاريخ الدفع",
+      "paymentType": "نوع الدفع",
+      "insuranceProvider": "شركة التأمين",
+      "policyNumber": "رقم البوليصة",
+      "coveragePercent": "التغطية (%)",
+      "coveredAmount": "المبلغ المُغطَّى",
+      "copayAmount": "المشاركة في الدفع",
+      "notes": "ملاحظات",
+      "termsAndConditions": "الشروط والأحكام",
+      "cancellationReason": "سبب الإلغاء",
+      "itemCode": "رمز الصنف",
+      "itemName": "اسم الصنف",
+      "itemType": "نوع الصنف",
+      "unitPrice": "سعر الوحدة",
+      "quantity": "الكمية"
+    },
+    "invoiceTypes": {
+      "standard": "عادية",
+      "proforma": "أولية",
+      "insurance": "تأمين",
+      "creditNote": "إشعار دائن",
+      "recurring": "متكررة"
+    },
+    "invoiceStatus": {
+      "draft": "مسودة",
+      "pending": "قيد الانتظار",
+      "sent": "مُرسَلة",
+      "partiallyPaid": "مدفوعة جزئياً",
+      "paid": "مدفوعة",
+      "overdue": "متأخرة",
+      "cancelled": "ملغاة",
+      "refunded": "مُستردة"
+    },
+    "paymentStatus": {
+      "pending": "قيد الانتظار",
+      "completed": "مكتمل",
+      "failed": "فشل",
+      "refunded": "مُسترد",
+      "partial": "جزئي"
+    },
+    "paymentMethods": {
+      "cash": "نقداً",
+      "creditCard": "بطاقة ائتمان",
+      "debitCard": "بطاقة خصم مباشر",
+      "mobileMoney": "الدفع عبر الهاتف",
+      "bankTransfer": "تحويل مصرفي",
+      "insurance": "تأمين",
+      "check": "شيك",
+      "credit": "آجل",
+      "card": "بطاقة",
+      "mobile": "هاتف"
+    },
+    "paymentTypes": {
+      "full": "كامل",
+      "partial": "جزئي",
+      "deposit": "دفعة مقدمة",
+      "installment": "قسط"
+    },
+    "emptyState": {
+      "title": "لا توجد فواتير",
+      "description": "ابدأ بإنشاء فاتورة جديدة"
+    }
+  },
+  "hr": {
+    "title": "الموارد البشرية",
+    "employees": "الموظفون",
+    "timeTracking": "تسجيل الحضور والانصراف",
+    "attendanceToday": "حضور اليوم",
+    "clockInTitle": "تسجيل دخول",
+    "employee": "الموظف",
+    "clockInButton": "تسجيل الدخول",
+    "noAttendance": "لا توجد سجلات حضور.",
+    "clockInLabel": "الدخول",
+    "clockOutLabel": "الخروج",
+    "shifts": "جداول العمل",
+    "attendance": "الحضور",
+    "leaves": "الإجازات",
+    "payroll": "الرواتب",
+    "evaluations": "التقييمات",
+    "payslips": "كشوف الرواتب",
+    "newEmployee": "موظف جديد",
+    "newShift": "وردية جديدة",
+    "newLeave": "طلب إجازة جديد",
+    "newPayrollRun": "دورة رواتب جديدة",
+    "newEvaluation": "تقييم جديد",
+    "clockIn": "تسجيل الحضور",
+    "clockOut": "تسجيل الانصراف",
+    "terminate": "إنهاء الخدمة",
+    "fields": {
+      "employeeNumber": "الرقم الوظيفي",
+      "firstName": "الاسم الأول",
+      "lastName": "اسم العائلة",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
+      "dateOfBirth": "تاريخ الميلاد",
+      "gender": "الجنس",
+      "nationalId": "رقم الهوية",
+      "socialSecurityNumber": "رقم الضمان الاجتماعي",
+      "address": "العنوان",
+      "jobTitle": "المسمى الوظيفي",
+      "department": "القسم",
+      "contractType": "نوع العقد",
+      "contractStartDate": "تاريخ بدء العقد",
+      "contractEndDate": "تاريخ انتهاء العقد",
+      "probationEndDate": "نهاية فترة التجربة",
+      "weeklyHours": "الساعات الأسبوعية",
+      "employmentStatus": "الحالة الوظيفية",
+      "baseSalary": "الراتب الأساسي",
+      "salaryCurrency": "العملة",
+      "salaryFrequency": "دورية الصرف",
+      "bankDetails": "البيانات المصرفية",
+      "licenseNumber": "رقم الترخيص",
+      "licenseExpiryDate": "تاريخ انتهاء الترخيص",
+      "annualLeaveBalance": "رصيد الإجازة السنوية",
+      "sickLeaveBalance": "رصيد الإجازة المرضية",
+      "emergencyContactName": "جهة اتصال الطوارئ",
+      "emergencyContactPhone": "هاتف الطوارئ",
+      "emergencyContactRelationship": "صلة القرابة",
+      "shiftDate": "التاريخ",
+      "startTime": "وقت البدء",
+      "endTime": "وقت الانتهاء",
+      "breakDuration": "مدة الاستراحة (بالدقائق)",
+      "shiftType": "نوع الوردية",
+      "leaveType": "نوع الإجازة",
+      "totalDays": "عدد الأيام",
+      "halfDay": "نصف يوم",
+      "reason": "السبب",
+      "periodStart": "بداية الفترة",
+      "periodEnd": "نهاية الفترة",
+      "grossSalary": "الراتب الإجمالي",
+      "netSalary": "الراتب الصافي",
+      "deductions": "الاستقطاعات",
+      "bonuses": "المكافآت",
+      "evaluationType": "نوع التقييم",
+      "overallRating": "التقييم العام",
+      "strengths": "نقاط القوة",
+      "areasForImprovement": "مجالات التحسين",
+      "goals": "الأهداف",
+      "comments": "التعليقات"
+    },
+    "contractTypes": {
+      "cdi": "عقد دائم",
+      "cdd": "عقد محدد المدة",
+      "interim": "عقد مؤقت",
+      "apprenticeship": "تدريب مهني",
+      "internship": "تدريب",
+      "freelance": "عمل حر"
+    },
+    "employmentStatus": {
+      "active": "نشط",
+      "onLeave": "في إجازة",
+      "suspended": "موقوف",
+      "terminated": "منتهي الخدمة",
+      "retired": "متقاعد"
+    },
+    "shiftTypes": {
+      "regular": "عادي",
+      "overtime": "عمل إضافي",
+      "night": "ليلي",
+      "weekend": "نهاية الأسبوع",
+      "holiday": "عطلة رسمية",
+      "onCall": "مناوبة"
+    },
+    "shiftStatus": {
+      "scheduled": "مجدوَل",
+      "confirmed": "مؤكد",
+      "inProgress": "قيد التنفيذ",
+      "completed": "مكتمل",
+      "cancelled": "ملغى",
+      "noShow": "غائب"
+    },
+    "leaveTypes": {
+      "annual": "إجازة سنوية",
+      "sick": "إجازة مرضية",
+      "maternity": "إجازة أمومة",
+      "paternity": "إجازة أبوة",
+      "unpaid": "إجازة بدون راتب",
+      "bereavement": "إجازة وفاة",
+      "training": "إجازة تدريبية",
+      "compensatory": "إجازة تعويضية",
+      "other": "أخرى"
+    },
+    "leaveStatus": {
+      "pending": "قيد الانتظار",
+      "approved": "معتمدة",
+      "rejected": "مرفوضة",
+      "cancelled": "ملغاة",
+      "revoked": "مسحوبة"
+    },
+    "payrollStatus": {
+      "draft": "مسودة",
+      "calculated": "محسوبة",
+      "approved": "معتمدة",
+      "paid": "مدفوعة",
+      "cancelled": "ملغاة"
+    },
+    "evaluationTypes": {
+      "annual": "سنوي",
+      "probation": "فترة التجربة",
+      "midYear": "نصف سنوي",
+      "project": "مشروع",
+      "promotion": "ترقية",
+      "disciplinary": "تأديبي"
+    },
+    "evaluationStatus": {
+      "draft": "مسودة",
+      "submitted": "مُقدَّم",
+      "employeeReviewed": "اطلع عليه الموظف",
+      "finalized": "مُعتمد نهائياً",
+      "archived": "مؤرشف"
+    },
+    "emptyState": {
+      "title": "لا يوجد موظفون",
+      "description": "ابدأ بإضافة الموظفين"
+    }
+  },
+  "vaccination": {
+    "title": "التطعيم",
+    "devices": "أجهزة سلسلة التبريد",
+    "temperatures": "قراءات الحرارة",
+    "coldChainAlerts": "تنبيهات سلسلة التبريد",
+    "vials": "القوارير",
+    "appointments": "المواعيد",
+    "injections": "الحقن",
+    "sideEffects": "الآثار الجانبية",
+    "certificates": "الشهادات",
+    "forecasts": "توقعات الطلب",
+    "proximityAlerts": "تنبيهات القرب",
+    "newDevice": "جهاز جديد",
+    "newVial": "قارورة جديدة",
+    "newAppointment": "موعد جديد",
+    "recordInjection": "تسجيل حقنة",
+    "reportAdverseEvent": "الإبلاغ عن أثر جانبي",
+    "generateCertificate": "إصدار شهادة",
+    "fields": {
+      "deviceName": "اسم الجهاز",
+      "deviceModel": "الطراز",
+      "serialNumber": "الرقم التسلسلي",
+      "manufacturer": "الشركة المصنعة",
+      "firmwareVersion": "إصدار البرنامج الثابت",
+      "unitType": "نوع الوحدة",
+      "locationDescription": "الموقع",
+      "capacityLiters": "السعة (لتر)",
+      "minTemp": "الحد الأدنى للحرارة (°م)",
+      "maxTemp": "الحد الأقصى للحرارة (°م)",
+      "temperature": "درجة الحرارة (°م)",
+      "humidity": "الرطوبة (%)",
+      "connectionStatus": "حالة الاتصال",
+      "vialNumber": "رقم القارورة",
+      "lotNumber": "رقم الدفعة",
+      "vaccineName": "اسم اللقاح",
+      "vaccineType": "نوع اللقاح",
+      "totalDoses": "إجمالي الجرعات",
+      "dosesRemaining": "الجرعات المتبقية",
+      "doseVolume": "حجم الجرعة (مل)",
+      "expiryDate": "تاريخ انتهاء الصلاحية",
+      "beyondUseDate": "تاريخ انتهاء الاستخدام",
+      "patient": "المريض",
+      "vaccineProduct": "المنتج اللقاحي",
+      "doseNumber": "رقم الجرعة",
+      "totalDosesInSeries": "عدد جرعات السلسلة",
+      "scheduledDate": "التاريخ المحدد",
+      "timeSlot": "الفترة الزمنية",
+      "isBooster": "جرعة معززة",
+      "injectionSite": "موقع الحقن",
+      "needleGauge": "قياس الإبرة",
+      "needleLength": "طول الإبرة (مم)",
+      "lotValidationMethod": "طريقة التحقق من الدفعة",
+      "consentObtained": "تم الحصول على الموافقة",
+      "visProvided": "تم تقديم بيان معلومات اللقاح",
+      "nextDoseDate": "تاريخ الجرعة التالية",
+      "symptoms": "الأعراض",
+      "primarySymptom": "العرض الرئيسي",
+      "symptomDescription": "وصف الأعراض",
+      "severity": "الخطورة",
+      "onsetDate": "تاريخ الظهور",
+      "lifeThreatening": "يهدد الحياة",
+      "hospitalizationRequired": "يستلزم دخول المستشفى",
+      "treatmentGiven": "العلاج المقدم",
+      "certificateFormat": "صيغة الشهادة",
+      "patientName": "اسم المريض",
+      "patientDateOfBirth": "تاريخ الميلاد"
+    },
+    "storageTypes": {
+      "refrigerator": "ثلاجة",
+      "freezer": "مجمد",
+      "ultraLowFreezer": "مجمد فائق البرودة",
+      "portableCooler": "حافظة تبريد محمولة",
+      "roomTemperature": "درجة حرارة الغرفة"
+    },
+    "coldChainStatus": {
+      "optimal": "مثالي",
+      "warning": "تحذير",
+      "critical": "حرج",
+      "broken": "مكسورة",
+      "frozen": "متجمد"
+    },
+    "vialStatus": {
+      "sealed": "مختومة",
+      "opened": "مفتوحة",
+      "expiredOpen": "منتهية الصلاحية (مفتوحة)",
+      "exhausted": "مستنفدة",
+      "discarded": "مُتلفة",
+      "quarantined": "في الحجر"
+    },
+    "appointmentStatus": {
+      "scheduled": "مجدوَل",
+      "confirmed": "مؤكد",
+      "checkedIn": "تم التسجيل",
+      "inProgress": "قيد التنفيذ",
+      "completed": "مكتمل",
+      "noShow": "غائب",
+      "cancelledByPatient": "ملغى (المريض)",
+      "cancelledByPharmacy": "ملغى (الصيدلية)",
+      "rescheduled": "أُعيد جدولته"
+    },
+    "injectionSites": {
+      "deltoidLeft": "العضلة الدالية اليسرى",
+      "deltoidRight": "العضلة الدالية اليمنى",
+      "vastusLateralisLeft": "العضلة المتسعة الوحشية اليسرى",
+      "vastusLateralisRight": "العضلة المتسعة الوحشية اليمنى",
+      "ventroglutealLeft": "المنطقة الألوية البطنية اليسرى",
+      "ventroglutealRight": "المنطقة الألوية البطنية اليمنى",
+      "subcutaneousAbdomen": "تحت الجلد — البطن",
+      "intradermalForearm": "داخل الأدمة — الساعد",
+      "oral": "فموي",
+      "nasal": "أنفي"
+    },
+    "adverseSeverity": {
+      "mild": "خفيف",
+      "moderate": "متوسط",
+      "severe": "شديد",
+      "lifeThreatening": "يهدد الحياة",
+      "death": "وفاة"
+    },
+    "certificateFormats": {
+      "euDcc": "EU DCC",
+      "smartHealthCard": "Smart Health Card",
+      "who": "منظمة الصحة العالمية",
+      "national": "وطني",
+      "custom": "مخصص"
+    },
+    "emptyState": {
+      "title": "لا توجد بيانات تطعيم",
+      "description": "ابدأ بإعداد أجهزة سلسلة التبريد"
+    }
+  },
+  "quality": {
+    "title": "الجودة",
+    "events": "أحداث الجودة",
+    "capas": "CAPA",
+    "documents": "المستندات",
+    "metrics": "المؤشرات",
+    "audits": "التدقيقات",
+    "training": "التدريب",
+    "newEvent": "حدث جديد",
+    "newCAPA": "CAPA جديد",
+    "newDocument": "مستند جديد",
+    "newTraining": "تدريب جديد",
+    "fields": {
+      "eventNumber": "رقم الحدث",
+      "eventType": "النوع",
+      "severity": "الخطورة",
+      "title": "العنوان",
+      "description": "الوصف",
+      "reportedBy": "أبلغ عنه",
+      "assignedTo": "مُسنَد إلى",
+      "occurredAt": "تاريخ الحدوث",
+      "investigation": "التحقيق",
+      "rootCause": "السبب الجذري",
+      "impactAssessment": "تقييم الأثر",
+      "immediateActions": "الإجراءات الفورية",
+      "conclusion": "الخلاصة",
+      "capaNumber": "رقم CAPA",
+      "capaType": "نوع CAPA",
+      "dueDate": "تاريخ الاستحقاق",
+      "actionPlan": "خطة العمل",
+      "implementation": "التنفيذ",
+      "verification": "التحقق",
+      "effectivenessCheck": "فحص الفعالية",
+      "documentNumber": "رقم المستند",
+      "documentType": "نوع المستند",
+      "version": "الإصدار",
+      "effectiveDate": "تاريخ السريان",
+      "reviewDate": "تاريخ المراجعة",
+      "approvalDate": "تاريخ الاعتماد",
+      "content": "المحتوى",
+      "trainingRequired": "التدريب مطلوب",
+      "changeReason": "سبب التعديل",
+      "trainerName": "المدرب",
+      "trainingMethod": "طريقة التدريب",
+      "trainingDuration": "المدة (بالساعات)",
+      "assessmentScore": "درجة التقييم",
+      "competencyLevel": "مستوى الكفاءة",
+      "nextReviewDate": "تاريخ المراجعة التالية"
+    },
+    "eventTypes": {
+      "deviation": "انحراف",
+      "nonConformity": "عدم مطابقة",
+      "complaint": "شكوى",
+      "incident": "حادثة",
+      "adverseEvent": "حدث سلبي",
+      "incomingInspection": "فحص الاستلام"
+    },
+    "eventStatus": {
+      "open": "مفتوح",
+      "investigation": "قيد التحقيق",
+      "resolved": "تمت المعالجة",
+      "closed": "مُقفَل",
+      "cancelled": "ملغى"
+    },
+    "capaTypes": {
+      "corrective": "تصحيحي",
+      "preventive": "وقائي"
+    },
+    "capaStatus": {
+      "identified": "مُحدَّد",
+      "planned": "مُخطَّط",
+      "implemented": "مُنفَّذ",
+      "verified": "تم التحقق",
+      "closed": "مُقفَل"
+    },
+    "documentTypes": {
+      "procedure": "إجراء",
+      "workInstruction": "تعليمات عمل",
+      "form": "نموذج",
+      "record": "سجل",
+      "policy": "سياسة",
+      "template": "قالب"
+    },
+    "documentStatus": {
+      "draft": "مسودة",
+      "review": "قيد المراجعة",
+      "approved": "معتمد",
+      "obsolete": "ملغى"
+    },
+    "emptyState": {
+      "title": "لا توجد أحداث جودة",
+      "description": "لا توجد أحداث جودة مسجلة"
+    }
+  },
+  "delivery": {
+    "title": "التوصيل",
+    "orders": "الطلبات",
+    "drivers": "السائقون",
+    "zones": "مناطق التوصيل",
+    "tracking": "التتبع المباشر",
+    "dashboard": "لوحة تحكم التوصيل",
+    "newOrder": "طلب جديد",
+    "newDriver": "سائق جديد",
+    "newZone": "منطقة جديدة",
+    "assignDriver": "تعيين سائق",
+    "fields": {
+      "orderNumber": "رقم الطلب",
+      "customerName": "اسم العميل",
+      "customerPhone": "هاتف العميل",
+      "customerEmail": "بريد العميل",
+      "deliveryAddress": "عنوان التوصيل",
+      "city": "المدينة",
+      "postalCode": "الرمز البريدي",
+      "deliveryZone": "منطقة التوصيل",
+      "driver": "السائق",
+      "priority": "الأولوية",
+      "deliveryFee": "رسوم التوصيل",
+      "totalAmount": "المبلغ الإجمالي",
+      "deliveryInstructions": "تعليمات التوصيل",
+      "scheduledDeliveryTime": "وقت التوصيل المحدد",
+      "estimatedDeliveryTime": "وقت التوصيل المقدَّر",
+      "actualDeliveryTime": "وقت التوصيل الفعلي",
+      "driverCode": "رمز السائق",
+      "firstName": "الاسم الأول",
+      "lastName": "اسم العائلة",
+      "phone": "الهاتف",
+      "email": "البريد الإلكتروني",
+      "licenseNumber": "رقم رخصة القيادة",
+      "vehicleType": "نوع المركبة",
+      "vehicleRegistration": "لوحة المركبة",
+      "vehicleModel": "طراز المركبة",
+      "averageRating": "متوسط التقييم",
+      "totalDeliveries": "إجمالي التوصيلات",
+      "successRate": "معدل النجاح",
+      "zoneName": "اسم المنطقة",
+      "boundaries": "الحدود الجغرافية",
+      "estimatedTime": "الوقت المقدَّر (بالدقائق)",
+      "minimumOrderAmount": "الحد الأدنى للطلب",
+      "maxDailyOrders": "الحد الأقصى للطلبات اليومية",
+      "operatingHours": "ساعات العمل"
+    },
+    "orderStatus": {
+      "pending": "قيد الانتظار",
+      "assigned": "تم التعيين",
+      "pickedUp": "تم الاستلام",
+      "inTransit": "في الطريق",
+      "delivered": "تم التوصيل",
+      "failed": "فشل التوصيل",
+      "cancelled": "ملغى"
+    },
+    "priorities": {
+      "standard": "عادي",
+      "express": "سريع",
+      "sameDay": "في نفس اليوم",
+      "urgent": "عاجل"
+    },
+    "vehicleTypes": {
+      "bike": "دراجة هوائية",
+      "motorcycle": "دراجة نارية",
+      "car": "سيارة",
+      "van": "شاحنة صغيرة"
+    },
+    "driverStatus": {
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "suspended": "موقوف",
+      "offline": "غير متصل"
+    },
+    "emptyState": {
+      "title": "لا توجد توصيلات",
+      "description": "لا توجد طلبات توصيل مسجلة"
+    }
+  },
+  "suppliers": {
+    "title": "الموردون",
+    "supplierList": "قائمة الموردين",
+    "purchaseOrders": "أوامر الشراء",
+    "contracts": "العقود",
+    "newSupplier": "مورد جديد",
+    "newPurchaseOrder": "أمر شراء جديد",
+    "fields": {
+      "supplierName": "اسم المورد",
+      "contactPerson": "جهة الاتصال",
+      "phone": "الهاتف",
+      "email": "البريد الإلكتروني",
+      "address": "العنوان",
+      "taxId": "الرقم الضريبي",
+      "paymentTerms": "شروط الدفع",
+      "orderNumber": "رقم الطلب",
+      "orderDate": "تاريخ الطلب",
+      "expectedDelivery": "التسليم المتوقع",
+      "totalAmount": "المبلغ الإجمالي",
+      "status": "الحالة"
+    },
+    "emptyState": {
+      "title": "لا يوجد موردون",
+      "description": "ابدأ بإضافة الموردين"
+    }
+  },
+  "analytics": {
+    "title": "التحليلات وذكاء الأعمال",
+    "dashboard": "لوحة تحكم التحليلات",
+    "salesAnalytics": "تحليل المبيعات",
+    "inventoryAnalytics": "تحليل المخزون",
+    "financialAnalytics": "التحليل المالي",
+    "patientAnalytics": "تحليل بيانات المرضى",
+    "performanceMetrics": "مؤشرات الأداء",
+    "customReports": "تقارير مخصصة",
+    "kpis": "مؤشرات الأداء الرئيسية",
+    "trends": "الاتجاهات",
+    "comparisons": "المقارنات",
+    "forecasts": "التوقعات",
+    "exportReport": "تصدير التقرير",
+    "dateRange": "فترة التحليل",
+    "realTime": "الوقت الفعلي",
+    "emptyState": {
+      "title": "لا توجد بيانات تحليلية",
+      "description": "ستظهر البيانات التحليلية فور تسجيل المعاملات الأولى"
+    }
+  },
+  "notifications": {
+    "title": "الإشعارات",
+    "all": "الكل",
+    "unread": "غير مقروءة",
+    "read": "مقروءة",
+    "markAllRead": "تعليم الكل كمقروء",
+    "markRead": "تعليم كمقروء",
+    "markUnread": "تعليم كغير مقروء",
+    "preferences": "تفضيلات الإشعارات",
+    "channels": "القنوات",
+    "push": "إشعارات فورية",
+    "email": "البريد الإلكتروني",
+    "sms": "رسائل نصية",
+    "inApp": "داخل التطبيق",
+    "noNotifications": "لا توجد إشعارات",
+    "noUnread": "لا توجد إشعارات غير مقروءة",
+    "types": {
+      "alert": "تنبيه",
+      "info": "معلومات",
+      "warning": "تحذير",
+      "success": "نجاح",
+      "error": "خطأ"
+    },
+    "emptyState": {
+      "title": "لا توجد إشعارات",
+      "description": "ليس لديك أي إشعارات حالياً"
+    }
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "general": "عام",
+    "pharmacy": "الصيدلية",
+    "users": "المستخدمون",
+    "roles": "الأدوار والصلاحيات",
+    "security": "الأمان",
+    "integrations": "التكاملات",
+    "billing": "الاشتراك",
+    "appearance": "المظهر",
+    "language": "اللغة",
+    "timezone": "المنطقة الزمنية",
+    "currency": "العملة",
+    "notifications": "الإشعارات",
+    "backup": "النسخ الاحتياطي",
+    "audit": "سجل التدقيق",
+    "apiKeys": "مفاتيح API",
+    "webhooks": "Webhooks",
+    "fields": {
+      "pharmacyName": "اسم الصيدلية",
+      "pharmacyEmail": "البريد الإلكتروني",
+      "pharmacyPhone": "الهاتف",
+      "pharmacyAddress": "العنوان",
+      "pharmacyCity": "المدينة",
+      "pharmacyPostalCode": "الرمز البريدي",
+      "pharmacyCountry": "البلد",
+      "licenseNumber": "رقم الترخيص",
+      "licenseExpiryDate": "تاريخ انتهاء الترخيص",
+      "timezone": "المنطقة الزمنية",
+      "currency": "العملة",
+      "language": "اللغة",
+      "taxRate": "معدل الضريبة الافتراضي (%)",
+      "openingHours": "ساعات العمل",
+      "logo": "الشعار",
+      "website": "الموقع الإلكتروني",
+      "theme": "السمة",
+      "darkMode": "الوضع الداكن",
+      "lightMode": "الوضع الفاتح",
+      "systemTheme": "سمة النظام"
+    },
+    "sections": {
+      "pharmacyInfo": "معلومات الصيدلية",
+      "contactInfo": "معلومات الاتصال",
+      "legalInfo": "المعلومات القانونية",
+      "operationalSettings": "الإعدادات التشغيلية",
+      "displaySettings": "إعدادات العرض"
+    },
+    "emptyState": {
+      "title": "الإعدادات",
+      "description": "قم بتهيئة إعدادات صيدليتك"
+    }
+  },
+  "identity": {
+    "title": "الهوية والوصول",
+    "users": "المستخدمون",
+    "organizations": "المؤسسات",
+    "roles": "الأدوار المخصصة",
+    "sessions": "الجلسات النشطة",
+    "newUser": "مستخدم جديد",
+    "newOrganization": "مؤسسة جديدة",
+    "newRole": "دور جديد",
+    "fields": {
+      "firstName": "الاسم الأول",
+      "lastName": "اسم العائلة",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
+      "password": "كلمة المرور",
+      "userType": "نوع المستخدم",
+      "status": "الحالة",
+      "roles": "الأدوار",
+      "isPatient": "مريض",
+      "emailVerified": "البريد الإلكتروني موثَّق",
+      "mfaEnabled": "المصادقة الثنائية مفعَّلة",
+      "lastLogin": "آخر تسجيل دخول",
+      "organizationName": "اسم المؤسسة",
+      "organizationType": "نوع المؤسسة",
+      "tenantId": "معرّف المستأجر",
+      "pharmacyId": "معرّف الصيدلية",
+      "licenseNumber": "رقم الترخيص",
+      "roleName": "الاسم التقني",
+      "displayName": "الاسم المعروض",
+      "permissions": "الصلاحيات",
+      "level": "المستوى",
+      "inheritsFrom": "يرث من",
+      "requiresApproval": "يتطلب موافقة",
+      "maxUsers": "الحد الأقصى للمستخدمين",
+      "color": "اللون",
+      "icon": "الأيقونة",
+      "tags": "الوسوم"
+    },
+    "userStatus": {
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "suspended": "موقوف",
+      "pendingVerification": "بانتظار التوثيق",
+      "archived": "مؤرشف"
+    },
+    "organizationTypes": {
+      "pharmacy": "صيدلية",
+      "clinic": "عيادة",
+      "hospital": "مستشفى",
+      "laboratory": "مختبر",
+      "other": "أخرى"
+    },
+    "organizationStatus": {
+      "active": "نشطة",
+      "inactive": "غير نشطة",
+      "suspended": "موقوفة",
+      "pending": "قيد الانتظار"
+    },
+    "membershipTypes": {
+      "staff": "طاقم العمل",
+      "patient": "مريض",
+      "admin": "مدير",
+      "guest": "زائر"
+    },
+    "roleStatus": {
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "archived": "مؤرشف"
+    },
+    "emptyState": {
+      "title": "لا يوجد مستخدمون",
+      "description": "ابدأ بإنشاء المستخدمين"
+    }
+  },
+  "eInvoice": {
+    "title": "الفوترة الإلكترونية",
+    "fiscalCredentials": "بيانات الاعتماد الضريبية",
+    "fiscalInvoices": "الفواتير الضريبية",
+    "submit": "الإرسال إلى الإدارة الضريبية",
+    "verify": "التحقق من الحالة",
+    "emptyState": {
+      "title": "لا توجد فواتير إلكترونية",
+      "description": "قم بإعداد بيانات الاعتماد الضريبية للبدء"
+    }
+  },
+  "insurance": {
+    "title": "التأمين",
+    "providers": "شركات التأمين",
+    "claims": "مطالبات التعويض",
+    "policies": "بوالص التأمين",
+    "newClaim": "مطالبة جديدة",
+    "fields": {
+      "providerName": "اسم شركة التأمين",
+      "policyNumber": "رقم البوليصة",
+      "coveragePercent": "التغطية (%)",
+      "claimStatus": "حالة المطالبة",
+      "claimAmount": "المبلغ المطالب به",
+      "approvedAmount": "المبلغ المعتمد"
+    },
+    "emptyState": {
+      "title": "لا توجد بيانات تأمين",
+      "description": "ابدأ بإضافة شركات التأمين"
+    }
+  },
+  "reports": {
+    "title": "التقارير",
+    "salesReport": "تقرير المبيعات",
+    "inventoryReport": "تقرير المخزون",
+    "financialReport": "التقرير المالي",
+    "patientReport": "تقرير المرضى",
+    "hrReport": "تقرير الموارد البشرية",
+    "qualityReport": "تقرير الجودة",
+    "generate": "إنشاء التقرير",
+    "schedule": "جدولة تقرير",
+    "emptyState": {
+      "title": "لا توجد تقارير",
+      "description": "أنشئ تقريراً لعرض بياناتك"
+    }
+  },
+  "dashboard": {
+    "title": "لوحة التحكم",
+    "welcome": "مرحباً",
+    "overview": "نظرة عامة",
+    "quickActions": "إجراءات سريعة",
+    "recentActivity": "النشاط الأخير",
+    "todaySales": "مبيعات اليوم",
+    "pendingOrders": "طلبات قيد الانتظار",
+    "lowStockAlerts": "تنبيهات المخزون المنخفض",
+    "expiringProducts": "منتجات قاربت على الانتهاء",
+    "pendingPrescriptions": "وصفات قيد الانتظار",
+    "upcomingAppointments": "المواعيد القادمة",
+    "revenue": "الإيرادات",
+    "profit": "الأرباح",
+    "customers": "العملاء",
+    "products": "المنتجات"
+  },
+  "errors": {
+    "required": "{field} مطلوب",
+    "invalidEmail": "البريد الإلكتروني غير صالح",
+    "invalidPhone": "رقم الهاتف غير صالح",
+    "invalidUrl": "الرابط غير صالح",
+    "minLength": "يجب أن يحتوي {field} على {min} أحرف على الأقل",
+    "maxLength": "يجب ألا يتجاوز {field} {max} حرفاً",
+    "minValue": "يجب أن يكون {field} {min} على الأقل",
+    "maxValue": "يجب ألا يتجاوز {field} {max}",
+    "passwordMismatch": "كلمتا المرور غير متطابقتين",
+    "invalidDate": "تاريخ غير صالح",
+    "dateInPast": "لا يمكن أن يكون التاريخ في الماضي",
+    "dateInFuture": "لا يمكن أن يكون التاريخ في المستقبل",
+    "invalidFormat": "صيغة غير صالحة",
+    "duplicateEntry": "هذا الإدخال موجود بالفعل",
+    "insufficientStock": "المخزون غير كافٍ",
+    "expiredProduct": "هذا المنتج منتهي الصلاحية",
+    "sessionRequired": "يجب فتح جلسة صندوق"
+  },
+  "pages": {
+    "home": {
+      "badge": "منصة SaaS للصيدليات",
+      "heroTitle1": "صيدليتك،",
+      "heroTitle2": "أكثر ربحية",
+      "heroTitle3": "بالإدارة الذكية.",
+      "heroDesc": "أتمتة شاملة، وتحسين المبيعات، وامتثال مضمون — من طاولة الصرف إلى القيادة الاستراتيجية.",
+      "ctaPrimary": "ابدأ المغامرة",
+      "ctaDemo": "شاهد العرض التوضيحي",
+      "statsPharmacies": "صيدلية",
+      "statsTransactions": "معاملة",
+      "statsUptime": "وقت التشغيل",
+      "statsSupport": "الدعم",
+      "capabilitiesTag": "القدرات",
+      "capabilitiesTitle": "كل ما تحتاجه صيدليتك",
+      "capabilitiesHighlight": "لتعظيم ربحيتها.",
+      "capabilitiesDesc": "منصة متكاملة مصممة للصيدليات العصرية، بأدوات مبنية لأرض الواقع.",
+      "capInventory": "المخزون وإعادة التوريد",
+      "capInventoryDesc": "المنتجات، الحركات، تواريخ الصلاحية، واقتراحات إعادة التوريد — تقليل النفاد.",
+      "capInventoryHighlight": "المخزون تحت السيطرة",
+      "capPatients": "المرضى والوصفات الطبية",
+      "capPatientsDesc": "ملفات المرضى، الوصفات الطبية، والتطعيم لخدمة علاجية منظمة.",
+      "capPatientsHighlight": "أمان صرف الأدوية",
+      "capPOS": "نقطة البيع",
+      "capPOSDesc": "نقطة بيع حديثة، فوترة، ووسائل دفع مناسبة لسوقك.",
+      "capPOSHighlight": "تحصيل سلس",
+      "capAnalytics": "القيادة والتقارير",
+      "capAnalyticsDesc": "لوحات تحكم، تقارير، وذكاء أعمال لإدارة الهوامش والأحجام والفرق.",
+      "capAnalyticsHighlight": "قرارات مستنيرة",
+      "capCompliance": "الامتثال والتدقيق",
+      "capComplianceDesc": "الجودة، السجل المهني، والتتبع للاستجابة لعمليات الرقابة.",
+      "capComplianceHighlight": "تتبع كامل 100%",
+      "capSupplyChain": "سلسلة توريد متكاملة",
+      "capSupplyChainDesc": "طلبات الشراء، الأوامر، الاستلام، ومتابعة الموردين في مسار واحد.",
+      "capSupplyChainHighlight": "دورة شراء كاملة",
+      "viewModule": "عرض الوحدة",
+      "bentoPOS": "نقطة بيع فائقة السرعة",
+      "bentoPOSDesc": "واجهة بديهية مصممة للسرعة. أدِر طوابير الانتظار بسهولة.",
+      "bentoPOSFeature1": "مسح فوري للرمز الشريطي",
+      "bentoPOSFeature2": "دفع متعدد الطرق",
+      "bentoPOSFeature3": "إيصالات رقمية",
+      "bentoAnalytics": "تحليلات متقدمة",
+      "bentoAnalyticsDesc": "توقع احتياجات المخزون وحدد منتجاتك الأكثر ربحية.",
+      "bentoCompliance": "امتثال تام",
+      "bentoComplianceDesc": "تقارير ضريبية آلية وتتبع كامل للأدوية الحساسة.",
+      "bentoPatients": "إدارة المرضى",
+      "bentoPatientsDesc": "تتبع السجل الطبي، وأدِر الوصفات المتكررة، وأرسل تذكيرات تلقائية.",
+      "ctaTitle": "هل أنت مستعد",
+      "ctaHighlight": "لتحديث",
+      "ctaTitleEnd": "صيدليتك؟",
+      "ctaDesc": "انضم إلى أكثر من 500 صيدلية تثق بـ SyntixPharma لتحسين عملياتها اليومية.",
+      "ctaRegister": "جرّب مجاناً",
+      "ctaContact": "تواصل مع الفريق",
+      "ctaFootnote": "التثبيت خلال 24 ساعة · التدريب مشمول · دعم 7 أيام/7",
+      "monthlyRevenue": "الإيرادات الشهرية",
+      "recentActivity": "النشاط الأخير",
+      "sales": "المبيعات",
+      "patients": "المرضى",
+      "products": "المنتجات",
+      "inventory": "المخزون",
+      "pos": "نقطة البيع",
+      "analytics": "التحليلات",
+      "saleNumber": "بيع #4821",
+      "saleDetails": "3 منتجات · $42.50",
+      "stockUpdated": "تم تحديث المخزون",
+      "stockUpdateDetails": "باراسيتامول · +200 وحدة",
+      "newPatient": "مريض جديد",
+      "newPatientDetails": "Marie K. · وصفة طبية",
+      "period7d": "7أ",
+      "period30d": "30أ"
+    },
+    "about": {
+      "tag": "قصتنا",
+      "title": "نحدث ثورة في",
+      "titleHighlight": "الصحة",
+      "titleEnd": "في أفريقيا.",
+      "desc": "وُلدت SyntixPharma من رؤية بسيطة: تمكين الصيادلة من الأدوات التكنولوجية اللازمة لتقديم رعاية فائقة الجودة، في كل مكان وكل وقت.",
+      "statFoundation": "التأسيس",
+      "statClients": "العملاء",
+      "statCountries": "الدول",
+      "quote": "مهمتنا هي إزالة الحواجز التكنولوجية.",
+      "missionTag": "المهمة والرؤية",
+      "missionTitle": "تحويل الصيدلة الأفريقية.",
+      "missionDesc": "نبني البنية التحتية التكنولوجية التي تمكن الصيدليات الأفريقية من منافسة أفضل المعايير العالمية.",
+      "missionLabel": "مهمتنا",
+      "missionText": "جعل تكنولوجيا الصيدلة في متناول كل صيدلي في أفريقيا، بغض النظر عن مستواه التقني أو موقعه الجغرافي.",
+      "visionLabel": "رؤيتنا",
+      "visionText": "قارة يستفيد فيها كل مريض من خدمة صيدلانية رقمية قابلة للتتبع وعالمية المستوى.",
+      "timelineTag": "المسيرة",
+      "timelineTitle": "تطورنا",
+      "timeline2021": "الانطلاقة",
+      "timeline2021Desc": "إطلاق النسخة التجريبية الأولى في كينشاسا مع 10 صيدليات رائدة.",
+      "timeline2022": "التوسع في الكونغو",
+      "timeline2022Desc": "التوسع إلى لوبومباشي وغوما. أكثر من 100 صيدلية نشطة.",
+      "timeline2023": "الانتشار الدولي",
+      "timeline2023Desc": "النشر في بوروندي والكونغو-برازافيل. إطلاق الذكاء الاصطناعي التنبؤي.",
+      "timeline2024": "التوسع الكبير",
+      "timeline2024Desc": "أكثر من 500 صيدلية. شراكات مع كبار الموزعين الوطنيين.",
+      "valuesTag": "القيم",
+      "valuesTitle": "ما يوجهنا",
+      "valueEmpathy": "التعاطف",
+      "valueEmpathyDesc": "نضع الإنسان في صميم كل سطر برمجي.",
+      "valueIntegrity": "النزاهة",
+      "valueIntegrityDesc": "أمان البيانات وسريتها من أولوياتنا المطلقة.",
+      "valueExcellence": "التميّز",
+      "valueExcellenceDesc": "نسعى للكمال في تجربة المستخدم والدعم الفني.",
+      "valueCollaboration": "التعاون",
+      "valueCollaborationDesc": "ننمو مع عملائنا بالاستماع لاحتياجاتهم الحقيقية.",
+      "teamCta": "تريد الانضمام إلينا؟",
+      "teamCtaDesc": "نوظف مواهب شغوفة بتكنولوجيا الصحة والأثر الاجتماعي في أفريقيا.",
+      "teamCtaButton": "عرض الوظائف المتاحة",
+      "teamCtaContact": "تواصل معنا"
+    },
+    "contact": {
+      "tag": "تواصل معنا",
+      "title": "لنتحدث عن",
+      "titleHighlight": "مشروعك.",
+      "desc": "فريقنا متاح للإجابة على جميع استفساراتك ومرافقتك في تحولك الرقمي.",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
+      "address": "العنوان",
+      "hours": "ساعات العمل",
+      "hoursValue": "الإثنين – الجمعة · 8 ص – 6 م",
+      "techSupport": "الدعم الفني",
+      "techSupportDesc": "هل أنت عميل حالي؟ ادخل إلى بوابة الدعم للحصول على مساعدة ذات أولوية.",
+      "accessSupport": "الوصول إلى الدعم",
+      "formTitle": "أرسل لنا رسالة",
+      "fullName": "الاسم الكامل",
+      "fullNamePlaceholder": "د. أحمد محمد",
+      "emailLabel": "البريد الإلكتروني",
+      "emailPlaceholder": "ahmed@pharmacy.com",
+      "phoneLabel": "الهاتف",
+      "phonePlaceholder": "+243 99 000 0000",
+      "subject": "الموضوع",
+      "subjectDemo": "طلب عرض توضيحي",
+      "subjectPricing": "استفسار عن الأسعار",
+      "subjectPartnership": "شراكة",
+      "subjectSupport": "دعم فني",
+      "subjectOther": "أخرى",
+      "message": "الرسالة",
+      "messagePlaceholder": "صِف احتياجك...",
+      "sendButton": "إرسال الرسالة"
+    },
+    "pricing": {
+      "tag": "التسعير",
+      "title": "اختر الخطة",
+      "titleHighlight": "المناسبة",
+      "titleEnd": "لصيدليتك",
+      "desc": "ابدأ مجاناً. وتطوَّر حين تشاء.",
+      "popular": "الأكثر شعبية",
+      "free": "مجاني",
+      "onQuote": "حسب العرض",
+      "perMonth": "/ شهرياً",
+      "billedAnnually": "يُفوتر سنوياً",
+      "saveAnnual": "أو وفِّر ~15% بالاشتراك السنوي",
+      "contactTeam": "تواصل مع الفريق",
+      "startFree": "ابدأ مجاناً",
+      "freeTrial": "تجربة مجانية 30 يوماً",
+      "choosePlan": "اختر هذه الخطة",
+      "whatsIncluded": "ما يتضمنه",
+      "viewComparison": "عرض المقارنة التفصيلية",
+      "comparisonTitle": "مقارنة تفصيلية",
+      "limits": "الحدود",
+      "modules": "الوحدات",
+      "support": "الدعم",
+      "users": "المستخدمون",
+      "sites": "عدد المواقع",
+      "storage": "التخزين السحابي",
+      "apiCalls": "استدعاءات API / شهرياً",
+      "unlimited": "غير محدود",
+      "faqTitle": "الأسئلة الشائعة",
+      "faqDesc": "إجابات على أكثر الأسئلة شيوعاً حول أسعارنا.",
+      "plansComingSoon": "الخطط ستكون متاحة قريباً.",
+      "contactUs": "تواصل معنا",
+      "heroTag": "أسعار بسيطة وشفافة",
+      "heroTitle": "الخطة المثالية",
+      "heroHighlight": "لصيدليتك",
+      "heroDesc": "ابدأ مجاناً، وتطوَّر حين تشاء.",
+      "heroDescLine2": "بدون رسوم خفية، بدون التزام.",
+      "monthly": "شهري",
+      "annual": "سنوي",
+      "loadError": "تعذر تحميل الخطط حالياً.",
+      "comparisonDesc": "كل ما تتضمنه كل خطة، في لمحة.",
+      "featureHeader": "الميزة",
+      "moduleSales": "نقطة البيع (POS)",
+      "moduleInventory": "إدارة المخزون",
+      "modulePrescriptions": "الوصفات الطبية",
+      "moduleSupplyChain": "سلسلة التوريد والمشتريات",
+      "moduleAccounting": "المحاسبة",
+      "moduleAnalytics": "التحليلات و BI",
+      "moduleCrm": "الولاء و CRM",
+      "moduleDelivery": "إدارة التوصيل",
+      "trialAvailable": "تجربة مجانية 30 يوماً",
+      "faq1Q": "هل يمكنني تغيير الخطة في أي وقت؟",
+      "faq1A": "نعم، يمكنك الترقية أو التخفيض من لوحة التحكم. يتم حساب الفرق بالتناسب.",
+      "faq2Q": "كيف تعمل التجربة المجانية؟",
+      "faq2A": "30 يوماً كاملة مع جميع ميزات الخطة المختارة. لا حاجة لبطاقة ائتمان للبدء.",
+      "faq3Q": "هل هناك رسوم إعداد؟",
+      "faq3A": "لا. التسجيل والإعداد مجانيان 100%. ستكون جاهزاً للعمل في أقل من 24 ساعة.",
+      "faq4Q": "ما طرق الدفع المقبولة؟",
+      "faq4A": "بطاقة ائتمان (Visa، Mastercard)، تحويل SEPA، و Mobile Money (M-Pesa، Airtel Money، Orange Money).",
+      "guaranteeTitle": "ضمان 30 يوماً",
+      "guaranteeDesc": "استرداد الأموال بدون شروط.",
+      "expressTitle": "إعداد سريع",
+      "expressDesc": "جاهز للعمل في أقل من 24 ساعة.",
+      "humanSupportTitle": "دعم بشري",
+      "humanSupportDesc": "فريق حقيقي يرافقك.",
+      "unlimitedStorage": "تخزين غير محدود",
+      "storageGb": "{amount} GB تخزين",
+      "tierLabel_free": "مجاني",
+      "tierLabel_starter": "Starter",
+      "tierLabel_professional": "Pro",
+      "tierLabel_enterprise": "Enterprise",
+      "tierLabel_custom": "مخصص",
+      "feat_1pharmacy": "صيدلية واحدة",
+      "feat_5users": "5 مستخدمين",
+      "feat_basicPos": "نقطة بيع أساسية",
+      "feat_stockMgmt": "إدارة المخزون",
+      "feat_communitySupport": "دعم مجتمعي",
+      "feat_15users": "15 مستخدماً",
+      "feat_fullPos": "نقطة بيع كاملة",
+      "feat_advancedInventory": "مخزون متقدم",
+      "feat_patientsRx": "المرضى والوصفات",
+      "feat_monthlyReports": "تقارير شهرية",
+      "feat_emailSupport": "دعم بالبريد الإلكتروني",
+      "feat_5pharmacies": "حتى 5 صيدليات",
+      "feat_50users": "50 مستخدماً",
+      "feat_allModules": "جميع الوحدات مشمولة",
+      "feat_analyticsBI": "التحليلات و BI",
+      "feat_supplyChain": "سلسلة التوريد",
+      "feat_integratedAccounting": "محاسبة متكاملة",
+      "feat_crmLoyalty": "CRM والولاء",
+      "feat_prioritySupport": "دعم ذو أولوية 24/7",
+      "feat_unlimitedSites": "مواقع غير محدودة",
+      "feat_unlimitedUsers": "مستخدمون غير محدودين",
+      "feat_customModules": "وحدات قابلة للتخصيص",
+      "feat_dedicatedApi": "API مخصص",
+      "feat_ssoCompliance": "SSO والامتثال",
+      "feat_accountManager": "مدير حساب مخصص",
+      "feat_sla": "SLA مضمون 99.9%",
+      "feat_onsiteTraining": "تدريب في الموقع",
+      "feat_dedicatedInfra": "بنية تحتية مخصصة",
+      "feat_customFeatures": "ميزات مخصصة",
+      "feat_customIntegrations": "تكاملات مخصصة",
+      "feat_premiumSupport": "دعم متميز",
+      "shortFeat_5users": "5 مستخدمين",
+      "shortFeat_basicPos": "POS أساسي",
+      "shortFeat_stockMgmt": "إدارة المخزون",
+      "shortFeat_communitySupport": "دعم مجتمعي",
+      "shortFeat_15users": "15 مستخدماً",
+      "shortFeat_fullPos": "POS كامل",
+      "shortFeat_advancedInventory": "مخزون متقدم",
+      "shortFeat_patientsRx": "المرضى والوصفات",
+      "shortFeat_freeTrial": "تجربة مجانية",
+      "shortFeat_50users": "50 مستخدماً",
+      "shortFeat_allModules": "جميع الوحدات",
+      "shortFeat_analyticsBI": "التحليلات و BI",
+      "shortFeat_crmLoyalty": "CRM والولاء",
+      "shortFeat_support247": "دعم 24/7",
+      "shortFeat_unlimitedUsers": "مستخدمون غير محدودين",
+      "shortFeat_unlimitedSites": "مواقع غير محدودة",
+      "shortFeat_dedicatedApi": "API مخصص",
+      "shortFeat_accountManager": "مدير حساب",
+      "shortFeat_sla": "SLA 99.9%",
+      "ctaContact": "تواصل",
+      "ctaStart": "ابدأ",
+      "ctaTry": "جرّب",
+      "popularShort": "شائع"
+    },
+    "modules": {
+      "tag": "دليل المنتجات",
+      "title": "كل وحدة من",
+      "titleEnd": "مشروحة لفريقك",
+      "readyTitle": "هل أنت مستعد لرؤية المنصة قيد العمل؟",
+      "readyDesc": "تسجيل موجَّه، مساحة مخصصة لكل صيدلية، ومسار تأهيل الفريق مشمول.",
+      "readyButton": "ابدأ مجاناً",
+      "viewPricing": "عرض الأسعار",
+      "categories": "الفئات"
+    },
+    "support": {
+      "tag": "الدعم",
+      "title": "كيف يمكننا",
+      "titleHighlight": "مساعدتك؟",
+      "desc": "نوفر عدة قنوات للحصول على دعم سريع ومخصص.",
+      "channels": {
+        "liveSupport": {
+          "title": "دعم مباشر",
+          "desc": "دردشة فورية مع فريقنا التقني، من الاثنين إلى الجمعة.",
+          "cta": "فتح الدردشة"
+        },
+        "knowledgeBase": {
+          "title": "قاعدة المعرفة",
+          "desc": "شروحات وأدلة وأسئلة شائعة لحل المشاكل بنفسك.",
+          "cta": "استكشف"
+        },
+        "community": {
+          "title": "المجتمع",
+          "desc": "تواصل مع صيادلة آخرين يستخدمون SyntixPharma.",
+          "cta": "انضم"
+        },
+        "tickets": {
+          "title": "التذاكر",
+          "desc": "أرسل تذكرة مفصلة لمتابعة مخصصة لطلبك.",
+          "cta": "إنشاء تذكرة"
+        }
+      },
+      "popularArticlesTitle": "مقالات شائعة",
+      "popularArticles": {
+        "a1": "كيف يمكنني استيراد المخزون الحالي؟",
+        "a2": "إعداد Mobile Money (M-Pesa, Orange)",
+        "a3": "إضافة مستخدم جديد",
+        "a4": "إنشاء تقرير مبيعات شهري",
+        "a5": "إعداد تنبيهات انتهاء الصلاحية",
+        "a6": "ربط طابعة حرارية"
+      },
+      "supportEmailTitle": "بريد الدعم",
+      "supportEmailDesc": "الرد خلال 4 ساعات عمل.",
+      "phoneSupportTitle": "الدعم عبر الهاتف",
+      "phoneSupportDesc": "الاثنين–الجمعة · 8ص–6م (توقيت كينشاسا)",
+      "phoneSupportValue": "+243 99 000 0000"
+    },
+    "solutions": {
+      "tag": "حلولنا",
+      "title": "مصممة لكل",
+      "titleHighlight": "مجال",
+      "titleEnd": "في الرعاية الصحية.",
+      "desc": "سواء كنت صيدلية حيّ أو موزعاً وطنياً، لدى SyntixPharma الحل المناسب.",
+      "startCta": "ابدأ بهذه الحلول",
+      "impactTag": "أثر حقيقي",
+      "storiesTitle": "قصص",
+      "storiesTitleHighlight": "النجاح.",
+      "storiesDesc": "اكتشف كيف تغيّر SyntixPharma عمل المختصين الصحيين يومياً.",
+      "solutions": {
+        "officine": {
+          "title": "صيدلية تجزئة",
+          "desc": "حسّن مبيعات الشباك وعزّز ولاء المرضى.",
+          "features": {
+            "f1": "مبيعات POS سريعة",
+            "f2": "إدارة الوصفات",
+            "f3": "تنبيهات المخزون",
+            "f4": "ولاء العملاء"
+          }
+        },
+        "grossiste": {
+          "title": "تجار الجملة والموزعون",
+          "desc": "أدر أحجاماً كبيرة ولوجستيات معقدة بكل سهولة.",
+          "features": {
+            "f1": "إدارة المستودعات",
+            "f2": "تتبع التسليمات",
+            "f3": "بوابة عملاء B2B",
+            "f4": "تحليلات متقدمة"
+          }
+        },
+        "hopital": {
+          "title": "صيدلية مستشفى",
+          "desc": "ادمج الصيدلية ضمن مسار رعاية المنشأة.",
+          "features": {
+            "f1": "سجل مريض مشترك",
+            "f2": "إدارة الأقسام",
+            "f3": "تتبع على مستوى الوحدة",
+            "f4": "مخزون مركزي"
+          }
+        }
+      },
+      "stories": {
+        "pax": {
+          "title": "صيدلية السلام",
+          "location": "لوبومباشي، الكونغو الديمقراطية",
+          "impact": "+45% ربحية خلال 6 أشهر",
+          "quote": "بفضل إدارة المخزون التنبؤية، خفّضنا خسائر انتهاء الصلاحية بنسبة 80%."
+        },
+        "horizon": {
+          "title": "مجموعة أفق الطبية",
+          "location": "أبيدجان، كوت ديفوار",
+          "impact": "صفر أخطاء في الصرف",
+          "quote": "التتبع على مستوى الوحدة أمّن مسار الدواء بالكامل من المستودع إلى المريض."
+        }
+      },
+      "ctaTitle": "هل تحتاج حلاً مخصصاً؟",
+      "ctaDesc": "يمكن لفريقنا الهندسي تكييف SyntixPharma لاحتياجات مؤسستك الصحية الخاصة.",
+      "ctaContact": "تحدث مع خبير",
+      "ctaPricing": "عرض الأسعار"
+    },
+    "features": {
+      "tag": "الميزات",
+      "title": "كل ما تحتاجه من أجل",
+      "titleHighlight": "النجاح.",
+      "desc": "منصة متكاملة صُممت خصيصاً لتحديات الصيدليات الحديثة في أفريقيا.",
+      "modulesCatalogCta": "كتالوج مفصل لجميع الوحدات",
+      "features": {
+        "inventorySmart": {
+          "title": "إدارة ذكية للمخزون",
+          "desc": "تتبع فوري، تنبيهات تلقائية لانتهاء الصلاحية، وإدارة متعددة المستودعات.",
+          "details": {
+            "d1": "جرد دوري",
+            "d2": "الباركود",
+            "d3": "تحويلات بين الفروع",
+            "d4": "تقييم المخزون"
+          }
+        },
+        "posBilling": {
+          "title": "المبيعات والفوترة عبر POS",
+          "desc": "واجهة بيع فائقة السرعة متوافقة مع شاشات اللمس وقارئات الباركود.",
+          "details": {
+            "d1": "طرق دفع متعددة",
+            "d2": "إدارة الخصومات",
+            "d3": "إيصالات مخصصة",
+            "d4": "وضع دون اتصال"
+          }
+        },
+        "patientsCrm": {
+          "title": "إدارة المرضى وCRM",
+          "desc": "سجل كامل للوصفات ومتابعة مخصصة لكل مريض.",
+          "details": {
+            "d1": "سجل طبي مشترك",
+            "d2": "تذكير بالعلاج",
+            "d3": "برامج الولاء",
+            "d4": "ملاحظات سريرية"
+          }
+        },
+        "complianceSecurity": {
+          "title": "الامتثال والأمان",
+          "desc": "استضافة آمنة لبيانات الصحة وتتبع كامل لكل إجراء.",
+          "details": {
+            "d1": "تشفير AES-256",
+            "d2": "نسخ احتياطية كل ساعة",
+            "d3": "سجلات تدقيق",
+            "d4": "صلاحيات حسب الأدوار"
+          }
+        },
+        "cloudMobility": {
+          "title": "سحابة وتنقل",
+          "desc": "أدر صيدليتك من أي مكان على الكمبيوتر أو الجهاز اللوحي أو الهاتف.",
+          "details": {
+            "d1": "مزامنة فورية",
+            "d2": "تصميم متجاوب",
+            "d3": "متعدد المستخدمين",
+            "d4": "بدون تثبيت"
+          }
+        },
+        "reportsAnalytics": {
+          "title": "تقارير وتحليلات",
+          "desc": "لوحات متابعة تنبؤية لتوقع الاحتياجات وتحسين الربحية.",
+          "details": {
+            "d1": "توقعات المبيعات",
+            "d2": "أفضل 10 منتجات",
+            "d3": "هوامش صافية",
+            "d4": "تصدير Excel / PDF"
+          }
+        },
+        "deliveryLogistics": {
+          "title": "التوصيل واللوجستيات",
+          "desc": "تتبع الجولات وحالات الطلبات وخدمة توصيل منزلية منظمة.",
+          "details": {
+            "d1": "سندات تسليم",
+            "d2": "تتبع الحالات",
+            "d3": "مناطق التوصيل",
+            "d4": "إشعارات العملاء"
+          }
+        },
+        "loyaltyCrm": {
+          "title": "الولاء وCRM",
+          "desc": "برامج نقاط ومزايا وحملات موجهة لزيادة ولاء المرضى.",
+          "details": {
+            "d1": "نقاط ولاء",
+            "d2": "عروض مخصصة",
+            "d3": "سجل العميل",
+            "d4": "تقسيم واستهداف"
+          }
+        },
+        "supplyChainPurchases": {
+          "title": "سلسلة الإمداد والمشتريات",
+          "desc": "من طلب الشراء إلى الاستلام، مسار شراء متكامل.",
+          "details": {
+            "d1": "طلبات شراء",
+            "d2": "أوامر شراء",
+            "d3": "استلام (GRN)",
+            "d4": "عروض أسعار الموردين"
+          }
+        }
+      },
+      "ecosystemTag": "النظام البيئي",
+      "ecosystemTitle": "متصلة بـ",
+      "ecosystemTitleHighlight": "عالمك.",
+      "ecosystemDesc": "يتكامل SyntixPharma بسلاسة مع الأدوات التي تستخدمها بالفعل.",
+      "integrations": {
+        "mobileMoney": { "title": "Mobile Money", "desc": "M-Pesa، Airtel Money، Orange Money." },
+        "accounting": { "title": "المحاسبة", "desc": "تصدير مباشر إلى Sage وQuickBooks." },
+        "wholesalers": { "title": "تجار الجملة", "desc": "طلبات تلقائية عبر EDI." },
+        "insurances": { "title": "التأمين", "desc": "التحقق من الحقوق في الوقت الفعلي." }
+      },
+      "deployTag": "النشر",
+      "deployTitle": "جاهزة في",
+      "deployTitleHighlight": "3 خطوات.",
+      "deployDesc": "انتقال سلس نحو صيدلية المستقبل.",
+      "deploySteps": {
+        "01": { "title": "الإعداد", "desc": "استورد مخزونك الحالي واضبط صلاحيات المستخدمين خلال دقائق." },
+        "02": { "title": "التدريب", "desc": "استفد من شروحاتنا التفاعلية أو اطلب جلسة مع خبرائنا." },
+        "03": { "title": "الانطلاق", "desc": "ابدأ البيع وإدارة الصيدلية بكفاءة أعلى." }
+      },
+      "deepDive": {
+        "title": "واجهة",
+        "titleHighlight": "سهلة",
+        "titleEnd": "— دون الحاجة إلى تدريب.",
+        "desc": "آلاف الساعات من الملاحظة داخل الصيدليات لبناء أكثر واجهة سلاسة في السوق. كن جاهزاً للعمل خلال أقل من 30 دقيقة.",
+        "items": {
+          "i1": "وضع داكن للعمل الليلي",
+          "i2": "اختصارات لوحة المفاتيح للمحترفين",
+          "i3": "بحث شامل فائق السرعة",
+          "i4": "دعم متعدد اللغات (الفرنسية، الإنجليزية، العربية)"
+        }
+      },
+      "tryFreeCta": "جرّب مجاناً"
+    },
+    "planDemo": {
+      "tag": "اكتشف",
+      "title": "احجز",
+      "titleHighlight": "عرضاً",
+      "titleEnd": "تجريبياً مجانياً.",
+      "desc": "اكتشف كيف يمكن لـ SyntixPharma أن يطور صيدليتك خلال جلسة مخصصة مع أحد خبرائنا.",
+      "quickInfo": {
+        "duration": "30 دقيقة",
+        "remote": "عبر مكالمة فيديو",
+        "flexible": "مواعيد مرنة"
+      },
+      "benefits": {
+        "b1": "عرض تجريبي مخصص لمدة 30 دقيقة",
+        "b2": "تهيئة مناسبة لصيدليتك",
+        "b3": "أسئلة وأجوبة مباشرة",
+        "b4": "خطة ترحيل مجانية",
+        "b5": "بدون التزام"
+      },
+      "testimonial": {
+        "quote": "أقنعنا العرض خلال 15 دقيقة. الواجهة بديهية جداً لدرجة أن فريقنا بدأ العمل في نفس اليوم.",
+        "author": "د. أميسي، صيدلية السلام"
+      },
+      "form": {
+        "title": "احجز موعدك",
+        "fullName": "الاسم الكامل",
+        "fullNamePlaceholder": "د. جون دو",
+        "workEmail": "البريد المهني",
+        "workEmailPlaceholder": "john@pharmacy.com",
+        "phone": "الهاتف",
+        "phonePlaceholder": "+243 99 000 0000",
+        "pharmacyName": "اسم الصيدلية",
+        "pharmacyNamePlaceholder": "صيدلية المركز",
+        "preferredSlot": "الوقت المفضل",
+        "slotMorning": "صباحاً (8–12)",
+        "slotAfternoon": "بعد الظهر (13–17)",
+        "slotEvening": "مساءً (17–19)",
+        "submit": "احجز العرض التجريبي",
+        "footnote": "مجاني · بدون التزام · رد خلال 24 ساعة"
+      }
+    },
+    "signup": {
+      "tag": "العروض والباقات",
+      "title": "اختر",
+      "titleHighlight": "خطتك",
+      "desc": "الشهر الأول مجاني، بدون التزام، وإلغاء بنقرة واحدة.",
+      "badges": {
+        "freeTrial": "30 يوماً مجاناً",
+        "noCommitment": "بدون التزام",
+        "mobileMoney": "يدعم Mobile Money"
+      },
+      "monthly": "شهري",
+      "annual": "سنوي",
+      "annualDiscount": "-20%",
+      "plansSynced": "تمت مزامنة الخطط",
+      "plansLoadError": "تعذر تحميل الخطط",
+      "plansSoon": "ستتوفر الخطط قريباً.",
+      "contactUsArrow": "تواصل معنا ←",
+      "faqTitle": "الأسئلة الشائعة",
+      "faq": {
+        "q1": "هل يمكنني تغيير الخطة لاحقاً؟",
+        "a1": "نعم، يمكنك الترقية أو التخفيض في أي وقت من خلال واجهتك.",
+        "q2": "هل توجد رسوم مخفية؟",
+        "a2": "لا. السعر المعروض شامل بالكامل — بدون رسوم إعداد أو دعم.",
+        "q3": "كيف تعمل التجربة المجانية؟",
+        "a3": "30 يوماً كاملة مع جميع الميزات. لا حاجة لبطاقة بنكية.",
+        "q4": "هل الدعم التقني مشمول؟",
+        "a4": "نعم، جميع الخطط تشمل الدعم. الخطط الأعلى تشمل دعماً أولوياً."
+      },
+      "ctaTrust": "أكثر من 500 صيدلية تثق بنا في أفريقيا",
+      "ctaTry": "جرّب مجاناً",
+      "ctaTalk": "تحدث مع خبير"
+    },
+    "terms": {
+      "tag": "قانوني",
+      "title": "شروط الاستخدام",
+      "lastUpdate": "آخر تحديث: 1 أبريل 2026",
+      "questions": "هل لديك أسئلة حول هذه الشروط؟",
+      "sections": {
+        "s1": { "title": "1. قبول الشروط", "content": "عند الوصول إلى SyntixPharma فإنك توافق على الالتزام بشروط الاستخدام هذه. إذا لم توافق على جميع الشروط، يجب عدم استخدام خدماتنا." },
+        "s2": { "title": "2. وصف الخدمة", "content": "SyntixPharma منصة SaaS لإدارة الصيدليات تتضمن نقاط البيع وإدارة المخزون ومتابعة المرضى وسلسلة الإمداد والمحاسبة والتحليلات. تُقدَّم الخدمة كما هي عبر المتصفح." },
+        "s3": { "title": "3. حسابات المستخدمين", "content": "أنت مسؤول عن سرية بيانات الدخول الخاصة بك وعن جميع الأنشطة التي تتم عبر حسابك. يجب إشعارنا فوراً عند أي استخدام غير مصرح به." },
+        "s4": { "title": "4. حماية البيانات", "content": "تُعالج البيانات الصحية وفق الأنظمة المعمول بها. نستخدم تشفير AES-256 ونسخاً احتياطية يومية. تظل البيانات ملكاً حصرياً للعميل." },
+        "s5": { "title": "5. الاشتراكات والمدفوعات", "content": "تُفوتر الاشتراكات شهرياً أو سنوياً حسب الخطة المختارة. الأسعار بالدولار الأمريكي. عند عدم السداد، قد يتم تعليق الوصول بعد الإخطار." },
+        "s6": { "title": "6. الإلغاء", "content": "يمكنك إلغاء الاشتراك في أي وقت من لوحة التحكم. يسري الإلغاء بنهاية فترة الفوترة الحالية. تبقى بياناتك متاحة لمدة 30 يوماً بعد الإلغاء." },
+        "s7": { "title": "7. تحديد المسؤولية", "content": "لا تتحمل SyntixPharma مسؤولية الأضرار غير المباشرة أو العرضية أو التبعية الناتجة عن استخدام الخدمة أو عدم القدرة على استخدامها. المسؤولية الإجمالية محدودة بالمبلغ المدفوع خلال آخر 12 شهراً." },
+        "s8": { "title": "8. التعديلات", "content": "نحتفظ بالحق في تعديل هذه الشروط في أي وقت. تصبح التعديلات نافذة فور نشرها على هذه الصفحة." }
+      }
+    },
+    "privacy": {
+      "tag": "قانوني",
+      "title": "سياسة الخصوصية",
+      "lastUpdate": "آخر تحديث: 1 أبريل 2026",
+      "intro": "في SyntixPharma، حماية بياناتك وبيانات مرضاك هي أولويتنا القصوى. نلتزم بالشفافية الكاملة حول جمع واستخدام وحماية معلوماتك.",
+      "questions": "هل لديك أسئلة حول بياناتك؟",
+      "sections": {
+        "s1": { "title": "1. البيانات التي نجمعها", "content": "نجمع البيانات اللازمة لتقديم خدماتنا: معلومات الحساب (الاسم، البريد الإلكتروني، الهاتف)، بيانات الاستخدام (السجلات، التفضيلات)، وبيانات العمل (المخزون، المبيعات، المرضى) التي تُدخلها." },
+        "s2": { "title": "2. استخدام البيانات", "content": "تُستخدم بياناتك حصراً لتقديم خدماتنا وتحسينها وتأمينها. لا نستخدم بيانات صحة مرضاك أبداً لأغراض إعلانية أو تسويقية." },
+        "s3": { "title": "3. التخزين والأمان", "content": "تُستضاف البيانات على خوادم آمنة مع تشفير AES-256 عند التخزين وTLS 1.3 أثناء النقل. تُجرى نسخ احتياطية تلقائية كل ساعة. الوصول إلى البيانات مضبوط حسب الأدوار." },
+        "s4": { "title": "4. مشاركة البيانات", "content": "لا نبيع بياناتك أبداً. تقتصر المشاركة على مزودي الخدمات التقنية اللازمة لتشغيل الخدمة (الاستضافة، الدفع) والالتزامات القانونية." },
+        "s5": { "title": "5. حقوقك", "content": "لديك حق الوصول والتصحيح ونقل وحذف بياناتك الشخصية. لممارسة هذه الحقوق، تواصل معنا عبر {email}." },
+        "s6": { "title": "6. ملفات تعريف الارتباط", "content": "نستخدم ملفات تعريف ارتباط ضرورية فقط لتشغيل الخدمة (الجلسة، التفضيلات). لا نستخدم ملفات تتبع إعلانية." },
+        "s7": { "title": "7. الاحتفاظ بالبيانات", "content": "تُحفظ بيانات الحساب طوال مدة الاشتراك إضافة إلى 30 يوماً. قد تُحفظ بيانات الاستخدام المجهولة لأغراض إحصائية." },
+        "s8": { "title": "8. التواصل", "content": "لأي سؤال يتعلق بحماية البيانات، تواصل مع مسؤول حماية البيانات لدينا عبر: {email}" }
+      }
+    },
+    "status": {
+      "tag": "حالة الخدمات",
+      "title": "حالة المنصة",
+      "allOperational": "جميع الأنظمة تعمل بشكل طبيعي",
+      "someIssues": "بعض الخدمات تواجه مشكلات",
+      "servicesTitle": "الخدمات",
+      "uptimeTitle": "التوافر (آخر 30 يوماً)",
+      "plannedMaintenance": "صيانة مجدولة",
+      "uptimeWindow": "30 يوماً",
+      "uptimeLabel": "نسبة التشغيل:",
+      "today": "اليوم",
+      "historyTitle": "السجل الأخير",
+      "badges": {
+        "operational": "تشغيل طبيعي",
+        "degraded": "أداء متراجع",
+        "maintenance": "صيانة",
+        "outage": "انقطاع"
+      },
+      "services": {
+        "webApp": "تطبيق الويب",
+        "apiBackend": "واجهة API الخلفية",
+        "database": "قاعدة البيانات",
+        "auth": "المصادقة (Keycloak)",
+        "payments": "المدفوعات (Stripe)",
+        "mobileMoney": "Mobile Money",
+        "email": "إشعارات البريد الإلكتروني",
+        "cdn": "CDN والأصول"
+      },
+      "history": {
+        "d1Date": "31 مارس 2026",
+        "d1Desc": "جميع الأنظمة تعمل بشكل طبيعي.",
+        "d2Date": "30 مارس 2026",
+        "d2Desc": "جميع الأنظمة تعمل بشكل طبيعي.",
+        "d3Date": "29 مارس 2026",
+        "d3Desc": "صيانة مجدولة – تحديث قاعدة البيانات (ساعتان).",
+        "d4Date": "28 مارس 2026",
+        "d4Desc": "جميع الأنظمة تعمل بشكل طبيعي."
+      }
+    },
+    "apiDocs": {
+      "tag": "المطورون",
+      "title": "API",
+      "titleHighlight": "RESTful",
+      "desc": "ادمج SyntixPharma مع أنظمتك الحالية عبر واجهتنا البرمجية الآمنة والموثقة بشكل كامل.",
+      "authJwt": "مصادقة JWT / OAuth2",
+      "authJwtDesc": "مصادقة آمنة عبر الرموز المميزة.",
+      "webhooks": "Webhooks فوري",
+      "webhooksDesc": "إشعارات فورية لكل حدث.",
+      "openApi": "OpenAPI 3.0",
+      "openApiDesc": "مواصفات كاملة مع Swagger UI.",
+      "popularEndpoints": "نقاط الوصول الأكثر استخداماً",
+      "quickExample": "مثال سريع",
+      "sdksTitle": "حزم التطوير والمكتبات",
+      "available": "متاح",
+      "readyToIntegrate": "هل أنت مستعد للتكامل؟",
+      "readyToIntegrateDesc": "أنشئ حساب المطور واحصل على مفاتيح API في دقائق معدودة.",
+      "getApiKeys": "الحصول على مفاتيح API",
+      "talkToTeam": "تحدث مع الفريق"
+    },
+    "unauthorized": {
+      "title": "وصول غير مصرح",
+      "desc": "ليس لديك الصلاحيات اللازمة للوصول إلى هذه الصفحة.",
+      "backHome": "العودة إلى الصفحة الرئيسية"
+    }
+  },
+  "authPages": {
+    "login": {
+      "title": "مرحباً بعودتك،",
+      "titleHighlight": "دكتور.",
+      "subtitle": "سجّل دخولك لإدارة صيدليتك بكل سهولة.",
+      "sessionExpired": "انتهت صلاحية جلستك. يرجى تسجيل الدخول مجدداً.",
+      "inactivity": "تم تسجيل الخروج بسبب عدم النشاط. أعِد تسجيل الدخول للمتابعة.",
+      "button": "تسجيل الدخول",
+      "redirecting": "جارٍ إعادة التوجيه الآمن…",
+      "secureAuth": "مصادقة آمنة عبر مزود الهوية الخاص بك.",
+      "authError": "خطأ في المصادقة",
+      "newUser": "جديد على SyntixPharma؟",
+      "createAccount": "إنشاء حساب",
+      "forgotPassword": "هل نسيت كلمة المرور؟"
+    },
+    "register": {
+      "title": "أنشئ صيدليتك",
+      "titleHighlight": "الرقمية.",
+      "step1": "الحساب",
+      "step2": "الصيدلية",
+      "step3": "الخطة",
+      "step4": "الدفع",
+      "step5": "التأكيد",
+      "personalInfo": "المعلومات الشخصية",
+      "firstName": "الاسم الأول",
+      "lastName": "اسم العائلة",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
+      "password": "كلمة المرور",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "pharmacyInfo": "معلومات الصيدلية",
+      "pharmacyName": "اسم الصيدلية",
+      "pharmacyType": "نوع الصيدلية",
+      "country": "البلد",
+      "city": "المدينة",
+      "address": "العنوان",
+      "subdomain": "النطاق الفرعي",
+      "subdomainHint": "ستكون صيدليتك متاحة على",
+      "selectPlan": "اختر خطتك",
+      "paymentMethod": "طريقة الدفع",
+      "billingCycle": "دورة الفوترة",
+      "monthly": "شهري",
+      "annual": "سنوي",
+      "termsAccept": "أوافق على شروط الاستخدام",
+      "createPharmacy": "إنشاء صيدليتي",
+      "creating": "جارٍ الإنشاء…",
+      "alreadyAccount": "لديك حساب بالفعل؟",
+      "login": "تسجيل الدخول",
+      "nextStep": "التالي",
+      "prevStep": "السابق"
+    },
+    "forgotPassword": {
+      "backToLogin": "العودة إلى تسجيل الدخول",
+      "title": "هل نسيت كلمة المرور؟",
+      "desc": "سيتم توجيهك إلى خدمة المصادقة الآمنة لإعادة تعيين كلمة المرور.",
+      "button": "إعادة تعيين كلمة المرور",
+      "redirecting": "جارٍ إعادة التوجيه…",
+      "emailNote": "سيتم إرسال بريد إلكتروني لإعادة التعيين إلى العنوان المرتبط بحسابك. تحقق من مجلد الرسائل غير المرغوب فيها إذا لم تستلمه.",
+      "testimonialQuote": "أمان SyntixPharma يمنحنا الطمأنينة يومياً. بياناتنا الصحية في أيدٍ أمينة.",
+      "testimonialName": "د. بول تشيمانغا",
+      "testimonialTitle": "صيدلية الأمل، لوبومباشي"
+    },
+    "registrationSuccess": {
+      "title": "تم التسجيل بنجاح!",
+      "desc": "تم إنشاء صيدليتك بنجاح. يمكنك الآن تسجيل الدخول.",
+      "loginButton": "تسجيل الدخول",
+      "invalidProvisioningId": "مرجع التهيئة غير صالح. تحقق من الرابط الذي وصلك عبر البريد الإلكتروني أو أعد التسجيل.",
+      "testimonialQuote": "استغرق الإعداد 10 دقائق فقط، وبدأنا العمل في نفس اليوم.",
+      "testimonialName": "د. أميسي",
+      "testimonialTitle": "صيدلية السلام",
+      "readyTitle": "مساحتك جاهزة!",
+      "errorTitle": "حدثت مشكلة",
+      "pendingTitle": "جارٍ تجهيز المساحة…",
+      "noProvisioningIdDesc": "شكراً لتسجيلك! تحقق من بريدك الإلكتروني (بما في ذلك الرسائل غير المرغوب فيها) للحصول على بيانات الدخول.",
+      "stepLabel": "الخطوة {current}/{total}",
+      "realTime": "لحظي",
+      "yourSpace": "مساحتك",
+      "cards": {
+        "dashboardTitle": "لوحة التحكم",
+        "dashboardDesc": "المبيعات، المخزون، المرضى",
+        "aiTitle": "ذكاء اصطناعي تنبؤي",
+        "aiDesc": "توقع نفاد المخزون"
+      },
+      "loginToSpace": "الدخول إلى مساحتي",
+      "goToLogin": "الذهاب إلى تسجيل الدخول",
+      "needHelp": "تحتاج مساعدة؟",
+      "statusFetching": "جارٍ جلب الحالة…",
+      "statusCompleted": "اكتملت التهيئة.",
+      "statusFailed": "فشلت التهيئة. تواصل مع الدعم مع رقم المرجع.",
+      "statusPending": "التهيئة قيد التنفيذ…"
+    },
+    "selectOrganization": {
+      "loadError": "تعذر تحميل مؤسساتك. يرجى تسجيل الدخول مرة أخرى.",
+      "testimonialQuote": "إدارة عدة صيدليات لم تكن بهذه السهولة من قبل. بنقرة واحدة أصل إلى البيئة الصحيحة.",
+      "testimonialName": "د. أميسي كابيلا",
+      "testimonialTitle": "مجموعة أفق الطبية",
+      "title": "اختر",
+      "titleHighlight": "مؤسستك",
+      "desc": "حدد مساحة العمل التي تريد الوصول إليها.",
+      "backToLogin": "العودة إلى تسجيل الدخول",
+      "noOrganization": "لم يتم العثور على مؤسسة لهذا الحساب.",
+      "createPharmacy": "إنشاء صيدلية",
+      "member": "عضو",
+      "continue": "متابعة"
+    },
+    "callback": {
+      "missingCodeState": "معلمات code/state مفقودة في رابط callback",
+      "callbackError": "خطأ في callback",
+      "failedTitle": "فشل تسجيل الدخول",
+      "retry": "إعادة المحاولة",
+      "inProgressTitle": "جارٍ تسجيل الدخول…",
+      "inProgressDesc": "جارٍ إكمال جلستك الآمنة."
+    },
+    "tenant": {
+      "wrongOrganization": "مؤسسة غير صحيحة",
+      "crossTenantPart1": "لقد حاولت الوصول إلى",
+      "crossTenantPart2": "وينتمي حسابك إلى هذه المؤسسة. تمت إعادة توجيهك إلى هنا.",
+      "crossTenantBelong": "حسابك يتبع",
+      "goTo": "الانتقال إلى",
+      "retryAnotherAccount": "أعد المحاولة بحساب آخر"
+    }
+  },
+  "layout": {
+    "header": {
+      "platform": "المنصة",
+      "solutions": "الحلول",
+      "features": "المزايا",
+      "pricing": "الأسعار",
+      "about": "من نحن",
+      "contact": "تواصل معنا",
+      "helpCenter": "مركز المساعدة",
+      "demo": "العرض التوضيحي",
+      "api": "API",
+      "statusPage": "حالة الخدمة",
+      "offers": "العروض",
+      "createAccount": "إنشاء حساب",
+      "login": "تسجيل الدخول",
+      "freeTrial": "تجربة مجانية",
+      "openMenu": "فتح القائمة",
+      "closeMenu": "إغلاق القائمة"
+    },
+    "footer": {
+      "newsletterTitle": "ابقَ على اطلاع بأحدث",
+      "newsletterHighlight": "الابتكارات",
+      "newsletterDesc": "احصل على نصائحنا وتحديثات المنتج وأفضل الممارسات الصيدلانية مباشرة في بريدك الإلكتروني.",
+      "newsletterPlaceholder": "بريدك@الإلكتروني.com",
+      "newsletterButton": "اشتراك",
+      "brandDesc": "المنصة السحابية لإدارة صيدليتك، من الصندوق إلى الامتثال. سحابية، متعددة المستأجرين، جاهزة لأفريقيا وما بعدها.",
+      "product": "المنتج",
+      "home": "الرئيسية",
+      "modulesCapabilities": "الوحدات والقدرات",
+      "businessSolutions": "الحلول المهنية",
+      "featuresLabel": "المزايا",
+      "pricingLabel": "الأسعار",
+      "demoLabel": "العرض التوضيحي",
+      "offersLabel": "العروض والباقات",
+      "devReliability": "المطورون والموثوقية",
+      "apiDocumentation": "وثائق API",
+      "serviceStatus": "حالة الخدمات",
+      "helpAccess": "المساعدة والوصول",
+      "helpCenter": "مركز المساعدة",
+      "contactUs": "تواصل معنا",
+      "loginLabel": "تسجيل الدخول",
+      "trialSignup": "تجربة / تسجيل",
+      "companyLegal": "الشركة والقانون",
+      "aboutLabel": "من نحن",
+      "privacyLabel": "الخصوصية",
+      "termsLabel": "شروط الاستخدام",
+      "copyright": "© {year} SyntixPharma. جميع الحقوق محفوظة.",
+      "terms": "شروط الاستخدام",
+      "privacy": "الخصوصية",
+      "status": "حالة الخدمة"
+    },
+    "pwa": {
+      "installTitle": "تثبيت SyntixPharma",
+      "installDesc": "يمكنك الوصول بشكل أسرع من شاشتك الرئيسية",
+      "installButton": "تثبيت",
+      "laterButton": "لاحقاً",
+      "closeLabel": "إغلاق",
+      "offlineMessage": "وضع عدم الاتصال — سيتم مزامنة البيانات عند استعادة الاتصال",
+      "reconnected": "تم استعادة الاتصال"
+    },
+    "errorBoundary": {
+      "title": "حدث خطأ",
+      "reloadButton": "إعادة تحميل الصفحة"
+    }
+  },
+  "languageSwitcher": {
+    "label": "اللغة",
+    "fr": "Français",
+    "en": "English",
+    "ar": "العربية"
+  },
+  "dashboardMain": {
+    "userDefault": "مستخدم",
+    "wrongOrganizationLabel": "مؤسسة غير صحيحة:",
+    "crossTenantPart1": "لقد حاولت الوصول إلى",
+    "crossTenantPart2": "تمت إعادة توجيهك إلى مؤسستك الخاصة.",
+    "pharmacyFallback": "صيدلية",
+    "overviewSubtitle": "نظرة عامة على نشاطك",
+    "quickActions": "إجراءات سريعة",
+    "productFallback": "منتج",
+    "noData": "لا توجد بيانات",
+    "greetings": {
+      "morning": "صباح الخير",
+      "afternoon": "مساء الخير",
+      "evening": "مساء الخير"
+    },
+    "kpi": {
+      "salesToday": "مبيعات اليوم",
+      "revenue": "الإيرادات",
+      "productsInStock": "منتجات في المخزون",
+      "activePatients": "المرضى النشطون",
+      "pendingPrescriptions": "وصفات قيد الانتظار",
+      "stockAlerts": "تنبيهات المخزون"
+    },
+    "actions": {
+      "newSaleTitle": "بيع جديد",
+      "newSaleDesc": "بدء عملية بيع سريعة",
+      "newPrescriptionTitle": "وصفة جديدة",
+      "newPrescriptionDesc": "تسجيل وصفة طبية",
+      "newPatientTitle": "مريض جديد",
+      "newPatientDesc": "إضافة مريض",
+      "newProductTitle": "منتج جديد",
+      "newProductDesc": "إضافة إلى الكتالوج",
+      "vaccinationTitle": "التطعيم",
+      "vaccinationDesc": "جدولة موعد",
+      "qualityEventTitle": "حدث جودة",
+      "qualityEventDesc": "الإبلاغ عن حادث",
+      "reportsTitle": "التقارير",
+      "reportsDesc": "عرض التحليلات"
+    },
+    "charts": {
+      "weeklySales": "مبيعات الأسبوع",
+      "revenueTrend": "اتجاه الإيرادات",
+      "recentActivity": "النشاط الأخير",
+      "topProducts": "أفضل المنتجات مبيعاً"
+    },
+    "days": {
+      "mon": "الإثنين",
+      "tue": "الثلاثاء",
+      "wed": "الأربعاء",
+      "thu": "الخميس",
+      "fri": "الجمعة",
+      "sat": "السبت",
+      "sun": "الأحد"
+    }
+  },
+  "dashboardPharmacist": {
+    "header": {
+      "title": "لوحة الصيدلي",
+      "subtitle": "إدارة الوصفات وضبط الجودة",
+      "newPreparation": "تحضير جديد"
+    },
+    "stats": {
+      "pending": "وصفات قيد الانتظار",
+      "inProgress": "تحضيرات قيد التنفيذ",
+      "ready": "جاهزة للتسليم",
+      "stockAlerts": "تنبيهات المخزون"
+    },
+    "status": {
+      "pending": "قيد الانتظار",
+      "inProgress": "قيد التحضير",
+      "ready": "جاهز",
+      "delivered": "تم التسليم"
+    },
+    "priority": {
+      "urgent": "عاجل",
+      "normal": "عادي",
+      "low": "منخفض"
+    },
+    "sections": {
+      "prescriptions": "وصفات للمعالجة",
+      "stockAlerts": "تنبيهات المخزون",
+      "validation": "التحقق الصيدلاني"
+    },
+    "byDoctor": "من طرف",
+    "medicationCount": "{count} دواء",
+    "actions": {
+      "start": "بدء",
+      "complete": "إنهاء",
+      "deliver": "تسليم",
+      "orderNow": "اطلب الآن"
+    },
+    "stockCurrent": "المخزون الحالي: {count} وحدة",
+    "stockMin": "الحد الأدنى المطلوب: {count} وحدة",
+    "severity": {
+      "critical": "حرج",
+      "high": "مرتفع",
+      "medium": "متوسط"
+    },
+    "validation": {
+      "interactionsTitle": "تداخلات دوائية",
+      "interactionsDesc": "تحقق تلقائي من التداخلات بين الأدوية الموصوفة",
+      "interactionsBtn": "عرض التنبيهات",
+      "qualityTitle": "ضبط الجودة",
+      "qualityDesc": "التحقق من مطابقة التحضيرات الصيدلانية",
+      "qualityBtn": "إجراء التحقق",
+      "patientsTitle": "إرشاد المرضى",
+      "patientsDesc": "دليل الاستشارة الصيدلانية للمرضى",
+      "patientsBtn": "عرض البروتوكولات"
+    }
+  },
+  "dashboardTechnician": {
+    "header": {
+      "title": "لوحة الفني",
+      "subtitle": "إدارة المخزون واللوجستيات",
+      "scanProduct": "مسح المنتج",
+      "inventory": "الجرد"
+    },
+    "stats": {
+      "productsInStock": "منتجات في المخزون",
+      "productsInStockDetail": "22 فئة",
+      "lowStock": "مخزون منخفض",
+      "lowStockDetail": "تتطلب طلبية",
+      "pendingDeliveries": "شحنات قيد الانتظار",
+      "pendingDeliveriesDetail": "هذا الأسبوع",
+      "qualityChecks": "فحوصات الجودة",
+      "qualityChecksDetail": "هذا الشهر"
+    },
+    "sections": {
+      "stockAlerts": "تنبيهات المخزون",
+      "deliveries": "الشحنات",
+      "recentActivities": "الأنشطة الأخيرة"
+    },
+    "location": "الموقع",
+    "stock": "المخزون",
+    "min": "الحد الأدنى",
+    "expiresSoon": "ينتهي قريباً",
+    "expiration": "تاريخ الانتهاء",
+    "itemsCount": "{count} عناصر",
+    "expectedOn": "متوقع في",
+    "status": {
+      "received": "تم الاستلام",
+      "pending": "قيد الانتظار"
+    },
+    "severity": {
+      "critical": "حرج",
+      "low": "منخفض",
+      "normal": "عادي"
+    },
+    "actions": {
+      "order": "طلب",
+      "restock": "إعادة تزويد",
+      "receive": "استلام",
+      "reschedule": "إعادة الجدولة",
+      "viewDetails": "عرض التفاصيل",
+      "scheduleDelivery": "جدولة شحنة"
+    },
+    "tools": {
+      "inventoryTitle": "الجرد",
+      "inventoryDesc": "إدارة كاملة للمخزون",
+      "inventoryActions": {
+        "a1": "عد فعلي",
+        "a2": "تعديلات المخزون",
+        "a3": "تقرير الجرد"
+      },
+      "maintenanceTitle": "الصيانة",
+      "maintenanceDesc": "المعدات والمنشآت",
+      "maintenanceActions": {
+        "a1": "جدولة الصيانة",
+        "a2": "معايرة المعدات",
+        "a3": "سجل التدخلات"
+      },
+      "qualityTitle": "الجودة",
+      "qualityDesc": "التحقق والامتثال",
+      "qualityActions": {
+        "a1": "فحص الجودة",
+        "a2": "التحقق من الانتهاء",
+        "a3": "تدقيق الامتثال"
+      }
+    },
+    "activity": {
+      "a1": { "action": "استلام شحنة", "details": "150 وحدة من باراسيتامول 500mg", "time": "منذ ساعتين" },
+      "a2": { "action": "تنبيه مخزون منخفض", "details": "أموكسيسيلين 250mg - مخزون حرج", "time": "منذ 4 ساعات" },
+      "a3": { "action": "فحص الجودة", "details": "التحقق من الدفعة #LOT2025001", "time": "منذ 6 ساعات" },
+      "a4": { "action": "تعديل مخزون", "details": "تصحيح الجرد - فيتامين C", "time": "منذ يوم" }
+    }
+  },
+  "dashboardAdmin": {
+    "errors": {
+      "loadStats": "خطأ أثناء تحميل الإحصائيات:"
+    },
+    "header": {
+      "title": "لوحة المدير",
+      "subtitle": "نظرة عامة على صيدليتك"
+    },
+    "filters": {
+      "today": "اليوم",
+      "thisWeek": "هذا الأسبوع",
+      "thisMonth": "هذا الشهر",
+      "thisYear": "هذا العام"
+    },
+    "stats": {
+      "salesToday": "مبيعات اليوم",
+      "revenue": "الإيرادات",
+      "activeCustomers": "العملاء النشطون",
+      "productsInStock": "منتجات في المخزون",
+      "lowStock": "مخزون منخفض",
+      "expiredProducts": "منتجات منتهية",
+      "pendingOrders": "طلبات قيد الانتظار",
+      "completedOrders": "طلبات مكتملة"
+    },
+    "sections": {
+      "salesTrend": "اتجاه المبيعات",
+      "salesChartPlaceholder": "مخطط المبيعات",
+      "topProducts": "أكثر المنتجات مبيعاً",
+      "importantAlerts": "تنبيهات مهمة"
+    },
+    "salesCount": "{count} مبيعات",
+    "alerts": {
+      "a1": { "message": "هناك 5 منتجات بمخزون منخفض ويجب إعادة تزويدها", "time": "منذ ساعتين" },
+      "a2": { "message": "دفعتان من الأدوية ستنتهيان خلال 7 أيام", "time": "منذ 4 ساعات" },
+      "a3": { "message": "تم استلام شحنة من 150 منتجاً بنجاح", "time": "منذ 6 ساعات" },
+      "a4": { "message": "تم إنشاء التقرير الشهري وإرساله عبر البريد الإلكتروني", "time": "منذ يوم" }
+    }
+  },
+  "dashboardCashier": {
+    "header": {
+      "title": "نقطة البيع",
+      "subtitle": "إدارة المبيعات والتحصيل",
+      "cashReport": "تقرير الصندوق",
+      "newSale": "بيع جديد"
+    },
+    "stats": {
+      "salesToday": "مبيعات اليوم",
+      "salesTodayCount": "23 معاملة",
+      "currentSale": "بيع جارٍ",
+      "customersServed": "عملاء تم خدمتهم",
+      "customersServedCount": "منذ هذا الصباح",
+      "cashRegister": "الصندوق",
+      "cashRegisterCount": "الرصيد المتاح"
+    },
+    "sections": {
+      "currentSale": "بيع جارٍ",
+      "payment": "الدفع",
+      "quickActions": "إجراءات سريعة",
+      "recentSales": "المبيعات الأخيرة"
+    },
+    "customerLabel": "العميل",
+    "itemsCount": "{count} عناصر",
+    "totals": {
+      "subtotal": "المجموع الفرعي",
+      "tax": "ضريبة القيمة المضافة (10%)",
+      "total": "الإجمالي"
+    },
+    "payment": {
+      "receivedAmount": "المبلغ المستلم",
+      "changeDue": "الباقي المستحق: 0 FC"
+    },
+    "paymentMethods": {
+      "cash": "نقداً",
+      "card": "بطاقة بنكية",
+      "mobileMoney": "موبايل موني",
+      "cardShort": "بطاقة",
+      "mobileShort": "موبايل"
+    },
+    "quickActions": {
+      "applyDiscount": "تطبيق خصم",
+      "suspendedSales": "مبيعات معلقة",
+      "searchCustomer": "بحث عن عميل"
+    },
+    "actions": {
+      "change": "تغيير",
+      "suspend": "تعليق",
+      "proceedPayment": "المتابعة إلى الدفع",
+      "receipt": "إيصال"
+    },
+    "table": {
+      "customer": "العميل",
+      "amount": "المبلغ",
+      "items": "العناصر",
+      "time": "الوقت",
+      "payment": "الدفع",
+      "actions": "إجراءات"
+    }
+  },
+  "dashboardHr": {
+    "kpis": {
+      "totalEmployees": "إجمالي الموظفين",
+      "presentToday": "الحاضرون اليوم",
+      "pendingLeaves": "إجازات قيد الانتظار",
+      "scheduledShifts": "ورديات مجدولة"
+    },
+    "quickActionsTitle": "إجراءات سريعة",
+    "quickActions": {
+      "createShift": {
+        "title": "إنشاء وردية",
+        "description": "جدولة فترة جديدة"
+      },
+      "approveLeaves": {
+        "title": "الموافقة على الإجازات",
+        "description": "{count} طلب(ات) قيد الانتظار"
+      },
+      "payroll": {
+        "title": "الرواتب",
+        "description": "عرض دورات الرواتب"
+      }
+    },
+    "charts": {
+      "weeklyAttendance": "الحضور الأسبوعي",
+      "leaveDistribution": "توزيع الإجازات"
+    },
+    "chart": {
+      "present": "حاضر",
+      "absent": "غائب"
+    },
+    "days": {
+      "mon": "الإثنين",
+      "tue": "الثلاثاء",
+      "wed": "الأربعاء",
+      "thu": "الخميس",
+      "fri": "الجمعة",
+      "sat": "السبت"
+    },
+    "leavePie": {
+      "pending": "قيد الانتظار",
+      "approved": "موافق عليها",
+      "rejected": "مرفوضة"
+    },
+    "attendance": {
+      "title": "حضور اليوم",
+      "empty": "لا بيانات حضور لهذا اليوم",
+      "inProgress": "(جارٍ)"
+    },
+    "seeAll": "عرض الكل",
+    "status": {
+      "present": "حاضر",
+      "late": "متأخر"
+    },
+    "employeeFallback": "موظف #{n}"
+  },
+  "dashboardInventoryManager": {
+    "kpis": {
+      "totalProducts": "إجمالي المنتجات",
+      "lowStockAlerts": "تنبيهات مخزون منخفض",
+      "expiringSoon": "تنتهي قريباً",
+      "pendingTransfers": "تحويلات قيد الانتظار"
+    },
+    "quickActionsTitle": "إجراءات سريعة",
+    "quickActions": {
+      "count": {
+        "title": "جرد جديد",
+        "description": "بدء جرد فعلي"
+      },
+      "alerts": {
+        "title": "عرض التنبيهات",
+        "description": "{count} تنبيه(ات) نشط(ة)"
+      },
+      "transfers": {
+        "title": "إدارة التحويلات",
+        "description": "تحويلات بين المستودعات"
+      }
+    },
+    "charts": {
+      "stockMovements": "حركات المخزون (آخر 7 أيام)",
+      "alertDistribution": "توزيع التنبيهات"
+    },
+    "chart": {
+      "in": "وارد",
+      "out": "صادر"
+    },
+    "days": {
+      "mon": "الإثنين",
+      "tue": "الثلاثاء",
+      "wed": "الأربعاء",
+      "thu": "الخميس",
+      "fri": "الجمعة",
+      "sat": "السبت",
+      "sun": "الأحد"
+    },
+    "pie": {
+      "lowStock": "مخزون منخفض",
+      "expiration": "انتهاء",
+      "transfers": "تحويلات"
+    },
+    "alerts": {
+      "title": "تنبيهات المخزون",
+      "empty": "لا توجد تنبيهات مخزون نشطة"
+    },
+    "seeAll": "عرض الكل",
+    "alertTypes": {
+      "lowStock": "مخزون منخفض",
+      "expiration": "قرب انتهاء الصلاحية",
+      "generic": "تنبيه"
+    },
+    "severity": {
+      "critical": "حرج",
+      "warning": "تحذير",
+      "info": "معلومات"
+    },
+    "stockLabel": "المخزون",
+    "alertFallback": "تنبيه #{n}"
+  },
+  "dashboardQualityManager": {
+    "kpis": {
+      "openEvents": "أحداث مفتوحة",
+      "openCapas": "CAPA قيد التنفيذ",
+      "trainingCompliance": "امتثال التدريب",
+      "upcomingAudits": "تدقيقات قادمة"
+    },
+    "quickActionsTitle": "إجراءات سريعة",
+    "quickActions": {
+      "createEvent": {
+        "title": "إنشاء حدث",
+        "description": "الإبلاغ عن حادث جودة"
+      },
+      "viewCapas": {
+        "title": "عرض CAPA",
+        "description": "{count} إجراء(ات) تصحيحية"
+      },
+      "documents": {
+        "title": "إدارة المستندات",
+        "description": "إجراءات ونماذج"
+      }
+    },
+    "recentEvents": {
+      "title": "أحداث الجودة الأخيرة",
+      "empty": "لا توجد أحداث جودة مفتوحة"
+    },
+    "seeAll": "عرض الكل",
+    "severity": {
+      "critical": "حرج",
+      "major": "رئيسي",
+      "minor": "ثانوي"
+    },
+    "eventFallback": "حدث #{n}"
+  },
+  "dashboardPatient": {
+    "kpis": {
+      "activePrescriptions": "وصفات نشطة",
+      "upcomingAppointments": "مواعيد قادمة",
+      "recentPurchases": "مشتريات حديثة"
+    },
+    "quickActionsTitle": "إجراءات سريعة",
+    "quickActions": {
+      "myPrescriptions": {
+        "title": "وصفاتي",
+        "description": "عرض سجل الوصفات"
+      },
+      "vaccination": {
+        "title": "التطعيم",
+        "description": "حجز موعد تطعيم"
+      }
+    },
+    "history": {
+      "title": "سجل الوصفات",
+      "prescriptionFallback": "وصفة #{n}",
+      "medicationCount": "{count} دواء",
+      "empty": "لا توجد وصفات حديثة"
+    },
+    "status": {
+      "active": "نشطة",
+      "expired": "منتهية",
+      "dispensed": "تم صرفها"
+    },
+    "seeAll": "عرض الكل"
+  },
+  "dashboardAccountant": {
+    "kpis": {
+      "revenue": "الإيرادات",
+      "expenses": "المصروفات",
+      "pendingInvoices": "فواتير قيد الانتظار",
+      "netCash": "صافي السيولة"
+    },
+    "quickActionsTitle": "إجراءات سريعة",
+    "quickActions": {
+      "newEntry": {
+        "title": "قيد جديد",
+        "description": "تسجيل معاملة محاسبية"
+      },
+      "financialReports": {
+        "title": "تقارير مالية",
+        "description": "الميزانية وقائمة الدخل وميزان المراجعة"
+      },
+      "fiscalPeriod": {
+        "title": "الفترة الضريبية",
+        "description": "حالة الإغلاق الحالية"
+      }
+    },
+    "charts": {
+      "revenueVsExpenses": "الإيرادات مقابل المصروفات",
+      "expenseDistribution": "توزيع المصروفات"
+    },
+    "months": {
+      "jan": "ينا",
+      "feb": "فبر",
+      "mar": "مار",
+      "apr": "أبر",
+      "may": "ماي",
+      "jun": "يون"
+    },
+    "expenseCategories": {
+      "supplies": "لوازم",
+      "salaries": "رواتب",
+      "rent": "إيجار",
+      "others": "أخرى"
+    },
+    "recentEntries": {
+      "title": "آخر القيود",
+      "entryFallback": "قيد #{n}",
+      "empty": "لا توجد قيود حديثة"
+    },
+    "seeAll": "عرض الكل"
+  },
+  "marketing": {
+    "trustedBy": "يثقون بنا عبر القارة",
+    "testimonialsTitle": "ماذا يقول",
+    "testimonialsHighlight": "مستخدمونا",
+    "testimonialsDesc": "انضم إلى مجتمع الصيادلة الذين يُحدِّثون قطاع الصحة.",
+    "testimonial1Name": "د. سارة منصح",
+    "testimonial1Role": "مالكة، صيدلية الأمل",
+    "testimonial1Content": "غيّرت SyntixPharma طريقة إدارتي اليومية. أصبح بإمكاني أخيراً متابعة مخزوني عن بُعد وارتفعت مبيعاتي بنسبة 20% خلال 6 أشهر.",
+    "testimonial2Name": "جان-بيير تالا",
+    "testimonial2Role": "مدير، صيدلية المركز",
+    "testimonial2Content": "الواجهة بسيطة لدرجة أن موظفيّ تعلموها في صباح واحد. والدعم الفني متاح دائماً عند الحاجة.",
+    "testimonial3Name": "د. أمينة ديالو",
+    "testimonial3Role": "صيدلانية، عيادة بيوسانتي",
+    "testimonial3Content": "كان الامتثال التنظيمي كابوساً قبل SyntixPharma. الآن أصبح كل شيء آلياً وآمناً. أنصح بها بشدة.",
+    "faqTitle": "الأسئلة",
+    "faqHighlight": "الشائعة",
+    "faqDesc": "كل ما تحتاج معرفته لتبدأ بثقة.",
+    "faq1Q": "هل يعمل SyntixPharma بدون إنترنت؟",
+    "faq1A": "نعم! يتوفر في SyntixPharma وضع عمل كامل بدون اتصال. يمكنك الاستمرار في إجراء المبيعات وإدارة المخزون. ستتم المزامنة تلقائياً فور استعادة الاتصال.",
+    "faq2Q": "هل بياناتي آمنة؟",
+    "faq2A": "بالتأكيد. نستخدم تشفيراً بمستوى مصرفي (AES-256) وخوادمنا متوافقة مع المعايير الصحية الدولية. يتم نسخ بياناتك احتياطياً يومياً.",
+    "faq3Q": "كم يستغرق التثبيت؟",
+    "faq3A": "يستغرق التسجيل أقل من دقيقتين. استيراد المخزون قد يستغرق بين 30 دقيقة وبضع ساعات حسب حجم مخزونك. يمكن لفريقنا مساعدتك مجاناً.",
+    "faq4Q": "هل يمكنني استخدام أجهزتي الحالية؟",
+    "faq4A": "نعم، SyntixPharma متوافق مع معظم ماسحات الرموز الشريطية والطابعات الحرارية وأدراج الصندوق المتوفرة في السوق.",
+    "authShellTestimonial": "غيّرت SyntixPharma الطريقة التي ندير بها صيدليتنا. أصبحت الأداة التي لا غنى عنها لفريقنا.",
+    "authShellName": "د. ماري كابانغي",
+    "authShellTitle": "الصيدلية المركزية، كينشاسا",
+    "authShellStatsPharmacies": "صيدليات",
+    "authShellStatsSalesPerMonth": "مبيعات / شهر",
+    "termsShort": "الشروط",
+    "privacyShort": "الخصوصية",
+    "help": "المساعدة"
+  },
+  "marketing": {
+    "authShellTestimonial": "غيرت SyntixPharma الطريقة التي ندير بها صيدلتنا. أصبحت أداة لا غنى عنها لفريقنا.",
+    "authShellName": "د. ماري كابانغي",
+    "authShellTitle": "الصيدلية المركزية، كينشاسا",
+    "authShellStatsPharmacies": "صيدليات",
+    "authShellStatsSalesPerMonth": "مبيعات / شهر",
+    "termsShort": "الشروط",
+    "privacyShort": "الخصوصية",
+    "help": "المساعدة",
+    "testimonial1Name": "د. سارة منساه",
+    "testimonial1Role": "مالكة، صيدلية الأمل",
+    "testimonial1Content": "غيرت SyntixPharma إدارتي اليومية. يمكنني أخيراً تتبع مخزوني عن بعد وزادت مبيعاتي بنسبة 20% في 6 أشهر.",
+    "testimonial2Name": "جان بيير تالا",
+    "testimonial2Role": "مدير، صيدلية الوسط",
+    "testimonial2Content": "الواجهة بسيطة جداً لدرجة أن موظفي تعلموها في صباح واحد. الدعم الفني موجود دائماً عند الحاجة.",
+    "testimonial3Name": "د. أمينة ديالو",
+    "testimonial3Role": "صيدلانية، عيادة بيو سانته",
+    "testimonial3Content": "كانت الامتثال التنظيمي كابوساً قبل SyntixPharma. الآن كل شيء مؤتمت وآمن. أوصي به بشدة.",
+    "faqTitle": "أسئلة",
+    "faqHighlight": "شائعة",
+    "faqDesc": "كل ما تحتاج لمعرفته لبدء العمل بسلاسة.",
+    "faq1Q": "هل يعمل SyntixPharma بدون إنترنت؟",
+    "faq1A": "نعم! يحتوي SyntixPharma على وضع عدم اتصال كامل. يمكنك الاستمرار في إجراء المبيعات وإدارة مخزونك. سيتم مزامنة البيانات تلقائياً بمجرد استعادة الاتصال.",
+    "faq2Q": "هل بياناتي آمنة؟",
+    "faq2A": "بالتأكيد. نحن نستخدم تشفيراً على مستوى البنوك (AES-256) وخوادمنا تتوافق مع معايير الصحة الدولية. يتم نسخ بياناتك احتياطياً يومياً.",
+    "faq3Q": "كم يستغرق التثبيت؟",
+    "faq3A": "يستغرق التسجيل أقل من دقيقتين. قد يستغرق استيراد مخزونك بين 30 دقيقة وعدة ساعات حسب حجم مخزونك. يمكن لفريقنا مساعدتك مجاناً.",
+    "faq4Q": "هل يمكنني استخدام معداتي الخاصة؟",
+    "faq4A": "نعم، يتوافق SyntixPharma مع معظم قارئات الباركود الحرارية وأدراج النقود القياسية في السوق."
+  }
+}

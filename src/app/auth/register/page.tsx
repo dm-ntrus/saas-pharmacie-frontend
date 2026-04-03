@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Check,
@@ -24,9 +23,10 @@ import {
   Pill,
   Copy
 } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Suspense, useMemo } from 'react';
 import AuthShell from '@/components/auth/AuthShell';
+import { Link, useRouter } from '@/i18n/navigation';
 import { useCreateTenant } from '@/hooks/useTenants';
 import {
   TenantType,
@@ -256,7 +256,7 @@ function RegisterInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const createTenant = useCreateTenant();
-  const { data: apiPlans, isLoading: plansLoading, isError: plansError } = usePublicPlans({ active: true });
+  const { data: apiPlans, isLoading: plansLoading, isError: plansError, refetch: refetchPlans } = usePublicPlans({ active: true });
 
   const tierGroups = useMemo(() => {
     if (!apiPlans || apiPlans.length === 0) return [];
@@ -903,9 +903,16 @@ function RegisterInner() {
                   )}
 
                   {plansError && !plansLoading && (
-                    <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center space-y-2">
+                    <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center space-y-3">
                       <p className="text-sm font-semibold text-red-700">Impossible de charger les plans</p>
                       <p className="text-xs text-red-500">Vérifiez votre connexion et réessayez. Les plans sont gérés exclusivement depuis la base de données.</p>
+                      <button
+                        type="button"
+                        onClick={() => void refetchPlans()}
+                        className="px-4 py-2 text-xs font-bold text-red-700 bg-red-100 rounded-lg hover:bg-red-200 transition-colors"
+                      >
+                        Réessayer
+                      </button>
                     </div>
                   )}
 

@@ -25,7 +25,7 @@ import {
   ScrollText,
   Settings,
 } from "lucide-react";
-import type { ModuleIconKey } from "@/content/platform-marketing";
+import type { ModuleIconKey } from "@/content/platform-marketing-types";
 
 const MAP: Record<ModuleIconKey, LucideIcon> = {
   LayoutDashboard,

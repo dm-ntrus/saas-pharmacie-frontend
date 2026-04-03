@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
 import { useAppStore, useNotificationCount } from "@/store/appStore";
 import { usePermissions } from "@/hooks/usePermissions";
 import { useTenantPath } from "@/hooks/useTenantPath";
 import { Permission } from "@/types/permissions";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import {
   PlusCircle,
   Search,
@@ -30,6 +31,9 @@ const TopBar: React.FC<TopBarProps> = ({
   sidebarCollapsed,
   isMobile,
 }) => {
+  const tCommon = useTranslations("common");
+  const tSales = useTranslations("sales");
+  const tNotifications = useTranslations("notifications");
   const { theme, setTheme } = useAppStore();
   const unreadCount = useNotificationCount();
   const { hasPermission } = usePermissions();
@@ -44,7 +48,7 @@ const TopBar: React.FC<TopBarProps> = ({
         <button
           onClick={isMobile ? onMenuClick : onCollapseClick}
           className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 dark:text-slate-400 transition-colors shrink-0"
-          aria-label={isMobile ? "Ouvrir le menu" : "Basculer la barre latérale"}
+          aria-label={isMobile ? tCommon("actions") : tCommon("actions")}
         >
           {isMobile ? (
             <Menu className="h-5 w-5" />
@@ -59,7 +63,7 @@ const TopBar: React.FC<TopBarProps> = ({
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             type="text"
-            placeholder="Rechercher..."
+            placeholder={tCommon("search")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 border-transparent rounded-full text-sm focus:bg-white dark:focus:bg-slate-700 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
@@ -79,7 +83,7 @@ const TopBar: React.FC<TopBarProps> = ({
         <Link
           href={buildPath("/notifications")}
           className="p-2 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 relative transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"
-          aria-label="Notifications"
+          aria-label={tNotifications("title")}
         >
           <Bell className="w-5 h-5" />
           {unreadCount > 0 && (
@@ -95,7 +99,7 @@ const TopBar: React.FC<TopBarProps> = ({
               className="flex items-center gap-2 px-3 py-1.5 sm:py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors shrink-0"
             >
               <PlusCircle className="w-4 h-4 shrink-0" />
-              <span className="hidden sm:inline">Nouvelle Vente</span>
+              <span className="hidden sm:inline">{tSales("newSale")}</span>
             </Link>
           </>
         )}

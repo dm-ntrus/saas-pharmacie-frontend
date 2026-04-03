@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { useParams, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 import {
@@ -14,8 +14,11 @@ import {
 } from "lucide-react";
 import AuthShell from "@/components/auth/AuthShell";
 import { getApiBaseUrl } from "@/helpers/auth-interceptor";
+import { Link } from "@/i18n/navigation";
 
 export default function TenantLoginPage() {
+  const t = useTranslations("authPages.login");
+  const tTenant = useTranslations("authPages.tenant");
   const params = useParams();
   const searchParams = useSearchParams();
   const tenant_slug = params?.tenant_slug as string;
@@ -32,7 +35,7 @@ export default function TenantLoginPage() {
       );
     } catch (e) {
       toast.error(
-        e instanceof Error ? e.message : "Erreur d'authentification",
+        e instanceof Error ? e.message : t("authError"),
       );
       setIsSubmitting(false);
     }
@@ -52,11 +55,11 @@ export default function TenantLoginPage() {
 
         <div>
           <h1 className="text-3xl sm:text-4xl font-display font-bold text-slate-900 mb-2 tracking-tight">
-            Bon retour,{" "}
-            <span className="text-emerald-600">Docteur.</span>
+            {t("title")}{" "}
+            <span className="text-emerald-600">{t("titleHighlight")}</span>
           </h1>
           <p className="text-slate-500 font-medium leading-relaxed">
-            Connectez-vous à votre espace de gestion.
+            {t("subtitle")}
           </p>
         </div>
 
@@ -65,7 +68,7 @@ export default function TenantLoginPage() {
           <div className="flex items-start gap-3 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-800">
             <XCircle className="w-5 h-5 shrink-0 mt-0.5 text-red-500" />
             <div>
-              <p className="font-semibold">Erreur d&apos;authentification</p>
+              <p className="font-semibold">{t("authError")}</p>
               <p className="mt-0.5 text-red-700">{authError}</p>
             </div>
           </div>
@@ -76,11 +79,11 @@ export default function TenantLoginPage() {
           <div className="flex items-start gap-3 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">
             <ShieldAlert className="w-5 h-5 shrink-0 mt-0.5 text-amber-500" />
             <div>
-              <p className="font-semibold">Organisation incorrecte</p>
+              <p className="font-semibold">{tTenant("wrongOrganization")}</p>
               <p className="mt-0.5">
-                Vous avez tenté d&apos;accéder à{" "}
+                {tTenant("crossTenantPart1")}{" "}
                 <strong>{crossTenantBlocked}</strong>, mais votre compte
-                appartient à cette organisation. Vous avez été redirigé ici.
+                {" "}{tTenant("crossTenantPart2")}
               </p>
             </div>
           </div>
@@ -90,13 +93,13 @@ export default function TenantLoginPage() {
         {reason === "session_expired" && (
           <div className="flex items-center gap-2 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">
             <AlertTriangle className="w-4 h-4 shrink-0" />
-            Votre session a expiré. Veuillez vous reconnecter.
+            {t("sessionExpired")}
           </div>
         )}
         {reason === "inactivity" && (
           <div className="flex items-center gap-2 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">
             <AlertTriangle className="w-4 h-4 shrink-0" />
-            Déconnecté pour inactivité. Reconnectez-vous pour continuer.
+            {t("inactivity")}
           </div>
         )}
 
@@ -110,18 +113,18 @@ export default function TenantLoginPage() {
           {isSubmitting ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin" />
-              Redirection sécurisée…
+              {t("redirecting")}
             </>
           ) : (
             <>
-              Se connecter
+              {t("button")}
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </>
           )}
         </button>
 
         <p className="text-center text-xs text-slate-400">
-          Authentification sécurisée via votre fournisseur d&apos;identité.
+          {t("secureAuth")}
         </p>
 
         <div className="text-center pt-2">
@@ -129,7 +132,7 @@ export default function TenantLoginPage() {
             href={`/tenant/${tenant_slug}/auth/forgot-password`}
             className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition-colors"
           >
-            Mot de passe oublié ?
+            {t("forgotPassword")}
           </Link>
         </div>
       </motion.div>

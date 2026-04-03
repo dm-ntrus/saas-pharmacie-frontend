@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import {
   Stethoscope,
   Truck,
@@ -9,66 +10,40 @@ import {
   ArrowRight,
   CheckCircle2,
 } from "lucide-react";
-import Link from "next/link";
 import Image from "next/image";
+import { Link } from "@/i18n/navigation";
 
-const solutions = [
-  {
-    id: "officine",
-    icon: Stethoscope,
-    title: "Pharmacie d'officine",
-    desc: "Optimisez vos ventes au comptoir et la fidélisation de vos patients.",
-    features: [
-      "Ventes POS rapides",
-      "Gestion des ordonnances",
-      "Alertes de stock",
-      "Fidélité client",
-    ],
-  },
-  {
-    id: "grossiste",
-    icon: Truck,
-    title: "Grossistes & répartiteurs",
-    desc: "Gérez des volumes massifs et une logistique complexe en toute simplicité.",
-    features: [
-      "Gestion d'entrepôt",
-      "Suivi des livraisons",
-      "Portail clients B2B",
-      "Analytique avancée",
-    ],
-  },
-  {
-    id: "hopital",
-    icon: Building,
-    title: "Pharmacie hospitalière",
-    desc: "Intégrez la pharmacie au parcours de soins de l'établissement.",
-    features: [
-      "Dossier patient partagé",
-      "Gestion des services",
-      "Traçabilité unitaire",
-      "Inventaire centralisé",
-    ],
-  },
-];
+const solutionsMeta = [
+  { id: "officine", icon: Stethoscope },
+  { id: "grossiste", icon: Truck },
+  { id: "hopital", icon: Building },
+] as const;
 
-const stories = [
-  {
-    title: "Pharmacie de la Paix",
-    location: "Lubumbashi, RDC",
-    impact: "+45 % de rentabilité en 6 mois",
-    quote:
-      "Grâce à la gestion prédictive des stocks, nous avons réduit nos pertes par péremption de 80 %.",
-  },
-  {
-    title: "Groupe Médical Horizon",
-    location: "Abidjan, Côte d'Ivoire",
-    impact: "Zéro erreur de délivrance",
-    quote:
-      "La traçabilité unitaire a sécurisé tout notre circuit du médicament, de l'entrepôt au patient.",
-  },
-];
+const storiesMeta = [{ id: "pax" }, { id: "horizon" }] as const;
 
 export default function SolutionsPage() {
+  const t = useTranslations("pages.solutions");
+
+  const solutions = solutionsMeta.map((sol) => ({
+    ...sol,
+    title: t(`solutions.${sol.id}.title`),
+    desc: t(`solutions.${sol.id}.desc`),
+    features: [
+      t(`solutions.${sol.id}.features.f1`),
+      t(`solutions.${sol.id}.features.f2`),
+      t(`solutions.${sol.id}.features.f3`),
+      t(`solutions.${sol.id}.features.f4`),
+    ],
+  }));
+
+  const stories = storiesMeta.map((s) => ({
+    id: s.id,
+    title: t(`stories.${s.id}.title`),
+    location: t(`stories.${s.id}.location`),
+    impact: t(`stories.${s.id}.impact`),
+    quote: t(`stories.${s.id}.quote`),
+  }));
+
   return (
     <div className="min-h-screen pt-28 sm:pt-32 pb-0 bg-white">
       {/* Header */}
@@ -79,15 +54,14 @@ export default function SolutionsPage() {
             animate={{ opacity: 1, y: 0 }}
           >
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 mb-3">
-              Nos solutions
+              {t("tag")}
             </p>
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-display font-bold text-slate-900 mb-5 tracking-tight leading-[1.05]">
-              Adapté à chaque{" "}
-              <span className="text-emerald-600">métier</span> de la santé.
+              {t("title")}{" "}
+              <span className="text-emerald-600">{t("titleHighlight")}</span> {t("titleEnd")}
             </h1>
             <p className="text-base sm:text-lg text-slate-500 leading-relaxed max-w-2xl mx-auto font-medium">
-              Que vous soyez une petite officine de quartier ou un grand
-              répartiteur national, SyntixPharma a la solution.
+              {t("desc")}
             </p>
           </motion.div>
         </div>
@@ -128,7 +102,7 @@ export default function SolutionsPage() {
                   href="/auth/register"
                   className="inline-flex items-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-xl font-bold hover:bg-emerald-600 transition-all group shadow-lg shadow-slate-900/20"
                 >
-                  Démarrer avec cette solution
+                  {t("startCta")}
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </motion.div>
@@ -160,15 +134,14 @@ export default function SolutionsPage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12 sm:mb-16">
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 mb-3">
-              Impact réel
+              {t("impactTag")}
             </p>
             <h2 className="text-3xl sm:text-5xl font-display font-bold text-slate-900 mb-4 tracking-tight">
-              Histoires de{" "}
-              <span className="text-emerald-600">succès.</span>
+              {t("storiesTitle")}{" "}
+              <span className="text-emerald-600">{t("storiesTitleHighlight")}</span>
             </h2>
             <p className="text-base text-slate-500 max-w-2xl mx-auto font-medium">
-              Découvrez comment SyntixPharma transforme le quotidien des
-              professionnels de santé.
+              {t("storiesDesc")}
             </p>
           </div>
 
@@ -222,24 +195,23 @@ export default function SolutionsPage() {
                 <ShieldPlus className="w-8 h-8 text-emerald-400" />
               </div>
               <h2 className="text-3xl sm:text-4xl font-display font-bold text-white mb-4">
-                Besoin d&apos;une solution sur mesure ?
+                {t("ctaTitle")}
               </h2>
               <p className="text-sm sm:text-base text-slate-400 max-w-xl mx-auto mb-8 leading-relaxed">
-                Notre équipe d&apos;ingénieurs peut adapter SyntixPharma aux besoins
-                spécifiques de votre organisation de santé.
+                {t("ctaDesc")}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   href="/contact"
                   className="px-8 py-4 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-600/20"
                 >
-                  Contacter un expert
+                  {t("ctaContact")}
                 </Link>
                 <Link
                   href="/pricing"
                   className="px-8 py-4 bg-white/10 text-white border border-white/20 rounded-xl font-bold hover:bg-white/20 transition-all"
                 >
-                  Voir les tarifs
+                  {t("ctaPricing")}
                 </Link>
               </div>
             </div>

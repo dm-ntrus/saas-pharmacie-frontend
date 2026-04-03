@@ -1,4 +1,25 @@
+import createMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
+import { locales, routing } from "@/i18n/routing";
+
+const handleI18nRouting = createMiddleware(routing);
+
+function hasLocalePrefix(pathname: string): boolean {
+  return locales.some((locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`));
+}
+
+function splitLocalePrefix(pathname: string): { locale: string | null; restPath: string } {
+  for (const locale of locales) {
+    if (pathname === `/${locale}`) {
+      return { locale, restPath: "/" };
+    }
+    if (pathname.startsWith(`/${locale}/`)) {
+      const rest = pathname.slice(locale.length + 1);
+      return { locale, restPath: rest.startsWith("/") ? rest : `/${rest}` };
+    }
+  }
+  return { locale: null, restPath: pathname };
+}
 
 interface NormalizedOrg {
   id: string;
@@ -294,6 +315,20 @@ export function proxy(req: NextRequest) {
   const url = req.nextUrl.clone();
   const host = req.headers.get("host") || "";
   const pathname = url.pathname;
+  const { locale: prefixedLocale, restPath } = splitLocalePrefix(pathname);
+
+  // App routes are unprefixed in filesystem. Normalize /en/* and /fr/* to /* and persist locale.
+  if (prefixedLocale) {
+    const redirectUrl = req.nextUrl.clone();
+    redirectUrl.pathname = restPath;
+    const response = NextResponse.redirect(redirectUrl);
+    response.cookies.set("NEXT_LOCALE", prefixedLocale, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365,
+      sameSite: "lax",
+    });
+    return response;
+  }
 
   const hostNoPortForIp = host.toLowerCase().split(":")[0];
   // Corrige l’URL résiduelle /tenant/<1er octet>/auth/... quand le Host est une IPv4 (ex. 192.168.x.x → faux tenant "192").
@@ -335,7 +370,12 @@ export function proxy(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (isPublicRoute(pathname)) return NextResponse.next();
+  if (isPublicRoute(pathname)) {
+    if (hasLocalePrefix(pathname)) {
+      return handleI18nRouting(req);
+    }
+    return NextResponse.next();
+  }
 
   // Subdomain rewrite: sub.domain.com/path → /tenant/sub/path (pas pour les IP LAN)
   const hostNoPortLc = host.toLowerCase().split(":")[0];
@@ -356,7 +396,12 @@ export function proxy(req: NextRequest) {
   const isProtected =
     /^\/tenant(\/.*)?$/.test(pathname) || /^\/admin(\/.*)?$/.test(pathname);
 
-  if (!isProtected) return NextResponse.next();
+  if (!isProtected) {
+    if (hasLocalePrefix(pathname)) {
+      return handleI18nRouting(req);
+    }
+    return NextResponse.next();
+  }
 
   const authHeader = req.headers.get("authorization") || "";
   const cookieToken = req.cookies.get("kc_at")?.value || req.cookies.get("access_token")?.value;
@@ -453,7 +498,7 @@ export function proxy(req: NextRequest) {
     }
   }
 
-  return NextResponse.next();
+  return hasLocalePrefix(pathname) ? handleI18nRouting(req) : NextResponse.next();
 }
 
 export const config = {

@@ -1,10 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
+import { Link } from "@/i18n/navigation";
 
 interface AuthShellProps {
   children: ReactNode;
@@ -13,30 +14,31 @@ interface AuthShellProps {
   /** Testimonial override */
   testimonial?: { quote: string; name: string; title: string };
   /** Stats override */
-  stats?: { value: string; label: string }[];
+  stats?: { value: string; labelKey: string }[];
   /** Right panel variant */
   variant?: "default" | "dark";
 }
 
 const DEFAULT_STATS = [
-  { value: "500+", label: "Pharmacies" },
-  { value: "1M+", label: "Ventes / mois" },
+  { value: "500+", labelKey: "authShellStatsPharmacies" },
+  { value: "1M+", labelKey: "authShellStatsSalesPerMonth" },
 ];
-
-const DEFAULT_TESTIMONIAL = {
-  quote:
-    "SyntixPharma a transformé la façon dont nous gérons notre officine. C'est devenu l'outil indispensable de notre équipe.",
-  name: "Dr. Marie Kabange",
-  title: "Pharmacie Centrale, Kinshasa",
-};
 
 export default function AuthShell({
   children,
   fullWidth = false,
-  testimonial = DEFAULT_TESTIMONIAL,
+  testimonial,
   stats = DEFAULT_STATS,
   variant = "default",
 }: AuthShellProps) {
+  const t = useTranslations("marketing");
+
+  const resolvedTestimonial = testimonial ?? {
+    quote: t("authShellTestimonial"),
+    name: t("authShellName"),
+    title: t("authShellTitle"),
+  };
+
   if (fullWidth) {
     return (
       <div className="min-h-screen bg-white">
@@ -46,7 +48,7 @@ export default function AuthShell({
   }
 
   return (
-    <div className="min-h-screen flex bg-white overflow-hidden">
+    <div className="min-h-screen flex bg-white overflow-x-hidden">
       {/* Left — Form area */}
       <div className="flex-1 flex flex-col min-h-screen overflow-y-auto relative bg-white">
         <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl px-6 sm:px-10 lg:px-16 py-4 border-b border-slate-50">
@@ -65,13 +67,13 @@ export default function AuthShell({
           <span>© {new Date().getFullYear()} SyntixPharma</span>
           <div className="flex gap-4">
             <Link href="/terms" className="hover:text-slate-600 transition-colors">
-              CGU
+              {t("termsShort")}
             </Link>
             <Link href="/privacy" className="hover:text-slate-600 transition-colors">
-              Confidentialité
+              {t("privacyShort")}
             </Link>
             <Link href="/support" className="hover:text-slate-600 transition-colors">
-              Aide
+              {t("help")}
             </Link>
           </div>
         </div>
@@ -91,12 +93,12 @@ export default function AuthShell({
           {/* Stats */}
           <div className="flex gap-10">
             {stats.map((s) => (
-              <div key={s.label} className="space-y-1">
+              <div key={s.labelKey} className="space-y-1">
                 <p className="text-4xl xl:text-5xl font-display font-bold">
                   {s.value}
                 </p>
                 <p className="text-emerald-400 font-black uppercase tracking-[0.2em] text-[9px]">
-                  {s.label}
+                  {t(s.labelKey)}
                 </p>
               </div>
             ))}
@@ -115,16 +117,16 @@ export default function AuthShell({
               ))}
             </div>
             <p className="text-lg xl:text-xl font-display font-bold leading-snug italic mb-6">
-              &quot;{testimonial.quote}&quot;
+              &quot;{resolvedTestimonial.quote}&quot;
             </p>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold text-sm border border-emerald-500/30">
-                {testimonial.name.charAt(0)}
+                {resolvedTestimonial.name.charAt(0)}
               </div>
               <div>
-                <p className="text-sm font-bold">{testimonial.name}</p>
+                <p className="text-sm font-bold">{resolvedTestimonial.name}</p>
                 <p className="text-emerald-400 font-black uppercase tracking-[0.15em] text-[8px]">
-                  {testimonial.title}
+                  {resolvedTestimonial.title}
                 </p>
               </div>
             </div>

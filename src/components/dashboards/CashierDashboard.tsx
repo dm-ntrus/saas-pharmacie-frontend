@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   ShoppingCart,
   CreditCard,
@@ -12,6 +13,7 @@ import {
 import { Card, Button } from '@/design-system';
 
 const CashierDashboard: React.FC = () => {
+  const t = useTranslations('dashboardCashier');
   const [currentSale] = useState({
     items: [
       { id: 1, name: 'Paracétamol 500mg', quantity: 2, price: 1500, total: 3000 },
@@ -31,57 +33,57 @@ const CashierDashboard: React.FC = () => {
 
   const stats = [
     {
-      title: 'Ventes Aujourd\'hui',
+      title: t('stats.salesToday'),
       value: '125,000 FC',
-      count: '23 transactions',
+      count: t('stats.salesTodayCount'),
       icon: DollarSign,
       color: 'bg-green-500'
     },
     {
-      title: 'Vente en Cours',
+      title: t('stats.currentSale'),
       value: currentSale.total.toLocaleString() + ' FC',
-      count: `${currentSale.items.length} articles`,
+      count: t('itemsCount', { count: currentSale.items.length }),
       icon: ShoppingCart,
       color: 'bg-blue-500'
     },
     {
-      title: 'Clients Servis',
+      title: t('stats.customersServed'),
       value: '18',
-      count: 'depuis ce matin',
+      count: t('stats.customersServedCount'),
       icon: User,
       color: 'bg-cyan-500'
     },
     {
-      title: 'Caisse',
+      title: t('stats.cashRegister'),
       value: '85,000 FC',
-      count: 'solde disponible',
+      count: t('stats.cashRegisterCount'),
       icon: Banknote,
       color: 'bg-emerald-500'
     }
   ];
 
   const paymentMethods = [
-    { name: 'Espèces', icon: Banknote, color: 'bg-green-100 text-green-800' },
-    { name: 'Carte Bancaire', icon: CreditCard, color: 'bg-blue-100 text-blue-800' },
-    { name: 'Mobile Money', icon: QrCode, color: 'bg-cyan-100 text-cyan-800' }
+    { name: t('paymentMethods.cash'), icon: Banknote, color: 'bg-green-100 text-green-800' },
+    { name: t('paymentMethods.card'), icon: CreditCard, color: 'bg-blue-100 text-blue-800' },
+    { name: t('paymentMethods.mobileMoney'), icon: QrCode, color: 'bg-cyan-100 text-cyan-800' }
   ];
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
       {/* En-tête */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Point de Vente</h1>
-          <p className="text-gray-600">Gestion des ventes et encaissements</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('header.title')}</h1>
+          <p className="text-gray-600">{t('header.subtitle')}</p>
         </div>
-        <div className="flex space-x-3">
+        <div className="flex flex-wrap gap-2 sm:gap-3">
           <Button variant="outline">
             <BadgePercent className="h-5 w-5 mr-2" />
-            Rapport Caisse
+            {t('header.cashReport')}
           </Button>
           <Button variant="default">
             <ShoppingCart className="h-5 w-5 mr-2" />
-            Nouvelle Vente
+            {t('header.newSale')}
           </Button>
         </div>
       </div>
@@ -109,15 +111,15 @@ const CashierDashboard: React.FC = () => {
         {/* Panier actuel */}
         <div className="lg:col-span-2">
           <Card className="p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Vente en Cours</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('sections.currentSale')}</h3>
             
             {/* Client */}
             <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 rounded-lg">
               <div className="flex items-center">
                 <User className="h-5 w-5 text-gray-400 mr-2" />
-                <span className="font-medium">Client: {currentSale.customer}</span>
+                <span className="font-medium">{t('customerLabel')}: {currentSale.customer}</span>
               </div>
-              <Button size="sm" variant="outline">Changer</Button>
+              <Button size="sm" variant="outline">{t('actions.change')}</Button>
             </div>
 
             {/* Articles */}
@@ -146,23 +148,23 @@ const CashierDashboard: React.FC = () => {
             {/* Totaux */}
             <div className="border-t pt-4 space-y-2">
               <div className="flex justify-between text-sm">
-                <span>Sous-total</span>
+                <span>{t('totals.subtotal')}</span>
                 <span>{currentSale.subtotal.toLocaleString()} FC</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span>TVA (10%)</span>
+                <span>{t('totals.tax')}</span>
                 <span>{currentSale.tax.toLocaleString()} FC</span>
               </div>
               <div className="flex justify-between text-lg font-bold border-t pt-2">
-                <span>Total</span>
+                <span>{t('totals.total')}</span>
                 <span>{currentSale.total.toLocaleString()} FC</span>
               </div>
             </div>
 
             {/* Actions */}
-            <div className="flex space-x-3 mt-6">
-              <Button variant="outline" className="flex-1">Suspendre</Button>
-              <Button variant="default" className="flex-1">Procéder au Paiement</Button>
+            <div className="flex flex-col sm:flex-row gap-3 mt-6">
+              <Button variant="outline" className="flex-1">{t('actions.suspend')}</Button>
+              <Button variant="default" className="flex-1">{t('actions.proceedPayment')}</Button>
             </div>
           </Card>
         </div>
@@ -170,7 +172,7 @@ const CashierDashboard: React.FC = () => {
         {/* Méthodes de paiement */}
         <div className="space-y-6">
           <Card className="p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Paiement</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('sections.payment')}</h3>
             <div className="space-y-3">
               {paymentMethods.map((method, index) => (
                 <button 
@@ -185,7 +187,7 @@ const CashierDashboard: React.FC = () => {
             
             <div className="mt-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Montant reçu
+                {t('payment.receivedAmount')}
               </label>
               <input 
                 type="number" 
@@ -193,26 +195,26 @@ const CashierDashboard: React.FC = () => {
                 placeholder="0"
               />
               <p className="text-sm text-gray-500 mt-1">
-                Monnaie à rendre: 0 FC
+                {t('payment.changeDue')}
               </p>
             </div>
           </Card>
 
           {/* Raccourcis */}
           <Card className="p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Actions Rapides</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('sections.quickActions')}</h3>
             <div className="space-y-3">
               <Button variant="outline" className="w-full justify-start">
                 <BadgePercent className="h-5 w-5 mr-2" />
-                Appliquer Remise
+                {t('quickActions.applyDiscount')}
               </Button>
               <Button variant="outline" className="w-full justify-start">
                 <Clock className="h-5 w-5 mr-2" />
-                Ventes Suspendues
+                {t('quickActions.suspendedSales')}
               </Button>
               <Button variant="outline" className="w-full justify-start">
                 <User className="h-5 w-5 mr-2" />
-                Rechercher Client
+                {t('quickActions.searchCustomer')}
               </Button>
             </div>
           </Card>
@@ -221,28 +223,28 @@ const CashierDashboard: React.FC = () => {
 
       {/* Historique des ventes */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Ventes Récentes</h3>
-        <div className="overflow-x-auto">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('sections.recentSales')}</h3>
+        <div className="hidden md:block overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Client
+                  {t('table.customer')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Montant
+                  {t('table.amount')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Articles
+                  {t('table.items')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Heure
+                  {t('table.time')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Paiement
+                  {t('table.payment')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
+                  {t('table.actions')}
                 </th>
               </tr>
             </thead>
@@ -256,7 +258,7 @@ const CashierDashboard: React.FC = () => {
                     {sale.amount.toLocaleString()} FC
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {sale.items} articles
+                    {t('itemsCount', { count: sale.items })}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {sale.time}
@@ -267,19 +269,44 @@ const CashierDashboard: React.FC = () => {
                       sale.method === 'card' ? 'bg-blue-100 text-blue-800' :
                       'bg-cyan-100 text-cyan-800'
                     }`}>
-                      {sale.method === 'cash' ? 'Espèces' :
-                       sale.method === 'card' ? 'Carte' : 'Mobile'}
+                      {sale.method === 'cash' ? t('paymentMethods.cash') :
+                       sale.method === 'card' ? t('paymentMethods.cardShort') : t('paymentMethods.mobileShort')}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <Button size="sm" variant="outline">
-                      Reçu
+                      {t('actions.receipt')}
                     </Button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+        <div className="md:hidden space-y-3">
+          {salesHistory.map((sale) => (
+            <div key={sale.id} className="rounded-lg border border-gray-200 p-3">
+              <div className="flex items-center justify-between">
+                <p className="font-medium text-sm text-gray-900">{sale.customer}</p>
+                <p className="text-sm font-semibold text-gray-900">{sale.amount.toLocaleString()} FC</p>
+              </div>
+              <div className="mt-1 flex items-center justify-between text-xs text-gray-500">
+                <span>{t('itemsCount', { count: sale.items })}</span>
+                <span>{sale.time}</span>
+              </div>
+              <div className="mt-2 flex items-center justify-between">
+                <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                  sale.method === 'cash' ? 'bg-green-100 text-green-800' :
+                  sale.method === 'card' ? 'bg-blue-100 text-blue-800' :
+                  'bg-cyan-100 text-cyan-800'
+                }`}>
+                  {sale.method === 'cash' ? t('paymentMethods.cash') :
+                   sale.method === 'card' ? t('paymentMethods.cardShort') : t('paymentMethods.mobileShort')}
+                </span>
+                <Button size="sm" variant="outline">{t('actions.receipt')}</Button>
+              </div>
+            </div>
+          ))}
         </div>
       </Card>
     </div>

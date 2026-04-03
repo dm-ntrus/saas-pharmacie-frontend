@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { I18N_CONFIG } from "@/i18n/i18n.config";
 import { setCookie, getCookie } from "@/utils/cookies";
+import type { Locale } from "@/i18n/routing";
 
 const COOKIE_NAME = "language";
 
@@ -16,8 +17,8 @@ const COOKIE_NAME = "language";
 const translationCache = new Map<string, Record<string, string>>();
 
 interface I18nContextType {
-  language: string;
-  setLanguage: (lang: string) => void;
+  language: Locale;
+  setLanguage: (lang: Locale) => void;
   t: (key: string, params?: Record<string, any>) => string;
   formatDate: (date: Date | string | number) => string;
   formatDateTime: (date: Date | string | number) => string;
@@ -33,7 +34,7 @@ const I18nContext = createContext<I18nContextType | undefined>(undefined);
 export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [language, setLanguageState] = useState<string>(I18N_CONFIG.defaultLanguage);
+  const [language, setLanguageState] = useState<Locale>(I18N_CONFIG.defaultLanguage);
   const [translations, setTranslations] = useState<Record<string, string>>({});
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -48,9 +49,9 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({
   // Chargement initial de la langue au montage du composant
   useEffect(() => {
     const saved = getSavedLanguage();
-    const validLang =
-      saved && I18N_CONFIG.supportedLanguages.includes(saved)
-        ? saved
+    const validLang: Locale =
+      saved && I18N_CONFIG.supportedLanguages.includes(saved as Locale)
+        ? (saved as Locale)
         : I18N_CONFIG.defaultLanguage;
 
     setLanguageState(validLang);
@@ -87,7 +88,7 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [language, isLoaded, loadTranslations]);
 
   // Applique la direction (ltr/rtl) et l'attribut lang sur <html>
-  const applyDirection = (lang: string) => {
+  const applyDirection = (lang: Locale) => {
     const safeLang = (lang in I18N_CONFIG.languageSettings
       ? (lang as keyof typeof I18N_CONFIG.languageSettings)
       : (I18N_CONFIG.defaultLanguage as keyof typeof I18N_CONFIG.languageSettings));
@@ -97,7 +98,7 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   // Change la langue + persistance (cookie + localStorage)
-  const setLanguage = (lang: string) => {
+  const setLanguage = (lang: Locale) => {
     if (!I18N_CONFIG.supportedLanguages.includes(lang)) return;
 
     setLanguageState(lang);

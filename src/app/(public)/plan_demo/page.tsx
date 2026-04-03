@@ -2,17 +2,19 @@
 
 import { motion } from "framer-motion";
 import { Calendar, Clock, Monitor, CheckCircle2, ArrowRight } from "lucide-react";
-import Link from "next/link";
-
-const benefits = [
-  "Démonstration personnalisée de 30 min",
-  "Configuration adaptée à votre pharmacie",
-  "Questions / réponses en direct",
-  "Plan de migration gratuit",
-  "Aucun engagement",
-];
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 export default function PlanDemoPage() {
+  const t = useTranslations("pages.planDemo");
+  const benefits = [
+    t("benefits.b1"),
+    t("benefits.b2"),
+    t("benefits.b3"),
+    t("benefits.b4"),
+    t("benefits.b5"),
+  ];
+
   return (
     <div className="min-h-screen pt-28 sm:pt-32 pb-16 sm:pb-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -24,23 +26,22 @@ export default function PlanDemoPage() {
               animate={{ opacity: 1, y: 0 }}
             >
               <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 mb-3">
-                Découvrir
+                {t("tag")}
               </p>
               <h1 className="text-3xl sm:text-5xl font-display font-bold text-slate-900 mb-4 tracking-tight leading-[1.05]">
-                Planifiez une{" "}
-                <span className="text-emerald-600">démo</span> gratuite.
+                {t("title")}{" "}
+                <span className="text-emerald-600">{t("titleHighlight")}</span> {t("titleEnd")}
               </h1>
               <p className="text-base text-slate-500 leading-relaxed font-medium mb-8 max-w-md">
-                Découvrez comment SyntixPharma peut transformer votre pharmacie
-                lors d&apos;une session personnalisée avec un de nos experts.
+                {t("desc")}
               </p>
             </motion.div>
 
             <div className="flex flex-wrap gap-6 mb-8">
               {[
-                { icon: Clock, text: "30 minutes" },
-                { icon: Monitor, text: "En visioconférence" },
-                { icon: Calendar, text: "Horaire flexible" },
+                { icon: Clock, text: t("quickInfo.duration") },
+                { icon: Monitor, text: t("quickInfo.remote") },
+                { icon: Calendar, text: t("quickInfo.flexible") },
               ].map((b) => (
                 <span
                   key={b.text}
@@ -66,12 +67,10 @@ export default function PlanDemoPage() {
 
             <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100">
               <p className="text-sm text-slate-500 leading-relaxed">
-                &quot;La démo nous a convaincus en 15 minutes. L&apos;interface est
-                tellement intuitive que notre équipe était opérationnelle le jour
-                même.&quot;
+                &quot;{t("testimonial.quote")}&quot;
               </p>
               <p className="text-sm font-bold text-slate-700 mt-3">
-                — Dr. Amisi, Pharmacie de la Paix
+                — {t("testimonial.author")}
               </p>
             </div>
           </div>
@@ -87,58 +86,58 @@ export default function PlanDemoPage() {
               className="bg-slate-50 rounded-3xl border border-slate-100 p-6 sm:p-10"
             >
               <h2 className="text-xl font-display font-bold text-slate-900 mb-6">
-                Réservez votre créneau
+                {t("form.title")}
               </h2>
 
               <div className="space-y-4 mb-6">
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">
-                    Nom complet
+                    {t("form.fullName")}
                   </label>
                   <input
                     type="text"
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500"
-                    placeholder="Dr. Jean Dupont"
+                    placeholder={t("form.fullNamePlaceholder")}
                   />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">
-                    Email professionnel
+                    {t("form.workEmail")}
                   </label>
                   <input
                     type="email"
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500"
-                    placeholder="jean@pharmacie.com"
+                    placeholder={t("form.workEmailPlaceholder")}
                   />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">
-                    Téléphone
+                    {t("form.phone")}
                   </label>
                   <input
                     type="tel"
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500"
-                    placeholder="+243 99 000 0000"
+                    placeholder={t("form.phonePlaceholder")}
                   />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">
-                    Nom de la pharmacie
+                    {t("form.pharmacyName")}
                   </label>
                   <input
                     type="text"
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500"
-                    placeholder="Pharmacie Centrale"
+                    placeholder={t("form.pharmacyNamePlaceholder")}
                   />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">
-                    Créneau préféré
+                    {t("form.preferredSlot")}
                   </label>
                   <select className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500">
-                    <option>Matin (8h – 12h)</option>
-                    <option>Après-midi (13h – 17h)</option>
-                    <option>Soir (17h – 19h)</option>
+                    <option>{t("form.slotMorning")}</option>
+                    <option>{t("form.slotAfternoon")}</option>
+                    <option>{t("form.slotEvening")}</option>
                   </select>
                 </div>
               </div>
@@ -147,12 +146,12 @@ export default function PlanDemoPage() {
                 type="submit"
                 className="w-full py-4 bg-slate-900 text-white rounded-xl font-bold hover:bg-emerald-600 transition-all flex items-center justify-center gap-2 shadow-lg"
               >
-                Réserver ma démo
+                {t("form.submit")}
                 <ArrowRight className="w-4 h-4" />
               </button>
 
               <p className="text-xs text-slate-400 text-center mt-4">
-                Gratuit · Sans engagement · Réponse sous 24h
+                {t("form.footnote")}
               </p>
             </form>
           </motion.div>

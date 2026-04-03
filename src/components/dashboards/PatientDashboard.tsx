@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useTenantPath } from "@/hooks/useTenantPath";
 import { usePatientSummary } from "@/hooks/api/usePatients";
 import { formatDate } from "@/utils/formatters";
@@ -23,6 +24,7 @@ import {
 } from "lucide-react";
 
 export function PatientDashboard() {
+  const t = useTranslations("dashboardPatient");
   const { buildPath } = useTenantPath();
   const { data: summaryData, isLoading } = usePatientSummary();
 
@@ -49,13 +51,13 @@ export function PatientDashboard() {
 
   const kpis = [
     {
-      title: "Ordonnances actives",
+      title: t("kpis.activePrescriptions"),
       value: activePrescriptions.toString(),
       icon: FileText,
       color: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
     },
     {
-      title: "Rendez-vous à venir",
+      title: t("kpis.upcomingAppointments"),
       value: upcomingAppointments.toString(),
       icon: CalendarClock,
       color: upcomingAppointments > 0
@@ -63,7 +65,7 @@ export function PatientDashboard() {
         : "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400",
     },
     {
-      title: "Achats récents",
+      title: t("kpis.recentPurchases"),
       value: recentPurchases.toString(),
       icon: ShoppingBag,
       color: "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400",
@@ -72,14 +74,14 @@ export function PatientDashboard() {
 
   const quickActions = [
     {
-      title: "Mes ordonnances",
-      description: "Consulter l'historique des prescriptions",
+      title: t("quickActions.myPrescriptions.title"),
+      description: t("quickActions.myPrescriptions.description"),
       icon: Eye,
       href: buildPath("/prescriptions"),
     },
     {
-      title: "Vaccination",
-      description: "Prendre un rendez-vous vaccinal",
+      title: t("quickActions.vaccination.title"),
+      description: t("quickActions.vaccination.description"),
       icon: Syringe,
       href: buildPath("/vaccination"),
     },
@@ -109,7 +111,7 @@ export function PatientDashboard() {
       {/* Actions rapides */}
       <div>
         <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3">
-          Actions rapides
+          {t("quickActionsTitle")}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {quickActions.map((action) => (
@@ -136,13 +138,13 @@ export function PatientDashboard() {
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
               <Pill className="w-5 h-5 text-emerald-600" />
-              Historique des ordonnances
+              {t("history.title")}
             </CardTitle>
             <Link
               href={buildPath("/prescriptions")}
               className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
             >
-              Tout voir <ArrowRight className="w-4 h-4" />
+              {t("seeAll")} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </CardHeader>
@@ -153,11 +155,11 @@ export function PatientDashboard() {
                 <div key={rx.id ?? idx} className="flex items-center justify-between py-3">
                   <div>
                     <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                      {rx.doctorName || rx.doctor_name || `Ordonnance #${idx + 1}`}
+                      {rx.doctorName || rx.doctor_name || t("history.prescriptionFallback", { n: idx + 1 })}
                     </p>
                     <p className="text-xs text-slate-500 dark:text-slate-400">
                       {formatDate(rx.date)}
-                      {rx.itemCount ? ` — ${rx.itemCount} médicament(s)` : ""}
+                      {rx.itemCount ? ` — ${t("history.medicationCount", { count: rx.itemCount })}` : ""}
                     </p>
                   </div>
                   <span className={`text-xs font-medium px-2 py-1 rounded-full ${
@@ -167,9 +169,9 @@ export function PatientDashboard() {
                         ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
                         : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
                   }`}>
-                    {rx.status === "active" ? "Active" :
-                     rx.status === "expired" ? "Expirée" :
-                     rx.status === "dispensed" ? "Dispensée" : rx.status ?? "—"}
+                    {rx.status === "active" ? t("status.active") :
+                     rx.status === "expired" ? t("status.expired") :
+                     rx.status === "dispensed" ? t("status.dispensed") : rx.status ?? "—"}
                   </span>
                 </div>
               ))}
@@ -178,7 +180,7 @@ export function PatientDashboard() {
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <FileText className="w-10 h-10 text-slate-300 dark:text-slate-600 mb-3" />
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                Aucune ordonnance récente
+                {t("history.empty")}
               </p>
             </div>
           )}

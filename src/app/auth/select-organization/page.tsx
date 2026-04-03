@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import axios from "axios";
 import { getCookie, setCookie } from "@/utils/cookies";
 import {
@@ -13,7 +14,7 @@ import {
 } from "lucide-react";
 import AuthShell from "@/components/auth/AuthShell";
 import { getApiBaseUrl } from "@/helpers/auth-interceptor";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 interface Organization {
   id: string;
@@ -24,6 +25,7 @@ interface Organization {
 }
 
 export default function SelectOrganizationPage() {
+  const t = useTranslations("authPages.selectOrganization");
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -55,9 +57,7 @@ export default function SelectOrganizationPage() {
         }
       })
       .catch(() => {
-        setError(
-          "Impossible de charger vos organisations. Veuillez vous reconnecter.",
-        );
+        setError(t("loadError"));
       })
       .finally(() => setLoading(false));
   }, []);
@@ -78,10 +78,9 @@ export default function SelectOrganizationPage() {
   return (
     <AuthShell
       testimonial={{
-        quote:
-          "Gérer plusieurs pharmacies n'a jamais été aussi simple. Un clic et je suis dans le bon environnement.",
-        name: "Dr. Amisi Kabila",
-        title: "Groupe Médical Horizon",
+        quote: t("testimonialQuote"),
+        name: t("testimonialName"),
+        title: t("testimonialTitle"),
       }}
     >
       <motion.div
@@ -94,11 +93,11 @@ export default function SelectOrganizationPage() {
             <Building className="w-7 h-7 text-emerald-600" />
           </div>
           <h1 className="text-3xl font-display font-bold text-slate-900 mb-2 tracking-tight">
-            Choisissez votre{" "}
-            <span className="text-emerald-600">organisation</span>
+            {t("title")}{" "}
+            <span className="text-emerald-600">{t("titleHighlight")}</span>
           </h1>
           <p className="text-sm text-slate-500 leading-relaxed">
-            Sélectionnez l&apos;espace de travail auquel vous souhaitez accéder.
+            {t("desc")}
           </p>
         </div>
 
@@ -117,7 +116,7 @@ export default function SelectOrganizationPage() {
                 href="/auth/login"
                 className="text-sm text-red-600 font-bold hover:underline mt-1 inline-block"
               >
-                Retour à la connexion
+                {t("backToLogin")}
               </Link>
             </div>
           </div>
@@ -127,13 +126,13 @@ export default function SelectOrganizationPage() {
           <div className="text-center py-12">
             <Building className="w-12 h-12 text-slate-200 mx-auto mb-4" />
             <p className="text-slate-500 font-medium mb-4">
-              Aucune organisation trouvée pour ce compte.
+              {t("noOrganization")}
             </p>
             <Link
               href="/auth/register"
               className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-all"
             >
-              Créer une pharmacie
+              {t("createPharmacy")}
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -169,7 +168,7 @@ export default function SelectOrganizationPage() {
                       {org.name}
                     </p>
                     <p className="text-xs text-slate-400 mt-0.5">
-                      {org.roles.join(", ") || "Membre"}
+                      {org.roles.join(", ") || t("member")}
                       {org.subdomain && (
                         <span className="ml-2 font-mono text-emerald-600">
                           {org.subdomain}
@@ -189,7 +188,7 @@ export default function SelectOrganizationPage() {
               disabled={!selectedOrg}
               className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-base hover:bg-emerald-600 transition-all flex items-center justify-center gap-3 disabled:opacity-50 shadow-xl shadow-slate-900/15 group"
             >
-              Continuer
+              {t("continue")}
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
           </>

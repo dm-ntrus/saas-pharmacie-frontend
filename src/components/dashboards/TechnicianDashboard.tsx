@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 import {
   Package,
   Truck,
@@ -12,6 +13,8 @@ import {
 import { Card, Button } from '@/design-system';
 
 const TechnicianDashboard: React.FC = () => {
+  const t = useTranslations('dashboardTechnician');
+  const locale = useLocale();
   const [inventory] = useState([
     {
       id: 1,
@@ -61,30 +64,30 @@ const TechnicianDashboard: React.FC = () => {
 
   const stats = [
     {
-      title: 'Produits en Stock',
+      title: t('stats.productsInStock'),
       value: '1,245',
-      detail: '22 catégories',
+      detail: t('stats.productsInStockDetail'),
       icon: Package,
       color: 'bg-blue-500'
     },
     {
-      title: 'Stock Faible',
+      title: t('stats.lowStock'),
       value: '8',
-      detail: 'nécessitent commande',
+      detail: t('stats.lowStockDetail'),
       icon: AlertTriangle,
       color: 'bg-orange-500'
     },
     {
-      title: 'Livraisons en Attente',
+      title: t('stats.pendingDeliveries'),
       value: '3',
-      detail: 'cette semaine',
+      detail: t('stats.pendingDeliveriesDetail'),
       icon: Truck,
       color: 'bg-cyan-500'
     },
     {
-      title: 'Contrôles Qualité',
+      title: t('stats.qualityChecks'),
       value: '12',
-      detail: 'ce mois',
+      detail: t('stats.qualityChecksDetail'),
       icon: CheckCircle,
       color: 'bg-green-500'
     }
@@ -92,9 +95,9 @@ const TechnicianDashboard: React.FC = () => {
 
   const getStockStatus = (item: typeof inventory[0]) => {
     const percentage = (item.stock / item.minStock) * 100;
-    if (percentage < 25) return { color: 'bg-red-100 text-red-800', text: 'Critique' };
-    if (percentage < 50) return { color: 'bg-orange-100 text-orange-800', text: 'Faible' };
-    return { color: 'bg-green-100 text-green-800', text: 'Normal' };
+    if (percentage < 25) return { color: 'bg-red-100 text-red-800', text: t('severity.critical') };
+    if (percentage < 50) return { color: 'bg-orange-100 text-orange-800', text: t('severity.low') };
+    return { color: 'bg-green-100 text-green-800', text: t('severity.normal') };
   };
 
   const isExpiringSoon = (expiryDate: string) => {
@@ -106,21 +109,21 @@ const TechnicianDashboard: React.FC = () => {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
       {/* En-tête */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Tableau de Bord Technicien</h1>
-          <p className="text-gray-600">Gestion des stocks et logistique</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('header.title')}</h1>
+          <p className="text-gray-600">{t('header.subtitle')}</p>
         </div>
-        <div className="flex space-x-3">
+        <div className="flex flex-wrap gap-2 sm:gap-3">
           <Button variant="outline">
             <QrCode className="h-5 w-5 mr-2" />
-            Scanner Produit
+            {t('header.scanProduct')}
           </Button>
           <Button variant="default">
             <Package className="h-5 w-5 mr-2" />
-            Inventaire
+            {t('header.inventory')}
           </Button>
         </div>
       </div>
@@ -147,7 +150,7 @@ const TechnicianDashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Alertes de stock */}
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Alertes de Stock</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('sections.stockAlerts')}</h3>
           <div className="space-y-4">
             {inventory
               .filter(item => item.status !== 'normal')
@@ -161,10 +164,10 @@ const TechnicianDashboard: React.FC = () => {
                       <div>
                         <h4 className="font-medium text-gray-900">{item.name}</h4>
                         <p className="text-sm text-gray-600">
-                          Emplacement: {item.location}
+                          {t('location')}: {item.location}
                         </p>
                         <p className="text-sm text-gray-600">
-                          Stock: {item.stock} / Min: {item.minStock}
+                          {t('stock')}: {item.stock} / {t('min')}: {item.minStock}
                         </p>
                       </div>
                       <div className="flex flex-col items-end space-y-1">
@@ -173,7 +176,7 @@ const TechnicianDashboard: React.FC = () => {
                         </span>
                         {expiringSoon && (
                           <span className="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">
-                            Expire bientôt
+                            {t('expiresSoon')}
                           </span>
                         )}
                       </div>
@@ -181,14 +184,14 @@ const TechnicianDashboard: React.FC = () => {
                     
                     <div className="flex justify-between items-center mt-3">
                       <p className="text-xs text-gray-500">
-                        Expiration: {new Date(item.expiry).toLocaleDateString('fr-FR')}
+                        {t('expiration')}: {new Date(item.expiry).toLocaleDateString(locale)}
                       </p>
                       <div className="flex space-x-2">
                         <Button size="sm" variant="outline">
-                          Commander
+                          {t('actions.order')}
                         </Button>
                         <Button size="sm" variant="primary">
-                          Réapprovisionner
+                          {t('actions.restock')}
                         </Button>
                       </div>
                     </div>
@@ -200,7 +203,7 @@ const TechnicianDashboard: React.FC = () => {
 
         {/* Livraisons */}
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Livraisons</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('sections.deliveries')}</h3>
           <div className="space-y-4">
             {deliveries.map((delivery) => (
               <div key={delivery.id} className="border border-gray-200 rounded-lg p-4">
@@ -208,10 +211,10 @@ const TechnicianDashboard: React.FC = () => {
                   <div>
                     <h4 className="font-medium text-gray-900">{delivery.supplier}</h4>
                     <p className="text-sm text-gray-600">
-                      {delivery.items} articles
+                      {t('itemsCount', { count: delivery.items })}
                     </p>
                     <p className="text-sm text-gray-600">
-                      Prévue le: {new Date(delivery.expectedDate).toLocaleDateString('fr-FR')}
+                      {t('expectedOn')}: {new Date(delivery.expectedDate).toLocaleDateString(locale)}
                     </p>
                   </div>
                   <span className={`px-2 py-1 text-xs font-medium rounded-full ${
@@ -219,7 +222,7 @@ const TechnicianDashboard: React.FC = () => {
                       ? 'bg-green-100 text-green-800' 
                       : 'bg-yellow-100 text-yellow-800'
                   }`}>
-                    {delivery.status === 'received' ? 'Reçue' : 'En attente'}
+                    {delivery.status === 'received' ? t('status.received') : t('status.pending')}
                   </span>
                 </div>
                 
@@ -227,15 +230,15 @@ const TechnicianDashboard: React.FC = () => {
                   {delivery.status === 'pending' ? (
                     <>
                       <Button size="sm" variant="primary">
-                        Réceptionner
+                        {t('actions.receive')}
                       </Button>
                       <Button size="sm" variant="outline">
-                        Reporter
+                        {t('actions.reschedule')}
                       </Button>
                     </>
                   ) : (
                     <Button size="sm" variant="outline">
-                      Voir Détails
+                      {t('actions.viewDetails')}
                     </Button>
                   )}
                 </div>
@@ -244,7 +247,7 @@ const TechnicianDashboard: React.FC = () => {
             
             <Button variant="outline" className="w-full">
               <Truck className="h-5 w-5 mr-2" />
-              Planifier Livraison
+              {t('actions.scheduleDelivery')}
             </Button>
           </div>
         </Card>
@@ -256,19 +259,19 @@ const TechnicianDashboard: React.FC = () => {
           <div className="flex items-center mb-4">
             <Archive className="h-8 w-8 text-blue-600 mr-3" />
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">Inventaire</h3>
-              <p className="text-sm text-gray-600">Gestion complète du stock</p>
+              <h3 className="text-lg font-semibold text-gray-900">{t('tools.inventoryTitle')}</h3>
+              <p className="text-sm text-gray-600">{t('tools.inventoryDesc')}</p>
             </div>
           </div>
           <div className="space-y-3">
             <Button variant="outline" className="w-full justify-start">
-              Comptage physique
+              {t('tools.inventoryActions.a1')}
             </Button>
             <Button variant="outline" className="w-full justify-start">
-              Ajustements stock
+              {t('tools.inventoryActions.a2')}
             </Button>
             <Button variant="outline" className="w-full justify-start">
-              Rapport d&apos;inventaire
+              {t('tools.inventoryActions.a3')}
             </Button>
           </div>
         </Card>
@@ -277,19 +280,19 @@ const TechnicianDashboard: React.FC = () => {
           <div className="flex items-center mb-4">
             <Wrench className="h-8 w-8 text-green-600 mr-3" />
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">Maintenance</h3>
-              <p className="text-sm text-gray-600">Équipements et installations</p>
+              <h3 className="text-lg font-semibold text-gray-900">{t('tools.maintenanceTitle')}</h3>
+              <p className="text-sm text-gray-600">{t('tools.maintenanceDesc')}</p>
             </div>
           </div>
           <div className="space-y-3">
             <Button variant="outline" className="w-full justify-start">
-              Planifier maintenance
+              {t('tools.maintenanceActions.a1')}
             </Button>
             <Button variant="outline" className="w-full justify-start">
-              Calibrage équipements
+              {t('tools.maintenanceActions.a2')}
             </Button>
             <Button variant="outline" className="w-full justify-start">
-              Historique interventions
+              {t('tools.maintenanceActions.a3')}
             </Button>
           </div>
         </Card>
@@ -298,19 +301,19 @@ const TechnicianDashboard: React.FC = () => {
           <div className="flex items-center mb-4">
             <ClipboardList className="h-8 w-8 text-cyan-600 mr-3" />
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">Qualité</h3>
-              <p className="text-sm text-gray-600">Contrôles et conformité</p>
+              <h3 className="text-lg font-semibold text-gray-900">{t('tools.qualityTitle')}</h3>
+              <p className="text-sm text-gray-600">{t('tools.qualityDesc')}</p>
             </div>
           </div>
           <div className="space-y-3">
             <Button variant="outline" className="w-full justify-start">
-              Contrôle qualité
+              {t('tools.qualityActions.a1')}
             </Button>
             <Button variant="outline" className="w-full justify-start">
-              Vérification expiration
+              {t('tools.qualityActions.a2')}
             </Button>
             <Button variant="outline" className="w-full justify-start">
-              Audit conformité
+              {t('tools.qualityActions.a3')}
             </Button>
           </div>
         </Card>
@@ -318,31 +321,31 @@ const TechnicianDashboard: React.FC = () => {
 
       {/* Tableau de bord d&apos;activité */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Activités Récentes</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('sections.recentActivities')}</h3>
         <div className="space-y-3">
           {[
             {
-              action: 'Réception livraison',
-              details: '150 unités de Paracétamol 500mg',
-              time: 'Il y a 2h',
+              action: t('activity.a1.action'),
+              details: t('activity.a1.details'),
+              time: t('activity.a1.time'),
               type: 'success'
             },
             {
-              action: 'Alerte stock faible',
-              details: 'Amoxicilline 250mg - Stock critique',
-              time: 'Il y a 4h',
+              action: t('activity.a2.action'),
+              details: t('activity.a2.details'),
+              time: t('activity.a2.time'),
               type: 'warning'
             },
             {
-              action: 'Contrôle qualité',
-              details: 'Vérification lot #LOT2025001',
-              time: 'Il y a 6h',
+              action: t('activity.a3.action'),
+              details: t('activity.a3.details'),
+              time: t('activity.a3.time'),
               type: 'info'
             },
             {
-              action: 'Ajustement stock',
-              details: 'Correction inventaire - Vitamine C',
-              time: 'Il y a 1 jour',
+              action: t('activity.a4.action'),
+              details: t('activity.a4.details'),
+              time: t('activity.a4.time'),
               type: 'info'
             }
           ].map((activity, index) => (

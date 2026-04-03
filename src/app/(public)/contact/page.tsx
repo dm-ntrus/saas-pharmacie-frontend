@@ -2,37 +2,40 @@
 
 import { motion } from "framer-motion";
 import { Mail, MapPin, Phone, Clock, Send, ArrowUpRight } from "lucide-react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { PLATFORM } from "@/config/platform";
-
-const contacts = [
-  {
-    icon: Mail,
-    title: "Email",
-    value: PLATFORM.email.contact,
-    href: `mailto:${PLATFORM.email.contact}`,
-  },
-  {
-    icon: Phone,
-    title: "Téléphone",
-    value: "+243 99 000 0000",
-    href: "tel:+243990000000",
-  },
-  {
-    icon: MapPin,
-    title: "Adresse",
-    value: "Kinshasa, RD Congo",
-    href: "#",
-  },
-  {
-    icon: Clock,
-    title: "Horaires",
-    value: "Lun – Ven · 8h – 18h",
-    href: "#",
-  },
-];
+import { Link } from "@/i18n/navigation";
 
 export default function ContactPage() {
+  const t = useTranslations("pages.contact");
+
+  const contacts = [
+    {
+      icon: Mail,
+      title: t("email"),
+      value: PLATFORM.email.contact,
+      href: `mailto:${PLATFORM.email.contact}`,
+    },
+    {
+      icon: Phone,
+      title: t("phone"),
+      value: "+243 99 000 0000",
+      href: "tel:+243990000000",
+    },
+    {
+      icon: MapPin,
+      title: t("address"),
+      value: "Kinshasa, RD Congo",
+      href: "https://maps.google.com/?q=Kinshasa%2C%20RD%20Congo",
+    },
+    {
+      icon: Clock,
+      title: t("hours"),
+      value: t("hoursValue"),
+      href: "/support",
+    },
+  ];
+
   return (
     <div className="min-h-screen pt-28 sm:pt-32 pb-16 sm:pb-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -43,15 +46,14 @@ export default function ContactPage() {
             animate={{ opacity: 1, y: 0 }}
           >
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 mb-3">
-              Contact
+              {t("tag")}
             </p>
             <h1 className="text-3xl sm:text-5xl font-display font-bold text-slate-900 mb-4 tracking-tight">
-              Parlons de votre{" "}
-              <span className="text-emerald-600">projet.</span>
+              {t("title")}{" "}
+              <span className="text-emerald-600">{t("titleHighlight")}</span>
             </h1>
             <p className="text-base text-slate-500 font-medium leading-relaxed">
-              Notre équipe est disponible pour répondre à toutes vos questions
-              et vous accompagner dans votre transition numérique.
+              {t("desc")}
             </p>
           </motion.div>
         </div>
@@ -80,16 +82,15 @@ export default function ContactPage() {
             ))}
 
             <div className="p-5 bg-slate-900 rounded-2xl text-white mt-4">
-              <h3 className="font-bold text-sm mb-2">Support technique</h3>
+              <h3 className="font-bold text-sm mb-2">{t("techSupport")}</h3>
               <p className="text-sm text-slate-400 leading-relaxed mb-3">
-                Déjà client ? Accédez à notre portail de support pour une
-                assistance prioritaire.
+                {t("techSupportDesc")}
               </p>
               <Link
                 href="/support"
                 className="text-emerald-400 text-sm font-bold inline-flex items-center gap-1 hover:text-emerald-300 transition-colors"
               >
-                Accéder au support
+                {t("accessSupport")}
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </Link>
             </div>
@@ -102,28 +103,28 @@ export default function ContactPage() {
               className="bg-slate-50 rounded-3xl border border-slate-100 p-6 sm:p-10"
             >
               <h2 className="text-xl font-display font-bold text-slate-900 mb-6">
-                Envoyez-nous un message
+                {t("formTitle")}
               </h2>
 
               <div className="grid sm:grid-cols-2 gap-4 mb-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">
-                    Nom complet
+                    {t("fullName")}
                   </label>
                   <input
                     type="text"
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 transition-all"
-                    placeholder="Dr. Jean Dupont"
+                    placeholder={t("fullNamePlaceholder")}
                   />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">
-                    Email
+                    {t("emailLabel")}
                   </label>
                   <input
                     type="email"
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 transition-all"
-                    placeholder="jean@pharmacie.com"
+                    placeholder={t("emailPlaceholder")}
                   />
                 </div>
               </div>
@@ -131,36 +132,36 @@ export default function ContactPage() {
               <div className="grid sm:grid-cols-2 gap-4 mb-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">
-                    Téléphone
+                    {t("phoneLabel")}
                   </label>
                   <input
                     type="tel"
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 transition-all"
-                    placeholder="+243 99 000 0000"
+                    placeholder={t("phonePlaceholder")}
                   />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">
-                    Sujet
+                    {t("subject")}
                   </label>
                   <select className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 transition-all">
-                    <option>Demande de démo</option>
-                    <option>Question tarifs</option>
-                    <option>Partenariat</option>
-                    <option>Support technique</option>
-                    <option>Autre</option>
+                    <option>{t("subjectDemo")}</option>
+                    <option>{t("subjectPricing")}</option>
+                    <option>{t("subjectPartnership")}</option>
+                    <option>{t("subjectSupport")}</option>
+                    <option>{t("subjectOther")}</option>
                   </select>
                 </div>
               </div>
 
               <div className="mb-6">
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">
-                  Message
+                  {t("message")}
                 </label>
                 <textarea
                   rows={5}
                   className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 transition-all"
-                  placeholder="Décrivez votre besoin..."
+                  placeholder={t("messagePlaceholder")}
                 />
               </div>
 
@@ -169,7 +170,7 @@ export default function ContactPage() {
                 className="w-full py-4 bg-slate-900 text-white rounded-xl font-bold hover:bg-emerald-600 transition-all flex items-center justify-center gap-2 shadow-lg"
               >
                 <Send className="w-4 h-4" />
-                Envoyer le message
+                {t("sendButton")}
               </button>
             </form>
           </div>

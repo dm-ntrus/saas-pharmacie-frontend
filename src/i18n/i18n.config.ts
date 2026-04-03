@@ -1,43 +1,47 @@
-export const I18N_CONFIG = {
-  defaultLanguage: 'fr',
-  supportedLanguages: ['fr', 'en', 'es', 'ar'],
-  
+import type { Locale } from "./routing";
+
+export type LanguageSettings = {
+  name: string;
+  nativeName: string;
+  currency: string;
+  timezone: string;
+  dateFormat: string;
+  timeFormat: "12h" | "24h";
+  direction: "ltr" | "rtl";
+  numberFormat: string;
+  flag: string;
+};
+
+export const I18N_CONFIG: {
+  defaultLanguage: Locale;
+  supportedLanguages: Locale[];
+  languageSettings: Record<Locale, LanguageSettings>;
+} = {
+  defaultLanguage: "fr",
+  supportedLanguages: ["fr", "en"],
+
   languageSettings: {
     fr: {
-      name: 'Français',
-      currency: 'XOF',
-      timezone: 'Africa/Abidjan',
-      dateFormat: 'DD/MM/YYYY',
-      timeFormat: '24h',
-      direction: 'ltr',
-      numberFormat: 'fr-FR'
+      name: "Français",
+      nativeName: "Français",
+      currency: "XOF",
+      timezone: "Africa/Abidjan",
+      dateFormat: "DD/MM/YYYY",
+      timeFormat: "24h",
+      direction: "ltr",
+      numberFormat: "fr-FR",
+      flag: "🇫🇷",
     },
     en: {
-      name: 'English',
-      currency: 'USD',
-      timezone: 'UTC',
-      dateFormat: 'MM/DD/YYYY',
-      timeFormat: '12h',
-      direction: 'ltr',
-      numberFormat: 'en-US'
+      name: "English",
+      nativeName: "English",
+      currency: "USD",
+      timezone: "UTC",
+      dateFormat: "MM/DD/YYYY",
+      timeFormat: "12h",
+      direction: "ltr",
+      numberFormat: "en-US",
+      flag: "🇬🇧",
     },
-    es: {
-      name: 'Español',
-      currency: 'EUR',
-      timezone: 'Europe/Madrid',
-      dateFormat: 'DD/MM/YYYY',
-      timeFormat: '24h',
-      direction: 'ltr',
-      numberFormat: 'es-ES'
-    },
-    ar: {
-      name: 'العربية',
-      currency: 'MAD',
-      timezone: 'Africa/Casablanca',
-      dateFormat: 'DD/MM/YYYY',
-      timeFormat: '24h',
-      direction: 'rtl',
-      numberFormat: 'ar-MA'
-    }
-  }
+  },
 };
