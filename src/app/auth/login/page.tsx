@@ -40,7 +40,7 @@ export default function LoginPage() {
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="space-y-6"
+        className="space-y-6 h-full max-w-lg mx-auto flex flex-col items-center text-center justify-center"
       >
         <div>
           <h1 className="text-3xl sm:text-4xl font-display font-bold text-slate-900 mb-2 tracking-tight">

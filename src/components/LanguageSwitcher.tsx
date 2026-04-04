@@ -62,6 +62,7 @@ export default function LanguageSwitcher({
     await setLocaleCookie(locale);
     startTransition(() => {
       router.replace(pathname, { locale });
+      router.refresh(); // Rafraîchir les données côté serveur
     });
   };
 

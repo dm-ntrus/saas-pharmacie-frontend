@@ -60,7 +60,7 @@ export default function AuthShell({
         </div>
 
         <div className="flex-1 flex items-start justify-center px-6 sm:px-10 lg:px-16 py-8 sm:py-12">
-          <div className="w-full max-w-lg">{children}</div>
+          <div className="w-full h-full">{children}</div>
         </div>
 
         <div className="px-6 sm:px-10 lg:px-16 py-4 border-t border-slate-50 text-xs text-slate-400 flex items-center justify-between">

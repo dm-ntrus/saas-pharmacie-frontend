@@ -33,7 +33,7 @@ export default function ForgotPasswordPage() {
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="space-y-6"
+        className="space-y-6 h-full max-w-lg mx-auto flex flex-col items-center text-center justify-center"
       >
         <Link
           href="/auth/login"
@@ -43,7 +43,7 @@ export default function ForgotPasswordPage() {
           {t("backToLogin")}
         </Link>
 
-        <div className="bg-white rounded-3xl border border-slate-100 p-6 sm:p-8 shadow-sm space-y-5">
+        <div className="bg-white flex flex-col items-center rounded-3xl border border-slate-100 p-6 sm:p-8 shadow-sm space-y-5">
           <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center">
             <KeyRound className="w-7 h-7 text-emerald-600" />
           </div>

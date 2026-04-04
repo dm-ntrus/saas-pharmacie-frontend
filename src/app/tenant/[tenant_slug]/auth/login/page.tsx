@@ -46,7 +46,7 @@ export default function TenantLoginPage() {
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="space-y-6"
+        className="space-y-6 h-full max-w-lg mx-auto flex flex-col items-center text-center justify-center"
       >
         {/* Tenant badge */}
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-black border border-emerald-100 uppercase tracking-[0.2em]">

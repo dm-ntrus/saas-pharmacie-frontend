@@ -359,7 +359,7 @@ function RegisterInner() {
   const calculatePrice = () => {
     if (!selectedPlan) return 0;
     if (selectedPlan.billing_interval === 'yearly') return selectedPlan.price / 12;
-    return selectedPlan.price;
+    return selectedPlan.price || 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -435,7 +435,7 @@ function RegisterInner() {
 
   return (
     <AuthShell testimonial={{ quote: "La technologie au service de la santé. SyntixPharma redéfinit l'excellence opérationnelle en officine.", name: "Dr. David Luvuezo", title: "Pharmacie de l'Espoir" }}>
-      <div className="space-y-6">
+      <div className="space-y-4">
         {/* Stepper */}
         <div className="flex items-center gap-1.5">
           {STEP_META.map((meta, i) => {
@@ -464,25 +464,25 @@ function RegisterInner() {
 
         <form onSubmit={handleSubmit}>
           <AnimatePresence mode="wait">
-            <motion.div key={step} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }} className="space-y-5">
+            <motion.div key={step} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }} className="space-y-1.5">
 
               {/* ═══════════════════════════════════════════
                   Step 1 — ENTREPRISE / SIÈGE (TenantDataDto)
                   ═══════════════════════════════════════════ */}
               {step === 1 && (
-                <div className="space-y-5">
+                <div className="space-y-2.5">
                   <div>
                     <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Votre <span className="text-emerald-600">entreprise</span></h1>
                     <p className="text-sm text-slate-500 mt-1">Informations sur l&apos;entité légale qui exploite la pharmacie (siège social).</p>
                   </div>
 
                   {/* Identity */}
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <div className="space-y-1">
                       <Lbl required>Nom de l&apos;entreprise</Lbl>
                       <input type="text" required placeholder="ex. Pharmacie Centrale" className={getInputClass('name', !!formData.tenantData.name)} value={formData.tenantData.name} onBlur={() => markTouched('name')} onChange={(e) => updateTenantData('name', e.target.value)} />
                     </div>
-                    <div className="space-y-1.5">
+                    <div className="space-y-1">
                       <Lbl required>Sous-domaine</Lbl>
                       <div className="flex items-center gap-2">
                         <input type="text" required placeholder="pharmacie-centrale" className={getInputClass('subdomain', !!formData.tenantData.subdomain)} value={formData.tenantData.subdomain} onBlur={() => markTouched('subdomain')} onChange={(e) => updateTenantData('subdomain', e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))} />
@@ -491,12 +491,12 @@ function RegisterInner() {
                     </div>
                   </div>
 
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <div className="space-y-1">
                       <Lbl>Raison sociale<OptTag /></Lbl>
                       <input type="text" placeholder="ex. Pharmacie Centrale SARL" className={inputBase} value={formData.tenantData.companyName ?? ''} onChange={(e) => updateTenantData('companyName', e.target.value)} />
                     </div>
-                    <div className="space-y-1.5">
+                    <div className="space-y-1">
                       <Lbl>Type d&apos;organisation</Lbl>
                       <select className={selectClass} value={formData.tenantData.tenantType} onChange={(e) => updateTenantData('tenantType', e.target.value as TenantType)}>
                         <option value={TenantType.SINGLE_PHARMACY}>Pharmacie individuelle</option>
@@ -509,14 +509,14 @@ function RegisterInner() {
                   </div>
 
                   {/* Contact */}
-                  <div className="border-t border-slate-100 pt-4">
-                    <h3 className="text-sm font-semibold text-slate-900 mb-3">Contact du siège</h3>
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div className="space-y-1.5">
+                  <div className="border-t border-slate-100 pt-2">
+                    <h3 className="text-sm font-semibold text-slate-900 mb-2">Contact du siège</h3>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      <div className="space-y-1">
                         <Lbl required>Email</Lbl>
                         <input type="email" required placeholder="contact@pharmacie.com" className={getInputClass('contactEmail', !!formData.tenantData.contact.email)} value={formData.tenantData.contact.email} onBlur={() => markTouched('contactEmail')} onChange={(e) => updateTenantData('contact', { ...formData.tenantData.contact, email: e.target.value })} />
                       </div>
-                      <div className="space-y-1.5">
+                      <div className="space-y-1">
                         <Lbl>Téléphone<OptTag /></Lbl>
                         <PhoneInput value={formData.tenantData.contact.phone ?? ''} onChange={(val) => updateTenantData('contact', { ...formData.tenantData.contact, phone: val })} defaultCountry={tenantCountry as Country} />
                       </div>
@@ -524,46 +524,46 @@ function RegisterInner() {
                   </div>
 
                   {/* Legal */}
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <div className="space-y-1">
                       <Lbl>N° de licence (entreprise)<OptTag /></Lbl>
                       <input type="text" placeholder="ex. RP-2024-12345678" className={inputBase} value={formData.tenantData.licenseNumber ?? ''} onChange={(e) => updateTenantData('licenseNumber', e.target.value)} />
                     </div>
-                    <div className="space-y-1.5">
+                    <div className="space-y-1">
                       <Lbl>Numéro TVA<OptTag /></Lbl>
                       <input type="text" placeholder="ex. FR12345678901" className={inputBase} value={formData.tenantData.taxId ?? ''} onChange={(e) => updateTenantData('taxId', e.target.value)} />
                     </div>
                   </div>
 
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <div className="space-y-1">
                       <Lbl>Site web<OptTag /></Lbl>
                       <input type="url" placeholder="https://www.pharmacie.com" className={inputBase} value={formData.tenantData.website ?? ''} onChange={(e) => updateTenantData('website', e.target.value)} />
                     </div>
-                    <div className="space-y-1.5">
+                    <div className="space-y-1">
                       <Lbl>Domaine personnalisé<OptTag /></Lbl>
                       <input type="text" placeholder="ex. pharmacie.mondomaine.com" className={inputBase} value={formData.tenantData.customDomain ?? ''} onChange={(e) => updateTenantData('customDomain', e.target.value)} />
                     </div>
                   </div>
 
                   {/* Tenant address (siège) */}
-                  <div className="border-t border-slate-100 pt-4">
-                    <h3 className="text-sm font-semibold text-slate-900 mb-3">Adresse du siège</h3>
+                  <div className="border-t border-slate-100 pt-2">
+                    <h3 className="text-sm font-semibold text-slate-900 mb-2">Adresse du siège</h3>
                     <div className="space-y-4">
-                      <div className="space-y-1.5">
+                      <div className="space-y-1">
                         <Lbl required>Rue / adresse</Lbl>
                         <input type="text" required placeholder="ex. 123 Avenue de la Paix" className={getInputClass('street', !!tenantAddr?.street)} value={tenantAddr?.street ?? ''} onBlur={() => markTouched('street')} onChange={(e) => updateTenantData('address', { ...(tenantAddr ?? {}), street: e.target.value })} />
                       </div>
-                      <div className="grid sm:grid-cols-3 gap-4">
-                        <div className="space-y-1.5">
+                      <div className="grid sm:grid-cols-3 gap-3">
+                        <div className="space-y-1">
                           <Lbl required>Ville</Lbl>
                           <input type="text" required placeholder="ex. Kinshasa" className={getInputClass('city', !!tenantAddr?.city)} value={tenantAddr?.city ?? ''} onBlur={() => markTouched('city')} onChange={(e) => updateTenantData('address', { ...(tenantAddr ?? {}), city: e.target.value })} />
                         </div>
-                        <div className="space-y-1.5">
+                        <div className="space-y-1">
                           <Lbl required>Code postal</Lbl>
                           <input type="text" required placeholder="ex. 75001" className={getInputClass('postalCode', !!tenantAddr?.postalCode)} value={tenantAddr?.postalCode ?? ''} onBlur={() => markTouched('postalCode')} onChange={(e) => updateTenantData('address', { ...(tenantAddr ?? {}), postalCode: e.target.value })} />
                         </div>
-                        <div className="space-y-1.5">
+                        <div className="space-y-1">
                           <Lbl required>Pays</Lbl>
                           <CountrySelect value={tenantCountry} required onChange={(code) => {
                             updateTenantData('address', { ...(tenantAddr ?? {}), country: code });
@@ -573,7 +573,7 @@ function RegisterInner() {
                           }} />
                         </div>
                       </div>
-                      <div className="space-y-1.5">
+                      <div className="space-y-1">
                         <Lbl>Région / état<OptTag /></Lbl>
                         <input type="text" placeholder="ex. Kinshasa" className={inputBase} value={tenantAddr?.state ?? ''} onChange={(e) => updateTenantData('address', { ...(tenantAddr ?? {}), state: e.target.value })} />
                       </div>
@@ -581,31 +581,31 @@ function RegisterInner() {
                   </div>
 
                   {/* Localization */}
-                  <div className="border-t border-slate-100 pt-4">
-                    <div className="flex items-center gap-2 mb-3">
+                  <div className="border-t border-slate-100 pt-2">
+                    <div className="flex items-center gap-2 mb-2">
                       <Sparkles className="w-4 h-4 text-emerald-600" />
                       <h3 className="text-sm font-semibold text-slate-900">Paramètres régionaux</h3>
                     </div>
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div className="space-y-1.5">
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      <div className="space-y-1">
                         <Lbl>Fuseau horaire</Lbl>
                         <select className={selectClass} value={formData.tenantData.localization?.timezone ?? 'Africa/Kinshasa'} onChange={(e) => updateTenantData('localization', { ...(formData.tenantData.localization ?? DEFAULT_LOCALIZATION), timezone: e.target.value })}>
                           {getTimezonesByCountry(tenantCountry).map((tz) => (<option key={tz} value={tz}>{tz}</option>))}
                         </select>
                       </div>
-                      <div className="space-y-1.5">
+                      <div className="space-y-1">
                         <Lbl>Devise</Lbl>
                         <select className={selectClass} value={formData.tenantData.localization?.currency ?? 'CDF'} onChange={(e) => updateTenantData('localization', { ...(formData.tenantData.localization ?? DEFAULT_LOCALIZATION), currency: e.target.value })}>
                           {(() => { const auto = getCurrencyByCountry(tenantCountry); return Array.from(new Set([auto, 'USD', 'EUR', 'GBP', 'CHF', 'CAD', 'XAF', 'XOF', 'CDF'])).map((c) => (<option key={c} value={c}>{c}{c === auto ? ' (auto)' : ''}</option>)); })()}
                         </select>
                       </div>
-                      <div className="space-y-1.5">
+                      <div className="space-y-1">
                         <Lbl>Langue</Lbl>
                         <select className={selectClass} value={formData.tenantData.localization?.language ?? 'fr'} onChange={(e) => updateTenantData('localization', { ...(formData.tenantData.localization ?? DEFAULT_LOCALIZATION), language: e.target.value })}>
                           <option value="fr">Français</option><option value="en">English</option><option value="de">Deutsch</option><option value="es">Español</option>
                         </select>
                       </div>
-                      <div className="space-y-1.5">
+                      <div className="space-y-1">
                         <Lbl>Format de date</Lbl>
                         <select className={selectClass} value={formData.tenantData.localization?.dateFormat ?? 'DD/MM/YYYY'} onChange={(e) => updateTenantData('localization', { ...(formData.tenantData.localization ?? DEFAULT_LOCALIZATION), dateFormat: e.target.value })}>
                           <option value="DD/MM/YYYY">JJ/MM/AAAA</option><option value="MM/DD/YYYY">MM/JJ/AAAA</option><option value="YYYY-MM-DD">AAAA-MM-JJ</option>
@@ -620,15 +620,15 @@ function RegisterInner() {
                   Step 2 — PHARMACIE (PharmacyDataDto)
                   ═══════════════════════════════════════════════ */}
               {step === 2 && (
-                <div className="space-y-5">
+                <div className="space-y-2.5">
                   <div>
                     <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Votre <span className="text-emerald-600">pharmacie</span></h1>
                     <p className="text-sm text-slate-500 mt-1">Informations spécifiques à l&apos;établissement pharmaceutique (point de vente).</p>
                   </div>
 
                   {/* Pharmacy identity */}
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <div className="space-y-1">
                       <Lbl required>Nom de la pharmacie</Lbl>
                       <input type="text" required placeholder="ex. Pharmacie Centrale - Gombe" className={getInputClass('pharmaName', !!formData.pharmacyData.name)} value={formData.pharmacyData.name} onBlur={() => markTouched('pharmaName')}
                         onChange={(e) => updatePharmacyData('name', e.target.value)} />
@@ -638,7 +638,7 @@ function RegisterInner() {
                         </button>
                       )}
                     </div>
-                    <div className="space-y-1.5">
+                    <div className="space-y-1">
                       <Lbl>Type de pharmacie<OptTag /></Lbl>
                       <select className={selectClass} value={formData.pharmacyData.pharmacyType ?? ''} onChange={(e) => updatePharmacyData('pharmacyType', (e.target.value || undefined) as PharmacyType | undefined)}>
                         <option value="">Sélectionnez un type</option>
@@ -650,31 +650,31 @@ function RegisterInner() {
                   </div>
 
                   {/* Pharmacist */}
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <div className="space-y-1">
                       <Lbl required>Pharmacien responsable</Lbl>
                       <input type="text" required placeholder="ex. Dr. Sophie Martin" className={getInputClass('pharmacist', !!formData.pharmacyData.pharmacistInCharge)} value={formData.pharmacyData.pharmacistInCharge} onBlur={() => markTouched('pharmacist')} onChange={(e) => updatePharmacyData('pharmacistInCharge', e.target.value)} />
                     </div>
-                    <div className="space-y-1.5">
+                    <div className="space-y-1">
                       <Lbl required>N° licence du pharmacien</Lbl>
                       <input type="text" required placeholder="ex. PHARM-123456" className={getInputClass('pharmLicense', !!formData.pharmacyData.pharmacistLicenseNumber)} value={formData.pharmacyData.pharmacistLicenseNumber} onBlur={() => markTouched('pharmLicense')} onChange={(e) => updatePharmacyData('pharmacistLicenseNumber', e.target.value)} />
                     </div>
                   </div>
 
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <div className="space-y-1">
                       <Lbl required>N° licence de la pharmacie</Lbl>
                       <input type="text" required placeholder="ex. PHARM-OFF-2024-001" className={getInputClass('pharmaLicNum', !!formData.pharmacyData.licenseNumber)} value={formData.pharmacyData.licenseNumber} onBlur={() => markTouched('pharmaLicNum')} onChange={(e) => updatePharmacyData('licenseNumber', e.target.value)} />
                     </div>
-                    <div className="space-y-1.5">
+                    <div className="space-y-1">
                       <Lbl>Expiration de la licence<OptTag /></Lbl>
                       <input type="date" className={inputBase} value={String(formData.pharmacyData.licenseExpiryDate ?? '').slice(0, 10)} onChange={(e) => updatePharmacyData('licenseExpiryDate', e.target.value)} />
                     </div>
                   </div>
 
                   {/* Pharmacy address with toggle */}
-                  <div className="border-t border-slate-100 pt-4">
-                    <div className="flex items-center justify-between mb-3">
+                  <div className="border-t border-slate-100 pt-2">
+                    <div className="flex items-center justify-between mb-2">
                       <h3 className="text-sm font-semibold text-slate-900">Adresse de la pharmacie</h3>
                       <label className="flex items-center gap-2 cursor-pointer group">
                         <input type="checkbox" className="w-4 h-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500 cursor-pointer" checked={sameAddress}
@@ -696,7 +696,7 @@ function RegisterInner() {
                             {[tenantAddr?.street, tenantAddr?.postalCode, tenantAddr?.city, tenantAddr?.state, tenantAddr?.country].filter(Boolean).join(', ') || 'Aucune adresse renseignée au siège'}
                           </p>
                         </div>
-                        <div className="space-y-1.5">
+                        <div className="space-y-1">
                           <Lbl required>Région / état de la pharmacie</Lbl>
                           <input type="text" required placeholder="ex. Kinshasa" className={getInputClass('pharmaStateSame', !!formData.pharmacyData.state)} value={formData.pharmacyData.state} onBlur={() => markTouched('pharmaStateSame')}
                             onChange={(e) => updatePharmacyData('state', e.target.value)} />
@@ -705,25 +705,25 @@ function RegisterInner() {
                       </div>
                     ) : (
                       <div className="space-y-4">
-                        <div className="space-y-1.5">
+                        <div className="space-y-1">
                           <Lbl required>Rue / adresse</Lbl>
                           <input type="text" required placeholder="ex. 45 Blvd du 30 Juin" className={getInputClass('pharmaStreet', !!formData.pharmacyData.address)} value={formData.pharmacyData.address} onBlur={() => markTouched('pharmaStreet')} onChange={(e) => updatePharmacyData('address', e.target.value)} />
                         </div>
-                        <div className="grid sm:grid-cols-3 gap-4">
-                          <div className="space-y-1.5">
+                        <div className="grid sm:grid-cols-3 gap-3">
+                          <div className="space-y-1">
                             <Lbl required>Ville</Lbl>
                             <input type="text" required placeholder="ex. Kinshasa" className={getInputClass('pharmaCity', !!formData.pharmacyData.city)} value={formData.pharmacyData.city} onBlur={() => markTouched('pharmaCity')} onChange={(e) => updatePharmacyData('city', e.target.value)} />
                           </div>
-                          <div className="space-y-1.5">
+                          <div className="space-y-1">
                             <Lbl required>Code postal</Lbl>
                             <input type="text" required placeholder="ex. 75001" className={getInputClass('pharmaPostal', !!formData.pharmacyData.postalCode)} value={formData.pharmacyData.postalCode} onBlur={() => markTouched('pharmaPostal')} onChange={(e) => updatePharmacyData('postalCode', e.target.value)} />
                           </div>
-                          <div className="space-y-1.5">
+                          <div className="space-y-1">
                             <Lbl required>Pays</Lbl>
                             <CountrySelect value={formData.pharmacyData.country || 'CD'} required onChange={(code) => updatePharmacyData('country', code)} />
                           </div>
                         </div>
-                        <div className="space-y-1.5">
+                        <div className="space-y-1">
                           <Lbl required>Région / état</Lbl>
                           <input type="text" required placeholder="ex. Kinshasa" className={getInputClass('pharmaState', !!formData.pharmacyData.state)} value={formData.pharmacyData.state} onBlur={() => markTouched('pharmaState')} onChange={(e) => updatePharmacyData('state', e.target.value)} />
                         </div>
@@ -732,33 +732,33 @@ function RegisterInner() {
                   </div>
 
                   {/* Pharmacy contact */}
-                  <div className="border-t border-slate-100 pt-4">
-                    <h3 className="text-sm font-semibold text-slate-900 mb-3">Contact de la pharmacie</h3>
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div className="space-y-1.5">
+                  <div className="border-t border-slate-100 pt-2">
+                    <h3 className="text-sm font-semibold text-slate-900 mb-2">Contact de la pharmacie</h3>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      <div className="space-y-1">
                         <Lbl required>Téléphone</Lbl>
                         <PhoneInput value={formData.pharmacyData.phone} onChange={(val) => updatePharmacyData('phone', val)} defaultCountry={(formData.pharmacyData.country || tenantCountry) as Country} />
                       </div>
-                      <div className="space-y-1.5">
+                      <div className="space-y-1">
                         <Lbl>Email<OptTag /></Lbl>
                         <input type="email" placeholder="pharmacie@email.com" className={inputBase} value={formData.pharmacyData.email ?? ''} onChange={(e) => updatePharmacyData('email', e.target.value)} />
                       </div>
                     </div>
-                    <div className="mt-4 space-y-1.5">
+                    <div className="mt-4 space-y-1">
                       <Lbl>Site web de la pharmacie<OptTag /></Lbl>
                       <input type="url" placeholder="https://www.pharmacie-gombe.com" className={inputBase} value={formData.pharmacyData.website ?? ''} onChange={(e) => updatePharmacyData('website', e.target.value)} />
                     </div>
                   </div>
 
                   {/* Services & certifications */}
-                  <div className="border-t border-slate-100 pt-4">
-                    <h3 className="text-sm font-semibold text-slate-900 mb-3">Services & certifications</h3>
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div className="space-y-1.5">
+                  <div className="border-t border-slate-100 pt-2">
+                    <h3 className="text-sm font-semibold text-slate-900 mb-2">Services & certifications</h3>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      <div className="space-y-1">
                         <Lbl>Services proposés<OptTag /></Lbl>
                         <TagInput value={formData.pharmacyData.services ?? []} onChange={(v) => updatePharmacyData('services', v)} placeholder="ex. Vaccination, Dépistage..." />
                       </div>
-                      <div className="space-y-1.5">
+                      <div className="space-y-1">
                         <Lbl>Certifications<OptTag /></Lbl>
                         <TagInput value={formData.pharmacyData.certifications ?? []} onChange={(v) => updatePharmacyData('certifications', v)} placeholder="ex. ISO 9001, BPF..." />
                       </div>
@@ -771,30 +771,30 @@ function RegisterInner() {
                   Step 3 — ADMINISTRATEUR (OwnerDataDto)
                   ═══════════════════════════════════════════════ */}
               {step === 3 && (
-                <div className="space-y-5">
+                <div className="space-y-2.5">
                   <div>
                     <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Compte <span className="text-emerald-600">administrateur</span></h1>
                     <p className="text-sm text-slate-500 mt-1">Le compte administrateur principal qui gérera votre espace.</p>
                   </div>
 
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <div className="space-y-1">
                       <Lbl required>Prénom</Lbl>
                       <input type="text" required placeholder="ex. Jean" className={getInputClass('firstName', !!formData.ownerData.firstName)} value={formData.ownerData.firstName} onBlur={() => markTouched('firstName')} onChange={(e) => updateOwnerData('firstName', e.target.value)} />
                     </div>
-                    <div className="space-y-1.5">
+                    <div className="space-y-1">
                       <Lbl required>Nom</Lbl>
                       <input type="text" required placeholder="ex. Dupont" className={getInputClass('lastName', !!formData.ownerData.lastName)} value={formData.ownerData.lastName} onBlur={() => markTouched('lastName')} onChange={(e) => updateOwnerData('lastName', e.target.value)} />
                     </div>
                   </div>
 
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <div className="space-y-1">
                       <Lbl required>Email</Lbl>
                       <input type="email" required placeholder="jean.dupont@email.com" className={getInputClass('ownerEmail', !!formData.ownerData.email)} value={formData.ownerData.email} onBlur={() => markTouched('ownerEmail')} onChange={(e) => updateOwnerData('email', e.target.value)} />
                       <p className="text-[11px] text-slate-400 flex items-start gap-1"><Info className="w-3 h-3 mt-0.5 shrink-0" />Cet email sera votre identifiant de connexion.</p>
                     </div>
-                    <div className="space-y-1.5">
+                    <div className="space-y-1">
                       <Lbl>Téléphone<OptTag /></Lbl>
                       <PhoneInput value={formData.ownerData.phone ?? ''} onChange={(val) => updateOwnerData('phone', val)} defaultCountry={tenantCountry as Country} />
                     </div>
@@ -820,45 +820,45 @@ function RegisterInner() {
                       Informations complémentaires (KYC)
                       <ChevronDown className={`w-4 h-4 ml-auto transition-transform ${showKyc ? 'rotate-180' : ''}`} />
                     </button>
-                    <p className="text-[11px] text-slate-400 mt-1 mb-3">Ces informations permettent de vérifier votre identité. Elles peuvent être complétées plus tard.</p>
+                    <p className="text-[11px] text-slate-400 mt-1 mb-2">Ces informations permettent de vérifier votre identité. Elles peuvent être complétées plus tard.</p>
 
                     <AnimatePresence>
                       {showKyc && (
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden space-y-4">
-                          <div className="grid sm:grid-cols-2 gap-4">
-                            <div className="space-y-1.5">
+                          <div className="grid sm:grid-cols-2 gap-3">
+                            <div className="space-y-1">
                               <Lbl>Date de naissance<OptTag /></Lbl>
                               <input type="date" className={inputBase} value={formData.ownerData.dateOfBirth ?? ''} onChange={(e) => updateOwnerData('dateOfBirth', e.target.value)} />
                             </div>
-                            <div className="space-y-1.5">
+                            <div className="space-y-1">
                               <Lbl>Lieu de naissance<OptTag /></Lbl>
                               <input type="text" placeholder="ex. Kinshasa, RDC" className={inputBase} value={formData.ownerData.placeOfBirth ?? ''} onChange={(e) => updateOwnerData('placeOfBirth', e.target.value)} />
                             </div>
                           </div>
-                          <div className="grid sm:grid-cols-2 gap-4">
-                            <div className="space-y-1.5">
+                          <div className="grid sm:grid-cols-2 gap-3">
+                            <div className="space-y-1">
                               <Lbl>Nationalité<OptTag /></Lbl>
                               <input type="text" placeholder="ex. Congolaise" className={inputBase} value={formData.ownerData.nationality ?? ''} onChange={(e) => updateOwnerData('nationality', e.target.value)} />
                             </div>
-                            <div className="space-y-1.5">
+                            <div className="space-y-1">
                               <Lbl>Profession<OptTag /></Lbl>
                               <input type="text" placeholder="ex. Pharmacien" className={inputBase} value={formData.ownerData.profession ?? ''} onChange={(e) => updateOwnerData('profession', e.target.value)} />
                             </div>
                           </div>
-                          <div className="grid sm:grid-cols-2 gap-4">
-                            <div className="space-y-1.5">
+                          <div className="grid sm:grid-cols-2 gap-3">
+                            <div className="space-y-1">
                               <Lbl>Type de pièce d&apos;identité<OptTag /></Lbl>
                               <select className={selectClass} value={formData.ownerData.identityDocumentType ?? ''} onChange={(e) => updateOwnerData('identityDocumentType', e.target.value)}>
                                 <option value="">Sélectionnez</option>
                                 {IDENTITY_DOC_TYPES.map((d) => (<option key={d.value} value={d.value}>{d.label}</option>))}
                               </select>
                             </div>
-                            <div className="space-y-1.5">
+                            <div className="space-y-1">
                               <Lbl>N° de pièce d&apos;identité<OptTag /></Lbl>
                               <input type="text" placeholder="ex. 123456789" className={inputBase} value={formData.ownerData.identityNumber ?? ''} onChange={(e) => updateOwnerData('identityNumber', e.target.value)} />
                             </div>
                           </div>
-                          <div className="space-y-1.5">
+                          <div className="space-y-1">
                             <Lbl>N° licence professionnelle<OptTag /></Lbl>
                             <input type="text" placeholder="ex. PHARM123456" className={inputBase} value={formData.ownerData.professionalLicenseNumber ?? ''} onChange={(e) => updateOwnerData('professionalLicenseNumber', e.target.value)} />
                           </div>
@@ -889,7 +889,7 @@ function RegisterInner() {
                   Step 4 — PLAN & PAIEMENT
                   ═══════════════════════════════════════════ */}
               {step === 4 && (
-                <div className="space-y-5">
+                <div className="space-y-2.5">
                   <div>
                     <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Plan & <span className="text-emerald-600">paiement</span></h1>
                     <p className="text-sm text-slate-500 mt-1">Choisissez le plan qui correspond à vos besoins.</p>
@@ -966,7 +966,7 @@ function RegisterInner() {
                             <motion.button key={group.tier} type="button" whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}
                               onClick={() => updatePlanSelection('planId', plan.plan_key)}
                               className={`p-5 rounded-2xl border-2 text-left transition-all flex flex-col ${isSelected ? 'border-emerald-500 bg-emerald-50/30 shadow-lg shadow-emerald-500/10' : 'border-slate-100 bg-white hover:border-slate-200 hover:shadow-md'}`}>
-                              <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center justify-between mb-2">
                                 <div>
                                   <h4 className="font-bold text-slate-900">{group.name}</h4>
                                   {group.trialAvailable && <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md">Essai gratuit</span>}
@@ -975,21 +975,21 @@ function RegisterInner() {
                                   {isSelected && <Check className="w-3 h-3 text-white" />}
                                 </div>
                               </div>
-                              <div className="mb-3">
+                              <div className="mb-2">
                                 {isFree ? (
                                   <span className="text-2xl font-bold text-slate-900">Gratuit</span>
                                 ) : (
                                   <>
-                                    <span className="text-2xl font-bold text-slate-900">{monthlyPrice.toFixed(0)}</span>
+                                    <span className="text-2xl font-bold text-slate-900">{Number(monthlyPrice || 0)?.toFixed(0)}</span>
                                     <span className="text-sm text-slate-500 ml-1">{currency}/mois</span>
                                   </>
                                 )}
                                 {isYearly && group.yearly && !isFree && (
-                                  <p className="text-[11px] text-slate-400 mt-0.5">soit {group.yearly.price.toFixed(0)} {currency}/an</p>
+                                  <p className="text-[11px] text-slate-400 mt-0.5">soit {Number(group?.yearly?.price || 0).toFixed(0)} {currency}/an</p>
                                 )}
                               </div>
-                              <p className="text-xs text-slate-400 mb-3 line-clamp-2">{group.description}</p>
-                              <ul className="text-sm text-slate-600 space-y-1.5 flex-1">
+                              <p className="text-xs text-slate-400 mb-2 line-clamp-2">{group.description}</p>
+                              <ul className="text-sm text-slate-600 space-y-1 flex-1">
                                 {group.features.map((f, i) => (<li key={i} className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" />{f}</li>))}
                               </ul>
                             </motion.button>
@@ -997,7 +997,7 @@ function RegisterInner() {
                         })}
                       </div>
 
-                      <div className="space-y-1.5">
+                      <div className="space-y-1">
                         <Lbl>Code promo<OptTag /></Lbl>
                         <input type="text" placeholder="ex. WELCOME20" className={inputBase} value={formData.planSelection.promoCode ?? ''} onChange={(e) => updatePlanSelection('promoCode', e.target.value)} />
                       </div>
@@ -1032,7 +1032,7 @@ function RegisterInner() {
                             <>
                               <p className="text-sm font-semibold text-slate-800 flex items-center gap-2"><CreditCard className="w-4 h-4 text-emerald-600" />Paiement par carte</p>
                               <p className="text-xs text-slate-500 leading-relaxed">Vous serez redirigé vers la page de paiement sécurisée Stripe après la création de votre compte. Aucune carte n&apos;est requise pour commencer votre essai gratuit.</p>
-                              <div className="space-y-1.5">
+                              <div className="space-y-1">
                                 <Lbl>Identifiant Stripe existant<OptTag /></Lbl>
                                 <input type="text" placeholder="ex. cus_1234567890" className={inputBase} value={formData.paymentInfo.customerId ?? ''} onChange={(e) => setFormData((prev) => ({ ...prev, paymentInfo: { ...prev.paymentInfo, customerId: e.target.value || undefined } }))} />
                               </div>
@@ -1070,7 +1070,7 @@ function RegisterInner() {
                         <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-600 to-emerald-700 text-white flex items-center justify-between">
                           <div>
                             <p className="text-xs font-medium text-emerald-200 mb-1">Récapitulatif</p>
-                            <p className="text-xl font-bold">{selectedTierGroup?.name ?? selectedPlan.name} · {calculatePrice().toFixed(2)} {selectedPlan.currency}/mois</p>
+                            <p className="text-xl font-bold">{selectedTierGroup?.name ?? selectedPlan.name} · {calculatePrice()?.toFixed(2)} {selectedPlan.currency}/mois</p>
                             {selectedTierGroup?.trialAvailable && <p className="text-sm text-emerald-200 mt-1">La période d&apos;essai est appliquée automatiquement.</p>}
                           </div>
                           <div className="text-right">

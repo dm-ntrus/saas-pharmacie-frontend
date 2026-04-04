@@ -52,7 +52,7 @@ export default function FooterNewsletter() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-3 bg-slate-900 text-white rounded-2xl font-bold text-md hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 disabled:opacity-60"
+        className="w-full cursor-pointer py-3 bg-slate-900 text-white rounded-2xl font-bold text-md hover:bg-slate-800 transition-all shadow-md shadow-slate-200 disabled:opacity-60"
       >
         {loading ? "Envoi…" : "S'abonner à la newsletter"}
       </button>

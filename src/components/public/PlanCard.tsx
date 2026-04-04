@@ -193,7 +193,7 @@ export default function PlanCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.08, duration: 0.5 }}
-      className={`relative flex flex-col rounded-2xl border-2 transition-shadow duration-300 ${
+      className={`relative h-full flex flex-col rounded-2xl border-2 transition-shadow duration-300 ${
         isPop
           ? "border-emerald-500 bg-white shadow-xl shadow-emerald-500/10 scale-[1.02] z-10"
           : "border-slate-200 bg-white hover:shadow-lg hover:border-slate-300"
@@ -202,7 +202,7 @@ export default function PlanCard({
       {isPop && (
         <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20">
           <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-emerald-600 text-white rounded-full text-[11px] font-bold uppercase tracking-wider shadow-lg shadow-emerald-600/30">
-            <Sparkles className="w-3.5 h-3.5" />
+            {/* <Sparkles className="w-3.5 h-3.5" /> */}
             {t("popular")}
           </span>
         </div>

@@ -126,7 +126,7 @@ export default function HomePricingSection() {
                   {isPop && (
                     <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20">
                       <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-emerald-600 text-white rounded-full text-[11px] font-bold uppercase tracking-wider shadow-lg shadow-emerald-600/30">
-                        <Sparkles className="w-3.5 h-3.5" />
+                        {/* <Sparkles className="w-3.5 h-3.5" /> */}
                         {t("popularShort")}
                       </span>
                     </div>
