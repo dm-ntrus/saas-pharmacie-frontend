@@ -37,8 +37,12 @@ export default getRequestConfig(async () => {
   }
 
   const base = (await import(`../../messages/${locale}.json`)).default;
-  const platformExtra = (await import(`../../messages/platform-${locale}.json`))
-    .default;
+  let platformExtra: Record<string, unknown> = {};
+  try {
+    platformExtra = (await import(`../../messages/platform-${locale}.json`)).default;
+  } catch {
+    platformExtra = {};
+  }
 
   return {
     locale,

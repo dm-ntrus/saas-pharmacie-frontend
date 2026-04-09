@@ -34,6 +34,7 @@ const TopBar: React.FC<TopBarProps> = ({
   const tCommon = useTranslations("common");
   const tSales = useTranslations("sales");
   const tNotifications = useTranslations("notifications");
+  const tTenant = useTranslations("tenantLayout");
   const { theme, setTheme } = useAppStore();
   const unreadCount = useNotificationCount();
   const { hasPermission } = usePermissions();
@@ -75,7 +76,7 @@ const TopBar: React.FC<TopBarProps> = ({
         <button
           onClick={() => setTheme(isDark ? "light" : "dark")}
           className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 dark:text-slate-400 transition-colors"
-          aria-label={isDark ? "Mode clair" : "Mode sombre"}
+          aria-label={isDark ? tTenant("lightMode") : tTenant("darkMode")}
         >
           {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
         </button>

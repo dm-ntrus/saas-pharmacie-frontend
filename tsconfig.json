@@ -51,6 +51,6 @@
   "exclude": [
     ".next/dev/types/routes.d.ts",
     "node_modules",
-    "src/app/tenant/[tenant_slug]/(modules)/**"
+    "src/app/tenant/[tenant_slug]/(modules)/inventory/batches/index.tsx"
   ]
 }

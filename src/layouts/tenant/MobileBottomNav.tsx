@@ -26,6 +26,7 @@ interface MobileBottomNavProps {
 export default function MobileBottomNav({ tenantSlug }: MobileBottomNavProps) {
   const pathname = usePathname();
   const t = useTranslations("nav");
+  const tTenant = useTranslations("tenantLayout");
   const basePath = `/tenant/${tenantSlug}`;
 
   const items: NavItem[] = [
@@ -41,7 +42,7 @@ export default function MobileBottomNav({ tenantSlug }: MobileBottomNavProps) {
       className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 shadow-[0_-4px_6px_-1px_rgb(0_0_0_/_0.05)]"
       style={{ height: "var(--bottom-nav-height)" }}
       role="navigation"
-      aria-label="Navigation mobile"
+      aria-label={tTenant("mobileNavigationAriaLabel")}
     >
       <div className="flex items-center justify-around h-full px-1 max-w-lg mx-auto">
         {items.map(({ href, label, icon: Icon, match }) => {

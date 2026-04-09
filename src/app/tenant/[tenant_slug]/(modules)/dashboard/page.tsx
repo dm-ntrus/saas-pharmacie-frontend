@@ -344,6 +344,22 @@ export default function DashboardPage() {
               href={buildPath("/analytics")}
             />
           )}
+          {hasPermission(Permission.BI_WRITE) && (
+            <QuickAction
+              title={t("actions.aiCopilotTitle")}
+              description={t("actions.aiCopilotDesc")}
+              icon={Activity}
+              href={buildPath("/ai-copilot")}
+            />
+          )}
+          {hasPermission(Permission.BI_READ) && (
+            <QuickAction
+              title={t("actions.aiSreTitle")}
+              description={t("actions.aiSreDesc")}
+              icon={TrendingUp}
+              href={buildPath("/ai-sre-dashboard")}
+            />
+          )}
         </div>
       </div>
 

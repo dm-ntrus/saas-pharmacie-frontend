@@ -7,6 +7,7 @@ import { useOrganization } from "@/context/OrganizationContext";
 import { useFeatureFlags } from "@/context/FeatureFlagContext";
 import { usePermissions } from "@/hooks/usePermissions";
 import { useTenantPath } from "@/hooks/useTenantPath";
+import { useTranslations } from "next-intl";
 import { Permission } from "@/types/permissions";
 import { PRODUCT_ENTITLEMENT_KEYS } from "@/constants/product-entitlement-keys";
 import {
@@ -37,10 +38,13 @@ import {
   ScrollText,
   Star,
   ClipboardList,
+  Handshake,
+  Clock,
 } from "lucide-react";
 
 interface NavItem {
   name: string;
+  labelKey?: string;
   href: string;
   icon: React.ComponentType<{ className?: string }>;
   moduleKey?: string;
@@ -92,12 +96,14 @@ function NavLinkWithTooltip({
 const NAVIGATION: NavItem[] = [
   {
     name: "Tableau de bord",
+    labelKey: "dashboard",
     href: "/dashboard",
     icon: LayoutDashboard,
     featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_DASHBOARD,
   },
   {
     name: "Point de Vente",
+    labelKey: "sales",
     href: "/sales",
     icon: ShoppingCart,
     moduleKey: "sales",
@@ -106,6 +112,7 @@ const NAVIGATION: NavItem[] = [
   },
   {
     name: "Inventaire",
+    labelKey: "inventory",
     href: "/inventory",
     icon: Package,
     moduleKey: "inventory",
@@ -114,6 +121,7 @@ const NAVIGATION: NavItem[] = [
   },
   {
     name: "Patients",
+    labelKey: "patients",
     href: "/patients",
     icon: Users,
     moduleKey: "patients",
@@ -122,6 +130,7 @@ const NAVIGATION: NavItem[] = [
   },
   {
     name: "Prescriptions",
+    labelKey: "prescriptions",
     href: "/prescriptions",
     icon: FileText,
     moduleKey: "prescriptions",
@@ -130,6 +139,7 @@ const NAVIGATION: NavItem[] = [
   },
   {
     name: "Vaccination",
+    labelKey: "vaccination",
     href: "/vaccination",
     icon: Syringe,
     moduleKey: "vaccination",
@@ -138,6 +148,7 @@ const NAVIGATION: NavItem[] = [
   },
   {
     name: "Livraisons",
+    labelKey: "delivery",
     href: "/delivery",
     icon: TruckIcon,
     moduleKey: "delivery",
@@ -146,6 +157,7 @@ const NAVIGATION: NavItem[] = [
   },
   {
     name: "Facturation",
+    labelKey: "billing",
     href: "/billing",
     icon: Receipt,
     moduleKey: "billing",
@@ -154,6 +166,7 @@ const NAVIGATION: NavItem[] = [
   },
   {
     name: "Paiements",
+    labelKey: "payments",
     href: "/billing/payments",
     icon: CreditCard,
     moduleKey: "billing",
@@ -162,6 +175,7 @@ const NAVIGATION: NavItem[] = [
   },
   {
     name: "Comptabilité",
+    labelKey: "accounting",
     href: "/accounting",
     icon: PieChart,
     moduleKey: "accounting",
@@ -170,6 +184,7 @@ const NAVIGATION: NavItem[] = [
   },
   {
     name: "Fournisseurs",
+    labelKey: "suppliers",
     href: "/suppliers",
     icon: Factory,
     moduleKey: "suppliers",
@@ -178,6 +193,7 @@ const NAVIGATION: NavItem[] = [
   },
   {
     name: "Supply Chain",
+    labelKey: "supplyChain",
     href: "/supply-chain",
     icon: Package,
     moduleKey: "supply-chain",
@@ -186,6 +202,7 @@ const NAVIGATION: NavItem[] = [
   },
   {
     name: "Commandes d'achat",
+    labelKey: "purchaseOrders",
     href: "/supply-chain/purchase-orders",
     icon: ShoppingCart,
     moduleKey: "supply-chain",
@@ -194,6 +211,7 @@ const NAVIGATION: NavItem[] = [
   },
   {
     name: "Demandes d'achat",
+    labelKey: "purchaseRequests",
     href: "/supply-chain/purchase-requests",
     icon: ClipboardList,
     moduleKey: "supply-chain",
@@ -202,6 +220,7 @@ const NAVIGATION: NavItem[] = [
   },
   {
     name: "Devis fournisseurs",
+    labelKey: "supplierQuotes",
     href: "/supply-chain/supplier-quotes",
     icon: ScrollText,
     moduleKey: "supply-chain",
@@ -210,6 +229,7 @@ const NAVIGATION: NavItem[] = [
   },
   {
     name: "Prévisions",
+    labelKey: "forecasts",
     href: "/supply-chain/forecasts",
     icon: BarChart3,
     moduleKey: "supply-chain",
@@ -218,6 +238,7 @@ const NAVIGATION: NavItem[] = [
   },
   {
     name: "Politiques stock",
+    labelKey: "stockPolicies",
     href: "/supply-chain/policies",
     icon: Shield,
     moduleKey: "supply-chain",
@@ -226,6 +247,7 @@ const NAVIGATION: NavItem[] = [
   },
   {
     name: "Performance fournisseurs",
+    labelKey: "supplierPerformance",
     href: "/supply-chain/performance",
     icon: TrendingUp,
     moduleKey: "supply-chain",
@@ -234,6 +256,7 @@ const NAVIGATION: NavItem[] = [
   },
   {
     name: "Alertes Supply Chain",
+    labelKey: "supplyChainAlerts",
     href: "/supply-chain/alerts",
     icon: Bell,
     moduleKey: "supply-chain",
@@ -242,6 +265,7 @@ const NAVIGATION: NavItem[] = [
   },
   {
     name: "Qualité",
+    labelKey: "quality",
     href: "/quality",
     icon: ClipboardCheck,
     moduleKey: "quality",
@@ -250,6 +274,7 @@ const NAVIGATION: NavItem[] = [
   },
   {
     name: "Assurance",
+    labelKey: "insurance",
     href: "/insurance",
     icon: Shield,
     moduleKey: "insurance",
@@ -258,6 +283,7 @@ const NAVIGATION: NavItem[] = [
   },
   {
     name: "E-Facture",
+    labelKey: "eInvoice",
     href: "/e-invoice",
     icon: FileText,
     moduleKey: "e-invoice",
@@ -266,6 +292,7 @@ const NAVIGATION: NavItem[] = [
   },
   {
     name: "Ressources Humaines",
+    labelKey: "hr",
     href: "/hr",
     icon: UserCog,
     moduleKey: "hr",
@@ -274,6 +301,7 @@ const NAVIGATION: NavItem[] = [
   },
   {
     name: "Analytics",
+    labelKey: "analytics",
     href: "/analytics",
     icon: BarChart3,
     moduleKey: "analytics",
@@ -281,7 +309,26 @@ const NAVIGATION: NavItem[] = [
     featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_ANALYTICS,
   },
   {
+    name: "AI Copilot",
+    labelKey: "aiCopilot",
+    href: "/ai-copilot",
+    icon: ClipboardList,
+    moduleKey: "analytics",
+    requiredPermissions: [Permission.BI_WRITE],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_ANALYTICS,
+  },
+  {
+    name: "AI SRE",
+    labelKey: "aiSre",
+    href: "/ai-sre-dashboard",
+    icon: BarChart3,
+    moduleKey: "analytics",
+    requiredPermissions: [Permission.BI_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_ANALYTICS,
+  },
+  {
     name: "Notifications",
+    labelKey: "notifications",
     href: "/notifications",
     icon: Bell,
     moduleKey: "notifications",
@@ -290,6 +337,7 @@ const NAVIGATION: NavItem[] = [
   },
   {
     name: "Rapports",
+    labelKey: "reports",
     href: "/reports",
     icon: Stethoscope,
     moduleKey: "analytics",
@@ -298,6 +346,7 @@ const NAVIGATION: NavItem[] = [
   },
   {
     name: "Fidélité",
+    labelKey: "loyalty",
     href: "/loyalty",
     icon: Star,
     moduleKey: "loyalty",
@@ -305,7 +354,98 @@ const NAVIGATION: NavItem[] = [
     featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_LOYALTY,
   },
   {
+    name: "Clients B2B",
+    labelKey: "customersB2B",
+    href: "/customers-b2b",
+    icon: Handshake,
+    moduleKey: "customers-b2b",
+    requiredPermissions: [Permission.BUSINESS_PARTNERS_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_CUSTOMERS_B2B,
+  },
+  {
+    name: "Commandes B2B",
+    labelKey: "salesOrdersB2B",
+    href: "/sales-orders-b2b",
+    icon: ShoppingCart,
+    moduleKey: "sales-orders-b2b",
+    requiredPermissions: [Permission.SALES_ORDERS_B2B_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_SALES_ORDERS_B2B,
+  },
+  {
+    name: "Credit Desk",
+    labelKey: "creditDesk",
+    href: "/credit-desk",
+    icon: CreditCard,
+    moduleKey: "credit-desk",
+    requiredPermissions: [Permission.CREDIT_CONTROL_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_CREDIT_CONTROL,
+  },
+  {
+    name: "Pricing Desk",
+    labelKey: "pricingDesk",
+    href: "/pricing-desk",
+    icon: TrendingUp,
+    moduleKey: "pricing-desk",
+    requiredPermissions: [Permission.COMMERCIAL_TERMS_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_PRICING_DESK,
+  },
+  {
+    name: "Retours RMA",
+    labelKey: "returnsRma",
+    href: "/returns-rma",
+    icon: ClipboardCheck,
+    moduleKey: "returns-rma",
+    requiredPermissions: [Permission.RETURNS_RMA_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_RETURNS_RMA,
+  },
+  {
+    name: "AP Matching",
+    labelKey: "apMatching",
+    href: "/ap-matching",
+    icon: Receipt,
+    moduleKey: "ap-matching",
+    requiredPermissions: [Permission.AP_MATCHING_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_AP_MATCHING,
+  },
+  {
+    name: "Dashboard B2B",
+    labelKey: "b2bDashboard",
+    href: "/b2b-dashboard",
+    icon: BarChart3,
+    moduleKey: "b2b-dashboard",
+    requiredPermissions: [Permission.B2B_DASHBOARD_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_B2B_DASHBOARD,
+  },
+  {
+    name: "Gouvernance B2B",
+    labelKey: "b2bGovernance",
+    href: "/b2b-governance",
+    icon: Shield,
+    moduleKey: "b2b-governance",
+    requiredPermissions: [Permission.B2B_OVERRIDES_REQUEST],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_B2B_GOVERNANCE,
+  },
+  {
+    name: "Jobs Async B2B",
+    labelKey: "b2bAsync",
+    href: "/b2b-async",
+    icon: Clock,
+    moduleKey: "b2b-async",
+    requiredPermissions: [Permission.B2B_ASYNC_JOBS_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_B2B_ASYNC,
+  },
+  {
+    name: "Integrations B2B",
+    labelKey: "b2bIntegrations",
+    href: "/b2b-integrations",
+    icon: Building2,
+    moduleKey: "b2b-integrations",
+    requiredPermissions: [Permission.B2B_INTEGRATIONS_READ],
+    featureFlag: PRODUCT_ENTITLEMENT_KEYS.MODULE_B2B_INTEGRATIONS,
+  },
+  {
     name: "Journal métier",
+    labelKey: "businessAudit",
     href: "/compliance/business-audit",
     icon: ScrollText,
     moduleKey: "audit-events",
@@ -314,6 +454,7 @@ const NAVIGATION: NavItem[] = [
   },
   {
     name: "Paramètres",
+    labelKey: "settings",
     href: "/settings",
     icon: Settings,
     moduleKey: "settings",
@@ -334,6 +475,8 @@ const Sidebar: React.FC<SidebarProps> = ({
   const { isFeatureEnabled } = useFeatureFlags();
   const { hasAnyPermission } = usePermissions();
   const { basePath } = useTenantPath();
+  const tNav = useTranslations("nav");
+  const tTenant = useTranslations("tenantLayout");
   const [isOrgMenuOpen, setIsOrgMenuOpen] = useState(false);
 
   const isItemVisible = (item: NavItem) => {
@@ -359,7 +502,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           <button
             onClick={onCloseOverlay}
             className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
-            aria-label="Fermer le menu"
+            aria-label={tTenant("closeMenu")}
           >
             <X className="h-5 w-5" />
           </button>
@@ -381,7 +524,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             <>
               <div className="flex-1 text-left min-w-0">
                 <p className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate">
-                  {currentOrganization?.name || "Sélectionner"}
+                  {currentOrganization?.name || tTenant("organizationPlaceholder")}
                 </p>
               </div>
               <ChevronDown
@@ -407,7 +550,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               style={isCollapsed ? { minWidth: "12rem" } : undefined}
             >
               <p className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 dark:border-slate-700 mb-1">
-                Vos pharmacies
+                {tTenant("organizationsLabel")}
               </p>
               {organizations.map((org) => (
                 <button
@@ -440,6 +583,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       {/* Navigation */}
       <nav className="flex-1 px-2 py-2 space-y-0.5 overflow-y-auto min-h-0">
         {NAVIGATION.filter(isItemVisible).map((item) => {
+          const label = item.labelKey ? tNav(item.labelKey) : item.name;
           const safePathname = pathname ?? "";
           const href = `${basePath}${item.href}`;
           const isActive =
@@ -448,7 +592,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           return (
             <NavLinkWithTooltip
               key={item.href}
-              item={item}
+              item={{ ...item, name: label }}
               href={href}
               isActive={isActive}
               isCollapsed={isCollapsed}
@@ -480,7 +624,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               className="flex w-full items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
             >
               <LogOut className="w-5 h-5 shrink-0" />
-              Déconnexion
+              {tTenant("logout")}
             </button>
           </>
         ) : (
@@ -499,7 +643,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             >
               <LogOut className="w-5 h-5" />
               <span className="absolute left-full ml-2 px-2 py-1 rounded-md text-xs font-medium whitespace-nowrap bg-slate-800 text-slate-100 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible z-[60]">
-                Déconnexion
+                {tTenant("logout")}
               </span>
             </button>
           </div>
