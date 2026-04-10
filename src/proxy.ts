@@ -317,6 +317,12 @@ export function proxy(req: NextRequest) {
   const pathname = url.pathname;
   const { locale: prefixedLocale, restPath } = splitLocalePrefix(pathname);
 
+  // Backward-compat for older cached manifests: serve SVG icon for legacy PNG paths.
+  if (pathname === "/images/icon-192x192.png" || pathname === "/images/icon-512x512.png") {
+    url.pathname = "/images/icon.svg";
+    return NextResponse.rewrite(url);
+  }
+
   // App routes are unprefixed in filesystem. Normalize /en/* and /fr/* to /* and persist locale.
   if (prefixedLocale) {
     const redirectUrl = req.nextUrl.clone();
