@@ -1,0 +1,42 @@
+{
+  "name": "SyntixPharma - Gestion de Pharmacie",
+  "short_name": "SyntixPharma",
+  "description": "Plateforme SaaS de gestion intégrée pour pharmacies — ventes, inventaire, patients, prescriptions",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#059669",
+  "orientation": "any",
+  "categories": ["medical", "business", "productivity"],
+  "lang": "fr",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/images/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Nouvelle vente",
+      "short_name": "Vente",
+      "url": "/sales/pos",
+      "icons": [{ "src": "/images/icon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Inventaire",
+      "short_name": "Stock",
+      "url": "/inventory",
+      "icons": [{ "src": "/images/icon.svg", "sizes": "any" }]
+    }
+  ]
+}

@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="SyntixPharma Dashboard">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#059669" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.08"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f8fafc"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#059669"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+    <linearGradient id="bar1" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#059669"/>
+      <stop offset="100%" stop-color="#34d399"/>
+    </linearGradient>
+    <linearGradient id="bar2" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#38bdf8"/>
+    </linearGradient>
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="112%">
+      <feDropShadow dx="0" dy="4" stdDeviation="12" flood-color="#0f172a" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" fill="#f8fafc"/>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Sidebar -->
+  <rect x="40" y="40" width="200" height="550" rx="20" fill="url(#card)" filter="url(#shadow)"/>
+  <rect x="60" y="70" width="120" height="14" rx="7" fill="#059669" opacity="0.8"/>
+  <rect x="60" y="96" width="80" height="8" rx="4" fill="#94a3b8" opacity="0.4"/>
+  <circle cx="76" cy="140" r="12" fill="#059669" opacity="0.15"/><rect x="96" y="134" width="100" height="10" rx="5" fill="#334155" opacity="0.6"/>
+  <circle cx="76" cy="174" r="12" fill="#0ea5e9" opacity="0.15"/><rect x="96" y="168" width="90" height="10" rx="5" fill="#334155" opacity="0.4"/>
+  <circle cx="76" cy="208" r="12" fill="#8b5cf6" opacity="0.15"/><rect x="96" y="202" width="80" height="10" rx="5" fill="#334155" opacity="0.4"/>
+  <circle cx="76" cy="242" r="12" fill="#f59e0b" opacity="0.15"/><rect x="96" y="236" width="110" height="10" rx="5" fill="#334155" opacity="0.4"/>
+  <circle cx="76" cy="276" r="12" fill="#ef4444" opacity="0.15"/><rect x="96" y="270" width="70" height="10" rx="5" fill="#334155" opacity="0.4"/>
+
+  <!-- Top bar -->
+  <rect x="260" y="40" width="900" height="60" rx="20" fill="url(#card)" filter="url(#shadow)"/>
+  <rect x="290" y="58" width="180" height="12" rx="6" fill="#334155" opacity="0.5"/>
+  <rect x="290" y="76" width="100" height="8" rx="4" fill="#94a3b8" opacity="0.3"/>
+  <circle cx="1100" cy="70" r="18" fill="#059669" opacity="0.15"/>
+  <circle cx="1060" cy="70" r="18" fill="#e2e8f0"/>
+
+  <!-- Stat cards row -->
+  <rect x="260" y="120" width="210" height="110" rx="18" fill="url(#card)" filter="url(#shadow)"/>
+  <rect x="284" y="142" width="60" height="8" rx="4" fill="#94a3b8" opacity="0.5"/>
+  <text x="284" y="180" fill="#0f172a" font-family="ui-sans-serif,system-ui,sans-serif" font-size="28" font-weight="700">2,847</text>
+  <rect x="284" y="196" width="40" height="14" rx="7" fill="#059669" opacity="0.15"/>
+  <text x="292" y="207" fill="#059669" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600">+12%</text>
+
+  <rect x="490" y="120" width="210" height="110" rx="18" fill="url(#card)" filter="url(#shadow)"/>
+  <rect x="514" y="142" width="80" height="8" rx="4" fill="#94a3b8" opacity="0.5"/>
+  <text x="514" y="180" fill="#0f172a" font-family="ui-sans-serif,system-ui,sans-serif" font-size="28" font-weight="700">$48.2K</text>
+  <rect x="514" y="196" width="40" height="14" rx="7" fill="#059669" opacity="0.15"/>
+  <text x="522" y="207" fill="#059669" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600">+8%</text>
+
+  <rect x="720" y="120" width="210" height="110" rx="18" fill="url(#card)" filter="url(#shadow)"/>
+  <rect x="744" y="142" width="70" height="8" rx="4" fill="#94a3b8" opacity="0.5"/>
+  <text x="744" y="180" fill="#0f172a" font-family="ui-sans-serif,system-ui,sans-serif" font-size="28" font-weight="700">1,234</text>
+  <rect x="744" y="196" width="40" height="14" rx="7" fill="#0ea5e9" opacity="0.15"/>
+  <text x="752" y="207" fill="#0ea5e9" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600">+5%</text>
+
+  <rect x="950" y="120" width="210" height="110" rx="18" fill="url(#card)" filter="url(#shadow)"/>
+  <rect x="974" y="142" width="90" height="8" rx="4" fill="#94a3b8" opacity="0.5"/>
+  <text x="974" y="180" fill="#0f172a" font-family="ui-sans-serif,system-ui,sans-serif" font-size="28" font-weight="700">99.9%</text>
+  <rect x="974" y="196" width="40" height="14" rx="7" fill="#059669" opacity="0.15"/>
+  <text x="982" y="207" fill="#059669" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="600">SLA</text>
+
+  <!-- Main chart area -->
+  <rect x="260" y="250" width="560" height="340" rx="20" fill="url(#card)" filter="url(#shadow)"/>
+  <rect x="290" y="274" width="120" height="10" rx="5" fill="#334155" opacity="0.6"/>
+  <rect x="290" y="294" width="80" height="8" rx="4" fill="#94a3b8" opacity="0.3"/>
+  <!-- Chart bars -->
+  <rect x="310" y="460" width="30" height="100" rx="6" fill="url(#bar1)" opacity="0.7"/>
+  <rect x="355" y="420" width="30" height="140" rx="6" fill="url(#bar1)" opacity="0.8"/>
+  <rect x="400" y="380" width="30" height="180" rx="6" fill="url(#bar1)" opacity="0.9"/>
+  <rect x="445" y="400" width="30" height="160" rx="6" fill="url(#bar1)"/>
+  <rect x="490" y="350" width="30" height="210" rx="6" fill="url(#bar1)"/>
+  <rect x="535" y="370" width="30" height="190" rx="6" fill="url(#bar2)" opacity="0.8"/>
+  <rect x="580" y="340" width="30" height="220" rx="6" fill="url(#bar2)" opacity="0.9"/>
+  <rect x="625" y="360" width="30" height="200" rx="6" fill="url(#bar2)"/>
+  <rect x="670" y="330" width="30" height="230" rx="6" fill="url(#bar1)"/>
+  <rect x="715" y="390" width="30" height="170" rx="6" fill="url(#bar1)" opacity="0.7"/>
+
+  <!-- Right panel - recent -->
+  <rect x="840" y="250" width="320" height="340" rx="20" fill="url(#card)" filter="url(#shadow)"/>
+  <rect x="868" y="274" width="100" height="10" rx="5" fill="#334155" opacity="0.6"/>
+  <rect x="868" y="304" width="264" height="44" rx="12" fill="#f1f5f9"/>
+  <circle cx="892" cy="326" r="14" fill="#059669" opacity="0.2"/>
+  <rect x="916" y="316" width="120" height="8" rx="4" fill="#334155" opacity="0.5"/>
+  <rect x="916" y="330" width="80" height="6" rx="3" fill="#94a3b8" opacity="0.3"/>
+  <rect x="868" y="360" width="264" height="44" rx="12" fill="#f1f5f9"/>
+  <circle cx="892" cy="382" r="14" fill="#0ea5e9" opacity="0.2"/>
+  <rect x="916" y="372" width="100" height="8" rx="4" fill="#334155" opacity="0.5"/>
+  <rect x="916" y="386" width="70" height="6" rx="3" fill="#94a3b8" opacity="0.3"/>
+  <rect x="868" y="416" width="264" height="44" rx="12" fill="#f1f5f9"/>
+  <circle cx="892" cy="438" r="14" fill="#8b5cf6" opacity="0.2"/>
+  <rect x="916" y="428" width="140" height="8" rx="4" fill="#334155" opacity="0.5"/>
+  <rect x="916" y="442" width="90" height="6" rx="3" fill="#94a3b8" opacity="0.3"/>
+  <rect x="868" y="472" width="264" height="44" rx="12" fill="#f1f5f9"/>
+  <circle cx="892" cy="494" r="14" fill="#f59e0b" opacity="0.2"/>
+  <rect x="916" y="484" width="110" height="8" rx="4" fill="#334155" opacity="0.5"/>
+  <rect x="916" y="498" width="60" height="6" rx="3" fill="#94a3b8" opacity="0.3"/>
+  <rect x="868" y="528" width="264" height="44" rx="12" fill="#f1f5f9"/>
+  <circle cx="892" cy="550" r="14" fill="#ef4444" opacity="0.2"/>
+  <rect x="916" y="540" width="130" height="8" rx="4" fill="#334155" opacity="0.5"/>
+  <rect x="916" y="554" width="80" height="6" rx="3" fill="#94a3b8" opacity="0.3"/>
+</svg>
