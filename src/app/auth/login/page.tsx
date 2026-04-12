@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useSearchParams } from "next/navigation";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "@/lib/i18n-simple";
 import toast from "react-hot-toast";
 import {
   Loader2,
@@ -13,6 +13,9 @@ import {
 import AuthShell from "@/components/auth/AuthShell";
 import { getApiBaseUrl } from "@/helpers/auth-interceptor";
 import { Link } from "@/i18n/navigation";
+
+// Force dynamic rendering
+export const dynamic = "force-dynamic";
 
 export default function LoginPage() {
   const t = useTranslations("authPages.login");

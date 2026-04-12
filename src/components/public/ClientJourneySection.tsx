@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Link } from "@/i18n/navigation";
 import { ArrowRight } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n-simple";
 import { MARKETING_BRAND } from "@/content/platform-marketing";
 
 const STEP_KEYS = ["s1", "s2", "s3", "s4"] as const;

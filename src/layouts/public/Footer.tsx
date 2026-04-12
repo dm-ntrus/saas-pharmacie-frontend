@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowUpRight } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n-simple";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import FooterNewsletter from "@/layouts/public/FooterNewsletter";
 import { Link } from "@/i18n/navigation";

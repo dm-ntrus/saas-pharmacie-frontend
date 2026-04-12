@@ -1,5 +1,13 @@
 import type { ReactNode } from "react";
 
-export default function AuthLayout({ children }: { children: ReactNode }) {
-  return <>{children}</>;
+// Disable static generation for all auth pages
+export const dynamic = "force-dynamic";
+export const dynamicParams = true;
+
+type LayoutProps = {
+  children: ReactNode;
+};
+
+export default function AuthLayout({ children }: LayoutProps) {
+  return children;
 }

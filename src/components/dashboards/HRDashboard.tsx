@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Link } from "@/i18n/navigation";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "@/lib/i18n-simple";
 import { useTenantPath } from "@/hooks/useTenantPath";
 import { useEmployeeStats, usePendingLeaves, useDailyAttendance, useShiftSchedule } from "@/hooks/api/useHR";
 import {

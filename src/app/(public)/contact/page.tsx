@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Mail, MapPin, Phone, Clock, Send, ArrowUpRight } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n-simple";
 import { PLATFORM } from "@/config/platform";
 import { Link } from "@/i18n/navigation";
 

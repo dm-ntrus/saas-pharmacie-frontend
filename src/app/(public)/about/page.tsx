@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n-simple";
 import { Users, Target, Heart, Shield, Globe, Award } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 

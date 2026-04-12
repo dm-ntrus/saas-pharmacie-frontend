@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n-simple";
 import { ShieldOff, ArrowLeft } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 

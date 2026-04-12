@@ -7,7 +7,7 @@ import { useOrganization } from "@/context/OrganizationContext";
 import { useFeatureFlags } from "@/context/FeatureFlagContext";
 import { usePermissions } from "@/hooks/usePermissions";
 import { useTenantPath } from "@/hooks/useTenantPath";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n-simple";
 import { Permission } from "@/types/permissions";
 import { PRODUCT_ENTITLEMENT_KEYS } from "@/constants/product-entitlement-keys";
 import {

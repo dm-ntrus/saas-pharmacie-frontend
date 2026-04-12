@@ -5,7 +5,7 @@ import { ModuleGuard } from "@/components/guards/ModuleGuard";
 import { Permission } from "@/types/permissions";
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
 import { useAICopilot } from "@/hooks/api/useAI";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n-simple";
 
 export default function AICopilotPage() {
   return (

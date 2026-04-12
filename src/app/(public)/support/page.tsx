@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { PLATFORM } from "@/config/platform";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n-simple";
 import {
   Book,
   MessageCircle,

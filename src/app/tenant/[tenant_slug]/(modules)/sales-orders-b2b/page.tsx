@@ -6,7 +6,7 @@ import { ProtectedAction } from "@/components/guards/ProtectedAction";
 import { Permission } from "@/types/permissions";
 import { Button, Card, Input } from "@/components/ui";
 import { useCreateSalesOrderB2B, useSalesOrdersB2B, useTransitionSalesOrderB2B } from "@/hooks/api/useSalesOrdersB2B";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n-simple";
 
 export default function SalesOrdersB2BPage() {
   return (

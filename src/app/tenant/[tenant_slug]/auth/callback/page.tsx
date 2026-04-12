@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams, useParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n-simple";
 import { Loader2, AlertCircle, ArrowRight, ShieldAlert } from "lucide-react";
 import { keycloakOidc } from "@/services/keycloak-oidc.service";
 import { tokenService } from "@/services/token.service";

@@ -5,7 +5,7 @@ import { ModuleGuard } from "@/components/guards/ModuleGuard";
 import { Permission } from "@/types/permissions";
 import { Card } from "@/components/ui";
 import { useB2BDashboard } from "@/hooks/api/useB2BDashboard";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n-simple";
 
 export default function B2BDashboardPage() {
   return (

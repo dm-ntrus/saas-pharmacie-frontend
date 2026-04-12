@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n-simple";
 import { Loader2, AlertCircle, ArrowRight } from "lucide-react";
 import AuthShell from "@/components/auth/AuthShell";
 import { getApiBaseUrl } from "@/helpers/auth-interceptor";

@@ -9,7 +9,7 @@ import { Permission } from "@/types/permissions";
 import { useDailyAttendance, useClockIn, useEmployees } from "@/hooks/api/useHR";
 import { Button, Card, CardContent, ErrorBanner, Skeleton } from "@/components/ui";
 import { Clock } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "@/lib/i18n-simple";
 
 export default function HrAttendancePage() {
   return (

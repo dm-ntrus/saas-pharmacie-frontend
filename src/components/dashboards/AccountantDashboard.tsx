@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Link } from "@/i18n/navigation";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "@/lib/i18n-simple";
 import { useTenantPath } from "@/hooks/useTenantPath";
 import { useAccounts, useTransactions, useTrialBalance } from "@/hooks/api/useAccounting";
 import { formatCurrency, formatDate } from "@/utils/formatters";

@@ -1,11 +1,9 @@
-import createNextIntlPlugin from "next-intl/plugin";
-
-const withNextIntl = createNextIntlPlugin();
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typedRoutes: false,
   allowedDevOrigins: ["192.168.30.74", "192.168.30.74:3000", "192.168.43.148"],
+  // Disable i18n routing at Next.js level - we'll handle it manually
+  i18n: undefined,
 };
 
-export default withNextIntl(nextConfig);
+export default nextConfig;

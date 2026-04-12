@@ -6,7 +6,7 @@ import { ProtectedAction } from "@/components/guards/ProtectedAction";
 import { Permission } from "@/types/permissions";
 import { Button, Card, Input } from "@/components/ui";
 import { useCreateReturnAuthorization, useReturnAuthorizations, useSetReturnDisposition } from "@/hooks/api/useReturnsRma";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n-simple";
 
 export default function ReturnsRmaPage() {
   return (

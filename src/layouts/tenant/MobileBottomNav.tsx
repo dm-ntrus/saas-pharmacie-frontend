@@ -10,7 +10,7 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 import { cn } from "@/utils/cn";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n-simple";
 
 interface NavItem {
   href: string;

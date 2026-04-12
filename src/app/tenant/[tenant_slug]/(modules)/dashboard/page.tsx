@@ -8,7 +8,7 @@ import { useTenantPath } from "@/hooks/useTenantPath";
 import { Permission } from "@/types/permissions";
 import { Role } from "@/types/roles";
 import { Link } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n-simple";
 import { useSearchParams } from "next/navigation";
 import {
   Card,

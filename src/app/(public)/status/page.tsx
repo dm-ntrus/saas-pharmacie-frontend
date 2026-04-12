@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n-simple";
 import { CheckCircle2, AlertTriangle, Clock, Activity } from "lucide-react";
 
 function StatusBadge({ status }: { status: "operational" | "degraded" | "maintenance" | "outage" }) {

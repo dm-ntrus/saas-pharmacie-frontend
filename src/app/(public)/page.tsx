@@ -14,7 +14,7 @@ import {
   Pill,
   CreditCard,
 } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n-simple";
 import TrustedBy from "@/components/public/trusted-by";
 import Testimonials from "@/components/public/testimonials";
 import FAQ from "@/components/public/faq";

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n-simple";
 import {
   CheckCircle2,
   ArrowRight,

@@ -6,7 +6,7 @@ import { usePermissions } from "@/hooks/usePermissions";
 import { useTenantPath } from "@/hooks/useTenantPath";
 import { Permission } from "@/types/permissions";
 import { Link } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n-simple";
 import {
   PlusCircle,
   Search,

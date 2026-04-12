@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useMessages, useTranslations } from "next-intl";
+import { useMessages, useTranslations } from "@/lib/i18n-simple";
 
 export default function TrustedBy() {
   const t = useTranslations("marketing");

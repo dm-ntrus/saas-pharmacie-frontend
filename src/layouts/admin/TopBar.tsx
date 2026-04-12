@@ -13,7 +13,7 @@ import {
 import { useAppStore } from "@/store/appStore";
 import { useAuth } from "@/context/AuthContext";
 import { Link } from "@/i18n/navigation";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "@/lib/i18n-simple";
 
 type TopBarProps = {
   onMenuClick: () => void;

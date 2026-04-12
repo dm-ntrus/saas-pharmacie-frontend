@@ -10,10 +10,7 @@ import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { OfflineIndicator } from "@/components/pwa/OfflineIndicator";
 import { SkipToContent } from "@/components/ui";
 import AppToaster from "@/components/providers/AppToaster";
-import { NextIntlClientProvider } from "next-intl";
-import { getLocale, getMessages } from "next-intl/server";
-import { I18N_CONFIG } from "@/i18n/i18n.config";
-import type { Locale } from "@/i18n/routing";
+import { SimpleI18nProvider } from "@/lib/i18n-simple";
 
 function metadataBaseUrl(): URL {
   const raw = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
@@ -82,36 +79,34 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const locale = (await getLocale()) as Locale;
-  const messages = await getMessages();
-  const direction = I18N_CONFIG.languageSettings[locale]?.direction ?? "ltr";
-
   return (
-    <html lang={locale} dir={direction}>
+    <html lang="fr" dir="ltr">
       <body
         suppressHydrationWarning
         className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}
       >
         <SoftwareApplicationJsonLd />
         <ErrorBoundary>
-          <NextIntlClientProvider locale={locale} messages={messages}>
+          <SimpleI18nProvider locale="fr">
             <QueryProvider>
               <AuthProvider>
                 <AppToaster />
                 <SkipToContent />
                 <AccessibilityProvider>
                   <OfflineIndicator />
-                  <div id="main-content" suppressHydrationWarning>{children}</div>
+                  <div id="main-content" suppressHydrationWarning>
+                    {children}
+                  </div>
                   <InstallPrompt />
                 </AccessibilityProvider>
               </AuthProvider>
             </QueryProvider>
-          </NextIntlClientProvider>
+          </SimpleI18nProvider>
         </ErrorBoundary>
       </body>
     </html>

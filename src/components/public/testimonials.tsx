@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Star, Quote } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/lib/i18n-simple';
 
 export default function Testimonials() {
   const t = useTranslations('marketing');

@@ -6,7 +6,7 @@ import { ProtectedAction } from "@/components/guards/ProtectedAction";
 import { Permission } from "@/types/permissions";
 import { Button, Card, Input } from "@/components/ui";
 import { useCreateDiscountRule, useCreatePriceList, useDiscountRules, usePriceLists } from "@/hooks/api/useCommercialTerms";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n-simple";
 
 export default function PricingDeskPage() {
   return (

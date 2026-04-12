@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useTransition } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "@/lib/i18n-simple";
 import { Globe, Check, ChevronDown } from "lucide-react";
 import { I18N_CONFIG } from "@/i18n/i18n.config";
 import { locales, type Locale } from "@/i18n/routing";
@@ -61,7 +61,7 @@ export default function LanguageSwitcher({
     setOpen(false);
     await setLocaleCookie(locale);
     startTransition(() => {
-      router.replace(pathname, { locale });
+      router.replace(pathname || "/");
       router.refresh(); // Rafraîchir les données côté serveur
     });
   };

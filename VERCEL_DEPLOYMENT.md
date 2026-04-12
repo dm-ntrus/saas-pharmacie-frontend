@@ -1,17 +1,26 @@
-# Déploiement Vercel - Configuration
+# Déploiement Vercel - Solution Sans Middleware
 
-## Fichiers de configuration
+## ✅ Solution Implémentée
 
-### i18n.ts (racine)
-Le fichier `i18n.ts` à la racine du projet configure next-intl pour le middleware.
-Il gère la détection automatique de la locale (fr/en) via cookies et headers.
+Pour résoudre les erreurs de middleware sur Vercel, nous avons implémenté une **solution i18n simplifiée sans middleware**.
 
-### middleware.ts
-Le middleware gère le routage i18n automatiquement.
+### Changements Principaux
+
+1. **Suppression du middleware** - Plus de fichier `middleware.ts`
+2. **Solution i18n custom** - `src/lib/i18n-simple.tsx` remplace next-intl
+3. **Navigation simplifiée** - `src/i18n/navigation.ts` utilise les hooks Next.js natifs
+4. **Tous les imports mis à jour** - Remplacement automatique de `next-intl` par `@/lib/i18n-simple`
+
+### Fichiers Clés
+
+- `src/lib/i18n-simple.tsx` - Provider i18n custom avec hooks `useTranslations`, `useLocale`, `useMessages`
+- `src/i18n/navigation.ts` - Wrappers simples pour Link, usePathname, useRouter
+- `src/app/layout.tsx` - Utilise `SimpleI18nProvider` au lieu de `NextIntlClientProvider`
+- `src/app/auth/layout.tsx` - Force le rendu dynamique pour les pages auth
 
 ## Variables d'environnement requises
 
-Assurez-vous de configurer ces variables dans les paramètres Vercel :
+Configurez ces variables dans les paramètres Vercel :
 
 ### Obligatoires
 ```
@@ -34,33 +43,32 @@ NEXT_PUBLIC_TOKEN_REFRESH_BUFFER_MS=60000
 ## Configuration du build
 
 - Framework: Next.js (détection automatique)
-- Build command: `next build` (par défaut)
-- Output directory: `.next` (par défaut)
+- Build command: `npm run build`
+- Output directory: `.next`
 - Node version: 20.x (recommandé)
 
-## Middleware i18n
+## Avantages de cette solution
 
-Le middleware gère automatiquement :
-- Détection de la locale (fr/en)
-- Redirection selon les préférences du navigateur
-- Cookie de mémorisation de la locale
-- Edge Runtime pour des performances optimales
+✅ **Pas de middleware** - Évite tous les problèmes Edge Runtime sur Vercel  
+✅ **Build rapide** - Pas de traçage de dépendances complexe  
+✅ **Compatible** - Fonctionne avec tous les hooks existants  
+✅ **Simple** - Code facile à maintenir et déboguer  
+✅ **Performant** - Messages chargés une seule fois au démarrage  
 
-## Troubleshooting
+## Déploiement
 
-### Erreur 500 MIDDLEWARE_INVOCATION_FAILED
-1. Vérifiez que toutes les variables d'environnement sont définies
-2. Vérifiez les logs de build Vercel
-3. Assurez-vous que `NEXT_PUBLIC_SITE_URL` correspond à votre URL Vercel
+```bash
+git add .
+git commit -m "Fix Vercel deployment: remove middleware, use simple i18n solution"
+git push
+```
 
-### Erreur ENOENT middleware.js.nft.json
-Cette erreur est résolue en utilisant le fichier `i18n.ts` à la racine au lieu de `src/i18n/request.ts`.
-Le plugin next-intl doit être appelé sans paramètre dans `next.config.mjs`.
+Vercel détectera automatiquement Next.js et déploiera l'application sans erreur de middleware.
 
-### Fichiers de messages manquants
-Les fichiers de messages doivent être dans `/messages/` :
-- `en.json`
-- `fr.json`
-- `platform-en.json`
-- `platform-fr.json`
+## Notes
+
+- La locale par défaut est `fr` (français)
+- Le changement de langue fonctionne via cookie et rechargement de page
+- Tous les messages sont chargés au démarrage (pas de lazy loading)
+- Compatible avec tous les composants existants utilisant `useTranslations`
 

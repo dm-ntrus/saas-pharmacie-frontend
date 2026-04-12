@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Calendar, Clock, Monitor, CheckCircle2, ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n-simple";
 
 export default function PlanDemoPage() {
   const t = useTranslations("pages.planDemo");

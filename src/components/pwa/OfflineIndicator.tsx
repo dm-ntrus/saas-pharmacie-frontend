@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { WifiOff, Wifi } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/i18n-simple";
 
 export function OfflineIndicator() {
   const t = useTranslations("layout.pwa");
