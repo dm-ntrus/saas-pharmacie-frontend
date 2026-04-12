@@ -5,7 +5,7 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typedRoutes: false,
-  allowedDevOrigins: ["192.168.30.74", "192.168.30.74:3000"],
+  allowedDevOrigins: ["192.168.30.74", "192.168.30.74:3000", "192.168.43.148"],
 };
 
 export default withNextIntl(nextConfig);
