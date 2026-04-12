@@ -1,5 +1,14 @@
 # Déploiement Vercel - Configuration
 
+## Fichiers de configuration
+
+### i18n.ts (racine)
+Le fichier `i18n.ts` à la racine du projet configure next-intl pour le middleware.
+Il gère la détection automatique de la locale (fr/en) via cookies et headers.
+
+### middleware.ts
+Le middleware gère le routage i18n automatiquement.
+
 ## Variables d'environnement requises
 
 Assurez-vous de configurer ces variables dans les paramètres Vercel :
@@ -24,10 +33,10 @@ NEXT_PUBLIC_TOKEN_REFRESH_BUFFER_MS=60000
 
 ## Configuration du build
 
-Le fichier `vercel.json` est configuré pour :
-- Framework: Next.js
-- Région: iad1 (US East)
-- Build command: `next build`
+- Framework: Next.js (détection automatique)
+- Build command: `next build` (par défaut)
+- Output directory: `.next` (par défaut)
+- Node version: 20.x (recommandé)
 
 ## Middleware i18n
 
@@ -35,10 +44,23 @@ Le middleware gère automatiquement :
 - Détection de la locale (fr/en)
 - Redirection selon les préférences du navigateur
 - Cookie de mémorisation de la locale
+- Edge Runtime pour des performances optimales
 
 ## Troubleshooting
 
-Si vous obtenez une erreur 500 MIDDLEWARE_INVOCATION_FAILED :
+### Erreur 500 MIDDLEWARE_INVOCATION_FAILED
 1. Vérifiez que toutes les variables d'environnement sont définies
 2. Vérifiez les logs de build Vercel
 3. Assurez-vous que `NEXT_PUBLIC_SITE_URL` correspond à votre URL Vercel
+
+### Erreur ENOENT middleware.js.nft.json
+Cette erreur est résolue en utilisant le fichier `i18n.ts` à la racine au lieu de `src/i18n/request.ts`.
+Le plugin next-intl doit être appelé sans paramètre dans `next.config.mjs`.
+
+### Fichiers de messages manquants
+Les fichiers de messages doivent être dans `/messages/` :
+- `en.json`
+- `fr.json`
+- `platform-en.json`
+- `platform-fr.json`
+
