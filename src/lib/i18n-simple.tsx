@@ -1,17 +1,33 @@
 "use client";
 
 import { createContext, useContext, ReactNode } from "react";
-import frMessages from "../../messages/fr.json";
-import enMessages from "../../messages/en.json";
-import frPlatform from "../../messages/platform-fr.json";
-import enPlatform from "../../messages/platform-en.json";
-
-const allMessages = {
-  fr: { ...frMessages, ...frPlatform },
-  en: { ...enMessages, ...enPlatform },
-};
 
 type Locale = "fr" | "en";
+
+// Import messages at build time
+const allMessages: Record<Locale, any> = {
+  fr: {},
+  en: {},
+};
+
+// Load messages synchronously
+if (typeof window === "undefined") {
+  // Server-side: load during build
+  try {
+    allMessages.fr = { ...require("../../messages/fr.json"), ...require("../../messages/platform-fr.json") };
+    allMessages.en = { ...require("../../messages/en.json"), ...require("../../messages/platform-en.json") };
+  } catch (e) {
+    console.error("Failed to load messages:", e);
+  }
+} else {
+  // Client-side: messages will be hydrated from server
+  try {
+    allMessages.fr = { ...require("../../messages/fr.json"), ...require("../../messages/platform-fr.json") };
+    allMessages.en = { ...require("../../messages/en.json"), ...require("../../messages/platform-en.json") };
+  } catch (e) {
+    console.error("Failed to load messages:", e);
+  }
+}
 
 const I18nContext = createContext<{
   locale: Locale;
