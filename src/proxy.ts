@@ -275,6 +275,17 @@ function isIpv4Literal(hostname: string): boolean {
   });
 }
 
+/**
+ * Replit / Vercel : le premier segment du hostname (ex. `mon-projet.vercel.app`) n’est pas un slug tenant.
+ * Sans ça, `/` et les pages marketing seraient réécrites ou redirigées vers `/tenant/mon-projet/...`.
+ */
+function isDeploymentPlatformHost(hostHeader: string): boolean {
+  const hostNoPort = hostHeader.toLowerCase().split(":")[0];
+  if (hostNoPort.includes("replit.app") || hostNoPort.includes("replit.dev")) return true;
+  if (hostNoPort.endsWith(".vercel.app") || hostNoPort.endsWith(".vercel.sh")) return true;
+  return false;
+}
+
 /** Domaine racine marketing ou accès par IP LAN (évite rewrite / faux tenant). */
 function isMarketingRootHost(hostHeader: string, hostLc: string): boolean {
   const roots = rootHostSet();
@@ -303,9 +314,7 @@ function tenantSlugFromHost(hostHeader: string): string | null {
   if (hostNoPort.startsWith("www.")) return null;
   const roots = rootHostSet();
   if (roots.has(hostNoPort)) return null;
-  if (hostNoPort.includes("replit.app") || hostNoPort.includes("replit.dev")) {
-    return null;
-  }
+  if (isDeploymentPlatformHost(hostHeader)) return null;
   const sub = hostNoPort.split(".")[0];
   if (!sub || SYSTEM_HOST_PREFIXES.includes(sub)) return null;
   return sub;
@@ -352,7 +361,7 @@ export function proxy(req: NextRequest) {
 
   const hostLc = host.toLowerCase();
   const isMainHost = isMarketingRootHost(host, hostLc);
-  const isReplit = host.includes("replit.app") || host.includes("replit.dev");
+  const isDeploymentHost = isDeploymentPlatformHost(host);
   const tenantSlugHost = tenantSlugFromHost(host);
 
   // —— Hôte tenant (ex. pharma.syntixpharma.com) : portail d’entrée ——
@@ -387,7 +396,7 @@ export function proxy(req: NextRequest) {
   const hostNoPortLc = host.toLowerCase().split(":")[0];
   if (
     !isMainHost &&
-    !isReplit &&
+    !isDeploymentHost &&
     host.includes(".") &&
     !host.toLowerCase().startsWith("www.") &&
     !isIpv4Literal(hostNoPortLc)

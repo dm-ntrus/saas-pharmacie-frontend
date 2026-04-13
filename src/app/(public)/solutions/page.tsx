@@ -14,9 +14,21 @@ import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 
 const solutionsMeta = [
-  { id: "officine", icon: Stethoscope },
-  { id: "grossiste", icon: Truck },
-  { id: "hopital", icon: Building },
+  {
+    id: "officine",
+    icon: Stethoscope,
+    image: "/images/solution-officine.webp",
+  },
+  {
+    id: "grossiste",
+    icon: Truck,
+    image: "/images/solution-grossiste.webp",
+  },
+  {
+    id: "hopital",
+    icon: Building,
+    image: "/images/solution-hopital.webp",
+  },
 ] as const;
 
 const storiesMeta = [{ id: "pax" }, { id: "horizon" }] as const;
@@ -117,10 +129,12 @@ export default function SolutionsPage() {
                 }`}
               >
                 <Image
-                  src="/images/hero.svg"
+                  src={sol.image}
                   alt={sol.title}
                   fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover"
+                  priority={i === 0}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent" />
               </motion.div>

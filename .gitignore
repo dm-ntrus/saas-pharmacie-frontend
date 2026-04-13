@@ -30,58 +30,21 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-package-lock.json
-
-# env files (can opt-in for committing if needed)
-# .env*
+# env (ne pas versionner les secrets ; garder .env.example)
+.env
+.env*.local
 
 # vercel
 .vercel
-# cursor (IDE)  
+
+# IDE
 .cursor
 .cursorrules
-
-# vscode
 .vscode
 
-# eslint
+# eslint / prettier cache
 .eslintcache
-
-# prettier
 .prettiercache
-
-# tsc
-
-# tsconfig
-tsconfig.build.json
-
-# tsconfig.json
-tsconfig.json
-
-# tsconfig.app.json
-tsconfig.app.json
-
-# tsconfig.spec.json
-tsconfig.spec.json
-
-# tsconfig.app.json
-tsconfig.app.json
-
-# tsconfig.spec.json
-tsconfig.spec.json
-
-# tsconfig.app.json
-tsconfig.app.json
-
-# tsconfig.spec.json
-tsconfig.spec.json
-
-# tsconfig.app.json
-tsconfig.app.json
-
-# tsconfig.spec.json
-tsconfig.spec.json
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
