@@ -8,7 +8,8 @@
     "url": "https://github.com/chriscedrick"
   },
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev --webpack",
+    "dev:turbo": "next dev",
     "build": "next build",
     "build:analyze": "ANALYZE=true next build",
     "start": "next start",

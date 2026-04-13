@@ -12,6 +12,13 @@ const nextConfig = {
   turbopack: {
     root: __dirname,
   },
+  images: {
+    // Allow generating optimized WEBP derivatives at common widths.
+    formats: ["image/avif", "image/webp"],
+    deviceSizes: [360, 640, 768, 1024, 1280, 1600, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    qualities: [60, 75, 80, 90],
+  },
 };
 
 export default nextConfig;

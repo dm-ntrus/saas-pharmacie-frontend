@@ -13,6 +13,10 @@ import {
   TrendingUp,
   Pill,
   CreditCard,
+  Bot,
+  Sparkles,
+  Shield,
+  TrendingDown,
 } from "lucide-react";
 import { useTranslations } from "@/lib/i18n-simple";
 import TrustedBy from "@/components/public/trusted-by";
@@ -398,6 +402,86 @@ export default function PublicHomePage() {
 
       {/* ═══════════ MODULES PREVIEW ═══════════ */}
       <PlatformModulesPreview />
+
+      {/* ═══════════ AI SPOTLIGHT ═══════════ */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+            <div className="lg:col-span-6">
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 mb-3">
+                {t("aiSpotlightTag")}
+              </p>
+              <h2 className="text-3xl sm:text-5xl font-display font-bold text-slate-900 tracking-tight leading-[1.06]">
+                {t("aiSpotlightTitle")}{" "}
+                <span className="text-emerald-600 italic">
+                  {t("aiSpotlightHighlight")}
+                </span>
+              </h2>
+              <p className="text-base sm:text-lg text-slate-500 leading-relaxed font-medium mt-4 max-w-xl">
+                {t("aiSpotlightDesc")}
+              </p>
+
+              <div className="mt-7 flex flex-col sm:flex-row gap-3">
+                <Link
+                  href="/modules/ai"
+                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-slate-900 text-white rounded-xl font-bold hover:bg-emerald-600 transition-all"
+                >
+                  {t("aiSpotlightCtaAi")}
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+                <Link
+                  href="/modules/inventory"
+                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:border-emerald-200 hover:text-emerald-700 transition-all"
+                >
+                  {t("aiSpotlightCtaInventory")}
+                </Link>
+              </div>
+            </div>
+
+            <div className="lg:col-span-6">
+              <div className="grid sm:grid-cols-2 gap-4">
+                {[
+                  {
+                    icon: Bot,
+                    title: t("aiSpotlightCard1Title"),
+                    desc: t("aiSpotlightCard1Desc"),
+                  },
+                  {
+                    icon: Sparkles,
+                    title: t("aiSpotlightCard2Title"),
+                    desc: t("aiSpotlightCard2Desc"),
+                  },
+                  {
+                    icon: TrendingDown,
+                    title: t("aiSpotlightCard3Title"),
+                    desc: t("aiSpotlightCard3Desc"),
+                  },
+                  {
+                    icon: Shield,
+                    title: t("aiSpotlightCard4Title"),
+                    desc: t("aiSpotlightCard4Desc"),
+                  },
+                ].map((card) => (
+                  <div
+                    key={card.title}
+                    className="rounded-2xl border border-slate-100 bg-slate-50/50 p-6 hover:bg-white hover:shadow-lg hover:shadow-emerald-600/5 transition-all"
+                  >
+                    <div className="w-11 h-11 rounded-xl bg-white border border-slate-100 flex items-center justify-center mb-4">
+                      <card.icon className="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <h3 className="text-base font-display font-bold text-slate-900 mb-1">
+                      {card.title}
+                    </h3>
+                    <p className="text-sm text-slate-500 leading-relaxed">
+                      {card.desc}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ═══════════ CLIENT JOURNEY ═══════════ */}
       <ClientJourneySection />

@@ -19,8 +19,21 @@ export const PLATFORM_MODULE_META: Record<string, ModuleMeta> = {
   patients: { icon: "Users", outcomes: 2 },
   prescriptions: { icon: "FileText", outcomes: 2 },
   vaccination: { icon: "Syringe", outcomes: 2 },
+  ai: { icon: "Bot", outcomes: 2, planNote: true },
+  "cold-chain": { icon: "Snowflake", outcomes: 2 },
+  compounding: { icon: "FlaskConical", outcomes: 2 },
+  teleconsultation: { icon: "Video", outcomes: 2 },
+  traceability: { icon: "Link2", outcomes: 2 },
   suppliers: { icon: "Building2", outcomes: 2 },
   "supply-chain": { icon: "GitBranch", outcomes: 2 },
+  partners: { icon: "Handshake", outcomes: 2 },
+  "sales-orders-b2b": { icon: "ScrollText", outcomes: 2 },
+  "credit-control": { icon: "BadgeDollarSign", outcomes: 2 },
+  "returns-rma": { icon: "Undo2", outcomes: 2 },
+  "commercial-terms": { icon: "Tags", outcomes: 2 },
+  "b2b-integrations": { icon: "Plug", outcomes: 2 },
+  "b2b-governance": { icon: "ShieldCheck", outcomes: 2 },
+  "b2b-dashboard": { icon: "BarChart3", outcomes: 2 },
   "billing-ops": { icon: "Receipt", outcomes: 2 },
   payments: { icon: "Wallet", outcomes: 2 },
   accounting: { icon: "BookOpen", outcomes: 2 },
@@ -40,8 +53,24 @@ export const PLATFORM_MODULE_META: Record<string, ModuleMeta> = {
 
 export const PLATFORM_CATEGORY_MODULE_IDS: { id: string; moduleIds: string[] }[] = [
   { id: "daily", moduleIds: ["dashboard", "pos", "inventory"] },
-  { id: "care", moduleIds: ["patients", "prescriptions", "vaccination"] },
+  {
+    id: "care",
+    moduleIds: ["patients", "prescriptions", "vaccination", "compounding"],
+  },
   { id: "supply", moduleIds: ["suppliers", "supply-chain"] },
+  {
+    id: "b2b",
+    moduleIds: [
+      "partners",
+      "sales-orders-b2b",
+      "credit-control",
+      "returns-rma",
+      "commercial-terms",
+      "b2b-integrations",
+      "b2b-governance",
+      "b2b-dashboard",
+    ],
+  },
   {
     id: "finance",
     moduleIds: [
@@ -52,11 +81,14 @@ export const PLATFORM_CATEGORY_MODULE_IDS: { id: string; moduleIds: string[] }[]
       "insurance",
     ],
   },
-  { id: "distribution", moduleIds: ["delivery"] },
-  { id: "quality", moduleIds: ["quality", "business-audit"] },
+  { id: "distribution", moduleIds: ["delivery", "teleconsultation"] },
+  {
+    id: "quality",
+    moduleIds: ["quality", "business-audit", "cold-chain", "traceability"],
+  },
   {
     id: "growth",
-    moduleIds: ["analytics", "reports", "loyalty", "notifications"],
+    moduleIds: ["analytics", "reports", "loyalty", "notifications", "ai"],
   },
   { id: "org", moduleIds: ["hr", "settings", "saas-billing"] },
 ];

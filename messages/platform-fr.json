@@ -30,7 +30,7 @@
       "s1": {
         "step": "01",
         "title": "Démarrer en minutes",
-        "text": "Inscription, provisionnement de votre espace et connexion sécurisée (Keycloak). Votre équipe accède à son sous-domaine dédié."
+        "text": "Inscription, provisionnement de votre espace et connexion sécurisée. Votre équipe accède à son sous-domaine dédié."
       },
       "s2": {
         "step": "02",
@@ -70,6 +70,10 @@
       "supply": {
         "label": "Chaîne d’approvisionnement",
         "intro": "De la demande d’achat à la réception marchandise."
+      },
+      "b2b": {
+        "label": "B2B & distribution",
+        "intro": "Partenaires, commandes, crédit et intégrations pour piloter vos flux B2B."
       },
       "finance": {
         "label": "Finance, assurance & facturation",
@@ -134,6 +138,98 @@
         "description": "Suivi des vaccinations dispensées en officine pour la conformité et le suivi patient.",
         "outcome0": "Registre structuré",
         "outcome1": "Appui aux campagnes locales"
+      },
+      "cold-chain": {
+        "title": "Chaîne du froid",
+        "tagline": "Température, alertes, conformité",
+        "description": "Surveillance des équipements, relevés, seuils et alertes pour sécuriser les produits sensibles et prouver la conformité.",
+        "outcome0": "Réduction des pertes liées aux écarts",
+        "outcome1": "Historique et rapports auditables"
+      },
+      "compounding": {
+        "title": "Préparations magistrales",
+        "tagline": "Formules, lots, traçabilité",
+        "description": "Gestion des formules, fabrication en lot, contrôles et documents pour structurer l’activité de préparation.",
+        "outcome0": "Traçabilité ingrédients → lot",
+        "outcome1": "Dossiers de lot standardisés"
+      },
+      "teleconsultation": {
+        "title": "Téléconsultation",
+        "tagline": "Soins à distance",
+        "description": "Sessions vidéo/audio/chat, notes de consultation et continuité du parcours patient (selon réglementation locale).",
+        "outcome0": "Accès simplifié aux conseils",
+        "outcome1": "Meilleure continuité des soins"
+      },
+      "ai": {
+        "title": "Intelligence artificielle",
+        "tagline": "Copilot et gouvernance",
+        "description": "Assistant intelligent, registre de modèles et traçabilité des inférences pour aider la délivrance et le pilotage.",
+        "outcome0": "Décisions plus rapides et plus sûres",
+        "outcome1": "Traçabilité modèle → prédiction",
+        "planNote": "Activable selon le plan et la configuration."
+      },
+      "partners": {
+        "title": "Partenaires B2B",
+        "tagline": "Référentiel clients & grossistes",
+        "description": "Centralisez vos partenaires (clients B2B, grossistes, distributeurs) avec contacts, adresses et conditions.",
+        "outcome0": "Référentiel unique et fiable",
+        "outcome1": "Conditions commerciales mieux maîtrisées"
+      },
+      "sales-orders-b2b": {
+        "title": "Commandes B2B",
+        "tagline": "Devis → commande → livraison",
+        "description": "Workflow complet: devis, commande, allocation stock, picking, expédition, facturation et paiement.",
+        "outcome0": "Cycle de commande standardisé",
+        "outcome1": "Meilleure exécution logistique"
+      },
+      "credit-control": {
+        "title": "Contrôle de crédit",
+        "tagline": "Limites, encours, relances",
+        "description": "Gestion des comptes de crédit, vérifications, scoring de risque et recouvrement pour réduire les impayés.",
+        "outcome0": "Moins d’impayés",
+        "outcome1": "Décisions de crédit plus rapides"
+      },
+      "returns-rma": {
+        "title": "Retours & RMA",
+        "tagline": "Retours clients & fournisseurs",
+        "description": "Autorisation de retour (RMA), inspection qualité, actions (avoir/remboursement/remplacement) et traçabilité.",
+        "outcome0": "Retours mieux contrôlés",
+        "outcome1": "Traçabilité & qualité renforcées"
+      },
+      "commercial-terms": {
+        "title": "Termes commerciaux",
+        "tagline": "Prix, remises, promotions",
+        "description": "Listes de prix, règles de remise, promotions et ristournes pour piloter vos marges et votre politique commerciale.",
+        "outcome0": "Marge protégée",
+        "outcome1": "Politique commerciale cohérente"
+      },
+      "b2b-integrations": {
+        "title": "Intégrations B2B",
+        "tagline": "API, EDI, webhooks",
+        "description": "Connexions partenaires (API/EDI), synchronisation catalogue/prix/commandes et monitoring des échanges.",
+        "outcome0": "Moins de ressaisie",
+        "outcome1": "Flux partenaires plus fiables"
+      },
+      "b2b-governance": {
+        "title": "Gouvernance B2B",
+        "tagline": "Contrats & approbations",
+        "description": "Contrats, SLA, workflows d’approbation et conformité pour sécuriser les transactions B2B.",
+        "outcome0": "Règles et exceptions maîtrisées",
+        "outcome1": "Auditabilité renforcée"
+      },
+      "b2b-dashboard": {
+        "title": "Dashboard B2B",
+        "tagline": "KPIs et pilotage",
+        "description": "Indicateurs B2B: volumes, OTIF, marge par client, DSO et tendances pour décider rapidement.",
+        "outcome0": "Pilotage exécutif",
+        "outcome1": "Détection rapide des risques"
+      },
+      "traceability": {
+        "title": "Traçabilité avancée",
+        "tagline": "Chaîne d’approvisionnement vérifiable",
+        "description": "Piste de traçabilité renforcée (lots, preuves, vérifications) pour sécuriser l’origine et les mouvements des produits.",
+        "outcome0": "Confiance accrue sur l’authenticité",
+        "outcome1": "Investigation plus rapide en cas d’incident"
       },
       "suppliers": {
         "title": "Fournisseurs",
@@ -252,7 +348,7 @@
       "saas-billing": {
         "title": "Abonnement & facturation plateforme",
         "tagline": "Votre relation commerciale avec SyntixPharma",
-        "description": "Gestion de l’abonnement SaaS, mises à niveau de plan et synchronisation avec la facturation (ex. Stripe) selon votre offre.",
+        "description": "Gestion de l’abonnement SaaS, mises à niveau de plan et synchronisation avec la facturation selon votre offre.",
         "outcome0": "Transparence des plans et options",
         "outcome1": "Montée en gamme contrôlée",
         "planNote": "Interface dédiée côté tenant (billing upgrade, factures)."

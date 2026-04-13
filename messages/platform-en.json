@@ -30,7 +30,7 @@
       "s1": {
         "step": "01",
         "title": "Get started in minutes",
-        "text": "Sign up, provisioning of your space, and secure login (Keycloak). Your team uses its dedicated subdomain."
+        "text": "Sign up, space provisioning, and secure sign-in. Your team uses its dedicated subdomain."
       },
       "s2": {
         "step": "02",
@@ -70,6 +70,10 @@
       "supply": {
         "label": "Supply chain",
         "intro": "From purchase request to goods receipt."
+      },
+      "b2b": {
+        "label": "B2B & distribution",
+        "intro": "Partners, orders, credit, and integrations to run your B2B flows."
       },
       "finance": {
         "label": "Finance, insurance & billing",
@@ -134,6 +138,98 @@
         "description": "Track vaccinations delivered in-store for compliance and patient follow-up.",
         "outcome0": "Structured registry",
         "outcome1": "Support for local campaigns"
+      },
+      "cold-chain": {
+        "title": "Cold chain",
+        "tagline": "Temperature, alerts, compliance",
+        "description": "Monitor equipment, readings, thresholds, and alerts to secure sensitive products and prove compliance.",
+        "outcome0": "Reduce losses from temperature excursions",
+        "outcome1": "Auditable history and reports"
+      },
+      "compounding": {
+        "title": "Compounding",
+        "tagline": "Formulas, batches, traceability",
+        "description": "Manage formulas, batch production, checks, and documentation to structure compounding operations.",
+        "outcome0": "Ingredient-to-batch traceability",
+        "outcome1": "Standardized batch records"
+      },
+      "teleconsultation": {
+        "title": "Teleconsultation",
+        "tagline": "Remote care",
+        "description": "Video/audio/chat sessions, consultation notes, and continuity of the patient journey (subject to local regulations).",
+        "outcome0": "Easier access to guidance",
+        "outcome1": "Better continuity of care"
+      },
+      "ai": {
+        "title": "Artificial intelligence",
+        "tagline": "Copilot and governance",
+        "description": "Smart assistant, model registry, and inference traceability to support dispensing and steering.",
+        "outcome0": "Faster, safer decisions",
+        "outcome1": "Model → prediction traceability",
+        "planNote": "Enabled depending on plan and configuration."
+      },
+      "partners": {
+        "title": "B2B partners",
+        "tagline": "Customers & wholesalers master data",
+        "description": "Centralize partners (B2B customers, wholesalers, distributors) with contacts, addresses, and payment terms.",
+        "outcome0": "Single source of truth",
+        "outcome1": "Better commercial control"
+      },
+      "sales-orders-b2b": {
+        "title": "B2B orders",
+        "tagline": "Quote → order → delivery",
+        "description": "End-to-end workflow: quotes, orders, stock allocation, picking, shipping, invoicing, and payment.",
+        "outcome0": "Standardized order cycle",
+        "outcome1": "Stronger logistics execution"
+      },
+      "credit-control": {
+        "title": "Credit control",
+        "tagline": "Limits, exposure, collections",
+        "description": "Credit accounts, real-time checks, risk scoring, and collections to reduce unpaid invoices.",
+        "outcome0": "Fewer unpaid invoices",
+        "outcome1": "Faster credit decisions"
+      },
+      "returns-rma": {
+        "title": "Returns & RMA",
+        "tagline": "Customer and supplier returns",
+        "description": "Return authorizations (RMA), quality inspection, actions (credit/refund/replacement), and full traceability.",
+        "outcome0": "Better-controlled returns",
+        "outcome1": "Stronger quality traceability"
+      },
+      "commercial-terms": {
+        "title": "Commercial terms",
+        "tagline": "Pricing, discounts, promotions",
+        "description": "Price lists, discount rules, promotions, and rebates to protect margin and standardize policies.",
+        "outcome0": "Protected margin",
+        "outcome1": "Consistent pricing policy"
+      },
+      "b2b-integrations": {
+        "title": "B2B integrations",
+        "tagline": "API, EDI, webhooks",
+        "description": "Partner connectivity (API/EDI), catalog/price/order sync, and exchange monitoring.",
+        "outcome0": "Less re-keying",
+        "outcome1": "More reliable partner flows"
+      },
+      "b2b-governance": {
+        "title": "B2B governance",
+        "tagline": "Contracts and approvals",
+        "description": "Contracts, SLAs, approval workflows, and compliance to secure B2B transactions.",
+        "outcome0": "Controlled rules and exceptions",
+        "outcome1": "Improved auditability"
+      },
+      "b2b-dashboard": {
+        "title": "B2B dashboard",
+        "tagline": "KPIs and steering",
+        "description": "B2B KPIs: volumes, OTIF, margin per customer, DSO, and trends to act quickly.",
+        "outcome0": "Executive steering",
+        "outcome1": "Early risk detection"
+      },
+      "traceability": {
+        "title": "Advanced traceability",
+        "tagline": "Verifiable supply chain",
+        "description": "Enhanced traceability trail (batches, evidence, verification) to secure product origin and movements.",
+        "outcome0": "Higher trust in authenticity",
+        "outcome1": "Faster investigation when issues occur"
       },
       "suppliers": {
         "title": "Suppliers",
@@ -252,7 +348,7 @@
       "saas-billing": {
         "title": "Subscription & platform billing",
         "tagline": "Your commercial relationship with SyntixPharma",
-        "description": "SaaS subscription management, plan upgrades, and billing sync (e.g. Stripe) per your offer.",
+        "description": "SaaS subscription management, plan upgrades, and billing sync based on your offer.",
         "outcome0": "Transparent plans and options",
         "outcome1": "Controlled upsell",
         "planNote": "Dedicated tenant UI (billing upgrade, invoices)."

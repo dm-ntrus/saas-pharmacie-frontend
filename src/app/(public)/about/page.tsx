@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { useTranslations } from "@/lib/i18n-simple";
+import { useLocale, useTranslations } from "@/lib/i18n-simple";
 import { Users, Target, Heart, Shield, Globe, Award } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 
@@ -12,6 +12,7 @@ const timelineYears = ["2021", "2022", "2023", "2024"] as const;
 
 export default function AboutPage() {
   const t = useTranslations("pages.about");
+  const locale = useLocale();
 
   const timeline = timelineYears.map((year) => ({
     year,
@@ -71,12 +72,18 @@ export default function AboutPage() {
               className="lg:col-span-5 relative aspect-[4/5] rounded-3xl overflow-hidden shadow-xl"
             >
               <Image
-                src="/images/hero.svg"
-                alt="SyntixPharma Team"
+                src={
+                  locale === "en"
+                    ? "/images/Gemini_history_en.webp"
+                    : "/images/Gemini_history_fr.webp"
+                }
+                alt={locale === "en" ? "SyntixPharma story" : "Histoire de SyntixPharma"}
                 fill
-                className="object-cover"
+                className="object-contain object-center bg-slate-950"
+                sizes="(max-width: 1024px) 100vw, 40vw"
+                priority
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent" />
               <div className="absolute bottom-8 sm:bottom-12 left-6 sm:left-10 right-6 sm:right-10">
                 <p className="text-white text-xl sm:text-2xl font-display font-bold italic leading-tight">
                   &quot;{t("quote")}&quot;

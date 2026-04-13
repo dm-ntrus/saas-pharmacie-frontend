@@ -35,7 +35,11 @@ export default function FooterNewsletter() {
   }
 
   return (
-    <form className="flex flex-col gap-2" onSubmit={onSubmit}>
+    <form
+      className="flex flex-col gap-2"
+      onSubmit={onSubmit}
+      suppressHydrationWarning
+    >
       <div className="relative group">
         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-600 transition-colors" />
         <input
@@ -46,6 +50,7 @@ export default function FooterNewsletter() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           disabled={loading}
+          suppressHydrationWarning
           className="w-full pl-10 pr-6 py-2.5 text-sm bg-slate-50 text-slate-900 border border-slate-200 rounded-2xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all font-medium disabled:opacity-60"
         />
       </div>

@@ -97,43 +97,45 @@ export default function PlatformModulesShowcase() {
               </p>
               <ul className="grid gap-6 lg:grid-cols-2">
                 {active.modules.map((m) => (
-                  <li
-                    key={m.id}
-                    className="rounded-[2rem] border border-slate-100 bg-slate-50/50 p-6 lg:p-8 hover:bg-white hover:border-emerald-100 hover:shadow-lg transition-all"
-                  >
-                    <div className="flex gap-4 mb-4">
-                      <div className="w-12 h-12 rounded-2xl bg-white border border-slate-100 flex items-center justify-center shrink-0">
-                        <MarketingIcon
-                          name={m.icon}
-                          className="w-6 h-6 text-emerald-600"
-                        />
+                  <li key={m.id}>
+                    <Link
+                      href={`/modules/${m.id}`}
+                      className="block rounded-[2rem] border border-slate-100 bg-slate-50/50 p-6 lg:p-8 hover:bg-white hover:border-emerald-100 hover:shadow-lg transition-all"
+                    >
+                      <div className="flex gap-4 mb-4">
+                        <div className="w-12 h-12 rounded-2xl bg-white border border-slate-100 flex items-center justify-center shrink-0">
+                          <MarketingIcon
+                            name={m.icon}
+                            className="w-6 h-6 text-emerald-600"
+                          />
+                        </div>
+                        <div className="min-w-0">
+                          <h2 className="text-lg font-display font-bold text-slate-900">
+                            {m.title}
+                          </h2>
+                          <p className="text-xs font-bold uppercase tracking-wider text-emerald-600">
+                            {m.tagline}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h2 className="text-lg font-display font-bold text-slate-900">
-                          {m.title}
-                        </h2>
-                        <p className="text-xs font-bold uppercase tracking-wider text-emerald-600">
-                          {m.tagline}
-                        </p>
-                      </div>
-                    </div>
-                    <p className="text-sm text-slate-600 leading-relaxed mb-4">
-                      {m.description}
-                    </p>
-                    <ul className="space-y-2 mb-3">
-                      {m.outcomes.map((o) => (
-                        <li
-                          key={o}
-                          className="text-sm text-slate-700 font-medium flex gap-2"
-                        >
-                          <span className="text-emerald-500 shrink-0">✓</span>
-                          {o}
-                        </li>
-                      ))}
-                    </ul>
-                    {m.planNote ? (
-                      <p className="text-xs text-slate-400 italic">{m.planNote}</p>
-                    ) : null}
+                      <p className="text-sm text-slate-600 leading-relaxed mb-4">
+                        {m.description}
+                      </p>
+                      <ul className="space-y-2 mb-3">
+                        {m.outcomes.map((o) => (
+                          <li
+                            key={o}
+                            className="text-sm text-slate-700 font-medium flex gap-2"
+                          >
+                            <span className="text-emerald-500 shrink-0">✓</span>
+                            {o}
+                          </li>
+                        ))}
+                      </ul>
+                      {m.planNote ? (
+                        <p className="text-xs text-slate-400 italic">{m.planNote}</p>
+                      ) : null}
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -156,34 +158,36 @@ export default function PlatformModulesShowcase() {
             </p>
             <ul className="space-y-4">
               {active.modules.map((m) => (
-                <li
-                  key={m.id}
-                  className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm"
-                >
-                  <div className="flex gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
-                      <MarketingIcon
-                        name={m.icon}
-                        className="w-5 h-5 text-emerald-600"
-                      />
+                <li key={m.id}>
+                  <Link
+                    href={`/modules/${m.id}`}
+                    className="block rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:shadow-md transition-all"
+                  >
+                    <div className="flex gap-3 mb-3">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
+                        <MarketingIcon
+                          name={m.icon}
+                          className="w-5 h-5 text-emerald-600"
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <h2 className="font-display font-bold text-slate-900">
+                          {m.title}
+                        </h2>
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-600">
+                          {m.tagline}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h2 className="font-display font-bold text-slate-900">
-                        {m.title}
-                      </h2>
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-600">
-                        {m.tagline}
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-sm text-slate-600 leading-relaxed mb-3">
-                    {m.description}
-                  </p>
-                  <ul className="text-xs text-slate-600 space-y-1">
-                    {m.outcomes.map((o) => (
-                      <li key={o}>• {o}</li>
-                    ))}
-                  </ul>
+                    <p className="text-sm text-slate-600 leading-relaxed mb-3">
+                      {m.description}
+                    </p>
+                    <ul className="text-xs text-slate-600 space-y-1">
+                      {m.outcomes.map((o) => (
+                        <li key={o}>• {o}</li>
+                      ))}
+                    </ul>
+                  </Link>
                 </li>
               ))}
             </ul>
