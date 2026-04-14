@@ -10,8 +10,8 @@
   "scripts": {
     "dev": "next dev --webpack",
     "dev:turbo": "next dev",
-    "build": "next build",
-    "build:analyze": "ANALYZE=true next build",
+    "build": "next build --webpack",
+    "build:analyze": "ANALYZE=true next build --webpack",
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
