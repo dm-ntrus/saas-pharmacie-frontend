@@ -147,7 +147,7 @@ export default function Footer() {
           <p>
             {t("copyright", { year: new Date().getFullYear().toString() })}
           </p>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6">
             <Link href="/terms" className="hover:text-white transition-colors">
               {t("terms")}
             </Link>
