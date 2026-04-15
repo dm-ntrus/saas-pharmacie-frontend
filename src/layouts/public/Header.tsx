@@ -19,10 +19,6 @@ const PRIMARY_LINKS = [
 
 const SECONDARY_LINKS = [
   { href: "/support", key: "helpCenter" },
-  { href: "/plan_demo", key: "demo" },
-  { href: "/api-docs", key: "api" },
-  { href: "/status", key: "statusPage" },
-  { href: "/signup", key: "offers" },
 ] as const;
 
 export default function Header() {
