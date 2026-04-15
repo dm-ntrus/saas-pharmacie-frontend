@@ -16,10 +16,10 @@ import {
 import { Link } from "@/i18n/navigation";
 
 const channelsMeta = [
-  { icon: HeadphonesIcon, key: "liveSupport", href: "/contact?topic=live-chat" },
-  { icon: Book, key: "knowledgeBase", href: "/api-docs" },
-  { icon: MessageCircle, key: "community", href: "/about" },
-  { icon: FileQuestion, key: "tickets", href: "/contact?topic=ticket" },
+  { icon: HeadphonesIcon, key: "liveSupport", href: "/support/live" },
+  { icon: Book, key: "knowledgeBase", href: "/support/knowledge-base" },
+  { icon: MessageCircle, key: "community", href: "/support/community" },
+  { icon: FileQuestion, key: "tickets", href: "/support/tickets" },
 ] as const;
 
 export default function SupportPage() {

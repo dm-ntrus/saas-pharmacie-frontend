@@ -132,6 +132,13 @@
         "outcome0": "Traçabilité des ordonnances",
         "outcome1": "Meilleure coordination équipe"
       },
+      "compliance": {
+        "title": "Conformité",
+        "tagline": "Audit, traçabilité et contrôle",
+        "description": "Gestion des audits, contrôles et documents de conformité pour répondre aux exigences réglementaires.",
+        "outcome0": "Audit trail complet",
+        "outcome1": "Documents centralisés"
+      },
       "vaccination": {
         "title": "Vaccination",
         "tagline": "Campagnes et registre",

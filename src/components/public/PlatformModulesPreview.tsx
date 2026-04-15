@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { Link } from "@/i18n/navigation";
@@ -10,6 +11,15 @@ import {
   TOTAL_PLATFORM_MODULES,
 } from "@/content/platform-marketing";
 import { MarketingIcon } from "@/components/public/marketing-icons";
+
+const MODULE_IMAGES: Record<string, string> = {
+  inventory: "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=400&h=300&fit=crop",
+  pos: "https://images.unsplash.com/photo-1589829545856-d10d557cf05f?w=400&h=300&fit=crop",
+  patients: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=300&fit=crop",
+  analytics: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop",
+  compliance: "https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=400&h=300&fit=crop",
+  supply: "https://images.unsplash.com/photo-1578474846511-04ba529f0b88?w=400&h=300&fit=crop",
+};
 
 export default function PlatformModulesPreview() {
   const t = useTranslations("pages.home");
@@ -51,33 +61,47 @@ export default function PlatformModulesPreview() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.05 }}
-              className="rounded-[2rem] border border-slate-100 bg-white p-6 sm:p-8 shadow-sm hover:shadow-md hover:border-emerald-100 transition-all"
+              className="rounded-[2rem] border border-slate-100 bg-white overflow-hidden shadow-sm hover:shadow-md hover:border-emerald-100 transition-all"
             >
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center mb-5">
-                <MarketingIcon name={m.icon} className="w-6 h-6 text-emerald-600" />
+              <div className="relative h-40 overflow-hidden">
+                <Image
+                  src={MODULE_IMAGES[m.icon] || MODULE_IMAGES.inventory}
+                  alt={m.title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                <div className="absolute bottom-3 left-3">
+                  <div className="w-10 h-10 rounded-xl bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm">
+                    <MarketingIcon name={m.icon} className="w-5 h-5 text-emerald-600" />
+                  </div>
+                </div>
               </div>
-              <h3 className="text-xl font-display font-bold text-slate-900 mb-1">
-                {m.title}
-              </h3>
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
-                {m.tagline}
-              </p>
-              <p className="text-sm text-slate-600 leading-relaxed mb-4">
-                {m.description}
-              </p>
-              <ul className="space-y-2">
-                {m.outcomes.map((o) => (
-                  <li
-                    key={o}
-                    className="text-xs text-slate-500 font-medium flex gap-2 before:content-[''] before:w-1 before:rounded-full before:bg-emerald-500 before:shrink-0 before:mt-1.5"
-                  >
-                    <span>{o}</span>
-                  </li>
-                ))}
-              </ul>
-              {m.planNote ? (
-                <p className="mt-4 text-[11px] text-slate-400 italic">{m.planNote}</p>
-              ) : null}
+              <div className="p-5 sm:p-6">
+                <h3 className="text-lg font-display font-bold text-slate-900 mb-1">
+                  {m.title}
+                </h3>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                  {m.tagline}
+                </p>
+                <p className="text-sm text-slate-600 leading-relaxed mb-3">
+                  {m.description}
+                </p>
+                <ul className="space-y-1.5">
+                  {m.outcomes.slice(0, 2).map((o) => (
+                    <li
+                      key={o}
+                      className="text-xs text-slate-500 font-medium flex gap-2 before:content-[''] before:w-1 before:rounded-full before:bg-emerald-500 before:shrink-0 before:mt-1.5"
+                    >
+                      <span>{o}</span>
+                    </li>
+                  ))}
+                </ul>
+                {m.planNote ? (
+                  <p className="mt-3 text-[11px] text-slate-400 italic">{m.planNote}</p>
+                ) : null}
+              </div>
             </motion.article>
           ))}
         </div>

@@ -171,13 +171,29 @@ export default function FeaturesPage() {
             </div>
             <div className="relative">
               <div className="grid grid-cols-3 gap-4">
-                {Array.from({ length: 9 }).map((_, i) => (
+                {[
+                  "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=200&h=200&fit=crop",
+                  "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=200&h=200&fit=crop",
+                  "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=200&h=200&fit=crop",
+                  "https://images.unsplash.com/photo-1551434678-e076c223a692?w=200&h=200&fit=crop",
+                  "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=200&h=200&fit=crop",
+                  "https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=200&h=200&fit=crop",
+                  "https://images.unsplash.com/photo-1532109137118-79ecd55e2b13?w=200&h=200&fit=crop",
+                  "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=200&h=200&fit=crop",
+                  "https://images.unsplash.com/photo-1553028826-02f6e3a7d0e3?w=200&h=200&fit=crop",
+                ].map((src, i) => (
                   <motion.div
                     key={i}
                     whileHover={{ scale: 1.08, rotate: 3 }}
-                    className="aspect-square bg-white rounded-2xl border border-slate-100 shadow-sm flex items-center justify-center p-4"
+                    className="aspect-square bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden relative"
                   >
-                    <div className="w-full h-full bg-slate-50 rounded-lg" />
+                    <Image
+                      src={src}
+                      alt=""
+                      fill
+                      className="object-cover"
+                      sizes="128px"
+                    />
                   </motion.div>
                 ))}
               </div>
@@ -259,13 +275,13 @@ export default function FeaturesPage() {
             </div>
             <div className="relative">
               <div className="absolute -inset-8 bg-emerald-500/20 blur-[80px] rounded-full" />
-              <div className="relative bg-slate-800 rounded-2xl border border-slate-700 p-3 shadow-2xl">
-                <div className="bg-slate-900 rounded-xl aspect-video flex items-center justify-center overflow-hidden relative">
+              <div className="relative bg-slate-800 rounded-2xl border border-slate-700 p-3 shadow-2xl overflow-hidden">
+                <div className="relative aspect-video overflow-hidden rounded-xl">
                   <Image
-                    src="/images/tenant.svg"
-                    alt="Dashboard"
+                    src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=450&fit=crop"
+                    alt="Dashboard Pharma"
                     fill
-                    className="object-cover opacity-80"
+                    className="object-cover"
                   />
                 </div>
               </div>

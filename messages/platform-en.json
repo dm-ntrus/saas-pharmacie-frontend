@@ -132,6 +132,13 @@
         "outcome0": "Prescription traceability",
         "outcome1": "Better team coordination"
       },
+      "compliance": {
+        "title": "Compliance",
+        "tagline": "Audit, traceability & control",
+        "description": "Manage audits, controls and compliance documents to meet regulatory requirements.",
+        "outcome0": "Complete audit trail",
+        "outcome1": "Centralized documents"
+      },
       "vaccination": {
         "title": "Vaccination",
         "tagline": "Campaigns and registry",

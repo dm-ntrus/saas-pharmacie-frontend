@@ -31,7 +31,10 @@ const solutionsMeta = [
   },
 ] as const;
 
-const storiesMeta = [{ id: "pax" }, { id: "horizon" }] as const;
+const storiesMeta = [
+  { id: "pax", image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=800&h=500&fit=crop" },
+  { id: "horizon", image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&h=500&fit=crop" },
+] as const;
 
 export default function SolutionsPage() {
   const t = useTranslations("pages.solutions");
@@ -54,6 +57,7 @@ export default function SolutionsPage() {
     location: t(`stories.${s.id}.location`),
     impact: t(`stories.${s.id}.impact`),
     quote: t(`stories.${s.id}.quote`),
+    image: s.image,
   }));
 
   return (
@@ -170,7 +174,7 @@ export default function SolutionsPage() {
               >
                 <div className="aspect-[16/9] relative overflow-hidden bg-slate-100">
                   <Image
-                    src="/images/hero.svg"
+                    src={story.image}
                     alt={story.title}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-700"

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { usePathname } from "@/i18n/navigation";
 import { useTranslations } from "@/lib/i18n-simple";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ChevronRight } from "lucide-react";
+import { Menu, X, ChevronRight, Shield, Award } from "lucide-react";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { Link } from "@/i18n/navigation";
 
@@ -41,14 +41,64 @@ export default function Header() {
 
   return (
     <>
-      <header className="fixed top-0 w-full bg-white/80 backdrop-blur-xl border-b border-slate-100 z-40">
+      <header className="fixed top-0 w-full bg-white/95 backdrop-blur-xl border-b border-slate-100 z-40">
+        {/* Compliance bar */}
+        <div className="bg-gradient-to-r from-emerald-50 via-teal-50 to-cyan-50 border-b border-emerald-100/30">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-center gap-4 sm:gap-6 overflow-x-auto scrollbar-hide py-1.5">
+              <div className="flex items-center gap-1.5 shrink-0">
+                <Shield className="w-3 h-3 text-emerald-600" />
+                <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider whitespace-nowrap">
+                  GDP Compliant
+                </span>
+              </div>
+              <div className="w-px h-3 bg-emerald-200 shrink-0" />
+              <div className="flex items-center gap-1.5 shrink-0">
+                <Award className="w-3 h-3 text-teal-600" />
+                <span className="text-[10px] font-bold text-teal-700 uppercase tracking-wider whitespace-nowrap">
+                  ISO 27001
+                </span>
+              </div>
+              <div className="w-px h-3 bg-emerald-200 shrink-0" />
+              <div className="flex items-center gap-1.5 shrink-0">
+                <div className="w-3 h-3 bg-blue-600 rounded-sm flex items-center justify-center">
+                  <span className="text-white text-[6px] font-black">+</span>
+                </div>
+                <span className="text-[10px] font-bold text-blue-700 uppercase tracking-wider whitespace-nowrap">
+                  HIPAA Ready
+                </span>
+              </div>
+              <div className="w-px h-3 bg-emerald-200 shrink-0 hidden sm:block" />
+              <div className="hidden sm:flex items-center gap-1.5 shrink-0">
+                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                <span className="text-[10px] font-medium text-emerald-600">
+                  All systems operational
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-[72px]">
             {/* Logo */}
-            <Link href="/" className="shrink-0">
-              <span className="font-display font-bold text-xl sm:text-2xl text-emerald-600 tracking-tight">
-                Syntix<span className="text-slate-900">Pharma</span>
-              </span>
+            <Link href="/" className="shrink-0 group">
+              <div className="flex items-center gap-2">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-md shadow-emerald-200 group-hover:shadow-lg group-hover:shadow-emerald-300 transition-all">
+                  <svg viewBox="0 0 24 24" className="w-5 h-5 sm:w-6 sm:h-6 text-white">
+                    <rect x="9" y="3" width="6" height="18" rx="1" fill="currentColor" opacity="0.9" />
+                    <rect x="3" y="9" width="18" height="6" rx="1" fill="currentColor" />
+                  </svg>
+                </div>
+                <div>
+                  <span className="font-display font-bold text-xl sm:text-2xl text-emerald-600 tracking-tight">
+                    Syntix<span className="text-slate-900">Pharma</span>
+                  </span>
+                  <span className="hidden sm:block text-[9px] text-slate-400 font-medium -mt-1">
+                    Pharmaceutical Management System
+                  </span>
+                </div>
+              </div>
             </Link>
 
             {/* Desktop nav */}

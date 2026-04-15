@@ -18,6 +18,7 @@ export const PLATFORM_MODULE_META: Record<string, ModuleMeta> = {
   inventory: { icon: "Package", outcomes: 2 },
   patients: { icon: "Users", outcomes: 2 },
   prescriptions: { icon: "FileText", outcomes: 2 },
+  compliance: { icon: "ShieldCheck", outcomes: 2 },
   vaccination: { icon: "Syringe", outcomes: 2 },
   ai: { icon: "Bot", outcomes: 2, planNote: true },
   "cold-chain": { icon: "Snowflake", outcomes: 2 },

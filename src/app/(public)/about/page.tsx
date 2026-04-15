@@ -215,20 +215,25 @@ export default function AboutPage() {
               </Link>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              {[1, 2, 3, 4].map((n) => (
+              {[
+                "https://images.unsplash.com/photo-1560250097-712b2b821181?w=400&h=500&fit=crop",
+                "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=500&fit=crop",
+                "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=500&fit=crop",
+                "https://images.unsplash.com/photo-1598550874175-4d0ef436c909?w=400&h=500&fit=crop",
+              ].map((src, n) => (
                 <div
                   key={n}
                   className="aspect-[4/5] bg-slate-800 rounded-2xl overflow-hidden relative group"
                 >
                   <Image
-                    src="/images/hero.svg"
-                    alt={`${t("teamCtaContact")} ${n}`}
+                    src={src}
+                    alt={`${t("teamCtaContact")} ${n + 1}`}
                     fill
                     className="object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-60" />
                   <div className="absolute bottom-4 left-4">
-                    <p className="font-bold text-sm">{t("teamCtaContact")} {n}</p>
+                    <p className="font-bold text-sm">{t("teamCtaContact")} {n + 1}</p>
                     <p className="text-emerald-400 text-xs">Expert SyntixPharma</p>
                   </div>
                 </div>
