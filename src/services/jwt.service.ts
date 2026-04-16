@@ -18,18 +18,32 @@ export interface Organization {
  * - **Array** (enrichToken / legacy): retourné tel quel.
  * - **Map** (Keycloak 26+ scope `organization`): `{ slug: { id, roles } }` → tableau.
  */
-export function normalizeJwtOrganizations(
-  raw: JWTPayload["organizations"] | undefined | null,
-): Organization[] {
+export function normalizeJwtOrganizations(raw: unknown): Organization[] {
   if (!raw) return [];
-  if (Array.isArray(raw)) return raw;
+
+  // Le mapper Keycloak peut configurer `organizations` en `jsonType: 'String'`,
+  // donc le claim peut arriver comme une string JSON.
+  if (typeof raw === "string") {
+    const s = raw.trim();
+    if (!s) return [];
+    try {
+      const parsed = JSON.parse(s);
+      return normalizeJwtOrganizations(parsed);
+    } catch {
+      return [];
+    }
+  }
+
+  if (Array.isArray(raw)) return raw as Organization[];
+
   if (typeof raw === "object") {
-    return Object.entries(raw).map(([slug, val]) => ({
+    return Object.entries(raw as Record<string, any>).map(([slug, val]) => ({
       id: val?.id ?? slug,
       name: slug,
       roles: val?.roles ?? [],
     }));
   }
+
   return [];
 }
 

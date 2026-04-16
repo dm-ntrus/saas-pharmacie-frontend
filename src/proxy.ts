@@ -45,8 +45,18 @@ interface JWTPayload {
 /**
  * Normalise les organizations du JWT (array legacy ou map KC26) en tableau uniforme.
  */
-function normalizeOrganizations(raw: JWTPayload["organizations"]): NormalizedOrg[] {
+function normalizeOrganizations(raw: JWTPayload["organizations"] | string | undefined): NormalizedOrg[] {
   if (!raw) return [];
+  if (typeof raw === "string") {
+    const s = raw.trim();
+    if (!s) return [];
+    try {
+      const parsed = JSON.parse(s) as JWTPayload["organizations"];
+      return normalizeOrganizations(parsed);
+    } catch {
+      return [];
+    }
+  }
   if (Array.isArray(raw)) return raw;
   return Object.entries(raw).map(([slug, val]) => ({
     id: val?.id ?? slug,

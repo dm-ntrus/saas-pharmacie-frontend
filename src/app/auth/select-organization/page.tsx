@@ -37,7 +37,8 @@ export default function SelectOrganizationPage() {
     axios
       .get(`${base}/bff/auth/me`, { withCredentials: true })
       .then((r) => {
-        const u = r.data?.user;
+        const payload = r.data?.data ?? r.data;
+        const u = payload?.user;
         const orgs: Organization[] = (u?.keycloakOrganizations || []).map(
           (org: any) => ({
             id: org.id,
@@ -64,10 +65,17 @@ export default function SelectOrganizationPage() {
 
   const handleConfirm = () => {
     if (!selectedOrg) return;
+    const org = organizations.find((o) => o.id === selectedOrg);
     setCookie("current_organization", selectedOrg);
     localStorage.setItem("current_organization", selectedOrg);
-
-    const org = organizations.find((o) => o.id === selectedOrg);
+    if (org?.subdomain) {
+      setCookie("slug_organization", org.subdomain);
+      localStorage.setItem("slug_organization", org.subdomain);
+    }
+    if (org?.tenantId) {
+      setCookie("tenant_id", org.tenantId);
+      localStorage.setItem("tenant_id", org.tenantId);
+    }
     if (org?.subdomain) {
       window.location.href = `/tenant/${org.subdomain}/dashboard`;
     } else {

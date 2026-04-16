@@ -358,8 +358,10 @@ function RegisterInner() {
 
   const calculatePrice = () => {
     if (!selectedPlan) return 0;
-    if (selectedPlan.billing_interval === 'yearly') return selectedPlan.price / 12;
-    return selectedPlan.price || 0;
+    const price = Number(selectedPlan.price);
+    if (isNaN(price)) return 0;
+    if (selectedPlan.billing_interval === 'yearly') return price / 12;
+    return price;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -388,9 +390,16 @@ function RegisterInner() {
     if (sameAddress) {
       finalPharmacy.address = formData.tenantData.address?.street ?? finalPharmacy.address;
       finalPharmacy.city = formData.tenantData.address?.city ?? finalPharmacy.city;
-      finalPharmacy.state = formData.tenantData.address?.state ?? finalPharmacy.state;
+      // Ne pas écraser `pharmacyData.state` par le state du siège si le siège est vide.
+      const tenantState = formData.tenantData.address?.state?.trim();
+      if (tenantState) finalPharmacy.state = tenantState;
       finalPharmacy.postalCode = formData.tenantData.address?.postalCode ?? finalPharmacy.postalCode;
       finalPharmacy.country = formData.tenantData.address?.country ?? finalPharmacy.country;
+    }
+
+    if (!finalPharmacy.state?.trim()) {
+      toast.error('pharmacyData.state est requis');
+      return;
     }
 
     const payload: CreateTenantDto = {

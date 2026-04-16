@@ -49,6 +49,7 @@ export const FeatureFlagProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const features = data?.features ?? {};
   const limits = data?.limits ?? {};
+  const loading = !!pharmacyId && (isLoading || isFetching);
 
   // Sync entitled module keys to a cookie for Edge middleware consumption
   useEffect(() => {
@@ -77,12 +78,16 @@ export const FeatureFlagProvider: React.FC<{ children: React.ReactNode }> = ({
   const isFeatureEnabled = useCallback(
     (featureKey: string): boolean => {
       if (!featureKey) return false;
+      // UX/Prod-safety: tant que les entitlements ne sont pas chargés (ou indisponibles),
+      // on n'emploie pas la sidebar comme "gate" dur. Le backend (guards) reste l'autorité.
+      // Sans ça, la navigation devient vide au moindre souci réseau.
+      if (loading || Object.keys(features).length === 0) return true;
       if (features[featureKey] !== undefined) return !!features[featureKey];
       const lower = featureKey.toLowerCase();
       if (features[lower] !== undefined) return !!features[lower];
       return false;
     },
-    [features],
+    [features, loading],
   );
 
   const refresh = useCallback(async () => {
@@ -91,8 +96,6 @@ export const FeatureFlagProvider: React.FC<{ children: React.ReactNode }> = ({
       queryKey: planEntitlementsQueryKey(pharmacyId),
     });
   }, [pharmacyId, queryClient]);
-
-  const loading = !!pharmacyId && (isLoading || isFetching);
 
   const value = useMemo(
     () => ({
