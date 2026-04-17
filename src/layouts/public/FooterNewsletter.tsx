@@ -57,6 +57,7 @@ export default function FooterNewsletter() {
       <button
         type="submit"
         disabled={loading}
+        suppressHydrationWarning
         className="w-full cursor-pointer py-3 bg-slate-900 text-white rounded-2xl font-bold text-md hover:bg-slate-800 transition-all shadow-md shadow-slate-200 disabled:opacity-60"
       >
         {loading ? "Envoi…" : "S'abonner à la newsletter"}

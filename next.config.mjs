@@ -5,6 +5,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Dev LAN / proxy access: allow all development origins.
+  allowedDevOrigins: ["*"],
   // Disable typed routes
   typedRoutes: false,
   // Déploiement Vercel : sortie classique (serverless). Pour Docker / `node server.js`, utiliser output: 'standalone'.

@@ -34,6 +34,7 @@ import ClientJourneySection from "@/components/public/ClientJourneySection";
 import HomePricingSection from "@/components/public/HomePricingSection";
 import { Link } from "@/i18n/navigation";
 import MedicalBackgroundPatterns, { HexagonalPattern } from "@/components/public/MedicalPatterns";
+import { FloatingDecoration, FloatingDecorationMobile } from "@/components/public/FloatingDecoration";
 
 const REVEAL_EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -130,12 +131,22 @@ export default function PublicHomePage() {
     { icon: Users, label: t("patients"), bgClass: "bg-amber-500" },
   ];
 
+  const HERO_IMAGES = [
+    "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=800&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1576602976047-174e57a47881?w=800&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=800&h=600&fit=crop",
+  ];
+
   return (
     <div className="bg-white">
       {/* ═══════════ HERO ═══════════ */}
       <section className="relative overflow-hidden bg-gradient-to-b from-slate-50/80 to-white">
         {/* Subtle background patterns */}
         <MedicalBackgroundPatterns />
+
+        {/* Floating decorations */}
+        <FloatingDecoration />
+        <FloatingDecorationMobile />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 lg:pt-32 pb-12 sm:pb-16 lg:pb-20">
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
@@ -399,6 +410,34 @@ export default function PublicHomePage() {
                   </div>
                 </div>
               </div>
+
+              {/* Visual gallery restored */}
+              <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-3">
+                {HERO_IMAGES.map((src, idx) => (
+                  <motion.div
+                    key={src}
+                    initial={motionSafe ? { opacity: 0, y: 12 } : false}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={
+                      motionSafe
+                        ? { delay: 0.45 + idx * 0.08, duration: 0.5, ease: REVEAL_EASE }
+                        : { duration: 0.01 }
+                    }
+                    whileHover={motionSafe ? { y: -3, scale: 1.01 } : {}}
+                    className="group relative h-24 sm:h-28 rounded-xl overflow-hidden border border-slate-200/70 shadow-sm"
+                  >
+                    <Image
+                      src={src}
+                      alt={idx === 0 ? "Pharmacy team collaboration" : idx === 1 ? "Pharmacy customer care" : "Modern pharmacy interior"}
+                      fill
+                      sizes="(max-width: 640px) 50vw, 25vw"
+                      className="object-cover scale-100 group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/25 via-slate-900/5 to-transparent" />
+                    <div className="absolute inset-0 ring-1 ring-inset ring-white/25 pointer-events-none" />
+                  </motion.div>
+                ))}
+              </div>
             </motion.div>
           </div>
         </div>
@@ -661,6 +700,24 @@ export default function PublicHomePage() {
                     </li>
                   ))}
                 </ul>
+                <motion.div
+                  initial={motionSafe ? { opacity: 0, y: 10 } : false}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={motionSafe ? { duration: 0.45, ease: REVEAL_EASE } : { duration: 0.01 }}
+                  whileHover={motionSafe ? { y: -2 } : {}}
+                  className="group relative mt-5 h-28 rounded-xl overflow-hidden border border-white/80 shadow-sm lg:hidden"
+                >
+                  <Image
+                    src="https://images.unsplash.com/photo-1550572017-edd951b55104?w=900&h=500&fit=crop"
+                    alt="Pharmacy point of sale"
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 0vw"
+                    className="object-cover scale-100 group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-slate-900/35 via-slate-900/10 to-transparent" />
+                  <div className="absolute inset-0 ring-1 ring-inset ring-white/25 pointer-events-none" />
+                </motion.div>
               </div>
               <div className="absolute top-0 right-0 w-1/2 h-full hidden lg:block overflow-hidden">
                 <Image

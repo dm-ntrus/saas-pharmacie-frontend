@@ -12,15 +12,35 @@ function unwrapPlanEntitlements(raw: unknown, pharmacyId: string): PlanEntitleme
     if (o.data && typeof o.data === "object") {
       const d = o.data as Record<string, unknown>;
       if ("features" in d) {
-        return o.data as PlanEntitlementsSummary;
+        return normalizeResponse(d, pharmacyId);
       }
     }
     if ("features" in o) {
-      return raw as PlanEntitlementsSummary;
+      return normalizeResponse(o, pharmacyId);
     }
   }
+  return createEmptySummary(pharmacyId);
+}
+
+function normalizeResponse(o: Record<string, unknown>, pharmacyId: string): PlanEntitlementsSummary {
+  const tenantId = (o.tenantId as string | undefined) || "";
+  const billingOrganizationId = (o.billingOrganizationId as string | undefined) || "";
+
   return {
-    billingOrganizationId: "",
+    tenantId: tenantId || billingOrganizationId,
+    pharmacyContextId: (o.pharmacyContextId as string) || pharmacyId,
+    features: (o.features as Record<string, boolean>) || {},
+    limits: (o.limits as Record<string, number>) || {},
+    catalogKeys: (o.catalogKeys as readonly string[]) || [],
+    subscriptionId: o.subscriptionId as string | undefined,
+    planId: o.planId as string | undefined,
+    reason: o.reason as string | undefined,
+  };
+}
+
+function createEmptySummary(pharmacyId: string): PlanEntitlementsSummary {
+  return {
+    tenantId: "",
     pharmacyContextId: pharmacyId,
     features: {},
     limits: {},

@@ -13,12 +13,29 @@ import {
 import { MarketingIcon } from "@/components/public/marketing-icons";
 
 const MODULE_IMAGES: Record<string, string> = {
-  inventory: "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=400&h=300&fit=crop",
-  pos: "https://images.unsplash.com/photo-1589829545856-d10d557cf05f?w=400&h=300&fit=crop",
-  patients: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=300&fit=crop",
+  pos: "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=400&h=300&fit=crop",
+  inventory: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&h=300&fit=crop",
+  patients: "https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=400&h=300&fit=crop",
+  "supply-chain": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400&h=300&fit=crop",
   analytics: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop",
-  compliance: "https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=400&h=300&fit=crop",
-  supply: "https://images.unsplash.com/photo-1578474846511-04ba529f0b88?w=400&h=300&fit=crop",
+  loyalty: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=400&h=300&fit=crop",
+  prescriptions: "https://images.unsplash.com/photo-1576602976047-174e57a47881?w=400&h=300&fit=crop",
+  vaccination: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400&h=300&fit=crop",
+  compounding: "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=400&h=300&fit=crop",
+  compliance: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=400&h=300&fit=crop",
+  cold_chain: "https://images.unsplash.com/photo-1578474846511-04ba529f0b88?w=400&h=300&fit=crop",
+  teleconsultation: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=300&fit=crop",
+  traceability: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=300&fit=crop",
+  suppliers: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=400&h=300&fit=crop",
+  partners: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=400&h=300&fit=crop",
+  billing_ops: "https://images.unsplash.com/photo-1554224154-26032ffc0d07?w=400&h=300&fit=crop",
+  accounting: "https://images.unsplash.com/photo-1606787366850-de6330128bfc?w=400&h=300&fit=crop",
+  e_invoice: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop",
+  insurance: "https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=400&h=300&fit=crop",
+  delivery: "https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?w=400&h=300&fit=crop",
+  quality: "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=400&h=300&fit=crop",
+  hr: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=400&h=300&fit=crop",
+  ai: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop",
 };
 
 export default function PlatformModulesPreview() {
@@ -65,7 +82,7 @@ export default function PlatformModulesPreview() {
             >
               <div className="relative h-40 overflow-hidden">
                 <Image
-                  src={MODULE_IMAGES[m.icon] || MODULE_IMAGES.inventory}
+                  src={MODULE_IMAGES[m.id] || "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=400&h=300&fit=crop"}
                   alt={m.title}
                   fill
                   className="object-cover"

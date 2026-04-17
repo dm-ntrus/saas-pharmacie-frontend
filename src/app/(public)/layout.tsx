@@ -8,7 +8,7 @@ type LayoutProps = {
 
 export default function PublicMarketingLayout({ children }: LayoutProps) {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <Header />
       <main>{children}</main>
       <Footer />

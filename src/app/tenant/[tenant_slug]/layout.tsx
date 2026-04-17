@@ -5,11 +5,11 @@ import { AccessibilityPanel } from "@/design-system";
 
 type LayoutProps = {
   children: ReactNode;
-  params: { tenant_slug: string };
+  params: Promise<{ tenant_slug: string }>;
 };
 
-export default function Layout({ children, params }: LayoutProps) {
-  const { tenant_slug } = params;
+export default async function Layout({ children, params }: LayoutProps) {
+  const { tenant_slug } = await params;
 
   return (
     <>
