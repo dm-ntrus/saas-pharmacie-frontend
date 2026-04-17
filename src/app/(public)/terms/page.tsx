@@ -12,7 +12,7 @@ export default function TermsPage() {
   }));
 
   return (
-    <div className="min-h-screen pt-28 sm:pt-32 pb-16 sm:pb-24 bg-white">
+    <div className="min-h-screen pt-24 sm:pt-32 pb-14 sm:pb-24 bg-white">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -22,21 +22,21 @@ export default function TermsPage() {
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-3">
             {t("tag")}
           </p>
-          <h1 className="text-3xl sm:text-4xl font-display font-bold text-slate-900 mb-2 tracking-tight">
+          <h1 className="text-2xl sm:text-4xl font-display font-bold text-slate-900 mb-2 tracking-tight">
             {t("title")}
           </h1>
-          <p className="text-sm text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-400">
             {t("lastUpdate")}
           </p>
         </motion.div>
 
-        <div className="space-y-8">
+        <div className="space-y-7 sm:space-y-8">
           {sections.map((s) => (
             <div key={s.title}>
-              <h2 className="text-lg font-display font-bold text-slate-900 mb-2">
+              <h2 className="text-base sm:text-lg font-display font-bold text-slate-900 mb-2">
                 {s.title}
               </h2>
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 {s.content}
               </p>
             </div>

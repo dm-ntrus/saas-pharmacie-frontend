@@ -122,7 +122,7 @@ export default function LiveSupportPage() {
             className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-emerald-700 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            Retour au support
+            {t("backToSupport")}
           </Link>
         </div>
 
@@ -239,7 +239,7 @@ export default function LiveSupportPage() {
                     <User className="w-5 h-5 text-emerald-600" />
                   </div>
                   <div>
-                    <p className="font-bold text-sm text-slate-900">Support SyntixPharma</p>
+                    <p className="font-bold text-sm text-slate-900">{t("supportLabel")}</p>
                     <p className="text-xs text-emerald-600 flex items-center gap-1">
                       <CheckCircle2 className="w-3 h-3" />
                       {t("agentAvailable")}

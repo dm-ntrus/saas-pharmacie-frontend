@@ -14,7 +14,7 @@ function StatusBadge({ status }: { status: "operational" | "degraded" | "mainten
   }[status];
 
   return (
-    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${config.color}`}>
+    <span className={`inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-wider sm:tracking-widest ${config.color}`}>
       <span className={`w-1.5 h-1.5 rounded-full ${config.dot}`} />
       {config.label}
     </span>
@@ -42,7 +42,7 @@ export default function StatusPage() {
   const allOperational = services.every((s) => s.status === "operational");
 
   return (
-    <div className="min-h-screen pt-28 sm:pt-32 pb-16 sm:pb-24 bg-white">
+    <div className="min-h-screen pt-24 sm:pt-32 pb-14 sm:pb-24 bg-white">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-10 sm:mb-14">
@@ -53,14 +53,14 @@ export default function StatusPage() {
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-3">
               {t("tag")}
             </p>
-            <h1 className="text-3xl sm:text-5xl font-display font-bold text-slate-900 mb-6 tracking-tight">
+            <h1 className="text-2xl sm:text-5xl font-display font-bold text-slate-900 mb-6 tracking-tight">
               {t("title")}
             </h1>
           </motion.div>
 
           {/* Global status */}
           <div
-            className={`inline-flex items-center gap-3 px-6 py-4 rounded-2xl ${
+            className={`inline-flex items-center gap-2.5 sm:gap-3 px-4 sm:px-6 py-3.5 sm:py-4 rounded-2xl ${
               allOperational
                 ? "bg-emerald-50 border border-emerald-100"
                 : "bg-amber-50 border border-amber-100"
@@ -71,7 +71,7 @@ export default function StatusPage() {
             ) : (
               <AlertTriangle className="w-6 h-6 text-amber-600" />
             )}
-            <span className="font-bold text-slate-900">
+            <span className="text-sm sm:text-base font-bold text-slate-900">
               {allOperational
                 ? t("allOperational")
                 : t("someIssues")}
@@ -85,13 +85,13 @@ export default function StatusPage() {
             <Activity className="w-5 h-5 text-emerald-600" />
             {t("servicesTitle")}
           </h2>
-          <div className="space-y-2">
+          <div className="space-y-2.5 sm:space-y-2">
             {services.map((svc) => (
               <div
                 key={svc.name}
-                className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100"
+                className="flex items-center justify-between gap-3 p-3.5 sm:p-4 bg-slate-50 rounded-xl border border-slate-100"
               >
-                <span className="text-sm font-bold text-slate-700">
+                <span className="text-xs sm:text-sm font-bold text-slate-700">
                   {svc.name}
                 </span>
                 <StatusBadge status={svc.status} />
@@ -116,7 +116,7 @@ export default function StatusPage() {
               />
             ))}
           </div>
-          <div className="flex justify-between mt-2 text-[10px] text-slate-400 font-bold">
+          <div className="flex justify-between gap-2 mt-2 text-[9px] sm:text-[10px] text-slate-400 font-bold">
             <span>{t("uptimeWindow")}</span>
             <span>
               {t("uptimeLabel")}{" "}

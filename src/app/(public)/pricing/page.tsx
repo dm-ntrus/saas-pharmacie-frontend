@@ -225,7 +225,7 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* ─── Hero ─── */}
-      <section className="pt-28 sm:pt-36 pb-4 text-center px-4 sm:px-6 lg:px-8">
+      <section className="pt-24 sm:pt-36 pb-4 text-center px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
@@ -235,7 +235,7 @@ export default function PricingPage() {
           <span className="inline-block text-[11px] font-bold uppercase tracking-[0.25em] text-emerald-600 mb-4">
             {t("heroTag")}
           </span>
-          <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mb-4 leading-[1.15]">
+          <h1 className="text-2xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mb-4 leading-[1.2] sm:leading-[1.15]">
             {t("heroTitle")}{" "}
             <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
               {t("heroHighlight")}
@@ -251,10 +251,10 @@ export default function PricingPage() {
 
       {/* ─── Toggle ─── */}
       <section className="flex justify-center px-4 mb-10 sm:mb-14">
-        <div className="inline-flex items-center gap-1 p-1 bg-slate-100 rounded-full">
+        <div className="inline-flex items-center gap-1 p-1 bg-slate-100 rounded-full max-w-full">
           <button
             onClick={() => setAnnual(false)}
-            className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${
+            className={`px-3 sm:px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all ${
               !annual
                 ? "bg-white text-slate-900 shadow-sm"
                 : "text-slate-500 hover:text-slate-700"
@@ -264,7 +264,7 @@ export default function PricingPage() {
           </button>
           <button
             onClick={() => setAnnual(true)}
-            className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all flex items-center gap-2 ${
+            className={`px-3 sm:px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 sm:gap-2 ${
               annual
                 ? "bg-white text-slate-900 shadow-sm"
                 : "text-slate-500 hover:text-slate-700"
@@ -294,9 +294,9 @@ export default function PricingPage() {
       )}
 
       {/* ─── Plan cards ─── */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-20 sm:mb-28">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-14 sm:mb-28">
         {isLoading ? (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             {[1, 2, 3, 4].map((i) => (
               <PlanCardSkeleton key={i} />
             ))}
@@ -336,7 +336,7 @@ export default function PricingPage() {
               </p>
             </div>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
-              <table className="w-full text-left min-w-[640px]">
+              <table className="w-full text-left min-w-[560px] sm:min-w-[640px]">
                 <thead>
                   <tr className="border-b border-slate-100 bg-slate-50/50">
                     <th className="px-5 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider w-56">

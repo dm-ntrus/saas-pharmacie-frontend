@@ -1555,6 +1555,13 @@
       "statsTransactions": "Transactions",
       "statsUptime": "Uptime",
       "statsSupport": "Support",
+      "statsMedicines": "Médicaments suivis",
+      "statsPrescriptions": "Ordonnances traitées",
+      "statsAlerts": "Alertes stock envoyées",
+      "statsCompliance": "Conformité réglementaire",
+      "badgePrescriptions": "Ordonnances",
+      "badgeStockAlerts": "Alertes stock",
+      "badgeGdpCompliance": "Conformité GDP",
       "capabilitiesTag": "Capacités",
       "capabilitiesTitle": "Tout ce dont votre pharmacie a besoin",
       "capabilitiesHighlight": "pour maximiser sa rentabilité.",
@@ -1619,6 +1626,9 @@
       "aiSpotlightTitle": "Un assistant qui aide votre équipe",
       "aiSpotlightHighlight": "à décider plus vite.",
       "aiSpotlightDesc": "Réduisez les erreurs, automatisez des workflows et transformez vos données en actions concrètes, avec une traçabilité complète.",
+      "aiFeatureDrugInteractions": "Détection des interactions médicamenteuses",
+      "aiFeatureHealthMonitoring": "Suivi de santé patient",
+      "aiFeatureQualityControl": "IA de contrôle qualité",
       "aiSpotlightCard1Title": "Support & opérations",
       "aiSpotlightCard1Desc": "Réponses contextualisées et propositions d’actions, avec validation avant exécution.",
       "aiSpotlightCard2Title": "Prévisions & réassort",
@@ -1672,7 +1682,8 @@
       "teamCta": "Envie de nous rejoindre ?",
       "teamCtaDesc": "Nous recrutons des talents passionnés par la HealthTech et l'impact social en Afrique.",
       "teamCtaButton": "Voir les postes ouverts",
-      "teamCtaContact": "Nous contacter"
+      "teamCtaContact": "Nous contacter",
+      "teamExpertLabel": "Expert SyntixPharma"
     },
     "contact": {
       "tag": "Contact",
@@ -1933,6 +1944,8 @@
       "tag": "Support en direct",
       "title": "Support en direct",
       "desc": "Chattez avec notre équipe technique en temps réel.",
+      "backToSupport": "Retour au support",
+      "supportLabel": "Support SyntixPharma",
       "onlineStatus": "En ligne",
       "formTitle": "Démarrer une conversation",
       "nameLabel": "Votre nom",
@@ -2006,6 +2019,9 @@
       "tag": "Communauté",
       "title": "Communauté SyntixPharma",
       "desc": "Échangez avec d'autres pharmaciens et partagez vos meilleures pratiques.",
+      "backToSupport": "Retour au support",
+      "backToCommunity": "Retour à la communauté",
+      "discussionNotFound": "Discussion introuvable.",
       "searchPlaceholder": "Rechercher une discussion...",
       "c1": "Général",
       "c2": "Fonctionnalités",
@@ -2027,8 +2043,139 @@
       "loadMore": "Charger plus",
       "discordTitle": "Rejoignez notre Discord",
       "discordDesc": "Discutez en temps réel avec la communauté.",
+      "discordDescLong": "Discussion en temps réel avec d'autres pharmaciens. Obtenez des réponses rapides !",
       "joinDiscord": "Rejoindre Discord",
-      "clearFilter": "Effacer le filtre"
+      "clearFilter": "Effacer le filtre",
+      "newDiscussionTitle": "Nouvelle discussion",
+      "newDiscussionDesc": "Partagez votre sujet avec la communauté",
+      "discussionTitleLabel": "Titre de la discussion",
+      "discussionTitlePlaceholder": "Un titre clair et concis...",
+      "categoryLabel": "Catégorie",
+      "contentLabel": "Contenu",
+      "edit": "Éditer",
+      "preview": "Aperçu",
+      "noContent": "Aucun contenu...",
+      "contentPlaceholder": "Décrivez votre sujet en détail. Soyez précis et donnez des exemples...",
+      "charCount": "{count} caractères",
+      "you": "Vous",
+      "justNow": "À l'instant",
+      "publishDiscussion": "Publier la discussion",
+      "cancel": "Annuler",
+      "tipsTitle": "💡 Conseils pour une bonne discussion",
+      "tips1": "• Choisissez une catégorie adaptée pour une meilleure visibilité",
+      "tips2": "• Soyez précis dans le titre pour attirer les réponses",
+      "tips3": "• Ajoutez des détails et des captures si possible",
+      "discussionCreated": "Discussion créée ! (Fonctionnalité à implémenter)",
+      "repliesTitle": "réponses",
+      "sampleReplyAuthor": "Pharmacien123",
+      "sampleReplyTime": "il y a 1h",
+      "sampleReplyText": "Merci pour ces conseils ! Très utile pour notre équipe.",
+      "topicData": {
+        "t1": {
+          "title": "Bienvenue sur SyntixPharma - présentation",
+          "content": "Bonjour à tous ! Je suis ravi de rejoindre cette communauté. Je gère une pharmacie à Kinshasa et je teste SyntixPharma depuis quelques semaines. Très impressionné par les fonctionnalités ! Qui d'autre utilise ce logiciel ?"
+        },
+        "t2": {
+          "title": "5 conseils pour gérer son inventaire",
+          "content": "Voici 5 conseils que j'utilise au quotidien:\n1. Faire l'inventaire chaque matin\n2. Utiliser les alertes de péremption\n3. Scanner les produits à l'arrivée\n4. Vérifier les lots\n5. Former votre équipe"
+        },
+        "t3": {
+          "title": "Intégration application mobile",
+          "content": "L'application mobile fonctionne très bien ! J'ai intégré avec notre système de facturation. Petit bémol : la synchronisation est parfois lente. Sinon top !"
+        },
+        "t4": {
+          "title": "Demande : Export PDF",
+          "content": "Serait-il possible d'avoir un export PDF des rapports de ventes ? Ce serait très utile pour mes réunions mensuelles. Merci !"
+        },
+        "t5": {
+          "title": "Bug sur la caisse",
+          "content": "J'ai remarqué un bug lors de l'impression des reçus. Le total s'affiche parfois avec une décimale en plus. Est-ce que quelqu'un d'autre a ce problème ?"
+        }
+      }
+    },
+    "security": {
+      "tag": "Sécurité",
+      "title": "Une plateforme",
+      "titleHighlight": "sécurisée",
+      "titleEnd": "pour les opérations de santé",
+      "desc": "Permissions, audit et isolation multi-tenant pour garder le contrôle sans ralentir l'équipe au comptoir.",
+      "ctaTalk": "Parler sécurité & conformité",
+      "ctaExplore": "Explorer les modules",
+      "items": {
+        "multiTenant": {
+          "title": "Multi-tenant",
+          "desc": "Espace isolé par organisation/pharmacie, avec séparation logique des données et des accès.",
+          "b1": "Isolation par tenant",
+          "b2": "Sous-domaines dédiés",
+          "b3": "Séparation des environnements"
+        },
+        "roles": {
+          "title": "Rôles & permissions",
+          "desc": "Contrôles fins pour limiter l'accès aux actions sensibles et sécuriser les opérations quotidiennes.",
+          "b1": "Gestion des rôles",
+          "b2": "Permissions par ressource",
+          "b3": "Actions protégées"
+        },
+        "audit": {
+          "title": "Audit & traçabilité",
+          "desc": "Journalisation des événements clés pour investiguer, prouver et améliorer vos processus.",
+          "b1": "Piste d'audit",
+          "b2": "Historique consultable",
+          "b3": "Exports pour contrôle"
+        },
+        "compliance": {
+          "title": "Conformité",
+          "desc": "Fonctionnalités orientées conformité (inventaire sensible, e-facture selon pays, qualité).",
+          "b1": "Processus qualité",
+          "b2": "Événements sensibles",
+          "b3": "Rapports et preuves"
+        }
+      },
+      "bottomTitle": "Vous avez des exigences spécifiques ?",
+      "bottomDesc": "Partagez votre contexte (pays, contraintes, audits, intégrations) et nous vous proposons un cadrage sécurité + déploiement.",
+      "bottomCta": "Demander un cadrage"
+    },
+    "integrations": {
+      "tag": "Écosystème",
+      "title": "Intégrations",
+      "titleHighlight": "connectées",
+      "titleEnd": "à votre marché",
+      "desc": "Paiements, messages, partenaires et conformité. Une base technique solide pour connecter ce qui compte sans casser vos workflows.",
+      "ctaTalk": "Parler à un expert",
+      "ctaModules": "Voir les modules",
+      "items": {
+        "payments": {
+          "title": "Paiements",
+          "desc": "Mobile Money, cartes et scénarios locaux via intégrations et configurations (selon pays/opérateur).",
+          "b1": "Encaissement multi-canal",
+          "b2": "Réconciliation simplifiée",
+          "b3": "Webhooks et statuts"
+        },
+        "notifications": {
+          "title": "Notifications",
+          "desc": "Email, SMS, WhatsApp et notifications in-app pour réduire les oublis et améliorer le service.",
+          "b1": "Templates",
+          "b2": "Préférences utilisateur",
+          "b3": "Historique et délivrabilité"
+        },
+        "partners": {
+          "title": "Partenaires (B2B)",
+          "desc": "Connexions aux grossistes et partenaires (catalogue, disponibilité, commandes) via API/EDI selon accords.",
+          "b1": "Catalogue & prix",
+          "b2": "Commandes & statuts",
+          "b3": "Synchronisation"
+        },
+        "compliance": {
+          "title": "Conformité & audit",
+          "desc": "Traçabilité et journaux pour investiguer, prouver et sécuriser les opérations sensibles.",
+          "b1": "RBAC & permissions",
+          "b2": "Audit trail",
+          "b3": "Exports et rapports"
+        }
+      },
+      "bottomTitle": "Besoin d'une intégration spécifique ?",
+      "bottomDesc": "Nous adaptons l'intégration à votre contexte (pays, opérateurs, partenaires, réglementation). Dites-nous ce que vous devez connecter.",
+      "bottomCta": "Demander une étude"
     },
     "solutions": {
       "tag": "Nos solutions",
@@ -2579,6 +2726,8 @@
       "createAccount": "Créer un compte",
       "login": "Connexion",
       "freeTrial": "Essai Gratuit",
+      "gdpCompliant": "Conforme GDP",
+      "systemsOperational": "Tous les systèmes opérationnels",
       "openMenu": "Ouvrir le menu",
       "closeMenu": "Fermer le menu"
     },

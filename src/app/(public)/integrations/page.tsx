@@ -3,35 +3,18 @@
 import { motion } from "framer-motion";
 import { ArrowRight, CreditCard, MessageCircle, Plug, ShieldCheck } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { useTranslations } from "@/lib/i18n-simple";
 
 const ITEMS = [
-  {
-    icon: CreditCard,
-    title: "Paiements",
-    desc: "Mobile Money, cartes et scénarios locaux via intégrations et configurations (selon pays/opérateur).",
-    bullets: ["Encaissement multi-canal", "Réconciliation simplifiée", "Webhooks et statuts"],
-  },
-  {
-    icon: MessageCircle,
-    title: "Notifications",
-    desc: "Email, SMS, WhatsApp et notifications in-app pour réduire les oublis et améliorer le service.",
-    bullets: ["Templates", "Préférences utilisateur", "Historique et délivrabilité"],
-  },
-  {
-    icon: Plug,
-    title: "Partenaires (B2B)",
-    desc: "Connexions aux grossistes et partenaires (catalogue, disponibilité, commandes) via API/EDI selon accords.",
-    bullets: ["Catalogue & prix", "Commandes & statuts", "Synchronisation"],
-  },
-  {
-    icon: ShieldCheck,
-    title: "Conformité & audit",
-    desc: "Traçabilité et journaux pour investiguer, prouver et sécuriser les opérations sensibles.",
-    bullets: ["RBAC & permissions", "Audit trail", "Exports et rapports"],
-  },
+  { id: "payments", icon: CreditCard },
+  { id: "notifications", icon: MessageCircle },
+  { id: "partners", icon: Plug },
+  { id: "compliance", icon: ShieldCheck },
 ] as const;
 
 export default function IntegrationsPage() {
+  const t = useTranslations("pages.integrations");
+
   return (
     <div className="min-h-screen pt-28 sm:pt-32 pb-16 bg-white">
       <section className="px-4 sm:px-6 lg:px-8 text-center mb-12">
@@ -41,37 +24,36 @@ export default function IntegrationsPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 mb-3"
           >
-            Écosystème
+            {t("tag")}
           </motion.p>
           <motion.h1
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-3xl sm:text-5xl lg:text-6xl font-display font-bold text-slate-900 mb-4 tracking-tight"
           >
-            Intégrations{" "}
-            <span className="text-emerald-600">connectées</span> à votre marché
+            {t("title")} <span className="text-emerald-600">{t("titleHighlight")}</span>{" "}
+            {t("titleEnd")}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-base sm:text-lg text-slate-500 leading-relaxed max-w-2xl mx-auto"
           >
-            Paiements, messages, partenaires et conformité. Une base technique solide pour
-            brancher ce qui compte, sans casser vos workflows.
+            {t("desc")}
           </motion.p>
           <div className="mt-7 flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               href="/contact"
               className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-slate-900 text-white rounded-xl font-bold hover:bg-emerald-600 transition-all"
             >
-              Parler à un expert
+              {t("ctaTalk")}
               <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
               href="/modules"
               className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:border-emerald-200 hover:text-emerald-700 transition-all"
             >
-              Voir les modules
+              {t("ctaModules")}
             </Link>
           </div>
         </div>
@@ -81,7 +63,7 @@ export default function IntegrationsPage() {
         <div className="max-w-6xl mx-auto grid sm:grid-cols-2 gap-5">
           {ITEMS.map((it, idx) => (
             <motion.div
-              key={it.title}
+              key={it.id}
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -92,13 +74,13 @@ export default function IntegrationsPage() {
                 <it.icon className="w-6 h-6 text-emerald-600" />
               </div>
               <h2 className="text-lg font-display font-bold text-slate-900 mb-2">
-                {it.title}
+                {t(`items.${it.id}.title`)}
               </h2>
               <p className="text-sm text-slate-500 leading-relaxed mb-4">
-                {it.desc}
+                {t(`items.${it.id}.desc`)}
               </p>
               <ul className="space-y-2 text-sm text-slate-700">
-                {it.bullets.map((b) => (
+                {[t(`items.${it.id}.b1`), t(`items.${it.id}.b2`), t(`items.${it.id}.b3`)].map((b) => (
                   <li key={b} className="flex gap-2">
                     <span className="text-emerald-500">✓</span>
                     <span className="font-medium">{b}</span>
@@ -115,11 +97,10 @@ export default function IntegrationsPage() {
           <div className="grid lg:grid-cols-3 gap-8 items-center">
             <div className="lg:col-span-2">
               <h2 className="text-2xl sm:text-3xl font-display font-bold mb-2">
-                Besoin d’une intégration spécifique ?
+                {t("bottomTitle")}
               </h2>
               <p className="text-slate-400 text-sm sm:text-base">
-                Nous adaptons l’intégration à votre contexte (pays, opérateurs, partenaires,
-                réglementation). Dites-nous ce que vous devez connecter.
+                {t("bottomDesc")}
               </p>
             </div>
             <div className="flex gap-3 lg:justify-end">
@@ -127,7 +108,7 @@ export default function IntegrationsPage() {
                 href="/contact"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 font-bold hover:bg-emerald-500 transition-colors w-full sm:w-auto"
               >
-                Demander une étude
+                {t("bottomCta")}
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </div>

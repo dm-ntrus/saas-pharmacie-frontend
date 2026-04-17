@@ -16,9 +16,9 @@ export default function PlanDemoPage() {
   ];
 
   return (
-    <div className="min-h-screen pt-28 sm:pt-32 pb-16 sm:pb-24 bg-white">
+    <div className="min-h-screen pt-24 sm:pt-32 pb-14 sm:pb-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-20 items-start">
+        <div className="grid lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-20 items-start">
           {/* Left */}
           <div>
             <motion.div
@@ -28,16 +28,16 @@ export default function PlanDemoPage() {
               <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 mb-3">
                 {t("tag")}
               </p>
-              <h1 className="text-3xl sm:text-5xl font-display font-bold text-slate-900 mb-4 tracking-tight leading-[1.05]">
+              <h1 className="text-2xl sm:text-5xl font-display font-bold text-slate-900 mb-4 tracking-tight leading-[1.1] sm:leading-[1.05]">
                 {t("title")}{" "}
                 <span className="text-emerald-600">{t("titleHighlight")}</span> {t("titleEnd")}
               </h1>
-              <p className="text-base text-slate-500 leading-relaxed font-medium mb-8 max-w-md">
+              <p className="text-sm sm:text-base text-slate-500 leading-relaxed font-medium mb-7 sm:mb-8 max-w-md">
                 {t("desc")}
               </p>
             </motion.div>
 
-            <div className="flex flex-wrap gap-6 mb-8">
+            <div className="flex flex-wrap gap-3 sm:gap-6 mb-7 sm:mb-8">
               {[
                 { icon: Clock, text: t("quickInfo.duration") },
                 { icon: Monitor, text: t("quickInfo.remote") },
@@ -45,7 +45,7 @@ export default function PlanDemoPage() {
               ].map((b) => (
                 <span
                   key={b.text}
-                  className="inline-flex items-center gap-2 text-sm text-slate-600 font-medium"
+                  className="inline-flex items-center gap-2 text-xs sm:text-sm text-slate-600 font-medium"
                 >
                   <b.icon className="w-4 h-4 text-emerald-600" />
                   {b.text}
@@ -53,11 +53,11 @@ export default function PlanDemoPage() {
               ))}
             </div>
 
-            <ul className="space-y-3 mb-8">
+            <ul className="space-y-2.5 sm:space-y-3 mb-7 sm:mb-8">
               {benefits.map((b) => (
                 <li
                   key={b}
-                  className="flex items-center gap-3 text-sm text-slate-700"
+                  className="flex items-center gap-3 text-xs sm:text-sm text-slate-700"
                 >
                   <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
                   <span className="font-medium">{b}</span>
@@ -65,11 +65,11 @@ export default function PlanDemoPage() {
               ))}
             </ul>
 
-            <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100">
-              <p className="text-sm text-slate-500 leading-relaxed">
+            <div className="p-5 sm:p-6 bg-slate-50 rounded-2xl border border-slate-100">
+              <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
                 &quot;{t("testimonial.quote")}&quot;
               </p>
-              <p className="text-sm font-bold text-slate-700 mt-3">
+              <p className="text-xs sm:text-sm font-bold text-slate-700 mt-3">
                 — {t("testimonial.author")}
               </p>
             </div>
@@ -83,7 +83,7 @@ export default function PlanDemoPage() {
           >
             <form
               onSubmit={(e) => e.preventDefault()}
-              className="bg-slate-50 rounded-3xl border border-slate-100 p-6 sm:p-10"
+              className="bg-slate-50 rounded-3xl border border-slate-100 p-5 sm:p-10"
             >
               <h2 className="text-xl font-display font-bold text-slate-900 mb-6">
                 {t("form.title")}

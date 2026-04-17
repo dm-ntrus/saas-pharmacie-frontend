@@ -34,7 +34,7 @@ export default function NewDiscussionPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert("Discussion créée! (Fonctionnalité à implémenter)");
+    alert(t("discussionCreated"));
   };
 
   return (
@@ -46,7 +46,7 @@ export default function NewDiscussionPage() {
             className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-emerald-700 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            Retour à la communauté
+            {t("backToCommunity")}
           </Link>
         </div>
 
@@ -63,10 +63,10 @@ export default function NewDiscussionPage() {
               </div>
               <div>
                 <h1 className="text-xl font-display font-bold text-white">
-                  Nouvelle discussion
+                  {t("newDiscussionTitle")}
                 </h1>
                 <p className="text-xs text-slate-300">
-                  Partagez votre sujet avec la communauté
+                  {t("newDiscussionDesc")}
                 </p>
               </div>
             </div>
@@ -76,15 +76,14 @@ export default function NewDiscussionPage() {
             {/* Title Input */}
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
-                Titre de la discussion
+                {t("discussionTitleLabel")}
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Un titre clair et concis..."
+                placeholder={t("discussionTitlePlaceholder")}
                 required
-                style={{ color: '#0f172a !important', fontSize: '14px' }}
                 className="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
               />
             </div>
@@ -92,7 +91,7 @@ export default function NewDiscussionPage() {
             {/* Category Selection */}
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
-                Catégorie
+                {t("categoryLabel")}
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {CATEGORIES.map((cat) => {
@@ -133,35 +132,34 @@ export default function NewDiscussionPage() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest">
-                  Contenu
+                  {t("contentLabel")}
                 </label>
                 <button
                   type="button"
                   onClick={() => setShowPreview(!showPreview)}
                   className="text-xs font-medium text-emerald-600 hover:text-emerald-700"
                 >
-                  {showPreview ? "Éditer" : "Aperçu"}
+                  {showPreview ? t("edit") : t("preview")}
                 </button>
               </div>
               {showPreview ? (
                 <div className="min-h-[200px] p-4 bg-slate-50 rounded-lg border border-slate-200">
                   <p className="text-sm text-slate-600 whitespace-pre-wrap">
-                    {content || "Aucun contenu..."}
+                    {content || t("noContent")}
                   </p>
                 </div>
               ) : (
 <textarea
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  placeholder="Décrivez votre sujet en détail. Soyez précis et donnez des examples..."
+                  placeholder={t("contentPlaceholder")}
                   rows={8}
                   required
-                  style={{ color: '#0f172a !important', fontSize: '14px' }}
                   className="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
                 />
               )}
               <p className="text-xs text-slate-400 mt-1 text-right">
-                {content.length} caractères
+                {t("charCount", { count: content.length })}
               </p>
             </div>
 
@@ -169,7 +167,7 @@ export default function NewDiscussionPage() {
             {title && content && (
               <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
-                  Aperçu
+                  {t("preview")}
                 </p>
                 <div className="flex items-start gap-3">
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${colorClasses?.bg || "bg-slate-100"}`}>
@@ -180,9 +178,9 @@ export default function NewDiscussionPage() {
                     <p className="text-sm text-slate-500 line-clamp-2">{content}</p>
                     <div className="flex items-center gap-2 mt-2 text-xs text-slate-400">
                       <User className="w-3 h-3" />
-                      <span>Vous</span>
+                      <span>{t("you")}</span>
                       <span>•</span>
-                      <span>À l'instant</span>
+                      <span>{t("justNow")}</span>
                     </div>
                   </div>
                 </div>
@@ -197,14 +195,14 @@ export default function NewDiscussionPage() {
                 className="flex-1 px-6 py-3.5 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-500 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Send className="w-4 h-4" />
-                Publier la discussion
+                {t("publishDiscussion")}
               </button>
               <Link
                 href="/support/community"
                 className="px-6 py-3.5 bg-slate-100 text-slate-700 rounded-xl font-bold hover:bg-slate-200 transition-colors flex items-center justify-center gap-2"
               >
                 <X className="w-4 h-4" />
-                Annuler
+                {t("cancel")}
               </Link>
             </div>
           </form>
@@ -212,11 +210,11 @@ export default function NewDiscussionPage() {
 
         {/* Tips */}
         <div className="mt-6 p-4 bg-amber-50 rounded-2xl border border-amber-100">
-          <h4 className="text-sm font-bold text-amber-800 mb-2">💡 Tips pour une bonne discussion</h4>
+          <h4 className="text-sm font-bold text-amber-800 mb-2">{t("tipsTitle")}</h4>
           <ul className="text-xs text-amber-700 space-y-1">
-            <li>•Choisissez une catégorie adapté pour une meilleure visibilité</li>
-            <li>•Soyez précis dans le titre pour attracted les réponses</li>
-            <li>• Ajoutez des details et screenshots si possible</li>
+            <li>{t("tips1")}</li>
+            <li>{t("tips2")}</li>
+            <li>{t("tips3")}</li>
           </ul>
         </div>
       </div>

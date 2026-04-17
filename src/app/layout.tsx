@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
+import { cookies } from "next/headers";
 import "./globals.css";
 import { AccessibilityProvider } from "@/components/ui/AccessibilityProvider";
 import QueryProvider from "@/providers/queryProvider";
@@ -11,6 +12,8 @@ import { OfflineIndicator } from "@/components/pwa/OfflineIndicator";
 import { SkipToContent } from "@/components/ui";
 import AppToaster from "@/components/providers/AppToaster";
 import { SimpleI18nProvider } from "@/lib/i18n-simple";
+import { locales, type Locale } from "@/i18n/routing";
+import { I18N_CONFIG } from "@/i18n/i18n.config";
 
 function metadataBaseUrl(): URL {
   const raw = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
@@ -84,15 +87,22 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = cookies();
+  const localeCookie = cookieStore.get("NEXT_LOCALE")?.value;
+  const locale = locales.includes(localeCookie as Locale)
+    ? (localeCookie as Locale)
+    : I18N_CONFIG.defaultLanguage;
+  const languageSettings = I18N_CONFIG.languageSettings[locale];
+
   return (
-    <html lang="fr" dir="ltr">
+    <html lang={locale} dir={languageSettings.direction}>
       <body
         suppressHydrationWarning
         className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}
       >
         <SoftwareApplicationJsonLd />
         <ErrorBoundary>
-          <SimpleI18nProvider locale="fr">
+          <SimpleI18nProvider locale={locale}>
             <QueryProvider>
               <AuthProvider>
                 <AppToaster />

@@ -25,6 +25,7 @@ export default function Header() {
   const pathname = usePathname();
   const t = useTranslations("layout.header");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => setMenuOpen(false), [pathname]);
 
@@ -35,78 +36,74 @@ export default function Header() {
     };
   }, [menuOpen]);
 
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <>
-      <header className="fixed top-0 w-full bg-white/95 backdrop-blur-xl border-b border-slate-100 z-40">
-        {/* Compliance bar */}
-        <div className="bg-gradient-to-r from-emerald-50 via-teal-50 to-cyan-50 border-b border-emerald-100/30">
+      <header
+        className={`fixed top-0 w-full z-40 transition-all duration-300 ${
+          scrolled
+            ? "bg-white/90 backdrop-blur-xl shadow-sm border-b border-slate-100/80"
+            : "bg-white/70 backdrop-blur-lg"
+        }`}
+      >
+        {/* Compliance micro-bar — hidden on mobile for cleaner UX */}
+        <div className="hidden sm:block bg-slate-50/80 border-b border-slate-100/50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-center gap-4 sm:gap-6 overflow-x-auto scrollbar-hide py-1.5">
-              <div className="flex items-center gap-1.5 shrink-0">
+            <div className="flex items-center justify-center gap-5 py-1">
+              <div className="flex items-center gap-1.5">
                 <Shield className="w-3 h-3 text-emerald-600" />
-                <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider whitespace-nowrap">
-                  GDP Compliant
+                <span className="text-[11px] font-semibold text-slate-500">
+                  {t("gdpCompliant")}
                 </span>
               </div>
-              <div className="w-px h-3 bg-emerald-200 shrink-0" />
-              <div className="flex items-center gap-1.5 shrink-0">
-                <Award className="w-3 h-3 text-teal-600" />
-                <span className="text-[10px] font-bold text-teal-700 uppercase tracking-wider whitespace-nowrap">
+              <div className="w-px h-3 bg-slate-200" />
+              <div className="flex items-center gap-1.5">
+                <Award className="w-3 h-3 text-emerald-600" />
+                <span className="text-[11px] font-semibold text-slate-500">
                   ISO 27001
                 </span>
               </div>
-              <div className="w-px h-3 bg-emerald-200 shrink-0" />
-              <div className="flex items-center gap-1.5 shrink-0">
-                <div className="w-3 h-3 bg-blue-600 rounded-sm flex items-center justify-center">
-                  <span className="text-white text-[6px] font-black">+</span>
-                </div>
-                <span className="text-[10px] font-bold text-blue-700 uppercase tracking-wider whitespace-nowrap">
-                  HIPAA Ready
-                </span>
-              </div>
-              <div className="w-px h-3 bg-emerald-200 shrink-0 hidden sm:block" />
-              <div className="hidden sm:flex items-center gap-1.5 shrink-0">
-                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                <span className="text-[10px] font-medium text-emerald-600">
-                  All systems operational
+              <div className="w-px h-3 bg-slate-200" />
+              <div className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse-subtle" />
+                <span className="text-[11px] font-medium text-emerald-600">
+                  {t("systemsOperational")}
                 </span>
               </div>
             </div>
           </div>
         </div>
-        
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 sm:h-[72px]">
+          <div className="flex items-center justify-between h-14 sm:h-16">
             {/* Logo */}
-            <Link href="/" className="shrink-0 group">
-              <div className="flex items-center gap-2">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-md shadow-emerald-200 group-hover:shadow-lg group-hover:shadow-emerald-300 transition-all">
-                  <svg viewBox="0 0 24 24" className="w-5 h-5 sm:w-6 sm:h-6 text-white">
-                    <rect x="9" y="3" width="6" height="18" rx="1" fill="currentColor" opacity="0.9" />
-                    <rect x="3" y="9" width="18" height="6" rx="1" fill="currentColor" />
-                  </svg>
-                </div>
-                <div>
-                  <span className="font-display font-bold text-xl sm:text-2xl text-emerald-600 tracking-tight">
-                    Syntix<span className="text-slate-900">Pharma</span>
-                  </span>
-                  <span className="hidden sm:block text-[9px] text-slate-400 font-medium -mt-1">
-                    Pharmaceutical Management System
-                  </span>
-                </div>
+            <Link href="/" className="shrink-0 group flex items-center gap-2.5">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md group-hover:shadow-emerald-200/50 transition-all">
+                <svg viewBox="0 0 24 24" className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-white">
+                  <rect x="9" y="3" width="6" height="18" rx="1" fill="currentColor" opacity="0.9" />
+                  <rect x="3" y="9" width="18" height="6" rx="1" fill="currentColor" />
+                </svg>
               </div>
+              <span className="font-display font-bold text-lg sm:text-xl text-emerald-600 tracking-tight">
+                Syntix<span className="text-slate-900">Pharma</span>
+              </span>
             </Link>
 
             {/* Desktop nav */}
-            <nav className="hidden lg:flex items-center gap-8">
+            <nav className="hidden lg:flex items-center gap-1">
               {PRIMARY_LINKS.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`text-[13px] font-bold uppercase tracking-widest transition-colors ${
+                  className={`px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${
                     pathname === link.href
-                      ? "text-emerald-600"
-                      : "text-slate-600 hover:text-emerald-600"
+                      ? "text-emerald-700 bg-emerald-50/80"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                   }`}
                 >
                   {t(link.key)}
@@ -115,35 +112,35 @@ export default function Header() {
             </nav>
 
             {/* Desktop CTA */}
-            <div className="hidden lg:flex items-center gap-5">
+            <div className="hidden lg:flex items-center gap-3">
               <LanguageSwitcher variant="compact" />
               <Link
                 href="/auth/login"
-                className="text-[13px] font-bold text-slate-600 hover:text-slate-900 uppercase tracking-widest transition-colors"
+                className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
               >
                 {t("login")}
               </Link>
               <Link
                 href="/auth/register"
-                className="px-6 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-emerald-600 transition-all shadow-lg shadow-slate-900/10"
+                className="px-5 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-semibold hover:bg-emerald-600 transition-all shadow-sm hover:shadow-md"
               >
                 {t("freeTrial")}
               </Link>
             </div>
 
-            {/* Mobile */}
-            <div className="flex lg:hidden items-center gap-2">
+            {/* Mobile actions */}
+            <div className="flex lg:hidden items-center gap-1.5">
               <LanguageSwitcher variant="compact" />
               <Link
                 href="/auth/login"
-                className="inline-flex items-center px-2.5 py-1.5 rounded-lg text-xs font-bold text-slate-500 uppercase tracking-widest hover:text-emerald-600 hover:bg-emerald-50 transition-all"
+                className="px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-emerald-600 hover:bg-emerald-50/60 transition-all"
               >
                 {t("login")}
               </Link>
               <button
                 onClick={() => setMenuOpen((v) => !v)}
                 aria-label={menuOpen ? t("closeMenu") : t("openMenu")}
-                className="w-10 h-10 flex items-center justify-center rounded-xl text-slate-600 border border-slate-200 bg-white hover:border-emerald-300 hover:text-emerald-600 transition-all"
+                className="w-10 h-10 flex items-center justify-center rounded-xl text-slate-600 hover:bg-slate-50 transition-colors"
               >
                 <AnimatePresence mode="wait" initial={false}>
                   {menuOpen ? (
@@ -185,29 +182,29 @@ export default function Header() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               onClick={() => setMenuOpen(false)}
-              className="fixed inset-0 bg-slate-900/30 backdrop-blur-sm z-30 lg:hidden"
+              className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-30 lg:hidden"
             />
 
             <motion.div
               key="drawer"
-              initial={{ opacity: 0, y: -12 }}
+              initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-              className="fixed top-[68px] left-3 right-3 bg-white rounded-2xl border border-slate-100 shadow-2xl shadow-slate-900/10 z-40 lg:hidden overflow-hidden max-h-[calc(100dvh-80px)] overflow-y-auto"
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              className="fixed top-[56px] sm:top-16 left-3 right-3 bg-white rounded-2xl border border-slate-100 shadow-xl z-40 lg:hidden overflow-hidden max-h-[calc(100dvh-72px)] sm:max-h-[calc(100dvh-80px)] overflow-y-auto"
             >
               {/* Primary links */}
-              <nav className="p-3 space-y-0.5">
+              <nav className="p-2 space-y-0.5">
                 {PRIMARY_LINKS.map((link, i) => (
                   <motion.div
                     key={link.href}
-                    initial={{ opacity: 0, x: -8 }}
+                    initial={{ opacity: 0, x: -6 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.03 + 0.04 }}
                   >
                     <Link
                       href={link.href}
-                      className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-all ${
+                      className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                         pathname === link.href
                           ? "bg-emerald-50 text-emerald-700"
                           : "text-slate-700 hover:bg-slate-50"
@@ -223,23 +220,20 @@ export default function Header() {
               <div className="mx-4 border-t border-slate-100" />
 
               {/* Secondary links */}
-              <nav className="p-3 space-y-0.5">
+              <nav className="p-2 space-y-0.5">
                 {SECONDARY_LINKS.map((link, i) => (
                   <motion.div
                     key={link.href}
-                    initial={{ opacity: 0, x: -8 }}
+                    initial={{ opacity: 0, x: -6 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{
-                      delay:
-                        PRIMARY_LINKS.length * 0.03 +
-                        i * 0.03 +
-                        0.06,
+                      delay: PRIMARY_LINKS.length * 0.03 + i * 0.03 + 0.06,
                     }}
                   >
                     <Link
                       href={link.href}
                       className={`flex items-center px-4 py-2.5 rounded-xl text-sm text-slate-500 hover:text-emerald-600 hover:bg-slate-50 transition-all ${
-                        pathname === link.href ? "text-emerald-600 font-bold" : ""
+                        pathname === link.href ? "text-emerald-600 font-semibold" : ""
                       }`}
                     >
                       {t(link.key)}
@@ -254,7 +248,7 @@ export default function Header() {
               <div className="p-3">
                 <Link
                   href="/auth/register"
-                  className="block w-full py-3.5 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-emerald-600 transition-all text-center shadow-lg shadow-slate-900/10"
+                  className="block w-full py-3 bg-slate-900 text-white rounded-xl text-sm font-semibold hover:bg-emerald-600 transition-all text-center"
                 >
                   {t("freeTrial")}
                 </Link>

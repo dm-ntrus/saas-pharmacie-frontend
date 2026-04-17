@@ -234,7 +234,7 @@ export default function AboutPage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-60" />
                   <div className="absolute bottom-4 left-4">
                     <p className="font-bold text-sm">{t("teamCtaContact")} {n + 1}</p>
-                    <p className="text-emerald-400 text-xs">Expert SyntixPharma</p>
+                    <p className="text-emerald-400 text-xs">{t("teamExpertLabel")}</p>
                   </div>
                 </div>
               ))}
