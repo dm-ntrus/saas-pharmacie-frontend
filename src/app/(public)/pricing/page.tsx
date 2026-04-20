@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, Fragment } from "react";
+import { useState, useMemo, Fragment, useEffect } from "react";
 import { useTranslations } from "@/lib/i18n-simple";
 import { motion } from "framer-motion";
 import {
@@ -16,6 +16,7 @@ import { usePublicPlans } from "@/hooks/api/usePublicPlans";
 import PlanCard, { PlanCardSkeleton } from "@/components/public/PlanCard";
 import type { Plan } from "@/types/billing";
 import { Link } from "@/i18n/navigation";
+import { pickSupportedCurrency } from "@/lib/countries";
 
 /* ────────────────────────── comparison matrix ────────────────────────── */
 
@@ -36,7 +37,6 @@ const COMPARISON_FEATURES = [
 ];
 
 const TIER_MODULES: Record<string, string[]> = {
-  free: ["module.sales", "module.inventory"],
   starter: [
     "module.sales",
     "module.inventory",
@@ -53,16 +53,6 @@ const TIER_MODULES: Record<string, string[]> = {
     "module.delivery",
   ],
   enterprise: [
-    "module.sales",
-    "module.inventory",
-    "module.prescriptions",
-    "module.supply_chain",
-    "module.accounting",
-    "module.analytics",
-    "module.crm",
-    "module.delivery",
-  ],
-  custom: [
     "module.sales",
     "module.inventory",
     "module.prescriptions",
@@ -147,7 +137,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
     <div className="border border-slate-200 rounded-xl overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between gap-4 p-5 text-left hover:bg-slate-50 transition-colors"
+        className="w-full flex items-center justify-between gap-4 p-5 text-left hover:bg-slate-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40"
       >
         <span className="text-sm font-semibold text-slate-900">{q}</span>
         <ChevronDown
@@ -168,21 +158,34 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 export default function PricingPage() {
   const t = useTranslations("pages.pricing");
   const [annual, setAnnual] = useState(false);
+  const [preferredCurrency, setPreferredCurrency] = useState("USD");
   const { data: apiPlans, isLoading, isError } = usePublicPlans({ active: true });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const currencies = (apiPlans ?? []).map((p) => (p.currency || "USD").toUpperCase());
+    setPreferredCurrency(
+      pickSupportedCurrency(window.navigator.languages ?? [window.navigator.language], currencies, "USD"),
+    );
+  }, [apiPlans]);
 
   const plans: Plan[] = useMemo(() => {
     if (!apiPlans || apiPlans.length === 0) return [];
+    const inPreferredCurrency = apiPlans.filter(
+      (p) => (p.currency || "USD").toUpperCase() === preferredCurrency,
+    );
+    const source = inPreferredCurrency.length > 0 ? inPreferredCurrency : apiPlans;
     const interval = annual ? "yearly" : "monthly";
-    const filtered = apiPlans.filter((p) => p.billing_interval === interval);
+    const filtered = source.filter((p) => p.billing_interval === interval);
     if (filtered.length > 0) return filtered;
     const seen = new Set<string>();
-    return apiPlans.filter((p) => {
+    return source.filter((p) => {
       const tier = p.plan_tier || p.plan_key;
       if (seen.has(tier)) return false;
       seen.add(tier);
       return true;
     });
-  }, [apiPlans, annual]);
+  }, [apiPlans, annual, preferredCurrency]);
 
   const annualDiscount = useMemo(() => {
     if (!apiPlans || apiPlans.length === 0) return 0;
@@ -225,7 +228,7 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* ─── Hero ─── */}
-      <section className="pt-24 sm:pt-36 pb-4 text-center px-4 sm:px-6 lg:px-8">
+      <section className="pt-20 sm:pt-36 pb-4 text-center px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
@@ -235,7 +238,7 @@ export default function PricingPage() {
           <span className="inline-block text-[11px] font-bold uppercase tracking-[0.25em] text-emerald-600 mb-4">
             {t("heroTag")}
           </span>
-          <h1 className="text-2xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mb-4 leading-[1.2] sm:leading-[1.15]">
+          <h1 className="text-[1.85rem] min-[390px]:text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mb-4 leading-[1.2] sm:leading-[1.15]">
             {t("heroTitle")}{" "}
             <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
               {t("heroHighlight")}
@@ -251,7 +254,7 @@ export default function PricingPage() {
 
       {/* ─── Toggle ─── */}
       <section className="flex justify-center px-4 mb-10 sm:mb-14">
-        <div className="inline-flex items-center gap-1 p-1 bg-slate-100 rounded-full max-w-full">
+        <div className="inline-flex items-center gap-1 p-1 bg-slate-100 rounded-full max-w-full overflow-x-auto">
           <button
             onClick={() => setAnnual(false)}
             className={`px-3 sm:px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all ${
@@ -283,7 +286,7 @@ export default function PricingPage() {
       {/* ─── Status ─── */}
       {!isLoading && isError && (
         <div className="max-w-lg mx-auto text-center px-4 mb-12">
-          <div className="inline-flex items-center gap-2 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-5 py-3">
+          <div className="inline-flex items-start sm:items-center gap-2 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-5 py-3 text-left">
             <AlertCircle className="w-4 h-4 shrink-0" />
             {t("loadError")}{" "}
             <Link href="/contact" className="font-bold underline">
@@ -418,11 +421,11 @@ export default function PricingPage() {
 
       {/* ─── Trust bar ─── */}
       <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-slate-50 border-t border-slate-100">
-        <div className="max-w-5xl mx-auto grid sm:grid-cols-3 gap-5">
+        <div className="max-w-5xl mx-auto grid sm:grid-cols-3 gap-4 sm:gap-5">
           {trustItems.map((g) => (
             <div
               key={g.title}
-              className="flex items-start gap-4 p-5 bg-white rounded-xl border border-slate-200"
+              className="flex items-start gap-3 sm:gap-4 p-4 sm:p-5 bg-white rounded-xl border border-slate-200"
             >
               <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center shrink-0">
                 <g.icon className="w-5 h-5 text-emerald-600" />

@@ -5,6 +5,7 @@ import { useTranslations } from "@/lib/i18n-simple";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import FooterNewsletter from "@/layouts/public/FooterNewsletter";
 import { Link } from "@/i18n/navigation";
+import { useMarketingFooter } from "@/hooks/api/usePublicDynamicModules";
 
 const socials = [
   { labelKey: "socialLinkedIn", href: "#" },
@@ -77,6 +78,28 @@ const FOOTER_COLUMNS: FooterColumn[] = [
 
 export default function Footer() {
   const t = useTranslations("layout.footer");
+  const { data } = useMarketingFooter();
+  const company = data?.company_info;
+  const socialsData =
+    data?.social_links?.length
+      ? data.social_links.map((s: any) => ({ label: s.label, href: s.url }))
+      : socials.map((s) => ({ label: t(s.labelKey), href: s.href }));
+  const columns =
+    data?.columns?.length
+      ? data.columns.map((column: any) => ({
+          id: column.column_key,
+          title: column.title,
+          links: (column.links ?? []).map((link: any) => ({
+            href: link.url,
+            label: link.title,
+          })),
+        }))
+      : FOOTER_COLUMNS.map((col) => ({
+          id: col.id,
+          title: t(col.titleKey),
+          links: col.links.map((link) => ({ href: link.href, label: t(link.labelKey) })),
+        }));
+  const legalLinks = data?.legal_links ?? [];
 
   return (
     <footer className="bg-slate-950 text-white" aria-label={t("footerAriaLabel")}>
@@ -119,18 +142,18 @@ export default function Footer() {
               </div>
             </Link>
             <p className="text-sm text-slate-400 leading-relaxed max-w-xs mb-6">
-              {t("brandDesc")}
+              {company?.description ?? t("brandDesc")}
             </p>
             <div className="flex flex-wrap gap-3 mb-6">
-              {socials.map((s) => (
+              {socialsData.map((s: any) => (
                 <a
-                  key={s.labelKey}
+                  key={s.label}
                   href={s.href}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-3 py-1.5 rounded-full border border-white/10 text-xs font-bold text-slate-400 hover:text-white hover:border-emerald-500/40 transition-colors"
                 >
-                  {t(s.labelKey)}
+                  {s.label}
                 </a>
               ))}
             </div>
@@ -161,19 +184,19 @@ export default function Footer() {
           </div>
 
           {/* Link columns */}
-          {FOOTER_COLUMNS.map((col) => (
-            <nav key={col.id} aria-label={t(col.titleKey)}>
+          {columns.map((col: any) => (
+            <nav key={col.id} aria-label={col.title}>
               <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-emerald-500 mb-5">
-                {t(col.titleKey)}
+                {col.title}
               </h3>
               <ul className="space-y-3">
-                {col.links.map((link) => (
+                {col.links.map((link: any) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
                       className="group text-sm text-slate-400 hover:text-white transition-colors inline-flex items-center gap-1"
                     >
-                      {t(link.labelKey)}
+                      {link.label}
                       {link.href.startsWith("http") && (
                         <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                       )}
@@ -189,16 +212,24 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <p>
-            {t("copyright", { year: new Date().getFullYear().toString() })}
+          <p className="text-center sm:text-left leading-relaxed">
+            {(company?.copyright_text ??
+              t("copyright", { year: new Date().getFullYear().toString() })).replace(
+              "{{year}}",
+              new Date().getFullYear().toString(),
+            )}
           </p>
-          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6">
-            <Link href="/terms" className="hover:text-white transition-colors">
-              {t("terms")}
-            </Link>
-            <Link href="/privacy" className="hover:text-white transition-colors">
-              {t("privacy")}
-            </Link>
+          <div className="flex flex-wrap items-center justify-center sm:justify-end gap-3 sm:gap-6">
+            {(legalLinks.length
+              ? legalLinks.map((l: any) => ({ href: l.url, label: l.title }))
+              : [
+                  { href: "/terms", label: t("terms") },
+                  { href: "/privacy", label: t("privacy") },
+                ]).map((item: any) => (
+              <Link key={item.href} href={item.href} className="hover:text-white transition-colors">
+                {item.label}
+              </Link>
+            ))}
             <Link href="/status" className="hover:text-white transition-colors">
               {t("status")}
             </Link>

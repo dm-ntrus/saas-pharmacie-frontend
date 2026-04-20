@@ -75,9 +75,9 @@ export default function FeaturesPage() {
   ];
 
   return (
-    <div className="min-h-screen pt-28 sm:pt-32 pb-0 bg-white">
+    <div className="min-h-screen pt-24 sm:pt-32 pb-0 bg-white">
       {/* Header */}
-      <section className="px-4 sm:px-6 lg:px-8 mb-12 text-center">
+      <section className="px-4 sm:px-6 lg:px-8 mb-10 sm:mb-12 text-center">
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -86,7 +86,7 @@ export default function FeaturesPage() {
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 mb-3">
               {t("tag")}
             </p>
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-display font-bold text-slate-900 mb-4 tracking-tight">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-display font-bold text-slate-900 mb-4 tracking-tight leading-tight">
               {t("title")}{" "}
               <span className="text-emerald-600">{t("titleHighlight")}</span>
             </h1>
@@ -95,7 +95,7 @@ export default function FeaturesPage() {
             </p>
             <Link
               href="/modules"
-              className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-widest text-emerald-600 hover:text-slate-900 transition-colors"
+              className="inline-flex items-center justify-center gap-2 text-sm font-black uppercase tracking-widest text-emerald-600 hover:text-slate-900 transition-colors w-full sm:w-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 rounded-lg"
             >
               {t("modulesCatalogCta")}
               <ArrowRight className="w-4 h-4" />
@@ -115,15 +115,15 @@ export default function FeaturesPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.04 }}
-                className="p-7 sm:p-8 rounded-2xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:shadow-xl hover:shadow-emerald-600/5 transition-all group"
+                className="p-5 min-[390px]:p-6 sm:p-8 rounded-2xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:shadow-xl hover:shadow-emerald-600/5 transition-all group h-full"
               >
                 <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mb-5 shadow-sm group-hover:bg-emerald-600 transition-colors">
                   <f.icon className="w-6 h-6 text-emerald-600 group-hover:text-white transition-colors" />
                 </div>
-                <h3 className="text-lg font-display font-bold text-slate-900 mb-2">
+                <h3 className="text-lg font-display font-bold text-slate-900 mb-2 line-clamp-2 min-h-[3.5rem]">
                   {f.title}
                 </h3>
-                <p className="text-sm text-slate-500 mb-5 leading-relaxed">
+                <p className="text-sm text-slate-500 mb-5 leading-relaxed line-clamp-3 min-h-[4rem]">
                   {f.desc}
                 </p>
                 <ul className="space-y-2">
@@ -158,7 +158,7 @@ export default function FeaturesPage() {
               <p className="text-base text-slate-500 leading-relaxed font-medium mb-10">
                 {t("ecosystemDesc")}
               </p>
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 min-[390px]:grid-cols-2 gap-4 sm:gap-6">
                 {integrations.map((item) => (
                   <div key={item.title} className="space-y-1">
                     <h4 className="text-base font-bold text-slate-900">
@@ -170,7 +170,7 @@ export default function FeaturesPage() {
               </div>
             </div>
             <div className="relative">
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-2 min-[390px]:gap-3 sm:gap-4">
                 {[
                   "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=200&h=200&fit=crop",
                   "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=200&h=200&fit=crop",
@@ -192,7 +192,7 @@ export default function FeaturesPage() {
                       alt=""
                       fill
                       className="object-cover"
-                      sizes="128px"
+                      sizes="(max-width: 390px) 28vw, 128px"
                     />
                   </motion.div>
                 ))}
@@ -218,12 +218,12 @@ export default function FeaturesPage() {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-3 gap-5 sm:gap-6 relative">
+          <div className="grid sm:grid-cols-3 gap-4 sm:gap-6 relative">
             <div className="hidden sm:block absolute top-1/2 left-0 w-full h-px bg-slate-100 -translate-y-1/2 z-0" />
             {deploySteps.map((item) => (
               <div
                 key={item.step}
-                className="relative z-10 bg-white p-8 sm:p-10 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all group"
+                className="relative z-10 bg-white p-6 sm:p-10 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all group"
               >
                 <div className="text-5xl font-display font-bold text-emerald-100 mb-4 group-hover:text-emerald-600 transition-colors">
                   {item.step}
@@ -267,7 +267,7 @@ export default function FeaturesPage() {
               </div>
               <Link
                 href="/auth/register"
-                className="inline-flex items-center gap-3 px-8 py-4 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-600/20"
+                className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-600/20 w-full sm:w-auto"
               >
                 {t("tryFreeCta")}
                 <ArrowRight className="w-5 h-5" />

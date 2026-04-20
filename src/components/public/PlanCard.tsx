@@ -10,8 +10,6 @@ import {
   Sparkles,
   Zap,
   Building2,
-  Gift,
-  Crown,
 } from "lucide-react";
 import type { Plan } from "@/types/billing";
 
@@ -25,13 +23,6 @@ const TIER_META: Record<
     ring: string;
   }
 > = {
-  free: {
-    icon: Gift,
-    accent: "text-slate-600",
-    badgeBg: "bg-slate-100",
-    badgeText: "text-slate-700",
-    ring: "ring-slate-200",
-  },
   starter: {
     icon: Zap,
     accent: "text-blue-600",
@@ -53,23 +44,9 @@ const TIER_META: Record<
     badgeText: "text-violet-700",
     ring: "ring-violet-200",
   },
-  custom: {
-    icon: Crown,
-    accent: "text-amber-600",
-    badgeBg: "bg-amber-50",
-    badgeText: "text-amber-700",
-    ring: "ring-amber-200",
-  },
 };
 
 const TIER_FEATURE_KEYS: Record<string, string[]> = {
-  free: [
-    "feat_1pharmacy",
-    "feat_5users",
-    "feat_basicPos",
-    "feat_stockMgmt",
-    "feat_communitySupport",
-  ],
   starter: [
     "feat_1pharmacy",
     "feat_15users",
@@ -98,12 +75,6 @@ const TIER_FEATURE_KEYS: Record<string, string[]> = {
     "feat_accountManager",
     "feat_sla",
     "feat_onsiteTraining",
-  ],
-  custom: [
-    "feat_dedicatedInfra",
-    "feat_customFeatures",
-    "feat_customIntegrations",
-    "feat_premiumSupport",
   ],
 };
 
@@ -167,23 +138,19 @@ export default function PlanCard({
   const price = typeof plan.price === "string" ? parseFloat(plan.price) : plan.price;
   const displayPrice =
     plan.billing_interval === "yearly" ? Math.round(price / 12) : price;
-  const isFree = !price || price === 0;
-
   const storage = typeof plan.max_storage_gb === "string"
     ? parseFloat(plan.max_storage_gb)
     : plan.max_storage_gb;
 
   const href =
-    tier === "enterprise" || tier === "custom"
+    tier === "enterprise"
       ? "/contact"
       : `/auth/register?plan=${encodeURIComponent(plan.plan_key)}`;
 
   const ctaLabel =
-    tier === "enterprise" || tier === "custom"
+    tier === "enterprise"
       ? t("contactTeam")
-      : isFree
-        ? t("startFree")
-        : plan.is_trial_available
+      : plan.is_trial_available
           ? t("freeTrial")
           : t("choosePlan");
 
@@ -195,7 +162,7 @@ export default function PlanCard({
       transition={{ delay: index * 0.08, duration: 0.5 }}
       className={`relative h-full flex flex-col rounded-2xl border-2 transition-shadow duration-300 ${
         isPop
-          ? "border-emerald-500 bg-white shadow-xl shadow-emerald-500/10 scale-[1.02] z-10"
+          ? "border-emerald-500 bg-white shadow-xl shadow-emerald-500/10 sm:scale-[1.02] z-10"
           : "border-slate-200 bg-white hover:shadow-lg hover:border-slate-300"
       }`}
     >
@@ -230,13 +197,7 @@ export default function PlanCard({
 
         {/* Price */}
         <div className="mb-6">
-          {isFree ? (
-            <div className="flex items-baseline gap-1">
-              <span className="text-4xl font-extrabold text-slate-900">
-                {t("free")}
-              </span>
-            </div>
-          ) : tier === "enterprise" || tier === "custom" ? (
+          {tier === "enterprise" ? (
             <div className="flex items-baseline gap-1">
               <span className="text-4xl font-extrabold text-slate-900">
                 {t("onQuote")}
@@ -273,8 +234,6 @@ export default function PlanCard({
           className={`w-full py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-200 ${
             isPop
               ? "bg-emerald-600 text-white hover:bg-emerald-700 shadow-md shadow-emerald-600/25"
-              : isFree
-                ? "bg-slate-100 text-slate-900 hover:bg-slate-200"
                 : "bg-slate-900 text-white hover:bg-slate-800"
           }`}
         >

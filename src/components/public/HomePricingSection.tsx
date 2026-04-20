@@ -1,23 +1,22 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "@/lib/i18n-simple";
 import { motion } from "framer-motion";
-import { ArrowRight, Check, Sparkles, Gift, Zap, Building2 } from "lucide-react";
+import { ArrowRight, Check, Sparkles, Zap, Building2 } from "lucide-react";
 import { usePublicPlans } from "@/hooks/api/usePublicPlans";
 import { PlanCardSkeleton } from "@/components/public/PlanCard";
 import type { Plan } from "@/types/billing";
+import { pickSupportedCurrency } from "@/lib/countries";
 
 const TIER_META: Record<string, { icon: typeof Zap; badgeBg: string; badgeText: string }> = {
-  free: { icon: Gift, badgeBg: "bg-slate-100", badgeText: "text-slate-700" },
   starter: { icon: Zap, badgeBg: "bg-blue-50", badgeText: "text-blue-700" },
   professional: { icon: Sparkles, badgeBg: "bg-emerald-50", badgeText: "text-emerald-700" },
   enterprise: { icon: Building2, badgeBg: "bg-violet-50", badgeText: "text-violet-700" },
 };
 
 const TIER_SHORT_FEATURE_KEYS: Record<string, string[]> = {
-  free: ["shortFeat_5users", "shortFeat_basicPos", "shortFeat_stockMgmt", "shortFeat_communitySupport"],
   starter: ["shortFeat_15users", "shortFeat_fullPos", "shortFeat_advancedInventory", "shortFeat_patientsRx", "shortFeat_freeTrial"],
   professional: ["shortFeat_50users", "shortFeat_allModules", "shortFeat_analyticsBI", "shortFeat_crmLoyalty", "shortFeat_support247"],
   enterprise: ["shortFeat_unlimitedUsers", "shortFeat_unlimitedSites", "shortFeat_dedicatedApi", "shortFeat_accountManager", "shortFeat_sla"],
@@ -35,12 +34,25 @@ function deduplicateByTier(plans: Plan[]): Plan[] {
 
 export default function HomePricingSection() {
   const t = useTranslations("pages.pricing");
+  const [preferredCurrency, setPreferredCurrency] = useState("USD");
   const { data: apiPlans, isLoading, isError } = usePublicPlans({ active: true, interval: "monthly" });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const currencies = (apiPlans ?? []).map((p) => (p.currency || "USD").toUpperCase());
+    setPreferredCurrency(
+      pickSupportedCurrency(window.navigator.languages ?? [window.navigator.language], currencies, "USD"),
+    );
+  }, [apiPlans]);
 
   const plans: Plan[] = useMemo(() => {
     if (!apiPlans || apiPlans.length === 0) return [];
-    return deduplicateByTier(apiPlans).slice(0, 4);
-  }, [apiPlans]);
+    const inPreferredCurrency = apiPlans.filter(
+      (p) => (p.currency || "USD").toUpperCase() === preferredCurrency,
+    );
+    const source = inPreferredCurrency.length > 0 ? inPreferredCurrency : apiPlans;
+    return deduplicateByTier(source).slice(0, 4);
+  }, [apiPlans, preferredCurrency]);
 
   return (
     <section id="pricing" className="py-20 sm:py-28 px-4 sm:px-6 lg:px-8 bg-slate-50">
@@ -103,8 +115,7 @@ export default function HomePricingSection() {
               const meta = TIER_META[tier] ?? TIER_META.starter;
               const featureKeys = TIER_SHORT_FEATURE_KEYS[tier] ?? TIER_SHORT_FEATURE_KEYS.starter;
               const price = typeof plan.price === "string" ? parseFloat(plan.price) : plan.price;
-              const isFree = !price || price === 0;
-              const isEnterprise = tier === "enterprise" || tier === "custom";
+              const isEnterprise = tier === "enterprise";
 
               const href = isEnterprise
                 ? "/contact"
@@ -119,7 +130,7 @@ export default function HomePricingSection() {
                   transition={{ delay: i * 0.08, duration: 0.5 }}
                   className={`relative flex flex-col rounded-2xl border-2 bg-white transition-shadow ${
                     isPop
-                      ? "border-emerald-500 shadow-xl shadow-emerald-500/10 scale-[1.02] z-10"
+                      ? "border-emerald-500 shadow-xl shadow-emerald-500/10 sm:scale-[1.02] z-10"
                       : "border-slate-200 hover:shadow-lg hover:border-slate-300"
                   }`}
                 >
@@ -148,9 +159,7 @@ export default function HomePricingSection() {
 
                     {/* Price */}
                     <div className="mb-5">
-                      {isFree ? (
-                        <span className="text-3xl font-extrabold text-slate-900">{t("free")}</span>
-                      ) : isEnterprise ? (
+                      {isEnterprise ? (
                         <span className="text-3xl font-extrabold text-slate-900">{t("onQuote")}</span>
                       ) : (
                         <div className="flex items-baseline gap-1">
@@ -169,12 +178,10 @@ export default function HomePricingSection() {
                       className={`w-full py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all ${
                         isPop
                           ? "bg-emerald-600 text-white hover:bg-emerald-700 shadow-md shadow-emerald-600/25"
-                          : isFree
-                            ? "bg-slate-100 text-slate-900 hover:bg-slate-200"
                             : "bg-slate-900 text-white hover:bg-slate-800"
                       }`}
                     >
-                      {isEnterprise ? t("ctaContact") : isFree ? t("ctaStart") : t("ctaTry")}
+                      {isEnterprise ? t("ctaContact") : t("ctaTry")}
                       <ArrowRight className="w-4 h-4" />
                     </Link>
                   </div>

@@ -16,7 +16,6 @@ import {
   Info,
   Landmark,
   Banknote,
-  Wallet,
   FileText,
   Plus,
   X,
@@ -36,6 +35,7 @@ import {
   type CreateTenantDto,
 } from '@/types/tenant.types';
 import { toast } from 'react-hot-toast';
+import { toastErrorSafe } from '@/lib/toast-safe';
 import {
   normalizeTenantSubdomain,
   validateTenantSubdomainFormat,
@@ -44,12 +44,12 @@ import { usePublicPlans } from '@/hooks/api/usePublicPlans';
 import type { Plan } from '@/types/billing';
 import CountrySelect from '@/components/form/CountrySelect';
 import PhoneInput from '@/components/form/PhoneInput';
-import { getTimezonesByCountry, getCurrencyByCountry } from '@/lib/countries';
+import { getTimezonesByCountry, getCurrencyByCountry, pickSupportedCurrency } from '@/lib/countries';
 import type { Country } from 'react-phone-number-input';
 
 /* ────────────────── Plan helpers ────────────────── */
 
-const TIER_ORDER: Record<string, number> = { free: 0, starter: 1, professional: 2, enterprise: 3, custom: 4 };
+const TIER_ORDER: Record<string, number> = { starter: 1, professional: 2, enterprise: 3 };
 
 interface TierGroup {
   tier: string;
@@ -158,11 +158,9 @@ const PHARMACY_TYPE_OPTIONS: { value: PharmacyType; label: string; group: string
 const PHARMACY_TYPE_GROUPS = [...new Set(PHARMACY_TYPE_OPTIONS.map((o) => o.group))];
 
 const PAYMENT_METHOD_META: Record<string, { icon: typeof CreditCard; label: string; desc: string; providerCode: string }> = {
-  [PaymentMethod.CREDIT_CARD]: { icon: CreditCard, label: 'Carte de crédit', desc: 'Visa, Mastercard — paiement sécurisé via Stripe', providerCode: 'stripe' },
-  [PaymentMethod.DEBIT_CARD]: { icon: CreditCard, label: 'Carte de débit', desc: 'Paiement direct depuis votre compte bancaire', providerCode: 'stripe' },
-  [PaymentMethod.STRIPE]: { icon: Wallet, label: 'Stripe', desc: 'Paiement sécurisé via la plateforme Stripe', providerCode: 'stripe' },
+  [PaymentMethod.CREDIT_CARD]: { icon: CreditCard, label: 'Carte de crédit', desc: 'Visa, Mastercard — paiement sécurisé', providerCode: 'manual' },
+  [PaymentMethod.DEBIT_CARD]: { icon: CreditCard, label: 'Carte de débit', desc: 'Paiement direct depuis votre compte bancaire', providerCode: 'manual' },
   [PaymentMethod.BANK_TRANSFER]: { icon: Landmark, label: 'Virement bancaire', desc: 'Transfert depuis votre banque — activation sous 48h', providerCode: 'bank_transfer' },
-  [PaymentMethod.PAYPAL]: { icon: Wallet, label: 'PayPal', desc: 'Paiement via votre compte PayPal', providerCode: 'paypal' },
   [PaymentMethod.CASH]: { icon: Banknote, label: 'Espèces', desc: 'Paiement en personne — contactez notre équipe', providerCode: 'cash' },
 };
 
@@ -204,7 +202,7 @@ const initialFormData: CreateTenantDto = {
     identityDocumentType: '', identityNumber: '', professionalLicenseNumber: '',
   },
   planSelection: { planId: '', billingInterval: BillingCycle.MONTHLY },
-  paymentInfo: { paymentMethod: PaymentMethod.CREDIT_CARD, paymentProviderCode: 'stripe' },
+  paymentInfo: { paymentMethod: PaymentMethod.CREDIT_CARD, paymentProviderCode: 'manual' },
   pharmacyData: {
     licenseNumber: '', name: '', address: '', city: '', state: '', postalCode: '', country: 'CD',
     phone: '', email: '', website: '',
@@ -257,11 +255,24 @@ function RegisterInner() {
   const router = useRouter();
   const createTenant = useCreateTenant();
   const { data: apiPlans, isLoading: plansLoading, isError: plansError, refetch: refetchPlans } = usePublicPlans({ active: true });
+  const [pricingCurrency, setPricingCurrency] = useState('USD');
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const currencies = (apiPlans ?? []).map((p) => (p.currency || 'USD').toUpperCase());
+    setPricingCurrency(
+      pickSupportedCurrency(window.navigator.languages ?? [window.navigator.language], currencies, 'USD'),
+    );
+  }, [apiPlans]);
 
   const tierGroups = useMemo(() => {
     if (!apiPlans || apiPlans.length === 0) return [];
-    return groupPlansByTier(apiPlans);
-  }, [apiPlans]);
+    const inPreferredCurrency = apiPlans.filter(
+      (p) => (p.currency || 'USD').toUpperCase() === pricingCurrency,
+    );
+    const source = inPreferredCurrency.length > 0 ? inPreferredCurrency : apiPlans;
+    return groupPlansByTier(source);
+  }, [apiPlans, pricingCurrency]);
 
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<CreateTenantDto>(initialFormData);
@@ -300,7 +311,7 @@ function RegisterInner() {
 
   const setPaymentMethod = useCallback((method: PaymentMethod) => {
     const meta = PAYMENT_METHOD_META[method];
-    setFormData((prev) => ({ ...prev, paymentInfo: { ...prev.paymentInfo, paymentMethod: method, paymentProviderCode: meta?.providerCode ?? 'stripe' } }));
+    setFormData((prev) => ({ ...prev, paymentInfo: { ...prev.paymentInfo, paymentMethod: method, paymentProviderCode: meta?.providerCode ?? 'manual' } }));
   }, []);
 
   const copyTenantAddressToPharmacy = useCallback(() => {
@@ -370,12 +381,12 @@ function RegisterInner() {
       if (step === 1) {
         const normalized = normalizeTenantSubdomain(formData.tenantData.subdomain);
         const subErr = validateTenantSubdomainFormat(normalized);
-        if (subErr) { toast.error(subErr); return; }
-        if (!validateStep(1)) { toast.error('Merci de remplir tous les champs obligatoires.'); return; }
+        if (subErr) { toastErrorSafe(subErr); return; }
+        if (!validateStep(1)) { toastErrorSafe('Merci de remplir tous les champs obligatoires.'); return; }
         updateTenantData('subdomain', normalized);
         if (sameAddress) copyTenantAddressToPharmacy();
       } else if (!validateStep(step)) {
-        toast.error('Merci de remplir tous les champs obligatoires.');
+        toastErrorSafe('Merci de remplir tous les champs obligatoires.');
         return;
       }
       nextStep();
@@ -384,7 +395,7 @@ function RegisterInner() {
     if (!validateStep(4)) return;
     const normalizedSub = normalizeTenantSubdomain(formData.tenantData.subdomain);
     const finalSubErr = validateTenantSubdomainFormat(normalizedSub);
-    if (finalSubErr) { toast.error(finalSubErr); return; }
+    if (finalSubErr) { toastErrorSafe(finalSubErr); return; }
 
     const finalPharmacy = { ...formData.pharmacyData };
     if (sameAddress) {
@@ -398,7 +409,7 @@ function RegisterInner() {
     }
 
     if (!finalPharmacy.state?.trim()) {
-      toast.error('pharmacyData.state est requis');
+      toastErrorSafe('pharmacyData.state est requis');
       return;
     }
 
@@ -424,7 +435,7 @@ function RegisterInner() {
       }
       router.push(`/auth/registration-success?subdomain=${subQ}`);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Inscription impossible pour le moment.");
+      toastErrorSafe(err instanceof Error ? err.message : err);
     }
   };
 
@@ -969,7 +980,6 @@ function RegisterInner() {
                           const isSelected = formData.planSelection.planId === plan.plan_key;
                           const monthlyPrice = isYearly && group.yearly ? group.yearly.price / 12 : (group.monthly?.price ?? 0);
                           const currency = plan.currency || 'USD';
-                          const isFree = plan.type === 'free' || plan.price === 0;
 
                           return (
                             <motion.button key={group.tier} type="button" whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}
@@ -985,15 +995,11 @@ function RegisterInner() {
                                 </div>
                               </div>
                               <div className="mb-2">
-                                {isFree ? (
-                                  <span className="text-2xl font-bold text-slate-900">Gratuit</span>
-                                ) : (
-                                  <>
-                                    <span className="text-2xl font-bold text-slate-900">{Number(monthlyPrice || 0)?.toFixed(0)}</span>
-                                    <span className="text-sm text-slate-500 ml-1">{currency}/mois</span>
-                                  </>
-                                )}
-                                {isYearly && group.yearly && !isFree && (
+                                <>
+                                  <span className="text-2xl font-bold text-slate-900">{Number(monthlyPrice || 0)?.toFixed(0)}</span>
+                                  <span className="text-sm text-slate-500 ml-1">{currency}/mois</span>
+                                </>
+                                {isYearly && group.yearly && (
                                   <p className="text-[11px] text-slate-400 mt-0.5">soit {Number(group?.yearly?.price || 0).toFixed(0)} {currency}/an</p>
                                 )}
                               </div>
@@ -1037,13 +1043,13 @@ function RegisterInner() {
                       {/* Payment context */}
                       {formData.paymentInfo?.paymentMethod && (
                         <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-3">
-                          {(formData.paymentInfo.paymentMethod === PaymentMethod.CREDIT_CARD || formData.paymentInfo.paymentMethod === PaymentMethod.DEBIT_CARD || formData.paymentInfo.paymentMethod === PaymentMethod.STRIPE) && (
+                          {(formData.paymentInfo.paymentMethod === PaymentMethod.CREDIT_CARD || formData.paymentInfo.paymentMethod === PaymentMethod.DEBIT_CARD) && (
                             <>
                               <p className="text-sm font-semibold text-slate-800 flex items-center gap-2"><CreditCard className="w-4 h-4 text-emerald-600" />Paiement par carte</p>
-                              <p className="text-xs text-slate-500 leading-relaxed">Vous serez redirigé vers la page de paiement sécurisée Stripe après la création de votre compte. Aucune carte n&apos;est requise pour commencer votre essai gratuit.</p>
+                              <p className="text-xs text-slate-500 leading-relaxed">Une instruction de paiement sera fournie après la création de votre compte. Aucune carte n&apos;est débitée automatiquement au moment de l&apos;inscription.</p>
                               <div className="space-y-1">
-                                <Lbl>Identifiant Stripe existant<OptTag /></Lbl>
-                                <input type="text" placeholder="ex. cus_1234567890" className={inputBase} value={formData.paymentInfo.customerId ?? ''} onChange={(e) => setFormData((prev) => ({ ...prev, paymentInfo: { ...prev.paymentInfo, customerId: e.target.value || undefined } }))} />
+                                <Lbl>Référence client (optionnel)<OptTag /></Lbl>
+                                <input type="text" placeholder="ex. CLIENT-123456" className={inputBase} value={formData.paymentInfo.customerId ?? ''} onChange={(e) => setFormData((prev) => ({ ...prev, paymentInfo: { ...prev.paymentInfo, customerId: e.target.value || undefined } }))} />
                               </div>
                             </>
                           )}
@@ -1054,12 +1060,6 @@ function RegisterInner() {
                               <div className="rounded-lg bg-amber-50 border border-amber-200 p-3">
                                 <p className="text-xs text-amber-700 font-medium">L&apos;accès à la plateforme sera limité jusqu&apos;à confirmation du paiement.</p>
                               </div>
-                            </>
-                          )}
-                          {formData.paymentInfo.paymentMethod === PaymentMethod.PAYPAL && (
-                            <>
-                              <p className="text-sm font-semibold text-slate-800 flex items-center gap-2"><Wallet className="w-4 h-4 text-emerald-600" />PayPal</p>
-                              <p className="text-xs text-slate-500 leading-relaxed">Vous serez redirigé vers PayPal pour autoriser le paiement récurrent après la création de votre compte.</p>
                             </>
                           )}
                           {formData.paymentInfo.paymentMethod === PaymentMethod.CASH && (

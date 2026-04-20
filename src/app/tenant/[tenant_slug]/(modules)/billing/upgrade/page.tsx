@@ -101,7 +101,7 @@ function BillingUpgradeContent() {
           Changer de plan
         </h1>
         <p className="text-sm text-slate-500 mt-1">
-          Choisissez un plan et vous serez redirigé vers le paiement sécurisé Stripe
+          Choisissez un plan et poursuivez la mise à niveau via le parcours de paiement configuré
         </p>
       </div>
 

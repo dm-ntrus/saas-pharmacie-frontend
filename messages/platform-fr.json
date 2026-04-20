@@ -231,6 +231,34 @@
         "outcome0": "Pilotage exécutif",
         "outcome1": "Détection rapide des risques"
       },
+      "ap-matching": {
+        "title": "AP Matching",
+        "tagline": "Rapprochement achat ↔ facture",
+        "description": "Automatisez le rapprochement facture fournisseur, bon de commande et réception pour réduire les écarts.",
+        "outcome0": "Moins de litiges comptables",
+        "outcome1": "Clôture achat plus rapide"
+      },
+      "b2b-async": {
+        "title": "Jobs async B2B",
+        "tagline": "Orchestration et fiabilité",
+        "description": "Pilotez les flux B2B asynchrones avec retries, monitoring et diagnostic des erreurs.",
+        "outcome0": "Flux partenaires plus résilients",
+        "outcome1": "Visibilité temps réel sur les échecs"
+      },
+      "pricing-desk": {
+        "title": "Pricing Desk",
+        "tagline": "Prix, remises, gouvernance",
+        "description": "Définissez les politiques tarifaires B2B avec garde-fous de marge et approbation des exceptions.",
+        "outcome0": "Politique prix cohérente",
+        "outcome1": "Marge mieux protégée"
+      },
+      "credit-desk": {
+        "title": "Credit Desk",
+        "tagline": "Encours et risque client",
+        "description": "Supervisez les limites de crédit, l'encours et les demandes d'override pour sécuriser vos ventes B2B.",
+        "outcome0": "Risque client maîtrisé",
+        "outcome1": "Décisions de crédit plus rapides"
+      },
       "traceability": {
         "title": "Traçabilité avancée",
         "tagline": "Chaîne d’approvisionnement vérifiable",
@@ -254,39 +282,39 @@
       },
       "billing-ops": {
         "title": "Facturation (opérations)",
-        "tagline": "Factures clients et suivi",
-        "description": "Émission et suivi de la facturation liée à l’activité de l’officine (clients, règlements associés).",
-        "outcome0": "Factures alignées sur les ventes",
-        "outcome1": "Vision des créances"
+        "tagline": "Quote-to-cash et recouvrement",
+        "description": "Pilotez devis, factures, avoirs, échéances, relances et rapprochement avec paiements/comptabilité.",
+        "outcome0": "Cycle de facturation maîtrisé de bout en bout",
+        "outcome1": "Créances mieux pilotées et moins d'écarts"
       },
       "payments": {
         "title": "Paiements",
-        "tagline": "Mobile money, cartes, scénarios locaux",
-        "description": "Centralisation des moyens de paiement adaptés à votre marché (dont mobile money selon configuration).",
-        "outcome0": "Encaissement multi-canal",
-        "outcome1": "Réconciliation simplifiée"
+        "tagline": "Encaissement omnicanal et fiabilité",
+        "description": "Unifiez paiements cash/cartes/mobile money, preuves, webhooks, remboursements et réconciliation.",
+        "outcome0": "Taux de succès paiement optimisé",
+        "outcome1": "Traçabilité et rapprochement accélérés"
       },
       "accounting": {
         "title": "Comptabilité",
-        "tagline": "Grand livre opérationnel",
-        "description": "Suivi comptable lié à l’activité : écritures, journaux et vision financière pour le gérant.",
-        "outcome0": "Lien ventes ↔ compta",
-        "outcome1": "Exports et contrôle de gestion"
+        "tagline": "Comptabilité enterprise et multi-normes",
+        "description": "Moteur comptable internationalisé: plan comptable dynamique, règles d'écritures, analytique, taxes, périodes et conformité.",
+        "outcome0": "Automatiser les écritures avec contrôle et audit",
+        "outcome1": "Piloter finance et analytique par tenant"
       },
       "e-invoice": {
         "title": "E-facture",
-        "tagline": "Facturation électronique",
-        "description": "Préparez-vous aux exigences de dématérialisation et d’échanges structurés avec l’écosystème.",
-        "outcome0": "Processus prêts pour la conformité",
-        "outcome1": "Moins de ressaisie",
+        "tagline": "Conformité fiscale automatisée",
+        "description": "Générez, soumettez, suivez et corrigez vos e-factures avec audit fiscal et gestion des rejets/retry.",
+        "outcome0": "Soumissions fiscales plus fiables",
+        "outcome1": "Conformité démontrable en audit",
         "planNote": "Peut dépendre du plan ou des habilitations."
       },
       "insurance": {
         "title": "Assurance",
-        "tagline": "Tiers payant et prises en charge",
-        "description": "Prise en charge des dossiers assurance pour accélérer le service au comptoir.",
-        "outcome0": "Moins de friction à l’encaissement",
-        "outcome1": "Traçabilité des prises en charge"
+        "tagline": "Tiers payant, claims et rapprochement",
+        "description": "Gérez assureurs, réclamations, statuts de remboursement et rapprochement pour réduire rejets et délais.",
+        "outcome0": "Parcours patient plus fluide au comptoir",
+        "outcome1": "Meilleure visibilité sur les remboursements"
       },
       "delivery": {
         "title": "Livraisons",
@@ -308,6 +336,20 @@
         "description": "Journalisation des événements métier pour audit interne, conformité et investigation.",
         "outcome0": "Piste d’audit exploitable",
         "outcome1": "Responsabilité clarifiée"
+      },
+      "inventory-recalls": {
+        "title": "Rappels de lots",
+        "tagline": "Gestion incidents produits",
+        "description": "Lancez et suivez des campagnes de rappel pour isoler rapidement les lots impactés.",
+        "outcome0": "Réaction plus rapide aux alertes",
+        "outcome1": "Conformité et sécurité renforcées"
+      },
+      "controlled-substances": {
+        "title": "Substances contrôlées",
+        "tagline": "Registre et contrôles",
+        "description": "Tracez les mouvements de produits sensibles avec validations renforcées et journal sécurisé.",
+        "outcome0": "Conformité réglementaire",
+        "outcome1": "Moins d'écarts critiques"
       },
       "analytics": {
         "title": "Analytics",
@@ -351,6 +393,13 @@
         "description": "Paramètres généraux, séquences documentaires, modèles et préférences pour adapter le SI à votre pharmacie.",
         "outcome0": "Cohérence des numérotations",
         "outcome1": "Personnalisation des impressions"
+      },
+      "role-security": {
+        "title": "Rôles & sécurité",
+        "tagline": "Permissions granulaires",
+        "description": "Contrôlez les accès par rôle et permission pour sécuriser les opérations sensibles.",
+        "outcome0": "Accès aligné aux responsabilités",
+        "outcome1": "Audit des changements de droits"
       },
       "saas-billing": {
         "title": "Abonnement & facturation plateforme",

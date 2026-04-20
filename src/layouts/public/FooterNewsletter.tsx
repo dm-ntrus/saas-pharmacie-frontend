@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import Link from "next/link";
 import { Mail } from "lucide-react";
 import toast from "react-hot-toast";
+import { toastErrorSafe } from "@/lib/toast-safe";
 
 export default function FooterNewsletter() {
   const [email, setEmail] = useState("");
@@ -20,15 +22,16 @@ export default function FooterNewsletter() {
       });
       const data = (await res.json().catch(() => ({}))) as {
         error?: string;
+        message?: string;
       };
       if (!res.ok) {
-        toast.error(data.error || "Impossible de s’inscrire pour le moment.");
+        toastErrorSafe(data.error || "Impossible de s’inscrire pour le moment.");
         return;
       }
-      toast.success("Merci ! Vous êtes inscrit·e à la newsletter.");
+      toast.success(data.message || "Merci ! Vous êtes inscrit·e à la newsletter.");
       setEmail("");
     } catch {
-      toast.error("Erreur réseau. Réessayez plus tard.");
+      toastErrorSafe("Erreur réseau. Réessayez plus tard.");
     } finally {
       setLoading(false);
     }
@@ -51,19 +54,22 @@ export default function FooterNewsletter() {
           onChange={(e) => setEmail(e.target.value)}
           disabled={loading}
           suppressHydrationWarning
-          className="w-full pl-10 pr-6 py-2.5 text-sm bg-slate-50 text-slate-900 border border-slate-200 rounded-2xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all font-medium disabled:opacity-60"
+          className="w-full pl-10 pr-6 py-3 sm:py-2.5 text-sm bg-slate-50 text-slate-900 border border-slate-200 rounded-2xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all font-medium disabled:opacity-60 min-h-11"
         />
       </div>
       <button
         type="submit"
         disabled={loading}
         suppressHydrationWarning
-        className="w-full cursor-pointer py-3 bg-slate-900 text-white rounded-2xl font-bold text-md hover:bg-slate-800 transition-all shadow-md shadow-slate-200 disabled:opacity-60"
+        className="w-full cursor-pointer py-3.5 sm:py-3 bg-slate-900 text-white rounded-2xl font-bold text-md hover:bg-slate-800 transition-all shadow-md shadow-slate-200 disabled:opacity-60 min-h-11"
       >
         {loading ? "Envoi…" : "S'abonner à la newsletter"}
       </button>
       <p className="text-center text-[10px] text-slate-400 mt-1">
-        Pas de spam. Désinscription possible à tout moment.
+        Pas de spam.{" "}
+        <Link href="/newsletter/unsubscribe" className="underline hover:text-slate-600">
+          Désinscription possible à tout moment.
+        </Link>
       </p>
     </form>
   );

@@ -34,12 +34,15 @@ import ClientJourneySection from "@/components/public/ClientJourneySection";
 import HomePricingSection from "@/components/public/HomePricingSection";
 import { Link } from "@/i18n/navigation";
 import MedicalBackgroundPatterns, { HexagonalPattern } from "@/components/public/MedicalPatterns";
-import { FloatingDecoration, FloatingDecorationMobile } from "@/components/public/FloatingDecoration";
+import { useMarketingStats } from "@/hooks/api/usePublicDynamicModules";
+import AnnouncementsBar from "@/components/public/AnnouncementsBar";
 
 const REVEAL_EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 export default function PublicHomePage() {
   const t = useTranslations("pages.home");
+  const { data: heroStatsData } = useMarketingStats("hero");
+  const { data: pharmaStatsData } = useMarketingStats("pharma");
   const shouldReduceMotion = useReducedMotion();
   const [isLowPowerMobile, setIsLowPowerMobile] = useState(false);
 
@@ -65,19 +68,55 @@ export default function PublicHomePage() {
     [shouldReduceMotion, isLowPowerMobile],
   );
 
-  const STATS = [
+  const STATS_FALLBACK = [
     { value: "500+", label: t("statsPharmacies"), icon: Package },
     { value: "1M+", label: t("statsTransactions"), icon: CreditCard },
     { value: "99.9%", label: t("statsUptime"), icon: ShieldCheck },
     { value: "24/7", label: t("statsSupport"), icon: Activity },
   ];
 
-  const PHARMA_STATS = [
+  const PHARMA_STATS_FALLBACK = [
     { value: "2.5M+", label: t("statsMedicines"), icon: Pill, bgClass: "bg-emerald-50", iconClass: "text-emerald-600" },
     { value: "850K+", label: t("statsPrescriptions"), icon: FileText, bgClass: "bg-teal-50", iconClass: "text-teal-600" },
     { value: "12K+", label: t("statsAlerts"), icon: AlertTriangle, bgClass: "bg-amber-50", iconClass: "text-amber-600" },
     { value: "100%", label: t("statsCompliance"), icon: Shield, bgClass: "bg-cyan-50", iconClass: "text-cyan-600" },
   ];
+
+  const iconMap: Record<string, any> = {
+    Package,
+    CreditCard,
+    ShieldCheck,
+    Activity,
+    Pill,
+    FileText,
+    AlertTriangle,
+    Shield,
+  };
+  const colorClassMap: Record<string, { bgClass: string; iconClass: string }> = {
+    emerald: { bgClass: "bg-emerald-50", iconClass: "text-emerald-600" },
+    teal: { bgClass: "bg-teal-50", iconClass: "text-teal-600" },
+    amber: { bgClass: "bg-amber-50", iconClass: "text-amber-600" },
+    cyan: { bgClass: "bg-cyan-50", iconClass: "text-cyan-600" },
+  };
+  const STATS = heroStatsData?.length
+    ? heroStatsData.map((s: any) => ({
+        value: s.value,
+        label: s.label,
+        icon: iconMap[s.icon] ?? Activity,
+      }))
+    : STATS_FALLBACK;
+  const PHARMA_STATS = pharmaStatsData?.length
+    ? pharmaStatsData.map((s: any) => {
+        const tone = colorClassMap[s.color ?? "emerald"] ?? colorClassMap.emerald;
+        return {
+          value: s.value,
+          label: s.label,
+          icon: iconMap[s.icon] ?? Shield,
+          bgClass: tone.bgClass,
+          iconClass: tone.iconClass,
+        };
+      })
+    : PHARMA_STATS_FALLBACK;
 
   const CAPABILITIES = [
     {
@@ -139,86 +178,82 @@ export default function PublicHomePage() {
 
   return (
     <div className="bg-white">
+      <AnnouncementsBar location="home" />
       {/* ═══════════ HERO ═══════════ */}
       <section className="relative overflow-hidden bg-gradient-to-b from-slate-50/80 to-white">
         {/* Subtle background patterns */}
         <MedicalBackgroundPatterns />
-
-        {/* Floating decorations */}
-        <FloatingDecoration />
-        <FloatingDecorationMobile />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 lg:pt-32 pb-12 sm:pb-16 lg:pb-20">
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-10 sm:pb-16 lg:pb-20">
+          <div className="grid lg:grid-cols-2 gap-7 sm:gap-10 lg:gap-16 items-center">
             {/* Left — copy */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: REVEAL_EASE }}
             >
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-[11px] font-semibold uppercase tracking-widest mb-5 border border-emerald-100/80">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest mb-4 sm:mb-5 border border-emerald-100/80">
                 <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse-subtle" />
                 {t("badge")}
               </div>
 
-              <h1 className="text-3xl leading-tight sm:text-5xl lg:text-[3.5rem] xl:text-6xl font-display font-bold text-slate-900 tracking-tight mb-5">
+              <h1 className="text-[1.85rem] leading-tight sm:text-5xl lg:text-[3.5rem] xl:text-6xl font-display font-bold text-slate-900 tracking-tight mb-4 sm:mb-5">
                 {t("heroTitle1")}
-                <br />
+                <br className="hidden sm:block" />
                 {t("heroTitle2")}{" "}
                 <span className="text-emerald-600">
                   {t("heroTitle3")}
                 </span>
               </h1>
 
-              <p className="text-base sm:text-lg text-slate-500 leading-relaxed max-w-lg mb-6">
+              <p className="text-[15px] sm:text-lg text-slate-500 leading-relaxed max-w-lg mb-5 sm:mb-6">
                 {t("heroDesc")}
               </p>
 
               {/* Pharma quick features */}
-              <div className="flex flex-wrap gap-2 mb-6">
+              <div className="flex flex-wrap gap-2 mb-5 sm:mb-6">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-100/80">
                   <FileText className="w-3.5 h-3.5 text-emerald-600" />
-                  <span className="text-[11px] font-semibold text-slate-600">{t("badgePrescriptions")}</span>
+                  <span className="text-[10px] sm:text-[11px] font-semibold text-slate-600">{t("badgePrescriptions")}</span>
                 </div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 rounded-full border border-amber-100/80">
                   <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
-                  <span className="text-[11px] font-semibold text-slate-600">{t("badgeStockAlerts")}</span>
+                  <span className="text-[10px] sm:text-[11px] font-semibold text-slate-600">{t("badgeStockAlerts")}</span>
                 </div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-cyan-50 rounded-full border border-cyan-100/80">
                   <Shield className="w-3.5 h-3.5 text-cyan-600" />
-                  <span className="text-[11px] font-semibold text-slate-600">{t("badgeGdpCompliance")}</span>
+                  <span className="text-[10px] sm:text-[11px] font-semibold text-slate-600">{t("badgeGdpCompliance")}</span>
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-8">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6 sm:mb-8">
                 <Link
                   href="/auth/register"
-                  className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-semibold text-base hover:from-emerald-700 hover:to-teal-700 transition-all shadow-lg shadow-emerald-500/20 group"
+                  className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-semibold text-base hover:from-emerald-700 hover:to-teal-700 transition-all shadow-lg shadow-emerald-500/20 group w-full sm:w-auto"
                 >
                   {t("ctaPrimary")}
                   <ArrowRight className="w-4.5 h-4.5 group-hover:translate-x-0.5 transition-transform" />
                 </Link>
                 <Link
                   href="/plan_demo"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white text-slate-700 border border-slate-200 rounded-xl font-semibold text-base hover:border-emerald-200 hover:text-emerald-700 hover:bg-emerald-50/30 transition-all"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white text-slate-700 border border-slate-200 rounded-xl font-semibold text-base hover:border-emerald-200 hover:text-emerald-700 hover:bg-emerald-50/30 transition-all w-full sm:w-auto"
                 >
                   {t("ctaDemo")}
                 </Link>
               </div>
 
               {/* Mini features strip — mobile only */}
-              <div className="flex flex-wrap gap-2 mb-6 lg:hidden">
+              <div className="flex flex-wrap gap-2 mb-5 sm:mb-6 lg:hidden">
                 {HERO_FEATURES.map((f) => (
                   <div
                     key={f.label}
-                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-full border border-slate-100"
+                    className="inline-flex items-center gap-2 px-2.5 sm:px-3 py-1.5 bg-slate-50 rounded-full border border-slate-100"
                   >
                     <div
                       className={`w-5 h-5 ${f.bgClass} rounded-md flex items-center justify-center`}
                     >
                       <f.icon className="w-3 h-3 text-white" />
                     </div>
-                    <span className="text-xs font-medium text-slate-600">
+                    <span className="text-[11px] sm:text-xs font-medium text-slate-600">
                       {f.label}
                     </span>
                   </div>
@@ -226,7 +261,7 @@ export default function PublicHomePage() {
               </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 border-t border-slate-100 pt-6">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6 border-t border-slate-100 pt-5 sm:pt-6">
                 {STATS.map((s, i) => (
                   <motion.div
                     key={s.label}
@@ -237,17 +272,17 @@ export default function PublicHomePage() {
                         ? { delay: 0.2 + i * 0.07, duration: 0.4, ease: REVEAL_EASE }
                         : { duration: 0.01 }
                     }
-                    className="group"
+                    className="group rounded-xl p-2 sm:p-0 bg-white/60 sm:bg-transparent border border-slate-100/70 sm:border-0"
                   >
                     <div className="flex items-center gap-2 mb-1">
                       <div className="w-6 h-6 bg-emerald-50 rounded-lg flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
                         <s.icon className="w-3 h-3 text-emerald-600" />
                       </div>
-                      <p className="text-xl sm:text-2xl font-display font-bold text-slate-900">
+                      <p className="text-lg min-[360px]:text-xl sm:text-2xl font-display font-bold text-slate-900">
                         {s.value}
                       </p>
                     </div>
-                    <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                    <p className="text-[10px] sm:text-[11px] leading-tight font-semibold text-slate-400 uppercase tracking-wider break-words">
                       {s.label}
                     </p>
                   </motion.div>
@@ -264,7 +299,7 @@ export default function PublicHomePage() {
                 delay: 0.15,
                 ease: REVEAL_EASE,
               }}
-              className="relative"
+              className="relative mt-1 sm:mt-2"
             >
               {/* Glow */}
               <div className="absolute -inset-6 bg-gradient-to-br from-emerald-400/8 via-transparent to-teal-400/8 rounded-3xl blur-2xl" />
@@ -424,7 +459,7 @@ export default function PublicHomePage() {
                         : { duration: 0.01 }
                     }
                     whileHover={motionSafe ? { y: -3, scale: 1.01 } : {}}
-                    className="group relative h-24 sm:h-28 rounded-xl overflow-hidden border border-slate-200/70 shadow-sm"
+                    className={`group relative h-20 min-[360px]:h-24 sm:h-28 rounded-xl overflow-hidden border border-slate-200/70 shadow-sm ${idx === 2 ? "hidden sm:block" : ""}`}
                   >
                     <Image
                       src={src}
@@ -444,9 +479,9 @@ export default function PublicHomePage() {
       </section>
 
       {/* ═══════════ PHARMA-SPECIFIC STATS ═══════════ */}
-      <section className="py-12 sm:py-16 bg-gradient-to-r from-emerald-50/60 via-teal-50/40 to-cyan-50/60 border-y border-slate-100/60">
+      <section className="py-10 min-[390px]:py-12 sm:py-16 bg-gradient-to-r from-emerald-50/60 via-teal-50/40 to-cyan-50/60 border-y border-slate-100/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 min-[390px]:gap-4 sm:gap-6">
             {PHARMA_STATS.map((stat, i) => (
               <motion.div
                 key={stat.label}
@@ -458,12 +493,12 @@ export default function PublicHomePage() {
                     ? { delay: i * 0.08, duration: 0.4, ease: REVEAL_EASE }
                     : { duration: 0.01 }
                 }
-                className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/60 shadow-xs"
+                className="bg-white/70 backdrop-blur-sm rounded-2xl p-3.5 min-[390px]:p-4 sm:p-6 border border-white/60 shadow-xs"
               >
                 <div className={`w-10 h-10 sm:w-12 sm:h-12 ${stat.bgClass} rounded-xl flex items-center justify-center mb-3`}>
                   <stat.icon className={`w-5 h-5 sm:w-6 sm:h-6 ${stat.iconClass}`} />
                 </div>
-                <p className="text-2xl sm:text-3xl font-display font-bold text-slate-900 mb-1">
+                <p className="text-xl min-[360px]:text-2xl sm:text-3xl font-display font-bold text-slate-900 mb-1">
                   {stat.value}
                 </p>
                 <p className="text-[11px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider">
@@ -544,7 +579,7 @@ export default function PublicHomePage() {
       <PlatformModulesPreview />
 
       {/* ═══════════ AI SPOTLIGHT ═══════════ */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-slate-50/50 via-white to-white relative overflow-hidden">
+      <section className="py-14 sm:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-slate-50/50 via-white to-white relative overflow-hidden">
         <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
           <HexagonalPattern className="absolute inset-0 w-full h-full" opacity={0.03} />
         </div>
@@ -595,14 +630,14 @@ export default function PublicHomePage() {
               <div className="mt-7 flex flex-col sm:flex-row gap-3">
                 <Link
                   href="/modules/ai"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-semibold hover:from-emerald-700 hover:to-teal-700 transition-all shadow-lg shadow-emerald-200/40"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-semibold hover:from-emerald-700 hover:to-teal-700 transition-all shadow-lg shadow-emerald-200/40 w-full sm:w-auto"
                 >
                   {t("aiSpotlightCtaAi")}
                   <ArrowRight className="w-4.5 h-4.5" />
                 </Link>
                 <Link
                   href="/modules/inventory"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white border border-slate-200 rounded-xl font-semibold text-slate-700 hover:border-emerald-200 hover:text-emerald-700 transition-all"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white border border-slate-200 rounded-xl font-semibold text-slate-700 hover:border-emerald-200 hover:text-emerald-700 transition-all w-full sm:w-auto"
                 >
                   {t("aiSpotlightCtaInventory")}
                 </Link>
@@ -610,7 +645,7 @@ export default function PublicHomePage() {
             </div>
 
             <div className="lg:col-span-6">
-              <div className="grid sm:grid-cols-2 gap-4">
+              <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
                 {[
                   {
                     icon: TestTube,

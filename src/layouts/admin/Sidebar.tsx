@@ -12,6 +12,8 @@ import {
   Menu,
   X,
   ChevronLeft,
+  Megaphone,
+  Mail,
 } from "lucide-react";
 
 interface NavItem {
@@ -50,6 +52,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       href: "/admin/reports",
       icon: BarChart3,
       requiredPermissions: ["view_reports"],
+    },
+    {
+      name: "Contenu Marketing",
+      href: "/admin/marketing-content",
+      icon: Megaphone,
+    },
+    {
+      name: "Newsletter",
+      href: "/admin/newsletter",
+      icon: Mail,
     },
   ];
 

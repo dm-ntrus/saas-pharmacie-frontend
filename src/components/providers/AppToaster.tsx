@@ -1,12 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
+import { normalizeToastMessage } from "@/lib/toast-safe";
 
 export default function AppToaster() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // Ensure toast.error never receives non-renderable objects.
+    const globalKey = "__toast_safe_patch_applied__";
+    const w = window as unknown as Record<string, unknown>;
+    if (!w[globalKey]) {
+      const originalError = toast.error.bind(toast) as any;
+      (toast as any).error = (message: unknown, ...rest: unknown[]) =>
+        originalError(normalizeToastMessage(message), ...rest);
+      w[globalKey] = true;
+    }
     setMounted(true);
   }, []);
 

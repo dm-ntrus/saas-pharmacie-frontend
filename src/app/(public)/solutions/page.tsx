@@ -61,9 +61,9 @@ export default function SolutionsPage() {
   }));
 
   return (
-    <div className="min-h-screen pt-28 sm:pt-32 pb-0 bg-white">
+    <div className="min-h-screen pt-24 sm:pt-32 pb-0 bg-white">
       {/* Header */}
-      <section className="px-4 sm:px-6 lg:px-8 mb-14 text-center">
+      <section className="px-4 sm:px-6 lg:px-8 mb-10 sm:mb-14 text-center">
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -98,13 +98,13 @@ export default function SolutionsPage() {
                 <div className="w-16 h-16 bg-slate-900 text-white rounded-2xl flex items-center justify-center mb-5 shadow-xl shadow-slate-900/20">
                   <sol.icon className="w-8 h-8" />
                 </div>
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-slate-900 mb-3 tracking-tight">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-slate-900 mb-3 tracking-tight line-clamp-2">
                   {sol.title}
                 </h2>
-                <p className="text-base text-slate-500 mb-8 leading-relaxed font-medium">
+                <p className="text-[15px] sm:text-base text-slate-500 mb-6 sm:mb-8 leading-relaxed font-medium">
                   {sol.desc}
                 </p>
-                <div className="grid grid-cols-2 gap-5 mb-8">
+                <div className="grid grid-cols-1 min-[390px]:grid-cols-2 gap-3 sm:gap-5 mb-6 sm:mb-8">
                   {sol.features.map((f) => (
                     <div key={f} className="flex items-center gap-3 text-slate-700">
                       <div className="w-5 h-5 rounded-full bg-emerald-50 flex items-center justify-center shrink-0">
@@ -116,7 +116,7 @@ export default function SolutionsPage() {
                 </div>
                 <Link
                   href="/auth/register"
-                  className="inline-flex items-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-xl font-bold hover:bg-emerald-600 transition-all group shadow-lg shadow-slate-900/20"
+                  className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-xl font-bold hover:bg-emerald-600 transition-all group shadow-lg shadow-slate-900/20 w-full sm:w-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50"
                 >
                   {t("startCta")}
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -128,7 +128,7 @@ export default function SolutionsPage() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8 }}
-                className={`lg:col-span-6 relative aspect-square sm:aspect-[4/3] rounded-3xl overflow-hidden shadow-xl ${
+                className={`lg:col-span-6 relative aspect-[4/3] sm:aspect-[4/3] rounded-3xl overflow-hidden shadow-xl ${
                   i % 2 === 1 ? "lg:order-1" : ""
                 }`}
               >
@@ -170,7 +170,7 @@ export default function SolutionsPage() {
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="group bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all"
+                className="group bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all h-full flex flex-col"
               >
                 <div className="aspect-[16/9] relative overflow-hidden bg-slate-100">
                   <Image
@@ -192,8 +192,8 @@ export default function SolutionsPage() {
                     </p>
                   </div>
                 </div>
-                <div className="p-8">
-                  <p className="text-lg font-display font-bold text-slate-900 italic leading-relaxed">
+                <div className="p-6 sm:p-8 flex-1">
+                  <p className="text-base sm:text-lg font-display font-bold text-slate-900 italic leading-relaxed line-clamp-4">
                     &quot;{story.quote}&quot;
                   </p>
                 </div>
@@ -221,13 +221,13 @@ export default function SolutionsPage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   href="/contact"
-                  className="px-8 py-4 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-600/20"
+                  className="px-8 py-4 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-600/20 w-full sm:w-auto"
                 >
                   {t("ctaContact")}
                 </Link>
                 <Link
                   href="/pricing"
-                  className="px-8 py-4 bg-white/10 text-white border border-white/20 rounded-xl font-bold hover:bg-white/20 transition-all"
+                  className="px-8 py-4 bg-white/10 text-white border border-white/20 rounded-xl font-bold hover:bg-white/20 transition-all w-full sm:w-auto"
                 >
                   {t("ctaPricing")}
                 </Link>

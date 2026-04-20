@@ -191,7 +191,6 @@ export function PaymentList({
                 options={[
                   { value: 'all', label: 'Toutes les méthodes' },
                   { value: 'manual', label: 'Manuel' },
-                  { value: 'stripe', label: 'Carte bancaire' },
                   { value: 'bank_transfer', label: 'Virement' },
                   { value: 'cash', label: 'Espèces' },
                 ]}

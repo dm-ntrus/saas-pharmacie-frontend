@@ -14,6 +14,7 @@ import {
   Eye,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { useMarketingHelpCenter, useMarketingHelpCenterArticles } from "@/hooks/api/usePublicDynamicModules";
 
 interface Article {
   id: string;
@@ -55,8 +56,29 @@ export default function KnowledgeBasePage() {
   const t = useTranslations("pages.knowledgeBase");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-
-  const filteredArticles = selectedCategory
+  const { data: helpCenter } = useMarketingHelpCenter();
+  const { data: articlesData } = useMarketingHelpCenterArticles({
+    categoryKey: selectedCategory ?? undefined,
+    search: searchQuery || undefined,
+  });
+  const categories = helpCenter?.categories?.length
+    ? helpCenter.categories.map((c: any) => ({
+        id: c.category_key,
+        titleKey: c.name,
+        icon: c.icon ?? "BookOpen",
+        articleCount: c.article_count ?? 0,
+      }))
+    : KNOWLEDGE_BASE_CATEGORIES;
+  const filteredArticles = articlesData?.length
+    ? articlesData.map((a: any, index: number) => ({
+        id: a.article_key ?? String(index),
+        titleKey: a.title,
+        excerptKey: a.summary ?? "",
+        category: a.category_key,
+        readTime: a.reading_time_minutes ?? 5,
+        views: a.view_count ?? 0,
+      }))
+    : selectedCategory
     ? SAMPLE_ARTICLES.filter((a) => a.category === selectedCategory)
     : searchQuery
     ? SAMPLE_ARTICLES.filter(
@@ -113,7 +135,7 @@ export default function KnowledgeBasePage() {
 
         {/* Categories */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-          {KNOWLEDGE_BASE_CATEGORIES.map((cat, i) => (
+          {categories.map((cat: Category, i: number) => (
             <motion.button
               key={cat.id}
               initial={{ opacity: 0, y: 16 }}
@@ -142,7 +164,7 @@ export default function KnowledgeBasePage() {
                   />
                 </div>
                 <span className="font-bold text-sm text-slate-900">
-                  {cat.id === "getting-started" ? t("k1") : cat.id === "inventory" ? t("k2") : cat.id === "pos-sales" ? t("k3") : cat.id === "patients" ? t("k4") : cat.id === "prescriptions" ? t("k5") : cat.id === "billing" ? t("k6") : cat.id === "integrations" ? t("k7") : t("k8")}
+                  {cat.titleKey}
                 </span>
               </div>
               <p className="text-xs text-slate-500">
@@ -170,7 +192,7 @@ export default function KnowledgeBasePage() {
 
           <div className="grid gap-4">
             {filteredArticles.length > 0 ? (
-              filteredArticles.map((article, i) => (
+              filteredArticles.map((article: Article, i: number) => (
                 <motion.div
                   key={article.id}
                   initial={{ opacity: 0, y: 12 }}
@@ -187,10 +209,10 @@ export default function KnowledgeBasePage() {
                         </span>
                       </div>
                       <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-emerald-700 transition-colors">
-                        {t(`articles.${article.titleKey}`)}
+                        {article.titleKey}
                       </h3>
                       <p className="text-sm text-slate-500 leading-relaxed">
-                        {t(`articles.${article.excerptKey}`)}
+                        {article.excerptKey}
                       </p>
                       <div className="flex items-center gap-4 mt-3 text-xs text-slate-400">
                         <span className="flex items-center gap-1">

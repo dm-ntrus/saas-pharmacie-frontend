@@ -65,7 +65,7 @@ export default function PlatformModulesPreview() {
               <span className="text-emerald-600 italic">{t("modulesPreviewTitleHighlight")}</span>
             </h2>
           </div>
-          <p className="text-lg text-slate-600 max-w-md font-medium leading-relaxed">
+          <p className="text-base sm:text-lg text-slate-600 max-w-md font-medium leading-relaxed">
             {t("modulesPreviewDesc")}
           </p>
         </div>
@@ -78,7 +78,7 @@ export default function PlatformModulesPreview() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.05 }}
-              className="rounded-[2rem] border border-slate-100 bg-white overflow-hidden shadow-sm hover:shadow-md hover:border-emerald-100 transition-all"
+              className="rounded-[2rem] border border-slate-100 bg-white overflow-hidden shadow-sm hover:shadow-md hover:border-emerald-100 transition-all h-full"
             >
               <div className="relative h-40 overflow-hidden">
                 <Image
@@ -95,14 +95,14 @@ export default function PlatformModulesPreview() {
                   </div>
                 </div>
               </div>
-              <div className="p-5 sm:p-6">
-                <h3 className="text-lg font-display font-bold text-slate-900 mb-1">
+              <div className="p-5 sm:p-6 flex flex-col h-[calc(100%-10rem)]">
+                <h3 className="text-lg font-display font-bold text-slate-900 mb-1 line-clamp-2 min-h-[3.5rem]">
                   {m.title}
                 </h3>
                 <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
                   {m.tagline}
                 </p>
-                <p className="text-sm text-slate-600 leading-relaxed mb-3">
+                <p className="text-sm text-slate-600 leading-relaxed mb-3 line-clamp-3 min-h-[4rem]">
                   {m.description}
                 </p>
                 <ul className="space-y-1.5">
@@ -116,17 +116,17 @@ export default function PlatformModulesPreview() {
                   ))}
                 </ul>
                 {m.planNote ? (
-                  <p className="mt-3 text-[11px] text-slate-400 italic">{m.planNote}</p>
+                  <p className="mt-3 text-[11px] text-slate-400 italic line-clamp-2">{m.planNote}</p>
                 ) : null}
               </div>
             </motion.article>
           ))}
         </div>
 
-        <div className="mt-12 text-center sm:text-left">
+        <div className="mt-10 sm:mt-12 text-center sm:text-left">
           <Link
             href="/modules"
-            className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-widest text-emerald-600 hover:text-slate-900 transition-colors"
+            className="inline-flex items-center justify-center gap-2 text-sm font-black uppercase tracking-widest text-emerald-600 hover:text-slate-900 transition-colors w-full sm:w-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 rounded-lg"
           >
             {t("modulesPreviewCta", { count: TOTAL_PLATFORM_MODULES })}
             <ArrowRight className="w-4 h-4" />

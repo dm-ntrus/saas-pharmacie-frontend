@@ -20,6 +20,9 @@ import {
   useBudgets, useCreateBudget, useUpdateBudgetActuals,
   useBankAccounts, useCreateBankAccount, useBankAccountTransactions,
   useStartBankReconciliation, useReconcileBankTransaction,
+  useAnalyticDimensions, useCreateAnalyticDimension, useUpdateAnalyticDimension,
+  useAllocateTransactionAnalytics, useTransactionAnalyticAllocations, useAnalyticReport,
+  useAnalyticAllocationTemplates, useCreateAnalyticAllocationTemplate, useDeleteAnalyticAllocationTemplate,
   useFinancialPeriods, useCreateFinancialPeriod, useCloseFinancialPeriod,
   useLockFinancialPeriod, useSetCurrentFinancialPeriod,
   useTrialBalance, useBalanceSheet, useIncomeStatement, useCashFlowReport,
@@ -28,6 +31,7 @@ import {
 import {
   type Account, type Transaction, type Budget, type Expense,
   type BankAccount, type BankTransaction, type FinancialPeriod,
+  type AnalyticDimension,
   ACCOUNT_TYPE_LABELS, TRANSACTION_STATUS_LABELS, BUDGET_STATUS_LABELS,
   EXPENSE_STATUS_LABELS, PERIOD_STATUS_LABELS,
   type AccountType, type TransactionStatus, type ExpenseStatus,
@@ -189,6 +193,7 @@ function AccountingContent() {
     { value: "budgets", label: "Budgets", icon: PiggyBank },
     { value: "bank", label: "Banque", icon: Landmark },
     { value: "periods", label: "Périodes fiscales", icon: Calendar },
+    { value: "analytic", label: "Comptabilité analytique", icon: ArrowUpDown },
     { value: "reports", label: "Rapports", icon: BarChart3 },
   ];
 
@@ -219,6 +224,7 @@ function AccountingContent() {
         <TabsContent value="budgets"><BudgetsTab /></TabsContent>
         <TabsContent value="bank"><BankTab /></TabsContent>
         <TabsContent value="periods"><FinancialPeriodsTab /></TabsContent>
+        <TabsContent value="analytic"><AnalyticAccountingTab /></TabsContent>
         <TabsContent value="reports"><ReportsTab /></TabsContent>
       </Tabs>
     </div>
@@ -1590,10 +1596,595 @@ function FinancialPeriodsTab() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// 9. RAPPORTS TAB
+// 9. COMPTABILITÉ ANALYTIQUE TAB
 // ═══════════════════════════════════════════════════════════════
 
-type ReportType = "trial-balance" | "balance-sheet" | "income" | "cash-flow" | "budget-variance" | "receivable-aging" | "payable-aging" | "department";
+function AnalyticAccountingTab() {
+  const [showCreateDimension, setShowCreateDimension] = useState(false);
+  const [selectedTransactionId, setSelectedTransactionId] = useState("");
+  const [selectedTemplate, setSelectedTemplate] = useState("");
+  const [selectedCustomTemplateId, setSelectedCustomTemplateId] = useState("");
+  const [newTemplateName, setNewTemplateName] = useState("");
+  const [startDate, setStartDate] = useState(() => {
+    const d = new Date(); d.setMonth(d.getMonth() - 3);
+    return d.toISOString().split("T")[0];
+  });
+  const [endDate, setEndDate] = useState(() => new Date().toISOString().split("T")[0]);
+
+  const { data: dimensionsData, isLoading: loadingDimensions } = useAnalyticDimensions(true);
+  const { data: transactionsData, isLoading: loadingTransactions } = useTransactions({ startDate, endDate, limit: 100 });
+  const { data: allocationsData, refetch: refetchAllocations } = useTransactionAnalyticAllocations(selectedTransactionId || "");
+  const { data: analyticReportData, isLoading: loadingReport } = useAnalyticReport({ startDate, endDate });
+  const { data: templatesData } = useAnalyticAllocationTemplates("transaction");
+
+  const createDimension = useCreateAnalyticDimension();
+  const updateDimension = useUpdateAnalyticDimension();
+  const allocateAnalytics = useAllocateTransactionAnalytics();
+  const createTemplate = useCreateAnalyticAllocationTemplate();
+  const deleteTemplate = useDeleteAnalyticAllocationTemplate();
+
+  const dimensions = ((dimensionsData as any)?.data ?? dimensionsData ?? []) as AnalyticDimension[];
+  const transactions = ((transactionsData as any)?.data ?? transactionsData ?? []) as Transaction[];
+  const allocations = ((allocationsData as any)?.data ?? allocationsData ?? []) as Array<{
+    analytic_dimension_id: string;
+    allocation_percentage: string;
+    allocation_amount: string;
+  }>;
+  const analyticReport = ((analyticReportData as any)?.data ?? analyticReportData ?? null) as any;
+  const customTemplates = ((templatesData as any)?.data ?? templatesData ?? []) as any[];
+
+  const dimensionOptions = dimensions.map((d) => ({ value: d.id, label: `${d.code} — ${d.name}` }));
+  const selectedTransaction = transactions.find((t) => String(t.id) === String(selectedTransactionId));
+  const transactionAmount = Number(selectedTransaction?.amount || 0);
+
+  const dimensionForm = useForm<{
+    code: string;
+    name: string;
+    description?: string;
+    dimension_type: "cost_center" | "department" | "project" | "product_line" | "channel" | "custom";
+  }>({
+    defaultValues: { code: "", name: "", description: "", dimension_type: "cost_center" },
+  });
+
+  const allocationForm = useForm<{
+    allocations: Array<{ analytic_dimension_id: string; allocation_percentage: string; allocation_amount: string; notes?: string }>;
+  }>({
+    defaultValues: {
+      allocations: [
+        { analytic_dimension_id: "", allocation_percentage: "100", allocation_amount: "", notes: "" },
+      ],
+    },
+  });
+  const allocationFields = useFieldArray({ control: allocationForm.control, name: "allocations" });
+
+  const onCreateDimension = (values: any) => {
+    createDimension.mutate(values, {
+      onSuccess: () => {
+        setShowCreateDimension(false);
+        dimensionForm.reset();
+      },
+    });
+  };
+
+  const onAllocate = (values: { allocations: Array<{ analytic_dimension_id: string; allocation_percentage: string; allocation_amount: string; notes?: string }> }) => {
+    if (!selectedTransactionId) return;
+    allocateAnalytics.mutate(
+      {
+        transaction_id: selectedTransactionId,
+        allocations: values.allocations,
+      },
+      {
+        onSuccess: () => {
+          refetchAllocations();
+        },
+      },
+    );
+  };
+
+  const watchedAllocations = allocationForm.watch("allocations");
+  const totalPct = watchedAllocations.reduce((sum, line) => sum + Number(line.allocation_percentage || 0), 0);
+  const totalAmount = watchedAllocations.reduce((sum, line) => sum + Number(line.allocation_amount || 0), 0);
+  const remainingPct = 100 - totalPct;
+  const remainingAmount = transactionAmount - totalAmount;
+  const lineErrors = watchedAllocations.map((line) => {
+    const errors: string[] = [];
+    if (!line.analytic_dimension_id) errors.push("Dimension requise");
+    const pct = Number(line.allocation_percentage || 0);
+    if (!Number.isFinite(pct) || pct < 0 || pct > 100) errors.push("% invalide (0-100)");
+    const amt = Number(line.allocation_amount || 0);
+    if (!Number.isFinite(amt) || amt < 0) errors.push("Montant invalide");
+    return errors;
+  });
+  const hasInlineErrors = lineErrors.some((errors) => errors.length > 0);
+  const isBalanced = Math.abs(remainingPct) < 0.0001 && Math.abs(remainingAmount) < 0.01;
+  const canSaveAllocations = !!selectedTransactionId && !hasInlineErrors && isBalanced && watchedAllocations.length > 0;
+
+  const recalculateAmountsFromPercentages = () => {
+    if (!selectedTransactionId || transactionAmount <= 0) return;
+    watchedAllocations.forEach((line, idx) => {
+      const pct = Number(line.allocation_percentage || 0);
+      const amount = (transactionAmount * pct) / 100;
+      allocationForm.setValue(`allocations.${idx}.allocation_amount`, amount.toFixed(2));
+    });
+  };
+
+  const applyEqualSplit = () => {
+    if (!selectedTransactionId || transactionAmount <= 0) return;
+    const activeLines = watchedAllocations.filter((line) => !!line.analytic_dimension_id);
+    if (activeLines.length === 0) return;
+    const equalPct = 100 / activeLines.length;
+    let assignedAmount = 0;
+    let seen = 0;
+    watchedAllocations.forEach((line, idx) => {
+      if (!line.analytic_dimension_id) return;
+      seen += 1;
+      const pct = seen === activeLines.length ? 100 - (equalPct * (activeLines.length - 1)) : equalPct;
+      const amount = seen === activeLines.length
+        ? transactionAmount - assignedAmount
+        : (transactionAmount * pct) / 100;
+      assignedAmount += amount;
+      allocationForm.setValue(`allocations.${idx}.allocation_percentage`, pct.toFixed(4));
+      allocationForm.setValue(`allocations.${idx}.allocation_amount`, amount.toFixed(2));
+    });
+  };
+
+  const completeLastLine = () => {
+    if (!selectedTransactionId || watchedAllocations.length === 0) return;
+    const lastIndex = watchedAllocations.length - 1;
+    const last = watchedAllocations[lastIndex];
+    if (!last.analytic_dimension_id) return;
+    allocationForm.setValue(`allocations.${lastIndex}.allocation_percentage`, Math.max(0, remainingPct + Number(last.allocation_percentage || 0)).toFixed(4));
+    allocationForm.setValue(`allocations.${lastIndex}.allocation_amount`, Math.max(0, remainingAmount + Number(last.allocation_amount || 0)).toFixed(2));
+  };
+
+  const templateOptions = [
+    { value: "", label: "Template d'allocation..." },
+    { value: "single-cost-center", label: "100% centre de coût principal" },
+    { value: "single-department", label: "100% département principal" },
+    { value: "equal-departments", label: "Répartition égale départements" },
+    { value: "equal-projects", label: "Répartition égale projets" },
+    { value: "by-transaction-type", label: "Template auto selon type d'écriture" },
+  ];
+
+  const applyTemplate = (template: string) => {
+    if (!template || transactionAmount <= 0) return;
+    const firstByType = (type: AnalyticDimension["dimension_type"]) =>
+      dimensions.find((d) => d.dimension_type === type && d.is_active);
+    const allByType = (type: AnalyticDimension["dimension_type"]) =>
+      dimensions.filter((d) => d.dimension_type === type && d.is_active);
+
+    const setSingle = (dim?: AnalyticDimension) => {
+      if (!dim) return;
+      allocationForm.setValue("allocations", [
+        {
+          analytic_dimension_id: dim.id,
+          allocation_percentage: "100.0000",
+          allocation_amount: transactionAmount.toFixed(2),
+          notes: "",
+        },
+      ]);
+    };
+
+    const setEqual = (dims: AnalyticDimension[]) => {
+      if (dims.length === 0) return;
+      const equalPct = 100 / dims.length;
+      let assigned = 0;
+      const rows = dims.map((dim, idx) => {
+        const pct = idx === dims.length - 1 ? 100 - (equalPct * (dims.length - 1)) : equalPct;
+        const amount = idx === dims.length - 1 ? transactionAmount - assigned : (transactionAmount * pct) / 100;
+        assigned += amount;
+        return {
+          analytic_dimension_id: dim.id,
+          allocation_percentage: pct.toFixed(4),
+          allocation_amount: amount.toFixed(2),
+          notes: "",
+        };
+      });
+      allocationForm.setValue("allocations", rows);
+    };
+
+    switch (template) {
+      case "custom":
+        return;
+      case "single-cost-center":
+        setSingle(firstByType("cost_center"));
+        break;
+      case "single-department":
+        setSingle(firstByType("department"));
+        break;
+      case "equal-departments":
+        setEqual(allByType("department"));
+        break;
+      case "equal-projects":
+        setEqual(allByType("project"));
+        break;
+      case "by-transaction-type":
+        if (selectedTransaction?.type === "credit") {
+          setSingle(firstByType("channel") || firstByType("department") || firstByType("cost_center"));
+        } else {
+          setSingle(firstByType("cost_center") || firstByType("department") || firstByType("project"));
+        }
+        break;
+      default:
+        break;
+    }
+  };
+
+  const applyCustomTemplate = (templateId: string) => {
+    if (!templateId || transactionAmount <= 0) return;
+    const template = customTemplates.find((t) => String(t.id) === String(templateId));
+    if (!template) return;
+    const rows = (template.lines || []).map((line: any) => {
+      const pct = Number(line.allocation_percentage || 0);
+      const amount = transactionAmount > 0 ? (transactionAmount * pct) / 100 : Number(line.allocation_amount || 0);
+      return {
+        analytic_dimension_id: String(line.analytic_dimension_id || ""),
+        allocation_percentage: pct.toFixed(4),
+        allocation_amount: amount.toFixed(2),
+        notes: String(line.notes || ""),
+      };
+    });
+    if (rows.length > 0) allocationForm.setValue("allocations", rows);
+  };
+
+  const onSaveTemplate = () => {
+    const name = newTemplateName.trim();
+    if (!name || hasInlineErrors || watchedAllocations.length === 0) return;
+    createTemplate.mutate({
+      name,
+      scope: "transaction",
+      lines: watchedAllocations,
+    }, {
+      onSuccess: () => setNewTemplateName(""),
+    });
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row gap-3 sm:items-end">
+        <div>
+          <label className="block text-xs font-medium text-slate-500 mb-1">Du</label>
+          <Input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="w-40" />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-slate-500 mb-1">Au</label>
+          <Input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="w-40" />
+        </div>
+        <div className="sm:ml-auto">
+          <ProtectedAction permission={Permission.ACCOUNTS_UPDATE}>
+            <Button onClick={() => setShowCreateDimension(true)} leftIcon={<Plus className="w-4 h-4" />}>
+              Nouvelle dimension
+            </Button>
+          </ProtectedAction>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <Card className="xl:col-span-1">
+          <CardHeader>
+            <CardTitle className="text-base">Dimensions analytiques</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {loadingDimensions ? (
+              <Skeleton className="h-40 w-full" />
+            ) : dimensions.length === 0 ? (
+              <EmptyState title="Aucune dimension" description="Créez un axe analytique pour commencer" />
+            ) : (
+              dimensions.map((d) => (
+                <div key={d.id} className="rounded-lg border border-slate-200 dark:border-slate-700 p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <div>
+                      <p className="font-medium text-sm">{d.code} — {d.name}</p>
+                      <p className="text-xs text-slate-500">{d.dimension_type}</p>
+                    </div>
+                    <Badge variant={d.is_active ? "success" : "default"} size="sm">
+                      {d.is_active ? "Actif" : "Inactif"}
+                    </Badge>
+                  </div>
+                  <div className="mt-2">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => updateDimension.mutate({ id: d.id, data: { is_active: !d.is_active } })}
+                    >
+                      {d.is_active ? "Désactiver" : "Activer"}
+                    </Button>
+                  </div>
+                </div>
+              ))
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="xl:col-span-2">
+          <CardHeader>
+            <CardTitle className="text-base">Allocation analytique des écritures</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Select
+              label="Transaction"
+              options={transactions.map((t) => ({
+                value: String(t.id),
+                label: `${t.transaction_number} — ${t.description} (${formatCurrency(Number(t.amount || 0))})`,
+              }))}
+              value={selectedTransactionId}
+              onChange={setSelectedTransactionId}
+              searchable
+              placeholder="Choisir une transaction à ventiler"
+            />
+
+            {selectedTransactionId && (
+              <form onSubmit={allocationForm.handleSubmit(onAllocate)} className="space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <Select
+                    options={templateOptions}
+                    value={selectedTemplate}
+                    onChange={(value) => {
+                      setSelectedTemplate(value);
+                      applyTemplate(value);
+                    }}
+                    placeholder="Appliquer un template"
+                  />
+                  <Select
+                    options={[
+                      { value: "", label: "Templates personnalisés..." },
+                      ...customTemplates.map((tpl) => ({
+                        value: String(tpl.id),
+                        label: tpl.name,
+                      })),
+                    ]}
+                    value={selectedCustomTemplateId}
+                    onChange={(value) => {
+                      setSelectedCustomTemplateId(value);
+                      applyCustomTemplate(value);
+                    }}
+                    placeholder="Appliquer un template personnalisé"
+                  />
+                  <div className="flex gap-2">
+                    <Button type="button" variant="outline" size="sm" onClick={applyEqualSplit}>
+                      Répartir 100% (égal)
+                    </Button>
+                    <Button type="button" variant="outline" size="sm" onClick={completeLastLine}>
+                      Compléter dernière ligne
+                    </Button>
+                    <Button type="button" variant="outline" size="sm" onClick={recalculateAmountsFromPercentages}>
+                      Recalculer montants
+                    </Button>
+                  </div>
+                  <div className="flex gap-2">
+                    <Input
+                      value={newTemplateName}
+                      onChange={(e) => setNewTemplateName(e.target.value)}
+                      placeholder="Nom du template personnalisé"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={onSaveTemplate}
+                      disabled={!newTemplateName.trim() || hasInlineErrors || watchedAllocations.length === 0 || createTemplate.isPending}
+                    >
+                      Sauvegarder template
+                    </Button>
+                    {selectedCustomTemplateId && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => deleteTemplate.mutate(selectedCustomTemplateId)}
+                        disabled={deleteTemplate.isPending}
+                      >
+                        Supprimer
+                      </Button>
+                    )}
+                  </div>
+                </div>
+
+                {allocationFields.fields.map((field, idx) => (
+                  <div key={field.id} className="grid grid-cols-12 gap-2 items-end">
+                    <div className="col-span-12 sm:col-span-5">
+                      <Select
+                        options={dimensionOptions}
+                        value={allocationForm.watch(`allocations.${idx}.analytic_dimension_id`)}
+                        onChange={(v) => allocationForm.setValue(`allocations.${idx}.analytic_dimension_id`, v)}
+                        searchable
+                        placeholder="Dimension..."
+                      />
+                    </div>
+                    <div className="col-span-6 sm:col-span-2">
+                      <Input
+                        type="number"
+                        step="0.0001"
+                        min={0}
+                        max={100}
+                        placeholder="%"
+                        {...allocationForm.register(`allocations.${idx}.allocation_percentage`)}
+                      />
+                    </div>
+                    <div className="col-span-6 sm:col-span-3">
+                      <Input
+                        type="number"
+                        step="0.01"
+                        min={0}
+                        placeholder="Montant"
+                        {...allocationForm.register(`allocations.${idx}.allocation_amount`)}
+                      />
+                    </div>
+                    <div className="col-span-12 sm:col-span-2 flex gap-1">
+                      {idx > 0 && (
+                        <Button type="button" size="sm" variant="outline" onClick={() => allocationFields.remove(idx)}>
+                          Retirer
+                        </Button>
+                      )}
+                    </div>
+                    {lineErrors[idx]?.length > 0 && (
+                      <div className="col-span-12">
+                        <p className="text-xs text-red-600">
+                          {lineErrors[idx].join(" • ")}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => allocationFields.append({
+                      analytic_dimension_id: "",
+                      allocation_percentage: "",
+                      allocation_amount: "",
+                      notes: "",
+                    })}
+                  >
+                    Ajouter ligne
+                  </Button>
+                  <Button
+                    type="submit"
+                    size="sm"
+                    loading={allocateAnalytics.isPending}
+                    disabled={!canSaveAllocations}
+                  >
+                    Enregistrer allocations
+                  </Button>
+                </div>
+                <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-3 text-sm">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    <div>
+                      <p className="text-xs text-slate-500">Montant transaction</p>
+                      <p className="font-semibold">{formatCurrency(transactionAmount)}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500">Total alloué</p>
+                      <p className="font-semibold">{formatCurrency(totalAmount)}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500">% alloué</p>
+                      <p className="font-semibold">{formatPercent(totalPct / 100)}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500">Reste</p>
+                      <p className={`font-semibold ${Math.abs(remainingAmount) < 0.01 ? "text-emerald-600" : "text-amber-600"}`}>
+                        {formatCurrency(remainingAmount)} / {remainingPct.toFixed(4)}%
+                      </p>
+                    </div>
+                  </div>
+                  {!canSaveAllocations && (
+                    <p className="mt-2 text-xs text-amber-600">
+                      Allocation non valide: corrigez les lignes en erreur et équilibrez à 100%.
+                    </p>
+                  )}
+                </div>
+              </form>
+            )}
+
+            {selectedTransactionId && (
+              <div className="pt-2 border-t border-slate-100 dark:border-slate-700">
+                <p className="text-sm font-medium mb-2">Allocations existantes</p>
+                {allocations.length === 0 ? (
+                  <p className="text-sm text-slate-500">Aucune allocation définie.</p>
+                ) : (
+                  <div className="space-y-1">
+                    {allocations.map((a, i) => (
+                      <div key={i} className="text-sm flex items-center justify-between">
+                        <span>{String(a.analytic_dimension_id)}</span>
+                        <span className="font-medium">{formatCurrency(Number(a.allocation_amount || 0))} ({a.allocation_percentage}%)</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Reporting analytique</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {loadingReport ? (
+            <Skeleton className="h-64 w-full" />
+          ) : !analyticReport ? (
+            <EmptyState title="Aucune donnée analytique" description="Affectez des écritures à des dimensions pour voir le reporting" />
+          ) : (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <Card><CardContent className="p-4">
+                  <p className="text-xs text-slate-500 uppercase">Montant alloué</p>
+                  <p className="text-lg font-bold">{formatCurrency(Number(analyticReport.totals?.allocatedAmount || 0))}</p>
+                </CardContent></Card>
+                <Card><CardContent className="p-4">
+                  <p className="text-xs text-slate-500 uppercase">Dimensions</p>
+                  <p className="text-lg font-bold">{formatNumber(Number(analyticReport.totals?.dimensionsCount || 0))}</p>
+                </CardContent></Card>
+                <Card><CardContent className="p-4">
+                  <p className="text-xs text-slate-500 uppercase">Allocations</p>
+                  <p className="text-lg font-bold">{formatNumber(Number(analyticReport.totals?.allocationsCount || 0))}</p>
+                </CardContent></Card>
+              </div>
+
+              <BarChartWidget
+                data={(analyticReport.byDimensionType || []).map((row: any) => ({
+                  name: row.dimensionType,
+                  montant: Number(row.allocatedAmount || 0),
+                }))}
+                xKey="name"
+                yKey="montant"
+                title="Montants par type de dimension"
+                height={260}
+              />
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Modal
+        open={showCreateDimension}
+        onOpenChange={setShowCreateDimension}
+        title="Créer une dimension analytique"
+        size="md"
+      >
+        <form onSubmit={dimensionForm.handleSubmit(onCreateDimension)} className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Input label="Code" {...dimensionForm.register("code")} placeholder="CC-VENTE-01" />
+            <Select
+              label="Type"
+              options={[
+                { value: "cost_center", label: "Centre de coût" },
+                { value: "department", label: "Département" },
+                { value: "project", label: "Projet" },
+                { value: "product_line", label: "Ligne produit" },
+                { value: "channel", label: "Canal" },
+                { value: "custom", label: "Personnalisé" },
+              ]}
+              value={dimensionForm.watch("dimension_type")}
+              onChange={(v) => dimensionForm.setValue("dimension_type", v as any)}
+            />
+          </div>
+          <Input label="Nom" {...dimensionForm.register("name")} placeholder="Centre de coût pharmacie centre-ville" />
+          <Input label="Description" {...dimensionForm.register("description")} placeholder="Description optionnelle" />
+          <div className="flex justify-end gap-2">
+            <Button type="button" variant="outline" onClick={() => setShowCreateDimension(false)}>
+              Annuler
+            </Button>
+            <Button type="submit" loading={createDimension.isPending}>
+              Créer
+            </Button>
+          </div>
+        </form>
+      </Modal>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 10. RAPPORTS TAB
+// ═══════════════════════════════════════════════════════════════
+
+type ReportType = "trial-balance" | "balance-sheet" | "income" | "cash-flow" | "budget-variance" | "receivable-aging" | "payable-aging" | "department" | "analytic";
 
 function ReportsTab() {
   const [reportType, setReportType] = useState<ReportType>("trial-balance");
@@ -1620,6 +2211,9 @@ function ReportsTab() {
   const { data: receivableAging, isLoading: lra } = useAccountsReceivableAging();
   const { data: payableAging, isLoading: lpa } = useAccountsPayableAging();
   const { data: departmentReport, isLoading: ldr } = useDepartmentReport();
+  const { data: analyticReport, isLoading: lar } = useAnalyticReport(
+    reportType === "analytic" ? { startDate, endDate } : undefined,
+  );
 
   const reportOptions = [
     { value: "trial-balance" as const, label: "Balance de vérification" },
@@ -1630,6 +2224,7 @@ function ReportsTab() {
     { value: "receivable-aging" as const, label: "Ancienneté créances clients" },
     { value: "payable-aging" as const, label: "Ancienneté dettes fournisseurs" },
     { value: "department" as const, label: "Par département" },
+    { value: "analytic" as const, label: "Comptabilité analytique" },
   ];
 
   const loading = (reportType === "trial-balance" && ltb) ||
@@ -1639,7 +2234,8 @@ function ReportsTab() {
     (reportType === "budget-variance" && lbv) ||
     (reportType === "receivable-aging" && lra) ||
     (reportType === "payable-aging" && lpa) ||
-    (reportType === "department" && ldr);
+    (reportType === "department" && ldr) ||
+    (reportType === "analytic" && lar);
 
   return (
     <div className="space-y-6">
@@ -1691,6 +2287,9 @@ function ReportsTab() {
       )}
       {!loading && reportType === "department" && !!departmentReport && (
         <GenericReport title="Rapport par département" data={departmentReport as Record<string, unknown>} />
+      )}
+      {!loading && reportType === "analytic" && !!analyticReport && (
+        <GenericReport title="Rapport de comptabilité analytique" data={analyticReport as Record<string, unknown>} />
       )}
     </div>
   );

@@ -252,37 +252,198 @@ export const MARKETING_MODULE_DETAILS: Record<string, MarketingModuleDetail> = {
     keyBenefits: ["Pilotage exécutif", "Détection de churn/risque", "Priorisation des clients"],
     capabilities: ["KPIs (OTIF, DSO, marge)", "Performance clients", "Performance produits", "Rapports exécutifs"],
   },
+  "ap-matching": {
+    id: "ap-matching",
+    keyBenefits: ["Réduction des écarts fournisseur", "Moins de litiges", "Traitement comptable plus rapide"],
+    capabilities: ["Matching facture fournisseur ↔ BC ↔ réception", "Détection des écarts", "Workflow d'approbation des écarts"],
+    subCapabilities: ["Tolérances configurables", "Justificatifs et audit trail", "Priorisation des anomalies"],
+    integrations: ["Supply chain", "Facturation", "Comptabilité"],
+  },
+  "b2b-async": {
+    id: "b2b-async",
+    keyBenefits: ["Résilience des flux B2B", "Moins d'échecs silencieux", "Visibilité opérationnelle"],
+    capabilities: ["Orchestration jobs asynchrones", "Retry intelligent", "Monitoring SLA des échanges"],
+    subCapabilities: ["Historique des tentatives", "Diagnostic d'erreur", "Relance manuelle contrôlée"],
+    integrations: ["B2B intégrations", "Notifications", "Audit"],
+  },
+  "pricing-desk": {
+    id: "pricing-desk",
+    keyBenefits: ["Marge protégée", "Règles de prix cohérentes", "Décisions commerciales plus rapides"],
+    capabilities: ["Grilles tarifaires", "Règles de remise", "Simulations d'impact marge"],
+    subCapabilities: ["Segmentation client", "Périodes de validité", "Gouvernance des exceptions"],
+    integrations: ["Commercial terms", "B2B commandes", "Facturation"],
+  },
+  "credit-desk": {
+    id: "credit-desk",
+    keyBenefits: ["Risque client mieux maîtrisé", "Encours sous contrôle", "Arbitrage crédit plus structuré"],
+    capabilities: ["Suivi des limites et encours", "Scoring et alertes risque", "Workflow d'override crédit"],
+    subCapabilities: ["Aging 30/60/90", "Promesses de paiement", "Escalade et approbation"],
+    integrations: ["Credit control", "B2B dashboard", "Recouvrement"],
+  },
 
   // ─────────────────────────── Finance ───────────────────────────
   "billing-ops": {
     id: "billing-ops",
-    keyBenefits: ["Facturation fiable", "Suivi des créances", "Moins d’écarts"],
-    capabilities: ["Factures (vente/B2B)", "Articles facture", "Statuts & échéances", "Avoirs"],
-    subCapabilities: ["Rapprochement (selon activation)", "Exports", "Notes de débit/crédit"],
+    keyBenefits: [
+      "Cycle quote-to-cash structuré",
+      "Recouvrement plus prévisible",
+      "Réduction des écarts de facturation",
+    ],
+    capabilities: [
+      "Facturation vente et B2B (proforma, facture, avoir)",
+      "Lignes de factures, remises, taxes, échéances et statuts",
+      "Suivi des encours, retards et relances opérationnelles",
+      "Gestion notes de crédit/débit et ajustements commerciaux",
+      "Rapprochement opérationnel avec paiements et commandes",
+      "Exports et reporting facturation multi-périmètre",
+    ],
+    subCapabilities: [
+      "Gestion des transitions de statut et workflows d'approbation",
+      "Annulation/remboursement avec piste d'audit",
+      "Scénarios B2B (override, litiges, exceptions validées)",
+    ],
+    integrations: ["Sales", "B2B orders", "Payments", "Accounting", "AP matching"],
+    kpis: [
+      "DSO (Days Sales Outstanding)",
+      "Taux de factures en retard",
+      "Taux d'erreurs de facturation",
+      "Délai moyen de conversion devis → facture",
+    ],
   },
   payments: {
     id: "payments",
-    keyBenefits: ["Encaissement multi-canal", "Traçabilité", "Réconciliation simplifiée"],
-    capabilities: ["Paiements", "Méthodes (cash/card/mobile money)", "Références transaction", "Rapprochement"],
-    subCapabilities: ["Stripe (webhooks)", "Opérateurs mobile money (selon marché)"],
+    keyBenefits: [
+      "Encaissement multi-canal localisé",
+      "Réconciliation accélérée",
+      "Traçabilité complète des transactions",
+    ],
+    capabilities: [
+      "Paiements cash, cartes, mobile money et modes alternatifs",
+      "Moteur de paiement unifié avec statuts et références",
+      "Preuves de paiement et vérification/validation",
+      "Webhooks et callbacks providers avec retry",
+      "Remboursements, annulations et gestion des incidents paiement",
+      "Consolidation des paiements pour reporting financier",
+    ],
+    subCapabilities: [
+      "Upload de pièces justificatives et contrôle manuel",
+      "Support opérateurs régionaux et multi-devises (selon config)",
+      "Gestion des erreurs provider et plans de reprise",
+    ],
+    integrations: ["Billing ops", "SaaS billing", "Accounting", "Notifications"],
+    kpis: [
+      "Taux de succès paiement",
+      "Temps moyen de confirmation paiement",
+      "Taux de litiges/remboursements",
+      "Taux de rapprochement automatique",
+    ],
   },
   accounting: {
     id: "accounting",
-    keyBenefits: ["Vision financière", "Automatisation des écritures", "Meilleur contrôle"],
-    capabilities: ["Plan comptable", "Écritures", "Grand livre", "Périodes", "Budgets", "Rapports"],
-    subCapabilities: ["Écritures automatiques via événements", "Dashboard temps réel (si activé)"],
+    keyBenefits: [
+      "Comptabilité multi-normes (OHADA / IFRS / US GAAP)",
+      "Automatisation des écritures avec gouvernance forte",
+      "Vision financière fiable pour pilotage et audit",
+    ],
+    capabilities: [
+      "Plan comptable dynamique par tenant (templates + personnalisation)",
+      "Moteur de traduction comptable (événement métier → écritures)",
+      "Règles de comptabilisation paramétrables (posting rules)",
+      "Grand livre, journaux, comptes et périodes financières",
+      "Budgets, dépenses, transactions bancaires et reporting",
+      "Comptabilité analytique (dimensions, allocations, modèles réutilisables)",
+      "Gestion des taxes (taux, règles) et préparation e-invoicing",
+      "Contrôles de conformité (immutabilité, clôture de période, audit trail)",
+    ],
+    subCapabilities: [
+      "Normalisation des standards comptables et aliases (ex: GAP → US_GAAP)",
+      "Onboarding enterprise par lot (scripts et runbook)",
+      "Validation stricte des allocations analytiques avec équilibrage",
+      "Templates d'allocation analytiques personnalisés par tenant",
+      "CRUD règles comptables et dimensions analytiques",
+      "Endpoints dédiés pour journal, budgets, périodes, taxes et allocations",
+      "Exports et rapprochement avec facturation/paiements",
+    ],
+    integrations: ["Facturation", "Paiements", "Supply chain", "Fiscal / e-invoice", "Audit métier"],
+    kpis: [
+      "Délai de clôture mensuelle",
+      "Taux d'écritures automatiques",
+      "Taux d'anomalies de validation comptable",
+      "Dérive budget vs réalisé",
+      "Taux d'allocations analytiques équilibrées",
+      "Temps moyen de résolution des écarts comptables",
+    ],
+    useCases: [
+      {
+        title: "Internationalisation comptable",
+        scenario:
+          "Une même transaction métier est traduite automatiquement selon la norme du tenant (OHADA/IFRS/US GAAP) avec règles locales et plan comptable dédié.",
+      },
+      {
+        title: "Clôture et conformité",
+        scenario:
+          "L'équipe clôture une période, verrouille les écritures, produit les rapports financiers et conserve une piste d'audit exploitable.",
+      },
+      {
+        title: "Pilotage analytique",
+        scenario:
+          "Les coûts sont ventilés sur des dimensions analytiques (rayon, projet, centre de coût) avec validation d'équilibre avant enregistrement.",
+      },
+    ],
   },
   insurance: {
     id: "insurance",
-    keyBenefits: ["Moins de friction au comptoir", "Meilleur suivi tiers payant", "Traçabilité des dossiers"],
-    capabilities: ["Assureurs", "Réclamations", "Statuts", "Remises & rapprochement"],
-    subCapabilities: ["Éligibilité temps réel (si intégré)", "Rapports performance assureur"],
+    keyBenefits: [
+      "Parcours tiers payant plus fluide",
+      "Meilleure visibilité sur les dossiers assureurs",
+      "Réduction des rejets et retards de prise en charge",
+    ],
+    capabilities: [
+      "Référentiel assureurs, contrats et paramètres de couverture",
+      "Création et suivi des claims/réclamations",
+      "Cycle de statut assureur (soumis, en attente, payé, rejeté)",
+      "Rapprochement règlement assureur ↔ facturation",
+      "Pilotage remises, participations patient et reste à charge",
+    ],
+    subCapabilities: [
+      "Éligibilité en temps réel (si connecteur disponible)",
+      "Historique complet du dossier et pièces justificatives",
+      "Analyse de performance par assureur et motif de rejet",
+    ],
+    integrations: ["Patients", "Prescriptions", "Billing ops", "Accounting"],
+    kpis: [
+      "Taux d'acceptation des claims",
+      "Délai moyen de remboursement assureur",
+      "Taux de rejet par assureur",
+      "Montant en attente de remboursement",
+    ],
   },
   "e-invoice": {
     id: "e-invoice",
-    keyBenefits: ["Conformité fiscale", "Moins de ressaisie", "Archivage structuré"],
-    capabilities: ["Génération e-facture", "Soumission autorités (si intégrée)", "Audit fiscal"],
-    subCapabilities: ["Signature/horodatage", "QR code", "Logs d’erreurs et corrections"],
+    keyBenefits: [
+      "Conformité fiscale renforcée",
+      "Moins d'opérations manuelles",
+      "Audit fiscal prêt à l'emploi",
+    ],
+    capabilities: [
+      "Génération de e-factures conformes au format attendu",
+      "Soumission aux plateformes fiscales (OBR/DGI/équivalent selon intégration)",
+      "Gestion des statuts fiscaux (soumis, validé, rejeté, annulé, retry)",
+      "Gestion des identifiants fiscaux, credentials et certificats",
+      "Rapports fiscaux et piste d'audit réglementaire",
+    ],
+    subCapabilities: [
+      "Signature, horodatage et QR code réglementaire",
+      "Retry intelligent et gestion des erreurs de soumission",
+      "Journal détaillé des échanges avec l'autorité fiscale",
+    ],
+    integrations: ["Billing ops", "Accounting", "Fiscal compliance", "Business audit"],
+    kpis: [
+      "Taux de soumission fiscale réussie",
+      "Temps moyen de validation fiscale",
+      "Taux de rejet e-facture",
+      "Délai de résolution des erreurs fiscales",
+    ],
   },
 
   // ─────────────────────────── Distribution / service ───────────────────────────
@@ -305,6 +466,20 @@ export const MARKETING_MODULE_DETAILS: Record<string, MarketingModuleDetail> = {
     keyBenefits: ["Traçabilité complète", "Investigation rapide", "Responsabilité clarifiée"],
     capabilities: ["Journal d’événements", "Recherche/filtrage", "Exports"],
     subCapabilities: ["Accès aux opérations sensibles", "Avant/après", "Métadonnées"],
+  },
+  "inventory-recalls": {
+    id: "inventory-recalls",
+    keyBenefits: ["Réaction rapide aux rappels", "Risque patient réduit", "Conformité démontrable"],
+    capabilities: ["Campagnes de rappel lot", "Blocage des lots impactés", "Traçabilité des actions correctives"],
+    subCapabilities: ["Recherche multi-critères", "Suivi statut rappel", "Exports auditables"],
+    integrations: ["Inventaire", "Traçabilité", "Qualité"],
+  },
+  "controlled-substances": {
+    id: "controlled-substances",
+    keyBenefits: ["Conformité réglementaire renforcée", "Réduction des écarts sensibles", "Audit simplifié"],
+    capabilities: ["Registre des mouvements sensibles", "Contrôles d'accès et validations", "Journal d'événements sécurisés"],
+    subCapabilities: ["Double validation", "Historique inviolable", "Alertes d'anomalies"],
+    integrations: ["Prescriptions", "Inventaire", "Audit métier"],
   },
 
   // ─────────────────────────── Growth / steering ───────────────────────────
@@ -342,6 +517,13 @@ export const MARKETING_MODULE_DETAILS: Record<string, MarketingModuleDetail> = {
     id: "settings",
     keyBenefits: ["Plateforme adaptée à l’organisation", "Cohérence documentaire", "Moins d’erreurs"],
     capabilities: ["Séquences de documents", "Modèles", "Paramètres généraux", "Préférences"],
+  },
+  "role-security": {
+    id: "role-security",
+    keyBenefits: ["Accès aligné aux responsabilités", "Moins de risques d'erreur humaine", "Sécurité opérationnelle"],
+    capabilities: ["Rôles et permissions granulaires", "Affectation par utilisateur/équipe", "Politiques d'accès tenant"],
+    subCapabilities: ["Journal des changements de rôles", "Revues périodiques", "Contrôles de séparation des tâches"],
+    integrations: ["Paramètres", "Audit métier", "Notifications sécurité"],
   },
   "saas-billing": {
     id: "saas-billing",

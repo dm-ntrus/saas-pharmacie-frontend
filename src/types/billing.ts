@@ -1,17 +1,15 @@
 /**
  * Types Billing & Abonnements — Alignés backend
- * Source: src/plateform/billing (subscriptions, stripe, plan, payments)
+ * Source: src/plateform/billing (subscriptions, plan, payments)
  */
 
 // —— Plans (API publique) ——
 export type BillingInterval = "monthly" | "yearly";
-export type PlanType = "free" | "paid";
+export type PlanType = "paid";
 export type PlanTier =
-  | "free"
   | "starter"
   | "professional"
-  | "enterprise"
-  | "custom";
+  | "enterprise";
 export type PricingModel = "flat" | "per_user";
 
 export interface PlanEntitlement {
@@ -42,7 +40,6 @@ export interface Plan {
   type: PlanType | string;
   plan_tier: PlanTier | string;
   pricing_model: PricingModel | string;
-  stripe_price_id?: string;
   is_trial_available?: boolean;
   price: number;
   max_users?: number;
@@ -71,7 +68,7 @@ export interface PlanFilterParams {
   sortDir?: "asc" | "desc" | "ASC" | "DESC";
   search?: string;
   planTier?: string;
-  type?: "free" | "paid";
+  type?: "paid";
   interval?: "monthly" | "yearly";
   currency?: string;
   active?: boolean;
@@ -182,10 +179,6 @@ export interface PortalSessionResponse {
 }
 
 // —— Paiements facture ——
-export interface PayInvoiceStripeDto {
-  paymentMethodId: string;
-}
-
 export interface PayInvoiceManualDto {
   imageBase64: string;
 }
@@ -220,7 +213,6 @@ export interface BillingPayment {
 }
 
 export const PAYMENT_METHOD_LABELS: Record<string, string> = {
-  stripe: "Stripe",
   card: "Carte bancaire",
   cash: "Espèces",
   bank_transfer: "Virement bancaire",

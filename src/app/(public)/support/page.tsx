@@ -43,7 +43,7 @@ export default function SupportPage() {
   ];
 
   return (
-    <div className="min-h-screen pt-28 sm:pt-32 pb-16 sm:pb-24 bg-white">
+    <div className="min-h-screen pt-24 sm:pt-32 pb-16 sm:pb-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
@@ -54,7 +54,7 @@ export default function SupportPage() {
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 mb-3">
               {t("tag")}
             </p>
-            <h1 className="text-3xl sm:text-5xl font-display font-bold text-slate-900 mb-4 tracking-tight">
+            <h1 className="text-3xl sm:text-5xl font-display font-bold text-slate-900 mb-4 tracking-tight leading-tight">
               {t("title")}{" "}
               <span className="text-emerald-600">{t("titleHighlight")}</span>
             </h1>
@@ -73,20 +73,20 @@ export default function SupportPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.05 }}
-              className="p-7 sm:p-8 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-white hover:shadow-xl transition-all group"
+              className="p-5 min-[390px]:p-6 sm:p-8 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-white hover:shadow-xl transition-all group h-full flex flex-col"
             >
               <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center mb-5 shadow-sm group-hover:bg-emerald-600 transition-colors">
                 <ch.icon className="w-7 h-7 text-emerald-600 group-hover:text-white transition-colors" />
               </div>
-              <h3 className="text-xl font-display font-bold text-slate-900 mb-2">
+              <h3 className="text-xl font-display font-bold text-slate-900 mb-2 line-clamp-2 min-h-[3.5rem]">
                 {ch.title}
               </h3>
-              <p className="text-sm text-slate-500 leading-relaxed mb-5">
+              <p className="text-sm text-slate-500 leading-relaxed mb-5 line-clamp-3 min-h-[4rem]">
                 {ch.desc}
               </p>
               <Link
                 href={ch.href}
-                className="inline-flex items-center gap-2 text-emerald-600 text-sm font-bold hover:text-slate-900 transition-colors"
+                className="inline-flex items-center gap-2 text-emerald-600 text-sm font-bold hover:text-slate-900 transition-colors min-h-10 mt-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 rounded-lg"
               >
                 {ch.cta}
                 <ArrowRight className="w-4 h-4" />
@@ -96,7 +96,7 @@ export default function SupportPage() {
         </div>
 
         {/* Popular articles */}
-        <div className="bg-slate-50 rounded-3xl border border-slate-100 p-8 sm:p-12 mb-12">
+        <div className="bg-slate-50 rounded-3xl border border-slate-100 p-5 min-[390px]:p-6 sm:p-12 mb-12">
           <h2 className="text-xl font-display font-bold text-slate-900 mb-6">
             {t("popularArticlesTitle")}
           </h2>
@@ -105,10 +105,10 @@ export default function SupportPage() {
               <Link
                 key={article.label}
                 href={article.href}
-                className="flex items-center gap-3 p-4 bg-white rounded-xl border border-slate-100 hover:border-emerald-200 hover:shadow-sm transition-all group"
+                className="flex items-start gap-3 p-4 bg-white rounded-xl border border-slate-100 hover:border-emerald-200 hover:shadow-sm transition-all group min-h-14 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40"
               >
                 <Zap className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span className="text-sm font-medium text-slate-600 group-hover:text-slate-900 transition-colors">
+                <span className="text-sm font-medium text-slate-600 group-hover:text-slate-900 transition-colors leading-snug">
                   {article.label}
                 </span>
               </Link>

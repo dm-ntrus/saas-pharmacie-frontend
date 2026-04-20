@@ -20,7 +20,6 @@ import type {
   CheckoutSessionResponse,
   CreatePortalDto,
   PortalSessionResponse,
-  PayInvoiceStripeDto,
   PayInvoiceManualDto,
   SubscriptionCreditNote,
   SubscriptionCreditNoteReasonCode,
@@ -45,8 +44,8 @@ export const BILLING_RETURN_SYNC_PARAM = "billing_sync";
 
 /**
  * Raisons reconnues pour déclencher un rafraîchissement abonnement + plan-entitlements.
- * - `checkout` : retour d’un flux de souscription hébergé (ex. Stripe Checkout, ou équivalent).
- * - `portal` : retour self-service (ex. portail client Stripe, ou équivalent).
+ * - `checkout` : retour d’un flux de souscription hébergé.
+ * - `portal` : retour self-service.
  * - `subscription` : tout autre retour (mobile money, cash + deep link, validation manuelle côté plateforme, etc.).
  */
 export type BillingReturnSyncReason = "checkout" | "portal" | "subscription";
@@ -89,7 +88,7 @@ async function invalidateSubscriptionBillingAsync(
 
 /**
  * Invalide contexte d’abonnement, historique et entitlements plan (pharmacie courante).
- * À utiliser après un paiement facture d’abonnement réussi (Stripe, preuve OCR, upload, mobile money API, etc.).
+ * À utiliser après un paiement facture d’abonnement réussi (preuve OCR, upload, mobile money API, etc.).
  */
 export function syncSubscriptionBillingCaches(
   qc: QueryClient,
@@ -195,31 +194,6 @@ export function usePortalSession() {
 }
 
 // —— Paiements facture (tenants/:tenantId/billing/payments) ——
-
-export function usePayInvoiceStripe() {
-  const tenantId = useBillingTenantId();
-  const { pharmacyId } = useTenantApiContext();
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({
-      invoiceId,
-      paymentMethodId,
-    }: { invoiceId: string } & PayInvoiceStripeDto) =>
-      apiService.post<unknown>(
-        `/tenants/${encodeURIComponent(tenantId)}/billing/payments/invoices/${encodeURIComponent(invoiceId)}/stripe`,
-        { paymentMethodId }
-      ),
-    onSuccess: () => {
-      syncSubscriptionBillingCaches(qc, tenantId, pharmacyId);
-      toast.success("Paiement enregistré");
-    },
-    onError: (err: unknown) =>
-      toast.error(
-        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ??
-          "Erreur de paiement"
-      ),
-  });
-}
 
 export function usePayInvoiceManual() {
   const tenantId = useBillingTenantId();

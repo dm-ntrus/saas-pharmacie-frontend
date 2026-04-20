@@ -35,6 +35,10 @@ export const PLATFORM_MODULE_META: Record<string, ModuleMeta> = {
   "b2b-integrations": { icon: "Plug", outcomes: 2 },
   "b2b-governance": { icon: "ShieldCheck", outcomes: 2 },
   "b2b-dashboard": { icon: "BarChart3", outcomes: 2 },
+  "ap-matching": { icon: "Sheet", outcomes: 2 },
+  "b2b-async": { icon: "GitBranch", outcomes: 2 },
+  "pricing-desk": { icon: "Tags", outcomes: 2 },
+  "credit-desk": { icon: "BadgeDollarSign", outcomes: 2 },
   "billing-ops": { icon: "Receipt", outcomes: 2 },
   payments: { icon: "Wallet", outcomes: 2 },
   accounting: { icon: "BookOpen", outcomes: 2 },
@@ -43,12 +47,15 @@ export const PLATFORM_MODULE_META: Record<string, ModuleMeta> = {
   delivery: { icon: "Truck", outcomes: 2 },
   quality: { icon: "ShieldCheck", outcomes: 2 },
   "business-audit": { icon: "ScrollText", outcomes: 2 },
+  "inventory-recalls": { icon: "ShieldCheck", outcomes: 2 },
+  "controlled-substances": { icon: "FileText", outcomes: 2 },
   analytics: { icon: "BarChart3", outcomes: 2 },
   reports: { icon: "PieChart", outcomes: 2 },
   loyalty: { icon: "Gift", outcomes: 2, planNote: true },
   notifications: { icon: "Bell", outcomes: 2 },
   hr: { icon: "UserCog", outcomes: 2 },
   settings: { icon: "Settings", outcomes: 2 },
+  "role-security": { icon: "Settings", outcomes: 2 },
   "saas-billing": { icon: "Receipt", outcomes: 2, planNote: true },
 };
 
@@ -70,6 +77,10 @@ export const PLATFORM_CATEGORY_MODULE_IDS: { id: string; moduleIds: string[] }[]
       "b2b-integrations",
       "b2b-governance",
       "b2b-dashboard",
+      "ap-matching",
+      "b2b-async",
+      "pricing-desk",
+      "credit-desk",
     ],
   },
   {
@@ -85,13 +96,20 @@ export const PLATFORM_CATEGORY_MODULE_IDS: { id: string; moduleIds: string[] }[]
   { id: "distribution", moduleIds: ["delivery", "teleconsultation"] },
   {
     id: "quality",
-    moduleIds: ["quality", "business-audit", "cold-chain", "traceability"],
+    moduleIds: [
+      "quality",
+      "business-audit",
+      "inventory-recalls",
+      "controlled-substances",
+      "cold-chain",
+      "traceability",
+    ],
   },
   {
     id: "growth",
     moduleIds: ["analytics", "reports", "loyalty", "notifications", "ai"],
   },
-  { id: "org", moduleIds: ["hr", "settings", "saas-billing"] },
+  { id: "org", moduleIds: ["hr", "settings", "role-security", "saas-billing"] },
 ];
 
 export const TOTAL_PLATFORM_MODULES = Object.keys(PLATFORM_MODULE_META).length;

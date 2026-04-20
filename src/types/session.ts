@@ -15,8 +15,7 @@ export type PlanTier =
   | "free"
   | "starter"
   | "professional"
-  | "enterprise"
-  | "custom";
+  | "enterprise";
 
 export type SubscriptionStatus =
   | "active"
@@ -33,7 +32,6 @@ export const PLAN_TIER_RANK: Record<PlanTier, number> = {
   starter: 1,
   professional: 2,
   enterprise: 3,
-  custom: 4,
 };
 
 export interface SessionPlan {
@@ -152,14 +150,13 @@ export interface MeResponseBody {
 
 /**
  * Helper: returns whether the active plan is at least the requested tier.
- * `custom` plans always satisfy any requirement.
+ * higher paid tiers satisfy lower requirements.
  */
 export function planSatisfies(
   current: PlanTier | undefined | null,
   required: PlanTier,
 ): boolean {
   if (!current) return false;
-  if (current === "custom") return true;
   return (PLAN_TIER_RANK[current] ?? 0) >= (PLAN_TIER_RANK[required] ?? 0);
 }
 

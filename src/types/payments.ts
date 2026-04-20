@@ -12,7 +12,6 @@ export type PaymentStatus =
 
 export type PaymentProvider = 
   | 'manual'       // Paiement manuel avec preuve
-  | 'stripe'       // Stripe (pour plus tard)
   | 'bank_transfer' // Virement bancaire
   | 'cash';        // Espèces
 
@@ -83,14 +82,12 @@ export const PAYMENT_STATUS_COLORS: Record<PaymentStatus, string> = {
 
 export const PAYMENT_PROVIDER_LABELS: Record<PaymentProvider, string> = {
   manual: 'Manuel',
-  stripe: 'Carte bancaire',
   bank_transfer: 'Virement',
   cash: 'Espèces',
 };
 
 export const PAYMENT_PROVIDER_ICONS: Record<PaymentProvider, string> = {
   manual: '📄',
-  stripe: '💳',
   bank_transfer: '🏦',
   cash: '💰',
 };

@@ -696,7 +696,7 @@ saas-pharmacie-backend/
   - Écarts et ajustements
 
 ##### 5.6 Intégrations Paiement
-- **Stripe**
+- **Provider cartes bancaires**
   - Paiements en ligne
   - Webhooks
   - Gestion des échecs

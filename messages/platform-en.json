@@ -231,6 +231,34 @@
         "outcome0": "Executive steering",
         "outcome1": "Early risk detection"
       },
+      "ap-matching": {
+        "title": "AP Matching",
+        "tagline": "Purchase-to-invoice matching",
+        "description": "Automate supplier invoice, purchase order, and goods receipt matching to reduce discrepancies.",
+        "outcome0": "Fewer accounting disputes",
+        "outcome1": "Faster purchase close"
+      },
+      "b2b-async": {
+        "title": "B2B async jobs",
+        "tagline": "Orchestration and reliability",
+        "description": "Run asynchronous B2B flows with retries, monitoring, and error diagnostics.",
+        "outcome0": "More resilient partner flows",
+        "outcome1": "Real-time visibility on failures"
+      },
+      "pricing-desk": {
+        "title": "Pricing Desk",
+        "tagline": "Pricing, discounts, governance",
+        "description": "Define B2B pricing policies with margin guardrails and exception approvals.",
+        "outcome0": "Consistent pricing policy",
+        "outcome1": "Better margin protection"
+      },
+      "credit-desk": {
+        "title": "Credit Desk",
+        "tagline": "Exposure and customer risk",
+        "description": "Monitor credit limits, exposure, and override requests to secure B2B sales.",
+        "outcome0": "Controlled customer risk",
+        "outcome1": "Faster credit decisions"
+      },
       "traceability": {
         "title": "Advanced traceability",
         "tagline": "Verifiable supply chain",
@@ -254,39 +282,39 @@
       },
       "billing-ops": {
         "title": "Billing (operations)",
-        "tagline": "Customer invoices and tracking",
-        "description": "Issue and track billing tied to pharmacy activity (customers, related payments).",
-        "outcome0": "Invoices aligned with sales",
-        "outcome1": "Receivables visibility"
+        "tagline": "Quote-to-cash and collections",
+        "description": "Run quotes, invoices, credit notes, due dates, reminders, and payment/accounting reconciliation.",
+        "outcome0": "End-to-end controlled billing cycle",
+        "outcome1": "Better receivables control with fewer discrepancies"
       },
       "payments": {
         "title": "Payments",
-        "tagline": "Mobile money, cards, local scenarios",
-        "description": "Centralize payment methods for your market (including mobile money where configured).",
-        "outcome0": "Multi-channel collection",
-        "outcome1": "Simpler reconciliation"
+        "tagline": "Omnichannel collection and reliability",
+        "description": "Unify cash/card/mobile money payments, proofs, webhooks, refunds, and reconciliation.",
+        "outcome0": "Improved payment success rate",
+        "outcome1": "Faster traceability and reconciliation"
       },
       "accounting": {
         "title": "Accounting",
-        "tagline": "Operational ledger",
-        "description": "Activity-linked accounting: entries, journals, and financial insight for the owner.",
-        "outcome0": "Sales ↔ accounting link",
-        "outcome1": "Exports and management control"
+        "tagline": "Enterprise multi-standard accounting",
+        "description": "Internationalized accounting engine: dynamic chart of accounts, posting rules, analytics, taxes, periods, and compliance controls.",
+        "outcome0": "Automate postings with strong governance and auditability",
+        "outcome1": "Drive finance and analytic performance per tenant"
       },
       "e-invoice": {
         "title": "E-invoicing",
-        "tagline": "Electronic invoicing",
-        "description": "Prepare for dematerialization and structured exchange with the ecosystem.",
-        "outcome0": "Processes ready for compliance",
-        "outcome1": "Less re-keying",
+        "tagline": "Automated fiscal compliance",
+        "description": "Generate, submit, track, and correct e-invoices with fiscal auditability and retry/rejection handling.",
+        "outcome0": "More reliable fiscal submissions",
+        "outcome1": "Audit-ready compliance evidence",
         "planNote": "May depend on plan or entitlements."
       },
       "insurance": {
         "title": "Insurance",
-        "tagline": "Third-party payment and coverage",
-        "description": "Handle insurance cases to speed up service at the counter.",
-        "outcome0": "Less friction at checkout",
-        "outcome1": "Traceability of coverage"
+        "tagline": "Third-party payment, claims, reconciliation",
+        "description": "Manage insurers, claims, reimbursement statuses, and reconciliation to reduce rejects and delays.",
+        "outcome0": "Smoother patient checkout journey",
+        "outcome1": "Clearer visibility on reimbursements"
       },
       "delivery": {
         "title": "Deliveries",
@@ -308,6 +336,20 @@
         "description": "Business event logging for internal audit, compliance, and investigation.",
         "outcome0": "Actionable audit trail",
         "outcome1": "Clear accountability"
+      },
+      "inventory-recalls": {
+        "title": "Batch recalls",
+        "tagline": "Product incident management",
+        "description": "Launch and track recall campaigns to isolate impacted batches quickly.",
+        "outcome0": "Faster response to alerts",
+        "outcome1": "Stronger compliance and safety"
+      },
+      "controlled-substances": {
+        "title": "Controlled substances",
+        "tagline": "Registers and controls",
+        "description": "Track sensitive product movements with stronger validations and secured logs.",
+        "outcome0": "Regulatory compliance",
+        "outcome1": "Fewer critical discrepancies"
       },
       "analytics": {
         "title": "Analytics",
@@ -351,6 +393,13 @@
         "description": "General settings, document sequences, templates, and preferences to fit the system to your pharmacy.",
         "outcome0": "Consistent numbering",
         "outcome1": "Customized printouts"
+      },
+      "role-security": {
+        "title": "Roles & security",
+        "tagline": "Granular permissions",
+        "description": "Control access by role and permission to secure sensitive operations.",
+        "outcome0": "Access aligned with responsibilities",
+        "outcome1": "Auditable permission changes"
       },
       "saas-billing": {
         "title": "Subscription & platform billing",

@@ -284,7 +284,7 @@ const fr = {
       title: "Abonnement & facturation plateforme",
       tagline: "Votre relation commerciale avec SyntixPharma",
       description:
-        "Gestion de l’abonnement SaaS, mises à niveau de plan et synchronisation avec la facturation (ex. Stripe) selon votre offre.",
+        "Gestion de l’abonnement SaaS, mises à niveau de plan et synchronisation avec la facturation selon votre offre.",
       outcome0: "Transparence des plans et options",
       outcome1: "Montée en gamme contrôlée",
       planNote: "Interface dédiée côté tenant (billing upgrade, factures).",
@@ -571,7 +571,7 @@ const en = {
       title: "Subscription & platform billing",
       tagline: "Your commercial relationship with SyntixPharma",
       description:
-        "SaaS subscription management, plan upgrades, and billing sync (e.g. Stripe) per your offer.",
+        "SaaS subscription management, plan upgrades, and billing sync per your offer.",
       outcome0: "Transparent plans and options",
       outcome1: "Controlled upsell",
       planNote: "Dedicated tenant UI (billing upgrade, invoices).",

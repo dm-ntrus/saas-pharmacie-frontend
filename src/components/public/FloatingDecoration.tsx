@@ -32,7 +32,7 @@ const MOBILE_POSITIONS = [
 
 export function FloatingDecoration() {
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    <div className="absolute inset-0 overflow-hidden pointer-events-none hidden sm:block">
       {FLOATING_IMAGES.map((img, index) => {
         const pos = POSITIONS[index];
         return (

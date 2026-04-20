@@ -2,17 +2,24 @@
 
 import { motion } from "framer-motion";
 import { useMessages, useTranslations } from "@/lib/i18n-simple";
+import { useMarketingTrustedPartners } from "@/hooks/api/usePublicDynamicModules";
 
 export default function TrustedBy() {
   const t = useTranslations("marketing");
   const messages = useMessages() as {
     platformModules?: { trustedLogos?: string[] };
   };
-  const logos = messages.platformModules?.trustedLogos ?? [];
+  const { data } = useMarketingTrustedPartners("home");
+  const logosFromApi = (data ?? [])
+    .map((partner: any) => partner?.name)
+    .filter((name: unknown): name is string => typeof name === "string" && name.trim().length > 0);
+  const logos = logosFromApi.length
+    ? logosFromApi
+    : (messages.platformModules?.trustedLogos ?? []);
 
   return (
-    <section className="py-16 overflow-hidden border-y border-slate-100 bg-slate-50/50">
-      <div className="container mx-auto px-4 mb-12">
+    <section className="py-12 sm:py-16 overflow-hidden border-y border-slate-100 bg-slate-50/50">
+      <div className="container mx-auto px-4 mb-8 sm:mb-12">
         <p className="text-center text-xs font-bold text-slate-400 uppercase tracking-[0.3em]">
           {t("trustedBy")}
         </p>
@@ -23,7 +30,7 @@ export default function TrustedBy() {
           {[...logos, ...logos].map((logo, i) => (
             <div
               key={`${logo}-${i}`}
-              className="text-2xl md:text-4xl font-bold text-slate-200 hover:text-emerald-600 transition-colors duration-500 font-display cursor-default select-none"
+              className="text-xl sm:text-2xl md:text-4xl font-bold text-slate-200 hover:text-emerald-600 transition-colors duration-500 font-display cursor-default select-none"
             >
               {logo}
             </div>
@@ -44,6 +51,11 @@ export default function TrustedBy() {
         }
         .animate-marquee:hover {
           animation-play-state: paused;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .animate-marquee {
+            animation: none;
+          }
         }
       `}</style>
     </section>

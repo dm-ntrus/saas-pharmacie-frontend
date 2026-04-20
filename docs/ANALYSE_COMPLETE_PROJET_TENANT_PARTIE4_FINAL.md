@@ -331,7 +331,7 @@
 - **Keycloak** - SSO, Organizations, Users
 
 #### 2. Paiements
-- **Stripe** - Cartes bancaires
+- **Provider cartes bancaires** - Cartes bancaires
 - **Mobile Money** - Orange, MTN, Moov
 - **Webhooks** - Notifications temps réel
 

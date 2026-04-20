@@ -75,6 +75,23 @@ export function useInitializeChartOfAccounts() {
   });
 }
 
+export function useInitializeEnterpriseAccounting() {
+  const pid = usePharmacyId();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      apiService.post(`${chartOfAccountsPath(pid)}/initialize-enterprise`, data),
+    onSuccess: () => {
+      toast.success("Configuration comptable entreprise initialisée");
+      qc.invalidateQueries({ queryKey: ["accounts", pid] });
+      qc.invalidateQueries({ queryKey: ["tax-rates", pid] });
+      qc.invalidateQueries({ queryKey: ["posting-rules", pid] });
+      qc.invalidateQueries({ queryKey: ["chart-of-accounts-validate", pid] });
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+}
+
 export function useChartOfAccountsRecommendation(countryCode: string) {
   const pid = usePharmacyId();
   return useQuery({
@@ -82,6 +99,176 @@ export function useChartOfAccountsRecommendation(countryCode: string) {
     queryFn: () =>
       apiService.get(`${chartOfAccountsPath(pid)}/recommendation/${countryCode}`),
     enabled: !!pid && !!countryCode,
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// ACCOUNTING TRANSLATION ENGINE (posting rules + simulation)
+// ═══════════════════════════════════════════════════════════
+
+export function usePostingRules(eventType?: string) {
+  const pid = usePharmacyId();
+  return useQuery({
+    queryKey: ["posting-rules", pid, eventType],
+    queryFn: () =>
+      apiService.get(`${basePath(pid)}/posting-rules`, {
+        params: eventType ? { event_type: eventType } : undefined,
+      }),
+    enabled: !!pid,
+  });
+}
+
+export function useCreatePostingRule() {
+  const pid = usePharmacyId();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      apiService.post(`${basePath(pid)}/posting-rules`, data),
+    onSuccess: () => {
+      toast.success("Règle d'imputation créée");
+      qc.invalidateQueries({ queryKey: ["posting-rules", pid] });
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+}
+
+export function useUpdatePostingRule() {
+  const pid = usePharmacyId();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Record<string, unknown> }) =>
+      apiService.patch(`${basePath(pid)}/posting-rules/${id}`, data),
+    onSuccess: () => {
+      toast.success("Règle d'imputation mise à jour");
+      qc.invalidateQueries({ queryKey: ["posting-rules", pid] });
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+}
+
+export function useSimulateAccountingTranslation() {
+  const pid = usePharmacyId();
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      apiService.post(`${basePath(pid)}/translation/simulate`, data),
+    onError: (err: Error) => toast.error(err.message),
+  });
+}
+
+export function useTranslateAndPost() {
+  const pid = usePharmacyId();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      apiService.post(`${basePath(pid)}/translation/post`, data),
+    onSuccess: () => {
+      toast.success("Écriture traduite et comptabilisée");
+      qc.invalidateQueries({ queryKey: ["transactions", pid] });
+      qc.invalidateQueries({ queryKey: ["accounts", pid] });
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// ANALYTIC ACCOUNTING
+// ═══════════════════════════════════════════════════════════
+
+export function useAnalyticDimensions(isActive?: boolean) {
+  const pid = usePharmacyId();
+  return useQuery({
+    queryKey: ["analytic-dimensions", pid, isActive],
+    queryFn: () =>
+      apiService.get(`${basePath(pid)}/analytic/dimensions`, {
+        params: typeof isActive === "boolean" ? { is_active: String(isActive) } : undefined,
+      }),
+    enabled: !!pid,
+  });
+}
+
+export function useCreateAnalyticDimension() {
+  const pid = usePharmacyId();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      apiService.post(`${basePath(pid)}/analytic/dimensions`, data),
+    onSuccess: () => {
+      toast.success("Dimension analytique créée");
+      qc.invalidateQueries({ queryKey: ["analytic-dimensions", pid] });
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+}
+
+export function useUpdateAnalyticDimension() {
+  const pid = usePharmacyId();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Record<string, unknown> }) =>
+      apiService.patch(`${basePath(pid)}/analytic/dimensions/${id}`, data),
+    onSuccess: () => {
+      toast.success("Dimension analytique mise à jour");
+      qc.invalidateQueries({ queryKey: ["analytic-dimensions", pid] });
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+}
+
+export function useAllocateTransactionAnalytics() {
+  const pid = usePharmacyId();
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      apiService.post(`${basePath(pid)}/analytic/allocations`, data),
+    onError: (err: Error) => toast.error(err.message),
+  });
+}
+
+export function useTransactionAnalyticAllocations(transactionId: string) {
+  const pid = usePharmacyId();
+  return useQuery({
+    queryKey: ["transaction-analytic-allocations", pid, transactionId],
+    queryFn: () => apiService.get(`${basePath(pid)}/analytic/allocations/${transactionId}`),
+    enabled: !!pid && !!transactionId,
+  });
+}
+
+export function useAnalyticAllocationTemplates(scope: "transaction" | "journal" | "rule" = "transaction") {
+  const pid = usePharmacyId();
+  return useQuery({
+    queryKey: ["analytic-allocation-templates", pid, scope],
+    queryFn: () =>
+      apiService.get(`${basePath(pid)}/analytic/templates`, {
+        params: { scope },
+      }),
+    enabled: !!pid,
+  });
+}
+
+export function useCreateAnalyticAllocationTemplate() {
+  const pid = usePharmacyId();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      apiService.post(`${basePath(pid)}/analytic/templates`, data),
+    onSuccess: () => {
+      toast.success("Template analytique enregistré");
+      qc.invalidateQueries({ queryKey: ["analytic-allocation-templates", pid] });
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+}
+
+export function useDeleteAnalyticAllocationTemplate() {
+  const pid = usePharmacyId();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) =>
+      apiService.delete(`${basePath(pid)}/analytic/templates/${id}`),
+    onSuccess: () => {
+      toast.success("Template analytique supprimé");
+      qc.invalidateQueries({ queryKey: ["analytic-allocation-templates", pid] });
+    },
+    onError: (err: Error) => toast.error(err.message),
   });
 }
 
@@ -1162,6 +1349,16 @@ export function useDepartmentReport() {
     queryKey: ["department-report", pid],
     queryFn: () =>
       apiService.get(`${basePath(pid)}/reports/department`),
+    enabled: !!pid,
+  });
+}
+
+export function useAnalyticReport(params?: { startDate?: string; endDate?: string }) {
+  const pid = usePharmacyId();
+  return useQuery({
+    queryKey: ["analytic-report", pid, params],
+    queryFn: () =>
+      apiService.get(`${basePath(pid)}/reports/analytic`, { params }),
     enabled: !!pid,
   });
 }

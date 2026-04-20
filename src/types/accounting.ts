@@ -206,6 +206,42 @@ export interface CreateTransactionDto {
   description: string;
   reference_number?: string;
   transaction_date?: string;
+  metadata?: Record<string, unknown>;
+}
+
+export type AnalyticDimensionType =
+  | "cost_center"
+  | "department"
+  | "project"
+  | "product_line"
+  | "channel"
+  | "custom";
+
+export interface AnalyticDimension {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  pharmacy_id: string;
+  code: string;
+  name: string;
+  description?: string;
+  dimension_type: AnalyticDimensionType;
+  parent_dimension_id?: string;
+  is_active: boolean;
+  metadata?: Record<string, unknown>;
+}
+
+export interface TransactionAnalyticAllocation {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  pharmacy_id: string;
+  transaction_id: string;
+  analytic_dimension_id: string;
+  allocation_percentage: string;
+  allocation_amount: string;
+  notes?: string;
+  metadata?: Record<string, unknown>;
 }
 
 export interface JournalEntryLineDto {

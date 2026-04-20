@@ -85,3 +85,35 @@ export function getCurrencyByCountry(code: string): string {
   };
   return map[code] ?? "USD";
 }
+
+export function getCurrencyFromLocale(locale?: string): string {
+  if (!locale) return "USD";
+  const normalized = locale.replace("_", "-");
+  const region = normalized.split("-")[1]?.toUpperCase();
+  if (!region) return "USD";
+  return getCurrencyByCountry(region);
+}
+
+export function pickSupportedCurrency(
+  locales: readonly string[] | undefined,
+  supportedCurrencies: readonly string[],
+  fallbackCurrency: string = "USD",
+): string {
+  const supported = new Set(
+    supportedCurrencies
+      .map((c) => String(c || "").trim().toUpperCase())
+      .filter(Boolean),
+  );
+  const fallback = fallbackCurrency.toUpperCase();
+
+  if (supported.size === 0) return fallback;
+
+  const normalizedLocales = (locales ?? []).filter(Boolean);
+  for (const locale of normalizedLocales) {
+    const candidate = getCurrencyFromLocale(locale).toUpperCase();
+    if (supported.has(candidate)) return candidate;
+  }
+
+  if (supported.has(fallback)) return fallback;
+  return Array.from(supported)[0] ?? fallback;
+}
