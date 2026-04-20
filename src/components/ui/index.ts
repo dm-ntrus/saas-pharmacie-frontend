@@ -68,3 +68,19 @@ export { AccessibilityPanel } from "./AccessibilityPanel";
 export { FormInput, FormSelect, FormTextarea, FormCheckbox } from "./FormField";
 export { PageTransition } from "./PageTransition";
 export { SkipToContent } from "./SkipToContent";
+
+export { Alert, AlertTitle, AlertDescription } from "./Alert";
+export { Separator } from "./Separator";
+export { Textarea } from "./Textarea";
+export { Label } from "./Label";
+export { Switch } from "./Switch";
+export {
+  Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableCaption,
+} from "./Table";

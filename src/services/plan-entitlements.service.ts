@@ -24,10 +24,9 @@ function unwrapPlanEntitlements(raw: unknown, pharmacyId: string): PlanEntitleme
 
 function normalizeResponse(o: Record<string, unknown>, pharmacyId: string): PlanEntitlementsSummary {
   const tenantId = (o.tenantId as string | undefined) || "";
-  const billingOrganizationId = (o.billingOrganizationId as string | undefined) || "";
 
   return {
-    tenantId: tenantId || billingOrganizationId,
+    tenantId: tenantId,
     pharmacyContextId: (o.pharmacyContextId as string) || pharmacyId,
     features: (o.features as Record<string, boolean>) || {},
     limits: (o.limits as Record<string, number>) || {},

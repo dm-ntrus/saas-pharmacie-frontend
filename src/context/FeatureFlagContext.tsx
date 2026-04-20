@@ -39,17 +39,57 @@ export const FeatureFlagProvider: React.FC<{ children: React.ReactNode }> = ({
   const pharmacyId = currentOrganization?.id;
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isFetching } = useQuery({
+  const { data, isLoading, isFetching, error } = useQuery({
     queryKey: planEntitlementsQueryKey(pharmacyId),
     queryFn: () => fetchPlanEntitlementsSummary(pharmacyId!),
     enabled: !!pharmacyId,
     staleTime: 30_000,
-    retry: 1,
+    retry: (failureCount, error: any) => {
+      // Ne pas retry sur 404 (pas d'abonnement) ou 403 (pas autorisé)
+      const status = error?.response?.status;
+      if (status === 404 || status === 403) {
+        return false;
+      }
+      // Retry max 2 fois sur erreurs réseau/serveur (5xx)
+      return failureCount < 2;
+    },
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 5000),
   });
 
   const features = data?.features ?? {};
   const limits = data?.limits ?? {};
   const loading = !!pharmacyId && (isLoading || isFetching);
+
+  // Gestion d'erreur explicite
+  useEffect(() => {
+    if (error) {
+      const status = (error as any)?.response?.status;
+
+      if (status === 404) {
+        // Pas d'abonnement actif - état normal pour free tier
+        console.warn("No active subscription found for pharmacy");
+        // Pas de toast, c'est un état valide
+      } else if (status === 403) {
+        // Accès refusé - problème de permissions
+        toast.error("Accès refusé aux informations d'abonnement", {
+          id: "entitlement-403",
+          duration: 5000,
+        });
+      } else if (status && status >= 500) {
+        // Erreur serveur
+        toast.error("Erreur serveur lors du chargement des fonctionnalités", {
+          id: "entitlement-5xx",
+          duration: 5000,
+        });
+      } else if (error) {
+        // Autre erreur (réseau, timeout, etc.)
+        toast.error("Erreur lors du chargement des fonctionnalités", {
+          id: "entitlement-error",
+          duration: 5000,
+        });
+      }
+    }
+  }, [error]);
 
   // Sync entitled module keys to a cookie for Edge middleware consumption
   useEffect(() => {
@@ -78,16 +118,39 @@ export const FeatureFlagProvider: React.FC<{ children: React.ReactNode }> = ({
   const isFeatureEnabled = useCallback(
     (featureKey: string): boolean => {
       if (!featureKey) return false;
-      // UX/Prod-safety: tant que les entitlements ne sont pas chargés (ou indisponibles),
-      // on n'emploie pas la sidebar comme "gate" dur. Le backend (guards) reste l'autorité.
-      // Sans ça, la navigation devient vide au moindre souci réseau.
-      if (loading || Object.keys(features).length === 0) return true;
+      
+      // Distinguer loading initial vs erreur
+      if (loading && Object.keys(features).length === 0) {
+        // Premier chargement: optimiste (évite sidebar vide)
+        return true;
+      }
+
+      if (error) {
+        const status = (error as any)?.response?.status;
+        if (status === 404) {
+          // Pas d'abonnement: mode free tier (features de base uniquement)
+          const freeTierFeatures = [
+            "module.dashboard",
+            "module.settings",
+            "module.sales",
+            "module.inventory",
+            "module.patients",
+            "module.prescriptions",
+            "module.notifications",
+          ];
+          return freeTierFeatures.includes(featureKey.toLowerCase());
+        }
+        // Autre erreur: pessimiste (sécurité)
+        return false;
+      }
+
+      // Vérification normale
       if (features[featureKey] !== undefined) return !!features[featureKey];
       const lower = featureKey.toLowerCase();
       if (features[lower] !== undefined) return !!features[lower];
       return false;
     },
-    [features, loading],
+    [features, loading, error],
   );
 
   const refresh = useCallback(async () => {
