@@ -382,9 +382,12 @@ export function proxy(req: NextRequest) {
     tenantSlugHost &&
     (pathname === "/" || pathname === "")
   ) {
-    const authHeader = req.headers.get("authorization") || "";
-    // BFF sets kc_at (HttpOnly), client OIDC sets access_token — check both
-    const cookieToken = req.cookies.get("kc_at")?.value || req.cookies.get("access_token")?.value;
+  const authHeader = req.headers.get("authorization") || "";
+  // Prefer backend session cookie; fallback to upstream access token cookies.
+  const cookieToken =
+    req.cookies.get("kc_session")?.value ||
+    req.cookies.get("kc_at")?.value ||
+    req.cookies.get("access_token")?.value;
     const token = authHeader.replace("Bearer ", "") || cookieToken;
     const payload = token ? safeDecodeJwt(token) : null;
     if (payload) {
@@ -429,7 +432,10 @@ export function proxy(req: NextRequest) {
   }
 
   const authHeader = req.headers.get("authorization") || "";
-  const cookieToken = req.cookies.get("kc_at")?.value || req.cookies.get("access_token")?.value;
+  const cookieToken =
+    req.cookies.get("kc_session")?.value ||
+    req.cookies.get("kc_at")?.value ||
+    req.cookies.get("access_token")?.value;
   const token = authHeader.replace("Bearer ", "") || cookieToken;
 
   if (!token) {
@@ -512,7 +518,9 @@ export function proxy(req: NextRequest) {
       if (entitlementKey) {
         const entitledRaw = req.cookies.get("entitled_modules")?.value;
         if (entitledRaw) {
-          const entitled = entitledRaw.split(",").map((s) => s.trim());
+          const entitled = decodeURIComponent(entitledRaw)
+            .split(",")
+            .map((s) => s.trim());
           if (!entitled.includes(entitlementKey)) {
             url.pathname = `/tenant/${pathParts[2]}/dashboard`;
             url.searchParams.set("plan_blocked", moduleName);

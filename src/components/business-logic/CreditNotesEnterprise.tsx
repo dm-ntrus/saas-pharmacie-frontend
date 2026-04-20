@@ -17,20 +17,46 @@ import {
   BUSINESS_LOGIC_CREDIT_NOTE_APPLY_MODE_LABELS,
 } from '@/types/business-logic-credit-notes';
 import { validateCreateCreditNoteDto } from '@/schemas/business-logic-credit-notes.schema';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Button,
+  Input,
+  Label,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Badge,
+  Skeleton,
+  Alert,
+  AlertDescription,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Textarea,
+  Calendar,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui';
 import { CalendarIcon, Filter, Search, Plus, CheckCircle, XCircle, BarChart3, Download } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -79,7 +105,7 @@ export const CreditNotesEnterprise: React.FC<CreditNotesEnterpriseProps> = ({
   // États pour le formulaire d'application
   const [applyForm, setApplyForm] = useState({
     targetInvoiceId: '',
-    applyMode: 'credit_account' as const,
+    applyMode: 'credit_account' as 'credit_account' | 'refund',
     comment: '',
   });
   
@@ -403,7 +429,7 @@ export const CreditNotesEnterprise: React.FC<CreditNotesEnterpriseProps> = ({
                     </TableCell>
                   </TableRow>
                 ) : (
-                  creditNotes.map((note) => (
+                  creditNotes.map((note: any) => (
                     <TableRow key={note.id}>
                       <TableCell className="font-medium">
                         {note.credit_note_number}
@@ -415,16 +441,16 @@ export const CreditNotesEnterprise: React.FC<CreditNotesEnterpriseProps> = ({
                         {note.total_amount.toFixed(2)} {note.currency}
                       </TableCell>
                       <TableCell>
-                        {BUSINESS_LOGIC_CREDIT_NOTE_REASON_LABELS[note.reason_code]}
+                        {BUSINESS_LOGIC_CREDIT_NOTE_REASON_LABELS[note.reason_code as keyof typeof BUSINESS_LOGIC_CREDIT_NOTE_REASON_LABELS]}
                       </TableCell>
                       <TableCell>
                         <Badge variant={
                           note.status === 'issued' ? 'default' :
                           note.status === 'applied' ? 'secondary' :
-                          note.status === 'void' ? 'destructive' :
-                          'outline'
+                          note.status === 'void' ? 'danger' :
+                          'secondary'
                         }>
-                          {BUSINESS_LOGIC_CREDIT_NOTE_STATUS_LABELS[note.status]}
+                          {BUSINESS_LOGIC_CREDIT_NOTE_STATUS_LABELS[note.status as keyof typeof BUSINESS_LOGIC_CREDIT_NOTE_STATUS_LABELS]}
                         </Badge>
                       </TableCell>
                       <TableCell>

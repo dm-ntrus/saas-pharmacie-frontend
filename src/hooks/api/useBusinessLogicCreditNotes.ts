@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiService } from "@/lib/api";
-import { toast } from "sonner";
+import toast from "react-hot-toast";
 import { useTenantApiContext } from "@/hooks/useTenantApiContext";
 import {
   BusinessLogicCreditNote,

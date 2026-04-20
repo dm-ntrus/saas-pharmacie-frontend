@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useAuth as useAuthContext } from "@/context/AuthContext";
+import { useSession } from "@/context/SessionContext";
 import type { User, UserRole } from "@/types";
 
 export { AuthProvider } from "@/context/AuthContext";
@@ -26,20 +27,8 @@ export interface AuthContextType {
  */
 export const useAuth = (): AuthContextType => {
   const auth = useAuthContext();
-  const realmRoles = auth.user?.roles ?? [];
-  const orgRoles = auth.user?.organizations?.[0]?.roles ?? [];
-  const allRoles = [...new Set([...realmRoles, ...orgRoles])];
-
-  const hasRole = (role: string): boolean =>
-    allRoles.some((r) => r.toLowerCase() === role.toLowerCase());
-
-  const hasAnyRole = (roles: string[]): boolean =>
-    roles.some((role) => hasRole(role));
-
-  const hasPermission = (permission: string): boolean => {
-    void permission;
-    return false;
-  };
+  // Pull RBAC/ABAC predicates from the session — single source of truth.
+  const session = useSession();
 
   const userAsUserType: User | null = auth.user
     ? {
@@ -49,7 +38,7 @@ export const useAuth = (): AuthContextType => {
         lastName: auth.user.family_name,
         avatar: undefined,
         roles: auth.user.roles as UserRole[],
-        permissions: [],
+        permissions: auth.user.permissions as string[],
         tenantId: auth.user.tenantId ?? undefined,
         isActive: true,
         lastLogin: undefined,
@@ -69,9 +58,9 @@ export const useAuth = (): AuthContextType => {
       throw new Error("Utilisez la page d'inscription pour créer un compte.");
     },
     logout: auth.logout,
-    hasRole,
-    hasPermission,
-    hasAnyRole,
+    hasRole: session.hasRole,
+    hasPermission: session.hasPermission,
+    hasAnyRole: (roles: string[]) => roles.some(session.hasRole),
     refetchUser: async () => {
       auth.refreshUser();
     },
@@ -79,7 +68,8 @@ export const useAuth = (): AuthContextType => {
 };
 
 export const useRequireAuth = (requiredRoles?: string[]) => {
-  const { user, loading, isAuthenticated, hasAnyRole } = useAuth();
+  const auth = useAuth();
+  const { user, loading, isAuthenticated, hasAnyRole } = auth;
   const router = useRouter();
 
   useEffect(() => {
@@ -98,7 +88,7 @@ export const useRequireAuth = (requiredRoles?: string[]) => {
       router.replace("/unauthorized");
       return;
     }
-  }, [loading, isAuthenticated, hasAnyRole, requiredRoles, router]);
+  }, [loading, isAuthenticated, requiredRoles, router, hasAnyRole]);
 
   return { user, loading, isAuthenticated };
 };

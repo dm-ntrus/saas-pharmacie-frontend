@@ -1,23 +1,31 @@
 "use client";
 
+/**
+ * AuthContext — legacy adapter over the enterprise SessionContext.
+ *
+ * New code SHOULD use `useSession()` / `useFeature()` / `usePlan()` /
+ * `useQuota()` / `usePermission()` from `@/context/SessionContext`.
+ *
+ * This module is kept solely for backward compatibility with existing
+ * consumers of `useAuth()`. It mounts a `<SessionProvider>` and then
+ * projects the enriched `SessionSnapshot` down onto the historical
+ * `AuthContext` shape (user + roles + organizations) without making any
+ * additional network calls or JWT decodes.
+ */
+
 import React, {
   createContext,
+  useCallback,
   useContext,
   useEffect,
-  useState,
-  useCallback,
-  useRef,
+  useMemo,
 } from "react";
+import { useRouter } from "next/navigation";
 import { jwtService, normalizeJwtOrganizations } from "@/services/jwt.service";
 import { tokenService } from "@/services/token.service";
-import { useRouter } from "next/navigation";
-import { getCookie, setCookie, removeCookie } from "@/utils/cookies";
+import { setCookie } from "@/utils/cookies";
 import { ACCESS_TOKEN_UPDATED_EVENT } from "@/utils/access-token-events";
-import axios from "axios";
-import { getApiBaseUrl } from "@/helpers/auth-interceptor";
-
-const INACTIVITY_TIMEOUT_MS = Number(process.env.NEXT_PUBLIC_INACTIVITY_TIMEOUT_MS) || 30 * 60 * 1000;
-const TOKEN_REFRESH_BUFFER_MS = Number(process.env.NEXT_PUBLIC_TOKEN_REFRESH_BUFFER_MS) || 60 * 1000;
+import { SessionProvider, useSession } from "@/context/SessionContext";
 
 interface AuthUser {
   id: string;
@@ -29,6 +37,7 @@ interface AuthUser {
   given_name: string;
   family_name: string;
   roles: string[];
+  permissions: string[];
   tenantId?: string | null;
   tenantSlug?: string | null;
   organizations: {
@@ -53,234 +62,122 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+/**
+ * Bridge component — consumes SessionContext and exposes the legacy
+ * AuthContext surface. Must be mounted inside <SessionProvider>.
+ */
+const AuthBridge: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const router = useRouter();
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [loading, setLoading] = useState(true);
-  const inactivityTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const session = useSession();
 
-  const loadUserFromToken = useCallback((token: string) => {
-    try {
-      const decoded = jwtService.decode(token);
-
-      const orgs = normalizeJwtOrganizations(decoded.organizations).map(
-        (org) => ({
-          id: org.id,
-          name: org.name,
-          roles: org.roles,
-          tenantId: org.attributes?.tenant_id?.[0] ?? "",
-          subdomain: org.attributes?.subdomain?.[0] || org.name,
-        }),
-      );
-
-      const firstOrg = orgs[0] || null;
-
-      setUser({
-        id: decoded.sub,
-        name: decoded.name,
-        email: decoded.email,
-        given_name: decoded.given_name,
-        family_name: decoded.family_name,
-        roles: decoded.realm_access?.roles || [],
-        tenantId:
-          (decoded as any).tenant_id ||
-          (decoded as any).tenantId ||
-          firstOrg?.tenantId ||
-          null,
-        tenantSlug: firstOrg?.subdomain || null,
-        organizations: orgs,
-      });
-    } catch (error) {
-      console.error("Failed to decode token", error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  // --- Proactive token refresh ---
-  const scheduleTokenRefresh = useCallback((expiresInMs: number) => {
-    if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
-    const refreshIn = Math.max(expiresInMs - TOKEN_REFRESH_BUFFER_MS, 5000);
-    refreshTimerRef.current = setTimeout(async () => {
-      try {
-        const csrf = getCookie("csrf_token");
-        await axios.post(
-          `${getApiBaseUrl()}/bff/auth/refresh`,
-          {},
-          {
-            withCredentials: true,
-            headers: csrf ? { "X-CSRF-Token": csrf } : {},
-          },
-        );
-      } catch {
-        // Refresh failed — user will be redirected on next API 401
-      }
-    }, refreshIn);
-  }, []);
-
-  // --- Inactivity timeout ---
-  const resetInactivityTimer = useCallback(() => {
-    if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
-    inactivityTimerRef.current = setTimeout(() => {
-      setUser(null);
-      tokenService.clearTokens();
-      removeCookie("slug_organization");
-      removeCookie("tenant_id");
-      removeCookie("entitled_modules");
-      const orgSlug = getCookie("slug_organization");
-      if (orgSlug) router.replace(`/tenant/${orgSlug}/auth/login?reason=inactivity`);
-      else router.replace("/auth/login?reason=inactivity");
-    }, INACTIVITY_TIMEOUT_MS);
-  }, [router]);
-
-  useEffect(() => {
-    if (!user) return;
-    const events = ["mousedown", "keydown", "scroll", "touchstart"];
-    const handler = () => resetInactivityTimer();
-    events.forEach((e) => window.addEventListener(e, handler, { passive: true }));
-    resetInactivityTimer();
-    return () => {
-      events.forEach((e) => window.removeEventListener(e, handler));
-      if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
+  const user = useMemo<AuthUser | null>(() => {
+    if (!session.session?.user) return null;
+    const u = session.session.user;
+    const tenantSlug =
+      session.session.tenant?.slug ||
+      session.session.organizations?.[0]?.slug ||
+      null;
+    return {
+      id: u.id,
+      email: u.email,
+      name: u.name || u.email || u.id,
+      avatar: null,
+      firstName: u.givenName ?? null,
+      lastName: u.familyName ?? null,
+      given_name: u.givenName || "",
+      family_name: u.familyName || "",
+      roles: u.roles,
+      permissions: u.permissions || [],
+      tenantId: session.session.tenant?.id || null,
+      tenantSlug,
+      organizations: (session.session.organizations || []).map((o) => ({
+        id: o.id,
+        name: o.name || "",
+        roles: o.roles,
+        tenantId: o.tenantId || "",
+        subdomain: o.slug || o.name || "",
+      })),
     };
-  }, [user, resetInactivityTimer]);
+  }, [session.session]);
 
-  // --- Load user via BFF on mount ---
   const refreshUser = useCallback(() => {
-    const base = getApiBaseUrl();
-    setLoading(true);
-    axios
-      .get(`${base}/bff/auth/me`, { withCredentials: true })
-      .then((r) => {
-        const payload = r.data?.data ?? r.data;
-        const u = payload?.user;
-        if (!u?.id) {
-          setUser(null);
-          return;
+    void session.refresh();
+  }, [session]);
+
+  const logout = useCallback(() => {
+    void session.logout();
+  }, [session]);
+
+  // Legacy login(): token is typically already set via the BFF cookie flow.
+  // We mirror it into tokenService for any remaining non-cookie consumer
+  // and trigger a single session refresh.
+  const login = useCallback(
+    async (access: string, refresh: string, expiresIn: number) => {
+      tokenService.setTokens(access, refresh, expiresIn);
+      try {
+        const decoded = jwtService.decode(access);
+        const isAdmin = decoded.realm_access?.roles?.includes("system_admin");
+        if (isAdmin) {
+          router.replace("/admin");
+        } else {
+          const orgs = normalizeJwtOrganizations(decoded.organizations);
+          const slug = orgs[0]?.attributes?.subdomain?.[0] || orgs[0]?.name;
+          if (slug) setCookie("slug_organization", slug);
+          if (slug) router.replace(`/tenant/${slug}/dashboard`);
         }
-        setUser({
-          id: u.id,
-          name: u.email || u.id,
-          email: u.email || "",
-          given_name: "",
-          family_name: "",
-          roles: u.roles || [],
-          tenantId: u.tenantId || null,
-          tenantSlug:
-            u.keycloakOrganizations?.[0]?.attributes?.subdomain?.[0] || null,
-          organizations: (u.keycloakOrganizations || []).map((org: any) => ({
-            id: org.id,
-            name: org.name,
-            roles: org.roles,
-            tenantId: org.attributes?.tenant_id?.[0],
-            subdomain: org.attributes?.subdomain?.[0],
-          })),
-        });
-        const ttlMs = r.data?.tokenExpiresInMs;
-        const refreshDelay = typeof ttlMs === "number" && ttlMs > 0 ? ttlMs : 5 * 60 * 1000;
-        scheduleTokenRefresh(refreshDelay);
-      })
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
-  }, [scheduleTokenRefresh]);
+      } catch {
+        /* ignore — /me will resolve state */
+      }
+      await session.refresh();
+    },
+    [session, router],
+  );
 
-  useEffect(() => {
-    void refreshUser();
-  }, [refreshUser]);
+  const getCurrentTenant = useCallback(
+    () =>
+      session.session?.tenant?.slug ||
+      session.session?.organizations?.[0]?.slug ||
+      null,
+    [session.session],
+  );
 
+  // Bridge legacy ACCESS_TOKEN_UPDATED events -> session refresh,
+  // so existing interceptors keep working without any call-site changes.
   useEffect(() => {
     if (typeof window === "undefined") return;
     const onAccessTokenUpdated = () => {
-      const t = tokenService.getAccessToken();
-      if (t) loadUserFromToken(t);
+      void session.refresh();
     };
     window.addEventListener(ACCESS_TOKEN_UPDATED_EVENT, onAccessTokenUpdated);
     return () => {
-      window.removeEventListener(ACCESS_TOKEN_UPDATED_EVENT, onAccessTokenUpdated);
+      window.removeEventListener(
+        ACCESS_TOKEN_UPDATED_EVENT,
+        onAccessTokenUpdated,
+      );
     };
-  }, [loadUserFromToken]);
+  }, [session]);
 
-  // --- Login ---
-  const login = async (
-    access: string,
-    refresh: string,
-    expiresIn: number,
-  ) => {
-    tokenService.setTokens(access, refresh, expiresIn);
-    loadUserFromToken(access);
-    scheduleTokenRefresh(expiresIn * 1000);
-
-    const decoded = jwtService.decode(access);
-    const isAdmin = decoded.realm_access?.roles?.includes("system_admin");
-
-    if (isAdmin) {
-      router.replace("/admin");
-    } else {
-      const orgs = normalizeJwtOrganizations(decoded.organizations);
-      const firstOrg = orgs[0];
-      const slug = firstOrg?.attributes?.subdomain?.[0] || firstOrg?.name;
-      if (slug) setCookie("slug_organization", slug);
-      router.replace(`/tenant/${slug}/dashboard`);
-    }
+  const value: AuthContextType = {
+    user,
+    loading: session.loading,
+    isAuthenticated: session.isAuthenticated,
+    isAdmin: session.isAdmin,
+    login,
+    logout,
+    refreshUser,
+    getCurrentTenant,
   };
 
-  // --- Logout: clear everything + revoke BFF session ---
-  const logout = useCallback(() => {
-    // Read redirect target BEFORE clearing cookies
-    const orgSlug = getCookie("slug_organization");
-    const csrf = getCookie("csrf_token");
-    const base = getApiBaseUrl();
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
 
-    // Clear React state immediately
-    setUser(null);
-
-    // Clear all client-side tokens and session data
-    tokenService.clearTokens();
-    removeCookie("slug_organization");
-    removeCookie("tenant_id");
-    removeCookie("entitled_modules");
-    removeCookie("current_organization");
-    removeCookie("csrf_token");
-
-    // Clear timers
-    if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
-    if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
-
-    axios
-      .post(
-        `${base}/bff/auth/logout`,
-        {},
-        {
-          withCredentials: true,
-          headers: csrf ? { "X-CSRF-Token": csrf } : {},
-        },
-      )
-      .finally(() => {
-        if (orgSlug) router.replace(`/tenant/${orgSlug}/auth/login`);
-        else router.replace("/auth/login");
-      });
-  }, [router]);
-
-  const getCurrentTenant = (): string | null => {
-    return user?.tenantSlug || null;
-  };
-
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        loading,
-        isAuthenticated: !!user,
-        isAdmin: user?.roles.includes("system_admin") || false,
-        login,
-        logout,
-        refreshUser,
-        getCurrentTenant,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+    <SessionProvider>
+      <AuthBridge>{children}</AuthBridge>
+    </SessionProvider>
   );
 };
 

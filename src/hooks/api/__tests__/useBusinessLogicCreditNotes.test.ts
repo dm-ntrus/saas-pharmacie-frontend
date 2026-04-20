@@ -1,8 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactNode } from 'react';
-import { useBusinessLogicCreditNotes } from '../useBusinessLogicCreditNotes.enterprise';
+import React, { ReactNode } from 'react';
+import {
+  useBusinessLogicCreditNotes,
+  useCreateBusinessLogicCreditNote,
+  usePatientCreditBalance,
+  useCreditNoteSummary,
+} from '../useBusinessLogicCreditNotes.enterprise';
 import { apiService } from '@/lib/api';
 
 // Mock de l'API
@@ -45,11 +50,8 @@ const createWrapper = () => {
     },
   });
   
-  return ({ children }: { children: ReactNode }) => (
-    <QueryClientProvider client={queryClient}>
-      {children}
-    </QueryClientProvider>
-  );
+  return ({ children }: { children: ReactNode }) =>
+    React.createElement(QueryClientProvider, { client: queryClient }, children);
 };
 
 describe('useBusinessLogicCreditNotes', () => {

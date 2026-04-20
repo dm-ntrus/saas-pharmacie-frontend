@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 import { jwtService, normalizeJwtOrganizations } from "@/services/jwt.service";
 import { tokenService } from "@/services/token.service";
 import { getCookie, setCookie } from "@/utils/cookies";
@@ -10,6 +11,8 @@ import { Permission } from "@/types/permissions";
 import { Role, ROLE_PERMISSION_MAP } from "@/types/roles";
 import { ACCESS_TOKEN_UPDATED_EVENT } from "@/utils/access-token-events";
 import { useAuth } from "@/context/AuthContext";
+import { useSession } from "@/context/SessionContext";
+import { getApiBaseUrl } from "@/helpers/auth-interceptor";
 
 /**
  * Une entrée = **une pharmacie** (organisation Keycloak dédiée).
@@ -34,7 +37,7 @@ interface OrganizationContextType {
   rootTenantId: string;
   currentOrganization: PharmacyOrganization | null;
   /** Pharmacie active : `currentOrganization.id` = segment `pharmacies/:pharmacyId` API métier. */
-  switchOrganization: (pharmacyOrgId: string) => void;
+  switchOrganization: (pharmacyOrgId: string) => Promise<void>;
   hasRole: (role: string) => boolean;
   hasPermission: (permission: Permission | string) => boolean;
   hasAnyPermission: (permissions: (Permission | string)[]) => boolean;
@@ -83,6 +86,7 @@ export const OrganizationProvider = ({
   const router = useRouter();
   const queryClient = useQueryClient();
   const { user: authUser } = useAuth();
+  const { session, refresh: refreshSession } = useSession();
   const [organizations, setOrganizations] = useState<PharmacyOrganization[]>([]);
   const [rootTenantId, setRootTenantId] = useState("");
   const [currentOrganization, setCurrentOrganization] =
@@ -92,8 +96,21 @@ export const OrganizationProvider = ({
     let pharmacies: PharmacyOrganization[] = [];
     let root = "";
 
-    // Primary: use AuthContext user data (works for BFF HttpOnly sessions)
-    if (authUser?.organizations?.length) {
+    // Primary: use enterprise session snapshot (single source of truth)
+    if (session?.organizations?.length) {
+      root = (session.tenant?.id || authUser?.tenantId || "").trim();
+      pharmacies = filterPharmaciesForRootTenant(
+        session.organizations.map((org) => ({
+          id: org.id,
+          name: org.name || org.slug || org.id,
+          roles: org.roles || [],
+          tenantId: org.tenantId || root,
+          subdomain: org.slug || org.name || org.id,
+        })),
+        root,
+      );
+    } else if (authUser?.organizations?.length) {
+      // Fallback: use AuthContext mirrored data
       root = (authUser.tenantId || "").trim();
       pharmacies = filterPharmaciesForRootTenant(authUser.organizations as PharmacyOrganization[], root);
     } else {
@@ -118,7 +135,13 @@ export const OrganizationProvider = ({
     const saved = getCookie("current_organization");
 
     let selected: PharmacyOrganization | undefined;
-    if (tenantRouteSlug) {
+    if (session?.activeOrganizationId) {
+      selected = pharmacies.find((o) => o.id === session.activeOrganizationId);
+    }
+    if (!selected && session?.activeOrganizationSlug) {
+      selected = pharmacies.find((o) => o.subdomain === session.activeOrganizationSlug);
+    }
+    if (!selected && tenantRouteSlug) {
       selected = pharmacies.find(
         (o) => o.subdomain && o.subdomain === tenantRouteSlug,
       );
@@ -141,7 +164,7 @@ export const OrganizationProvider = ({
     } else {
       setCurrentOrganization(null);
     }
-  }, [tenantRouteSlug, authUser]);
+  }, [tenantRouteSlug, authUser, session]);
 
   useEffect(() => {
     syncFromToken();
@@ -166,13 +189,22 @@ export const OrganizationProvider = ({
     };
   }, [syncFromToken]);
 
-  const switchOrganization = (pharmacyOrgId: string) => {
+  const switchOrganization = async (pharmacyOrgId: string) => {
     const org = organizations.find((o) => o.id === pharmacyOrgId);
     if (!org) {
       return;
     }
 
-    void queryClient.invalidateQueries();
+    const csrf = getCookie("csrf_token");
+    const base = getApiBaseUrl();
+    await axios.post(
+      `${base}/bff/auth/switch-organization`,
+      { organizationId: pharmacyOrgId },
+      {
+        withCredentials: true,
+        headers: csrf ? { "X-CSRF-Token": csrf } : undefined,
+      },
+    );
 
     setCurrentOrganization(org);
     setCookie("current_organization", pharmacyOrgId);
@@ -185,6 +217,8 @@ export const OrganizationProvider = ({
       setCookie("tenant_id", rootTenantId);
     }
 
+    await refreshSession();
+    await queryClient.invalidateQueries();
     router.replace(`/tenant/${org.subdomain}/dashboard`);
   };
 

@@ -26,9 +26,10 @@ const selectVariants = cva(
 );
 
 export interface SelectProps extends VariantProps<typeof selectVariants> {
-  options: SelectOption[];
+  options?: SelectOption[];
   value?: string;
   onChange?: (value: string) => void;
+  onValueChange?: (value: string) => void;
   placeholder?: string;
   disabled?: boolean;
   error?: string;
@@ -36,6 +37,7 @@ export interface SelectProps extends VariantProps<typeof selectVariants> {
   searchable?: boolean;
   className?: string;
   id?: string;
+  children?: React.ReactNode;
 }
 
 export const Select = React.forwardRef<HTMLDivElement, SelectProps>(
@@ -44,6 +46,7 @@ export const Select = React.forwardRef<HTMLDivElement, SelectProps>(
       options,
       value,
       onChange,
+      onValueChange,
       placeholder = "Sélectionner...",
       disabled = false,
       error,
@@ -51,9 +54,15 @@ export const Select = React.forwardRef<HTMLDivElement, SelectProps>(
       searchable = false,
       className,
       id,
+      children,
     },
     ref,
   ) => {
+    const resolvedOptions = options ?? [];
+    const handleChange = (next: string) => {
+      onChange?.(next);
+      onValueChange?.(next);
+    };
     const inputId = id || label?.toLowerCase().replace(/\s+/g, "-");
 
     if (!searchable) {
@@ -71,7 +80,7 @@ export const Select = React.forwardRef<HTMLDivElement, SelectProps>(
             <select
               id={inputId}
               value={value}
-              onChange={(e) => onChange?.(e.target.value)}
+              onChange={(e) => handleChange(e.target.value)}
               disabled={disabled}
               className={cn(
                 selectVariants({ state: error ? "error" : "default" }),
@@ -85,7 +94,7 @@ export const Select = React.forwardRef<HTMLDivElement, SelectProps>(
                   {placeholder}
                 </option>
               )}
-              {options.map((opt) => (
+              {resolvedOptions.map((opt) => (
                 <option key={opt.value} value={opt.value} disabled={opt.disabled}>
                   {opt.label}
                 </option>
@@ -105,9 +114,9 @@ export const Select = React.forwardRef<HTMLDivElement, SelectProps>(
     return (
       <SearchableSelect
         ref={ref}
-        options={options}
+        options={resolvedOptions}
         value={value}
-        onChange={onChange}
+        onChange={handleChange}
         placeholder={placeholder}
         disabled={disabled}
         error={error}
@@ -119,6 +128,30 @@ export const Select = React.forwardRef<HTMLDivElement, SelectProps>(
   },
 );
 Select.displayName = "Select";
+
+type LegacySelectItemProps = {
+  value: string;
+  children: React.ReactNode;
+};
+
+export function SelectContent({
+  children,
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return <>{children}</>;
+}
+export function SelectTrigger({
+  children,
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return <>{children}</>;
+}
+export function SelectValue({
+  children,
+}: React.HTMLAttributes<HTMLSpanElement> & { placeholder?: string }) {
+  return <>{children}</>;
+}
+export function SelectItem({ children }: LegacySelectItemProps) {
+  return <>{children}</>;
+}
 
 interface SearchableSelectInnerProps {
   options: SelectOption[];

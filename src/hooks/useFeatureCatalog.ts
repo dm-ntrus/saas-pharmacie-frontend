@@ -24,6 +24,7 @@
 
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useMemo } from 'react';
+import { getApiBaseUrl } from '@/helpers/auth-interceptor';
 
 // Types
 export interface FeatureCatalogEntry {
@@ -65,12 +66,16 @@ export interface CategoryResponse {
   total: number;
 }
 
-// API Base URL
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-const CATALOG_ENDPOINT = `${API_BASE_URL}/api/v1/platform/feature-flags/catalog`;
+// API Base URL — must use NEXT_PUBLIC_API_URL (Next.js env), not Vite's
+// `import.meta.env.VITE_API_URL` which is never populated in this project.
+// We route through the same BFF base as the rest of the app.
+function catalogEndpoint(): string {
+  return `${getApiBaseUrl()}/platform/feature-flags/catalog`;
+}
 
 /**
- * Fetch le catalogue complet depuis l'API
+ * Fetch le catalogue complet depuis l'API.
+ * `credentials: "include"` pour que le cookie de session BFF soit envoyé.
  */
 async function fetchFeatureCatalog(
   activeOnly = true,
@@ -80,8 +85,8 @@ async function fetchFeatureCatalog(
   if (!activeOnly) params.append('activeOnly', 'false');
   if (category) params.append('category', category);
 
-  const url = `${CATALOG_ENDPOINT}?${params.toString()}`;
-  const response = await fetch(url);
+  const url = `${catalogEndpoint()}?${params.toString()}`;
+  const response = await fetch(url, { credentials: 'include' });
 
   if (!response.ok) {
     throw new Error(`Failed to fetch feature catalog: ${response.statusText}`);
@@ -97,8 +102,8 @@ async function fetchFeatureKeys(activeOnly = true): Promise<FeatureKeysResponse>
   const params = new URLSearchParams();
   if (!activeOnly) params.append('activeOnly', 'false');
 
-  const url = `${CATALOG_ENDPOINT}/keys?${params.toString()}`;
-  const response = await fetch(url);
+  const url = `${catalogEndpoint()}/keys?${params.toString()}`;
+  const response = await fetch(url, { credentials: 'include' });
 
   if (!response.ok) {
     throw new Error(`Failed to fetch feature keys: ${response.statusText}`);
@@ -111,8 +116,8 @@ async function fetchFeatureKeys(activeOnly = true): Promise<FeatureKeysResponse>
  * Fetch les catégories
  */
 async function fetchCategories(): Promise<CategoryResponse> {
-  const url = `${CATALOG_ENDPOINT}/categories`;
-  const response = await fetch(url);
+  const url = `${catalogEndpoint()}/categories`;
+  const response = await fetch(url, { credentials: 'include' });
 
   if (!response.ok) {
     throw new Error(`Failed to fetch categories: ${response.statusText}`);

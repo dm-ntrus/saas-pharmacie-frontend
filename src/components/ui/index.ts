@@ -19,10 +19,23 @@ export { DataTable } from "./DataTable";
 export type { Column } from "./DataTable";
 
 export { Modal } from "./Modal";
+export {
+  Dialog,
+  DialogTrigger,
+  DialogPortal,
+  DialogClose,
+  DialogOverlay,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from "./Dialog";
+export { Popover, PopoverTrigger, PopoverContent, PopoverAnchor } from "./Popover";
 
 export { ErrorBanner } from "./ErrorBanner";
 
-export { Select } from "./Select";
+export { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./Select";
 export type { SelectProps, SelectOption } from "./Select";
 
 export { Tabs, TabsList, TabsTrigger, TabsContent } from "./Tabs";
@@ -46,6 +59,7 @@ export {
 
 export { DatePicker, DateRangePicker } from "./DatePicker";
 export type { DatePickerProps, DateRangePickerProps } from "./DatePicker";
+export { Calendar } from "./Calendar";
 
 export { FileUpload } from "./FileUpload";
 export type { FileUploadProps } from "./FileUpload";

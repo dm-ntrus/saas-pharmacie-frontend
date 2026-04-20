@@ -24,14 +24,15 @@ interface SidebarItem {
  * - Filtrage automatique selon les entitlements
  */
 export function DynamicSidebar() {
-  const { features, isLoading: catalogLoading } = useFeatureCatalog();
+  const { data, isLoading: catalogLoading } = useFeatureCatalog();
   const { isFeatureEnabled, loading: entitlementsLoading } = useFeatureFlags();
 
   /**
    * Construire les items de sidebar depuis le catalogue
    */
   const sidebarItems = useMemo<SidebarItem[]>(() => {
-    if (!features || features.length === 0) return [];
+    const features = data?.features ?? [];
+    if (features.length === 0) return [];
 
     return features
       .filter(f => {
@@ -55,7 +56,7 @@ export function DynamicSidebar() {
         };
       })
       .sort((a, b) => a.order - b.order); // Tri par ordre
-  }, [features, isFeatureEnabled]);
+  }, [data, isFeatureEnabled]);
 
   /**
    * Grouper par section

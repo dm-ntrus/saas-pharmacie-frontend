@@ -9,13 +9,25 @@ import {
   PAYMENT_PROVIDER_LABELS,
   PAYMENT_PROVIDER_ICONS,
 } from '@/types/payments';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Button,
+  Badge,
+  Input,
+  Select,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Alert,
+  AlertDescription,
+} from '@/components/ui';
 import { Download, Filter, RefreshCw, Search, Eye, FileText } from 'lucide-react';
 import Link from 'next/link';
 
@@ -158,33 +170,33 @@ export function PaymentList({
               </div>
 
               {/* Filtre par statut */}
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Statut" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tous les statuts</SelectItem>
-                  <SelectItem value="pending">En attente</SelectItem>
-                  <SelectItem value="processing">En traitement</SelectItem>
-                  <SelectItem value="completed">Terminé</SelectItem>
-                  <SelectItem value="failed">Échoué</SelectItem>
-                  <SelectItem value="cancelled">Annulé</SelectItem>
-                </SelectContent>
-              </Select>
+              <Select
+                value={statusFilter}
+                onChange={setStatusFilter}
+                options={[
+                  { value: 'all', label: 'Tous les statuts' },
+                  { value: 'pending', label: 'En attente' },
+                  { value: 'processing', label: 'En traitement' },
+                  { value: 'completed', label: 'Terminé' },
+                  { value: 'failed', label: 'Échoué' },
+                  { value: 'cancelled', label: 'Annulé' },
+                ]}
+                placeholder="Statut"
+              />
 
               {/* Filtre par méthode */}
-              <Select value={providerFilter} onValueChange={setProviderFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Méthode" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Toutes les méthodes</SelectItem>
-                  <SelectItem value="manual">Manuel</SelectItem>
-                  <SelectItem value="stripe">Carte bancaire</SelectItem>
-                  <SelectItem value="bank_transfer">Virement</SelectItem>
-                  <SelectItem value="cash">Espèces</SelectItem>
-                </SelectContent>
-              </Select>
+              <Select
+                value={providerFilter}
+                onChange={setProviderFilter}
+                options={[
+                  { value: 'all', label: 'Toutes les méthodes' },
+                  { value: 'manual', label: 'Manuel' },
+                  { value: 'stripe', label: 'Carte bancaire' },
+                  { value: 'bank_transfer', label: 'Virement' },
+                  { value: 'cash', label: 'Espèces' },
+                ]}
+                placeholder="Méthode"
+              />
 
               {/* Bouton de réinitialisation */}
               <Button

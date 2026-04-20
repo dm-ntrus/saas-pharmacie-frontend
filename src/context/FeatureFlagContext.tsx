@@ -1,5 +1,24 @@
 "use client";
 
+/**
+ * FeatureFlagContext — legacy public API kept identical, but now sourced
+ * 100% from the enterprise `SessionContext`.
+ *
+ * Rationale:
+ *   - The session JWT minted by the backend (`/bff/auth/me`) already carries
+ *     plan + features + quotas for the current tenant.
+ *   - Keeping a second React Query fetch (`plan-entitlements`) on top of it
+ *     would duplicate state, risk divergence, and send an extra round-trip
+ *     on every tenant switch.
+ *   - By proxying here, every existing consumer of `useFeatureFlags()` /
+ *     `isFeatureEnabled()` / `<FeatureGate>` / `<ModuleGuard>` automatically
+ *     inherits: JTI revocation, plan-status awareness (trial / grace),
+ *     free-tier fallback, session-version invalidation, SSO, etc.
+ *
+ * Public API unchanged: `useFeatureFlags()` still returns
+ *   { features, limits, isFeatureEnabled, loading, refresh }.
+ */
+
 import React, {
   createContext,
   useContext,
@@ -7,24 +26,23 @@ import React, {
   useCallback,
   useEffect,
 } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useOrganization } from "./OrganizationContext";
-import {
-  fetchPlanEntitlementsSummary,
-  planEntitlementsQueryKey,
-} from "@/services/plan-entitlements.service";
-import { setCookie } from "@/utils/cookies";
+import { toast } from "react-hot-toast";
+import { useSession } from "@/context/SessionContext";
 import {
   ENTITLEMENT_DENIED_EVENT,
   type EntitlementDeniedDetail,
 } from "@/helpers/auth-interceptor";
-import { toast } from "react-hot-toast";
 
 interface FeatureFlagContextType {
+  /** `featureKey -> enabled` flattened from the session snapshot. */
   features: Record<string, boolean>;
+  /** `featureKey -> limit` (0 / undefined when no limit). */
   limits: Record<string, number>;
+  /** Canonical enabled-check (case-insensitive, plan-aware, free-tier aware). */
   isFeatureEnabled: (featureKey: string) => boolean;
+  /** `true` while the very first /me reply has not yet returned. */
   loading: boolean;
+  /** Force a fresh /me round-trip. */
   refresh: () => Promise<void>;
 }
 
@@ -35,79 +53,37 @@ const FeatureFlagContext = createContext<FeatureFlagContextType | undefined>(
 export const FeatureFlagProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { currentOrganization } = useOrganization();
-  const pharmacyId = currentOrganization?.id;
-  const queryClient = useQueryClient();
+  const { session, loading, hasFeature, refresh } = useSession();
 
-  const { data, isLoading, isFetching, error } = useQuery({
-    queryKey: planEntitlementsQueryKey(pharmacyId),
-    queryFn: () => fetchPlanEntitlementsSummary(pharmacyId!),
-    enabled: !!pharmacyId,
-    staleTime: 30_000,
-    retry: (failureCount, error: any) => {
-      // Ne pas retry sur 404 (pas d'abonnement) ou 403 (pas autorisé)
-      const status = error?.response?.status;
-      if (status === 404 || status === 403) {
-        return false;
-      }
-      // Retry max 2 fois sur erreurs réseau/serveur (5xx)
-      return failureCount < 2;
-    },
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 5000),
-  });
-
-  const features = data?.features ?? {};
-  const limits = data?.limits ?? {};
-  const loading = !!pharmacyId && (isLoading || isFetching);
-
-  // Gestion d'erreur explicite
-  useEffect(() => {
-    if (error) {
-      const status = (error as any)?.response?.status;
-
-      if (status === 404) {
-        // Pas d'abonnement actif - état normal pour free tier
-        console.warn("No active subscription found for pharmacy");
-        // Pas de toast, c'est un état valide
-      } else if (status === 403) {
-        // Accès refusé - problème de permissions
-        toast.error("Accès refusé aux informations d'abonnement", {
-          id: "entitlement-403",
-          duration: 5000,
-        });
-      } else if (status && status >= 500) {
-        // Erreur serveur
-        toast.error("Erreur serveur lors du chargement des fonctionnalités", {
-          id: "entitlement-5xx",
-          duration: 5000,
-        });
-      } else if (error) {
-        // Autre erreur (réseau, timeout, etc.)
-        toast.error("Erreur lors du chargement des fonctionnalités", {
-          id: "entitlement-error",
-          duration: 5000,
-        });
+  // --- Project session.features -> legacy `features` / `limits` maps --------
+  const { features, limits } = useMemo(() => {
+    const f: Record<string, boolean> = {};
+    const l: Record<string, number> = {};
+    const src = session?.features ?? {};
+    for (const [key, entry] of Object.entries(src)) {
+      f[key] = !!entry?.enabled;
+      if (typeof entry?.limit === "number") l[key] = entry.limit;
+    }
+    // Free-tier keys must also surface as enabled (no subscription case).
+    if (session?.freeTierFeatureKeys?.length) {
+      for (const k of session.freeTierFeatureKeys) {
+        if (f[k] === undefined) f[k] = true;
       }
     }
-  }, [error]);
+    return { features: f, limits: l };
+  }, [session]);
 
-  // Sync entitled module keys to a cookie for Edge middleware consumption
-  useEffect(() => {
-    if (!data?.features) return;
-    const enabledKeys = Object.entries(data.features)
-      .filter(([, v]) => v)
-      .map(([k]) => k);
-    setCookie("entitled_modules", enabledKeys.join(","), 1);
-  }, [data?.features]);
-
-  // Global listener for backend 403 ENTITLEMENT_NOT_IN_PLAN responses
+  // --- Global 403 ENTITLEMENT_NOT_IN_PLAN toast (preserved) -----------------
   useEffect(() => {
     function onDenied(e: Event) {
       const detail = (e as CustomEvent<EntitlementDeniedDetail>).detail;
       toast.error(
-        detail.message ||
+        detail?.message ||
           "Cette fonctionnalité n'est pas incluse dans votre plan.",
-        { id: `entitlement-denied-${detail.featureKey}`, duration: 5000 },
+        {
+          id: `entitlement-denied-${detail?.featureKey ?? "unknown"}`,
+          duration: 5000,
+        },
       );
     }
     window.addEventListener(ENTITLEMENT_DENIED_EVENT, onDenied);
@@ -115,52 +91,29 @@ export const FeatureFlagProvider: React.FC<{ children: React.ReactNode }> = ({
       window.removeEventListener(ENTITLEMENT_DENIED_EVENT, onDenied);
   }, []);
 
+  // --- Legacy `isFeatureEnabled` semantics:
+  //     - optimistic during first load (avoid sidebar flash),
+  //     - plan-aware / free-tier aware via the session predicate. ------------
   const isFeatureEnabled = useCallback(
     (featureKey: string): boolean => {
       if (!featureKey) return false;
-      
-      // Distinguer loading initial vs erreur
-      if (loading && Object.keys(features).length === 0) {
-        // Premier chargement: optimiste (évite sidebar vide)
+
+      if (loading && !session) {
+        // First /me not yet resolved: optimistic to avoid empty sidebar.
         return true;
       }
 
-      if (error) {
-        const status = (error as any)?.response?.status;
-        if (status === 404) {
-          // Pas d'abonnement: mode free tier (features de base uniquement)
-          const freeTierFeatures = [
-            "module.dashboard",
-            "module.settings",
-            "module.sales",
-            "module.inventory",
-            "module.patients",
-            "module.prescriptions",
-            "module.notifications",
-          ];
-          return freeTierFeatures.includes(featureKey.toLowerCase());
-        }
-        // Autre erreur: pessimiste (sécurité)
+      if (!session) {
+        // Authenticated-but-no-session (error state): pessimistic.
         return false;
       }
 
-      // Vérification normale
-      if (features[featureKey] !== undefined) return !!features[featureKey];
-      const lower = featureKey.toLowerCase();
-      if (features[lower] !== undefined) return !!features[lower];
-      return false;
+      return hasFeature(featureKey);
     },
-    [features, loading, error],
+    [session, loading, hasFeature],
   );
 
-  const refresh = useCallback(async () => {
-    if (!pharmacyId) return;
-    await queryClient.invalidateQueries({
-      queryKey: planEntitlementsQueryKey(pharmacyId),
-    });
-  }, [pharmacyId, queryClient]);
-
-  const value = useMemo(
+  const value = useMemo<FeatureFlagContextType>(
     () => ({
       features,
       limits,

@@ -9,14 +9,21 @@ import {
   PAYMENT_PROVIDER_LABELS,
   PAYMENT_PROVIDER_ICONS,
 } from '@/types/payments';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Separator } from '@/components/ui/separator';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Button,
+  Badge,
+  Alert,
+  AlertDescription,
+  Separator,
+  Textarea,
+  Label,
+  Switch,
+} from '@/components/ui';
 import {
   Calendar,
   CreditCard,

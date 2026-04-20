@@ -5,6 +5,7 @@ import { apiService } from '@/services/api.service';
  * Prefer using `apiService` directly in new code.
  */
 export const api = apiService;
+export { apiService };
 
 // Some legacy code expects `import api from "@/lib/api"`
 export default apiService;

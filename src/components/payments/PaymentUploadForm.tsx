@@ -3,11 +3,18 @@
 import React, { useState, useCallback } from 'react';
 import { usePaymentUpload } from '@/hooks/usePayments';
 import { paymentsService } from '@/services/payments.service';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Input,
+  Label,
+  Alert,
+  AlertDescription,
+} from '@/components/ui';
 import { Upload, FileText, CheckCircle, XCircle } from 'lucide-react';
 
 interface PaymentUploadFormProps {
